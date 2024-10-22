@@ -1,20 +1,21 @@
-import React from "react";
-import Logo from "../global/Logo";
+import Link from "next/link";
+import { HiMiniArrowTopRightOnSquare } from "react-icons/hi2";
 
 const Hero = () => {
   return (
-    <div className="w-full min-h-screen h-screen flex flex-col items-center justify-start bg-accent-purple/20">
+    <div
+      className="w-full min-h-screen h-screen flex flex-col items-center justify-start 
+                bg-gradient-to-b from-accent-purple/40 to-accent-purple/10"
+    >
       <div
         className="w-full h-full flex flex-col items-start justify-center max-w-screen-l-s text-left p-4 gap-8
                     t:items-center t:justify-start t:text-center "
       >
-        <Logo />
-
         <div className="w-full flex flex-col items-start justify-start gap-4 t:items-center t:justify-center mt-auto">
           <p className="text-2xl font-normal t:text-3xl l-s:text-4xl l-l:text-5xl">
-            <span className="font-black">Empower</span> Employees,{" "}
+            <span className="font-extrabold">Empower</span> Employees,{" "}
             <br className="t:hidden" />{" "}
-            <span className="font-black">Elevate</span> Your Business
+            <span className="font-extrabold">Elevate</span> Your Business
           </p>
 
           <p className="text-sm t:text-base l-s:text-lg">
@@ -25,12 +26,13 @@ const Hero = () => {
         </div>
 
         <div className="flex flex-col items-center justify-center w-full text-neutral-950 t:max-w-40 mb-auto t:flex-row t:gap-4">
-          <button
+          <Link
+            href="/auth/register"
             className="w-full p-2.5 rounded-md font-bold bg-accent-yellow
-                        hover:brightness-105 active:brightness-90 transition-all"
+                        hover:brightness-105 active:brightness-90 transition-all flex flex-row gap-2 items-center justify-center"
           >
-            Start Now
-          </button>
+            Start Now <HiMiniArrowTopRightOnSquare />
+          </Link>
         </div>
 
         <div className="aspect-video w-full bg-white rounded-t-md t:max-w-screen-t"></div>

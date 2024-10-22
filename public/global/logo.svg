@@ -6,14 +6,14 @@
         fill: none;
         stroke: url(#linear-gradient);
         stroke-miterlimit: 10;
-        stroke-width: 50px;
+        stroke-width: 78.37px;
       }
     </style>
-    <linearGradient id="linear-gradient" x1="540" y1="20.63" x2="540" y2="1059.37" gradientUnits="userSpaceOnUse">
+    <linearGradient id="linear-gradient" x1="162.66" y1="24.89" x2="916.87" y2="779.09" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#e4f065"/>
       <stop offset=".5" stop-color="#adffff"/>
       <stop offset="1" stop-color="#b8a5ef"/>
     </linearGradient>
   </defs>
-  <path class="cls-1" d="M540.24,503.71l228.11,131.7v263.4l-228.11,131.7-228.11-131.7v-263.4l228.11-131.7Zm31.8-322.51V444.59l228.11,131.7,228.11-131.7V181.2L800.14,49.5l-228.11,131.7Zm-520.29,0V444.59l228.11,131.7,228.11-131.7V181.2L279.86,49.5,51.75,181.2Z"/>
+  <path class="cls-1" d="M539.53,551.91l198.65,114.69v229.38l-198.65,114.69-198.65-114.69v-229.38l198.65-114.69h0ZM65.33,184.03v229.37l198.65,114.69,198.65-114.69V184.03l-198.65-114.69L65.33,184.03h0Zm552.04,0v229.37l198.65,114.69,198.65-114.69V184.03l-198.65-114.69-198.65,114.69h0Z"/>
 </svg>

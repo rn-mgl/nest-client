@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${figtree.className} font-figtree antialiased text-neutral-900`}
+        className={`${figtree.className} font-figtree antialiased text-neutral-900 primary-scrollbar`}
       >
         {children}
       </body>
