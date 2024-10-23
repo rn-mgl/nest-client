@@ -21,7 +21,9 @@
       "@/*": ["./*"],
       "@/public/*": ["./public/*"],
       "@/components/*": ["./src/components/*"],
-      "@/hooks/*": ["./src/hooks/*"]
+      "@/hooks/*": ["./src/hooks/*"],
+      "@/interface/*": ["./src/interface/*"],
+      "@/utils/*": ["./src/utils/*"]
     },
     "target": "ES2017"
   },

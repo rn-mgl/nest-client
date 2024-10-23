@@ -17,6 +17,11 @@
   background: #171717;
 }
 
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
