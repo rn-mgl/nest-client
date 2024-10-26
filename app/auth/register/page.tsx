@@ -8,6 +8,7 @@ import useGlobalContext from "@/src/utils/context";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { getCookie } from "cookies-next";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { IoEye, IoEyeOff, IoMail, IoPersonCircle } from "react-icons/io5";
 
@@ -22,6 +23,7 @@ const Register = () => {
   const { showPassword, handleShowPassword } = useShowPassword();
 
   const { url } = useGlobalContext();
+  const route = useRouter();
 
   const handleRegisterData = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -41,7 +43,7 @@ const Register = () => {
       const { token } = await getCSRFToken(url);
 
       if (token) {
-        const { data } = await axios.post(
+        const { data: register } = await axios.post(
           `${url}/auth/register`,
           { ...registerData, role: "employee" },
           {
@@ -49,6 +51,10 @@ const Register = () => {
             withCredentials: true,
           }
         );
+
+        if (register.success) {
+          route.push("/auth/sending?type=verification");
+        }
       }
     } catch (error) {
       console.log(error);
@@ -67,7 +73,7 @@ const Register = () => {
         >
           <LogoDark />
 
-          <div className="w-full flex flex-col items-start justify-center gap-8 max-w-screen-m-l t:justify-center t:mx-auto l-s:my-auto">
+          <div className="w-full h-full flex flex-col items-start  gap-8 max-w-screen-m-l justify-center t:mx-auto l-s:my-auto pb-10">
             <p className="font-bold text-2xl">Create your account</p>
 
             <form
