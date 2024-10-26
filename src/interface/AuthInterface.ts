@@ -5,3 +5,8 @@ export interface Register {
   password: string;
   password_confirmation: string;
 }
+
+export interface Login {
+  email: string;
+  password: string;
+}

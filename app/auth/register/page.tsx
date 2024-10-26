@@ -2,13 +2,14 @@
 
 import InputString from "@/src/components/form/InputString";
 import LogoDark from "@/src/components/global/LogoDark";
+import useShowPassword from "@/src/hooks/useShowPassword";
 import { Register as RegisterInterface } from "@/src/interface/AuthInterface";
 import useGlobalContext from "@/src/utils/context";
+import { getCSRFToken } from "@/src/utils/token";
+import axios from "axios";
+import { getCookie } from "cookies-next";
 import React from "react";
 import { IoEye, IoEyeOff, IoMail, IoPersonCircle } from "react-icons/io5";
-import axios from "axios";
-import { getCSRFToken } from "@/src/utils/token";
-import { getCookie } from "cookies-next";
 
 const Register = () => {
   const [registerData, setRegisterData] = React.useState<RegisterInterface>({
@@ -18,21 +19,9 @@ const Register = () => {
     password: "",
     password_confirmation: "",
   });
-  const [showPassword, setShowPassword] = React.useState({
-    password: false,
-    password_confirmation: false,
-  });
+  const { showPassword, handleShowPassword } = useShowPassword();
 
   const { url } = useGlobalContext();
-
-  const handleShowPassword = (field: "password" | "password_confirmation") => {
-    setShowPassword((prev) => {
-      return {
-        ...prev,
-        [field]: !prev[field],
-      };
-    });
-  };
 
   const handleRegisterData = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -170,7 +159,7 @@ const Register = () => {
           </div>
         </div>
 
-        <div className="hidden l-s:flex w-full h-full bg-accent-purple rounded-lg"></div>
+        <div className="hidden l-s:flex w-full h-full bg-accent-yellow rounded-lg"></div>
       </div>
     </div>
   );
