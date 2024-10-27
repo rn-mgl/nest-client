@@ -5,17 +5,17 @@ const Hero = () => {
   return (
     <div
       className="w-full min-h-screen h-screen flex flex-col items-center justify-start 
-                bg-gradient-to-b from-accent-purple/40 to-accent-purple/10"
+                bg-accent-purple"
     >
       <div
         className="w-full h-full flex flex-col items-start justify-center max-w-screen-l-s text-left p-4 gap-8
                     t:items-center t:justify-start t:text-center "
       >
-        <div className="w-full flex flex-col items-start justify-start gap-4 t:items-center t:justify-center mt-auto">
-          <p className="text-2xl font-normal t:text-3xl l-s:text-4xl l-l:text-5xl">
-            <span className="font-extrabold">Empower</span> Employees,{" "}
-            <br className="t:hidden" />{" "}
-            <span className="font-extrabold">Elevate</span> Your Business
+        <div className="w-full flex flex-col items-start justify-start gap-4 t:items-center t:justify-center mt-auto text-neutral-50">
+          <p className="text-2xl font-extrabold t:text-3xl l-s:text-4xl l-l:text-5xl">
+            <span className="text-accent-yellow">Empower</span> Employees,
+            <br className="t:hidden" />
+            <span className="text-accent-yellow">Elevate</span> Your Business
           </p>
 
           <p className="text-sm t:text-base l-s:text-lg">

@@ -7,7 +7,8 @@ import { Login as LoginInterface } from "@/src/interface/AuthInterface";
 import useGlobalContext from "@/src/utils/context";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-import { getCookie } from "cookies-next";
+import { getCookie, setCookie } from "cookies-next";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { IoEye, IoEyeOff, IoMail } from "react-icons/io5";
 
@@ -20,6 +21,8 @@ const Login = () => {
   const { showPassword, handleShowPassword } = useShowPassword();
 
   const { url } = useGlobalContext();
+
+  const router = useRouter();
 
   const handleLoginData = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -48,7 +51,13 @@ const Login = () => {
           }
         );
 
-        console.log(data);
+        if (data?.isVerified) {
+          const role = data?.role;
+          setCookie("nest_token", data?.token);
+          router.push(`/nest/${role}`);
+        } else {
+          router.push("/auth/sending?type=verification");
+        }
       }
     } catch (error) {
       console.log(error);

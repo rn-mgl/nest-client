@@ -10,9 +10,9 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        "accent-yellow": "#e4f065",
-        "accent-purple": "#b8a5ef",
-        "accent-blue": "#adffff",
+        "accent-yellow": "#c2ff9c",
+        "accent-purple": "#524ee5",
+        "accent-blue": "#0039c7",
       },
       screens: {
         "m-s": "320px",
