@@ -13,7 +13,7 @@ const Hero = () => {
       >
         <div className="w-full flex flex-col items-start justify-start gap-4 t:items-center t:justify-center mt-auto text-neutral-50">
           <p className="text-2xl font-extrabold t:text-3xl l-s:text-4xl l-l:text-5xl">
-            <span className="text-accent-yellow">Empower</span> Employees,
+            <span className="text-accent-yellow">Empower</span> Employees,{" "}
             <br className="t:hidden" />
             <span className="text-accent-yellow">Elevate</span> Your Business
           </p>
