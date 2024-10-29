@@ -22,6 +22,15 @@ const config: Config = {
         "l-s": "1024px",
         "l-l": "1440px",
       },
+      keyframes: {
+        fade: {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+      },
+      animation: {
+        fade: "fade ease-in-out 150ms",
+      },
     },
   },
   plugins: [],
