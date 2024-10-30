@@ -1,7 +1,7 @@
 "use client";
 
 import InputString from "@/src/components/form/InputString";
-import LogoDark from "@/src/components/global/LogoDark";
+import Logo from "@/src/components/global/Logo";
 import useShowPassword from "@/src/hooks/useShowPassword";
 import { Register as RegisterInterface } from "@/src/interface/AuthInterface";
 import useGlobalContext from "@/src/utils/context";
@@ -71,7 +71,7 @@ const Register = () => {
           className="w-full h-full flex flex-col items-start justify-start gap-8 t:mx-auto l-s:max-w-full
                     l-s:justify-start l-s:items-start"
         >
-          <LogoDark />
+          <Logo url="/" type="dark" />
 
           <div className="w-full h-full flex flex-col items-start  gap-8 max-w-screen-m-l justify-center t:mx-auto l-s:my-auto pb-10">
             <p className="font-bold text-2xl">Create your account</p>

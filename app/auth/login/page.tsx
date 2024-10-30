@@ -1,7 +1,7 @@
 "use client";
 
 import InputString from "@/src/components/form/InputString";
-import LogoDark from "@/src/components/global/LogoDark";
+import Logo from "@/src/components/global/Logo";
 import useShowPassword from "@/src/hooks/useShowPassword";
 import { Login as LoginInterface } from "@/src/interface/AuthInterface";
 import useGlobalContext from "@/src/utils/context";
@@ -71,7 +71,7 @@ const Login = () => {
             max-w-screen-l-l rounded-lg t:shadow-lg t:p-4 t:bg-neutral-50"
       >
         <div className="hidden l-s:flex w-full h-full bg-accent-purple rounded-lg flex-col items-start justify-start p-4">
-          <LogoDark />
+          <Logo url="/" type="dark" />
         </div>
         <div
           className="w-full h-full flex flex-col items-start justify-start gap-8 t:mx-auto l-s:max-w-full

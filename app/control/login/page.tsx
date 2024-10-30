@@ -1,7 +1,7 @@
 "use client";
 
 import InputString from "@/src/components/form/InputString";
-import LogoDark from "@/src/components/global/LogoDark";
+import Logo from "@/src/components/global/Logo";
 import useShowPassword from "@/src/hooks/useShowPassword";
 import { Login as LoginInterface } from "@/src/interface/AuthInterface";
 import useGlobalContext from "@/src/utils/context";
@@ -52,8 +52,8 @@ const AdminLogin = () => {
         );
 
         if (data?.isVerified) {
-          setCookie("nest_admin_token", data?.token);
-          router.push(`/nest/admin`);
+          setCookie("nest_token", data?.token);
+          router.push(`/nest/controller`);
         } else {
           router.push("/auth/sending?type=verification");
         }
@@ -70,7 +70,7 @@ const AdminLogin = () => {
             max-w-screen-l-l rounded-lg t:shadow-lg t:p-4 t:bg-neutral-50"
       >
         <div className="hidden l-s:flex w-full h-full bg-gradient-to-b from-accent-purple to-accent-blue rounded-lg flex-col items-start justify-start p-4">
-          <LogoDark />
+          <Logo url="/" type="dark" />
         </div>
         <div
           className="w-full h-full flex flex-col items-start justify-start gap-8 t:mx-auto l-s:max-w-full

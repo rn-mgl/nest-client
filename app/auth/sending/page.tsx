@@ -1,7 +1,7 @@
 "use client";
 
 import sending from "@/public/global/sending.svg";
-import LogoDark from "@/src/components/global/LogoDark";
+import Logo from "@/src/components/global/Logo";
 import useGlobalContext from "@/src/utils/context";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
@@ -68,7 +68,7 @@ const Sending = () => {
   return (
     <div className="w-full h-screen flex flex-col items-center justify-start bg-gradient-to-b from-accent-purple/30 to-accent-blue/30">
       <div className="w-full h-full flex flex-col items-start justify-start max-w-screen-l-l p-4">
-        <LogoDark />
+        <Logo url="/" type="dark" />
         <div className="w-full h-full flex flex-col items-center justify-center pb-10">
           <div className="w-full max-w-96">
             <Image
