@@ -66,15 +66,15 @@ const Message = () => {
 
 const Sending = () => {
   return (
-    <div className="w-full h-screen flex flex-col items-center justify-start bg-gradient-to-b from-accent-purple/30 to-accent-blue/30">
+    <div className="w-full h-screen flex flex-col items-center justify-start bg-gradient-to-b from-accent-purple/50 to-accent-blue/20">
       <div className="w-full h-full flex flex-col items-start justify-start max-w-screen-l-l p-4">
         <Logo url="/" type="dark" />
         <div className="w-full h-full flex flex-col items-center justify-center pb-10">
-          <div className="w-full max-w-96">
+          <div className="w-full max-w-96 animate-float">
             <Image
               src={sending}
               alt="sending"
-              className="drop-shadow-md saturate-150"
+              className="drop-shadow-md saturate-150 animate-fade"
             />
           </div>
           <Message />
