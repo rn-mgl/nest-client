@@ -31,7 +31,7 @@ const Message = () => {
 
       if (token) {
         const { data } = await axios.post(
-          `${url}/email/verification-notification`,
+          `${url}/auth/verification-notification`,
           {},
           {
             headers: { "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") },
