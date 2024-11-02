@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <AppProvider>
         <body
-          className={`${figtree.className} font-figtree antialiased text-neutral-900 primary-scrollbar`}
+          className={`${figtree.className} w-full h-full font-figtree antialiased text-neutral-900 primary-scrollbar`}
         >
           {children}
         </body>

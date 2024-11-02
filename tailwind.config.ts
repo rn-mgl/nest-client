@@ -27,9 +27,14 @@ const config: Config = {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" },
         },
+        float: {
+          "0%": { transform: "translateY(-1rem)" },
+          "100%": { transform: "translateY(1rem)" },
+        },
       },
       animation: {
         fade: "fade ease-in-out 150ms",
+        float: "float ease-in-out 2s infinite alternate",
       },
     },
   },
