@@ -121,12 +121,12 @@ const Register = () => {
                   showPassword.password ? (
                     <IoEyeOff
                       onClick={() => handleShowPassword("password")}
-                      className="text-xl text-neutral-950"
+                      className="text-xl text-neutral-950 cursor-pointer"
                     />
                   ) : (
                     <IoEye
                       onClick={() => handleShowPassword("password")}
-                      className="text-xl text-neutral-950"
+                      className="text-xl text-neutral-950 cursor-pointer"
                     />
                   )
                 }
@@ -145,14 +145,14 @@ const Register = () => {
                       onClick={() =>
                         handleShowPassword("password_confirmation")
                       }
-                      className="text-xl text-neutral-950"
+                      className="text-xl text-neutral-950 cursor-pointer"
                     />
                   ) : (
                     <IoEye
                       onClick={() =>
                         handleShowPassword("password_confirmation")
                       }
-                      className="text-xl text-neutral-950"
+                      className="text-xl text-neutral-950 cursor-pointer"
                     />
                   )
                 }

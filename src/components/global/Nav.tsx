@@ -76,7 +76,7 @@ const Nav: React.FC<SideNavInterface & { children: React.ReactNode }> = (
         >
           <button
             onClick={() => handleSideNavVisible("button")}
-            className="p-2 rounded-full hover:bg-accent-purple/20 transition-all bg-slate-100"
+            className="p-2 rounded-full hover:bg-accent-purple/20 transition-all"
           >
             <IoMenu className="text-lg" />
           </button>
