@@ -8,6 +8,7 @@ import useGlobalContext from "@/src/utils/context";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { getCookie, setCookie } from "cookies-next";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { IoEye, IoEyeOff, IoMail } from "react-icons/io5";
@@ -42,7 +43,7 @@ const AdminLogin = () => {
       const { token } = await getCSRFToken(url);
 
       if (token) {
-        const { data } = await axios.post(
+        const { data: login } = await axios.post(
           `${url}/admin_auth/login`,
           { ...loginData },
           {
@@ -51,9 +52,17 @@ const AdminLogin = () => {
           }
         );
 
-        if (data?.isVerified) {
-          setCookie("nest_token", data?.token);
-          router.push(`/nest/controller`);
+        if (login?.isVerified) {
+          const data = await signIn("admin-credentials", {
+            token: login?.token,
+            role: login?.role,
+            redirect: false,
+          });
+
+          if (data?.ok) {
+            setCookie("nest_token", login?.token);
+            router.push(`/nest/controller`);
+          }
         } else {
           router.push("/auth/sending?type=verification");
         }

@@ -1,17 +1,30 @@
-import { NextRequest, NextResponse } from "next/server";
+import { withAuth } from "next-auth/middleware";
+import { NextResponse } from "next/server";
 
-export const middleware = async (request: NextRequest) => {
-  const nestToken = request.cookies.get("nest_token");
+export default withAuth(
+  function middleware(req) {
+    const response = NextResponse.rewrite(new URL("/auth/login", req.url));
 
-  const tokenValue = nestToken?.value;
+    if (!req.nextauth.token?.user.token) {
+      return response;
+    }
 
-  if (!tokenValue) {
-    return NextResponse.redirect(new URL(`/auth/login`, request.url));
+    const role = req.nextauth.token.user.role;
+    const pathname = req.nextUrl.pathname;
+
+    if (pathname.includes("controller") && role !== "admin") {
+      return response;
+    } else if (pathname.includes("employee") && role !== "employee") {
+      return response;
+    } else if (pathname.includes("hr") && role !== "hr") {
+      return response;
+    }
+  },
+  {
+    callbacks: {
+      authorized: ({ token }) => !!token?.user,
+    },
   }
+);
 
-  return NextResponse.next();
-};
-
-export const config = {
-  matcher: "/nest/:path*",
-};
+export const config = { matcher: "/nest/:path*" };
