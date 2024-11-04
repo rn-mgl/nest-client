@@ -7,7 +7,7 @@ import { Login as LoginInterface } from "@/src/interface/AuthInterface";
 import useGlobalContext from "@/src/utils/context";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-import { getCookie, setCookie } from "cookies-next";
+import { getCookie } from "cookies-next";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -60,7 +60,6 @@ const AdminLogin = () => {
           });
 
           if (data?.ok) {
-            setCookie("nest_token", login?.token);
             router.push(`/nest/controller`);
           }
         } else {

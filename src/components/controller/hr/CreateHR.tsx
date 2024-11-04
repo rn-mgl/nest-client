@@ -9,6 +9,7 @@ import { getCSRFToken } from "@/src/utils/token";
 import useGlobalContext from "@/src/utils/context";
 import axios from "axios";
 import { getCookie } from "cookies-next";
+import { useSession } from "next-auth/react";
 
 const CreateHR: React.FC<ModalInterface> = (props) => {
   const [credentials, setCredentials] = React.useState<RegisterInterface>({
@@ -19,6 +20,8 @@ const CreateHR: React.FC<ModalInterface> = (props) => {
     password_confirmation: "",
   });
   const { showPassword, handleShowPassword } = useShowPassword();
+  const { data } = useSession({ required: true });
+  const user = data?.user;
 
   const { url } = useGlobalContext();
 
@@ -39,20 +42,25 @@ const CreateHR: React.FC<ModalInterface> = (props) => {
     try {
       const { token } = await getCSRFToken(url);
 
-      if (token) {
+      if (token && user?.token) {
         const { data: createHR } = await axios.post(
           `${url}/admin/hr/register`,
           { ...credentials, role: "hr" },
           {
             headers: {
               "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-              Authorization: `Bearer ${getCookie("nest_token")}`,
+              Authorization: `Bearer ${user?.token}`,
             },
             withCredentials: true,
           }
         );
 
-        console.log(createHR);
+        if (createHR.success) {
+          if (props.refetchIndex !== undefined) {
+            props.refetchIndex();
+          }
+          props.toggleModal();
+        }
       }
     } catch (error) {
       console.log(error);
