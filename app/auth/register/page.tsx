@@ -81,6 +81,7 @@ const Register = () => {
               className="flex flex-col items-start justify-start w-full gap-4 "
             >
               <InputString
+                label={true}
                 id="first_name"
                 placeholder="First Name"
                 required={true}
@@ -91,6 +92,7 @@ const Register = () => {
               />
 
               <InputString
+                label={true}
                 id="last_name"
                 placeholder="Last Name"
                 required={true}
@@ -101,6 +103,7 @@ const Register = () => {
               />
 
               <InputString
+                label={true}
                 id="email"
                 placeholder="E-Mail"
                 required={true}
@@ -111,6 +114,7 @@ const Register = () => {
               />
 
               <InputString
+                label={true}
                 id="password"
                 placeholder="Password"
                 required={true}
@@ -133,6 +137,7 @@ const Register = () => {
               />
 
               <InputString
+                label={true}
                 id="password_confirmation"
                 placeholder="Confirm Password"
                 required={true}

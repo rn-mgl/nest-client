@@ -7,5 +7,6 @@ export interface InputString {
   required: boolean;
   type: "text" | "email" | "password";
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  label?: boolean;
   icon?: React.ReactNode;
 }

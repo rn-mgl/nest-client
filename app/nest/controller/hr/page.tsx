@@ -1,5 +1,7 @@
 "use client";
 import CreateHR from "@/src/components/controller/hr/CreateHR";
+import Search from "@/src/components/global/Search";
+import useSearch from "@/src/hooks/useSearch";
 import { BaseUser as HRInterface } from "@/src/interface/UserInterface";
 import useGlobalContext from "@/src/utils/context";
 import { getCSRFToken } from "@/src/utils/token";
@@ -19,6 +21,7 @@ const HumanResource = () => {
   const [hrs, setHrs] = React.useState<Array<HRInterface>>();
   const [canCreateHR, setCanCreateHR] = React.useState(false);
   const [activeHRMenu, setActiveHRMenu] = React.useState(0);
+  const { searchData, handleSearchData } = useSearch("Name");
 
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -48,6 +51,7 @@ const HumanResource = () => {
             "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
             Authorization: `Bearer ${user?.token}`,
           },
+          params: { verified: true },
           withCredentials: true,
         });
 
@@ -156,6 +160,14 @@ const HumanResource = () => {
         className="w-full h-full flex flex-col items-center justify-start max-w-screen-l-l p-2
                   t:items-start t:p-4 gap-4 t:gap-8"
       >
+        <div className="w-full flex flex-row items-center justify-between gap-2">
+          <Search
+            searchKey={searchData.key}
+            searchValue={searchData.value}
+            onChange={handleSearchData}
+          />
+        </div>
+
         <button
           onClick={handleCanCreateHR}
           className="bg-accent-blue text-accent-yellow w-full p-2 rounded-md font-bold flex flex-row items-center justify-center 

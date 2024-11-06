@@ -1,6 +1,6 @@
 import Nav from "@/src/components/global/Nav";
 import { Metadata } from "next";
-import { IoApps, IoPeople, IoShieldCheckmark } from "react-icons/io5";
+import { IoApps, IoPeople } from "react-icons/io5";
 
 export const metadata: Metadata = {
   title: "Dashboard | Admin",
@@ -16,11 +16,6 @@ const NAV_LINKS = [
     label: "Human Resource",
     url: "/hr",
     icon: <IoPeople />,
-  },
-  {
-    label: "Account Verification",
-    url: "/verification",
-    icon: <IoShieldCheckmark />,
   },
 ];
 

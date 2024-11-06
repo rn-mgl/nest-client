@@ -4,9 +4,12 @@ import { InputString as InputStringInterface } from "@/src/interface/FormInterfa
 const InputString: React.FC<InputStringInterface> = (props) => {
   return (
     <div className="w-full flex flex-col items-start justify-center gap-1">
-      <label htmlFor={props.id} className="text-xs">
-        {props.placeholder}
-      </label>
+      {props.label ? (
+        <label htmlFor={props.id} className="text-xs">
+          {props.placeholder}
+        </label>
+      ) : null}
+
       <div className="w-full flex flex-col items-center justify-center relative">
         <input
           type={props.type}

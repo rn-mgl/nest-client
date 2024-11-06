@@ -93,6 +93,7 @@ const Login = () => {
               className="flex flex-col items-start justify-start w-full gap-4 "
             >
               <InputString
+                label={true}
                 id="email"
                 placeholder="E-Mail"
                 required={true}
@@ -103,6 +104,7 @@ const Login = () => {
               />
 
               <InputString
+                label={true}
                 id="password"
                 placeholder="Password"
                 required={true}
