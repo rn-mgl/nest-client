@@ -1,13 +1,17 @@
 "use client";
 import CreateHR from "@/src/components/controller/hr/CreateHR";
-import Search from "@/src/components/global/Search";
+import Filter from "@/src/components/global/Filter";
+import useCategory from "@/src/hooks/useCategory";
+import useFilters from "@/src/hooks/useFilters";
 import useSearch from "@/src/hooks/useSearch";
+import useSort from "@/src/hooks/useSort";
 import { BaseUser as HRInterface } from "@/src/interface/UserInterface";
 import useGlobalContext from "@/src/utils/context";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { getCookie } from "cookies-next";
 import { useSession } from "next-auth/react";
+import { ADMIN_HR_SORT, ADMIN_HR_CATEGORY } from "@/src/utils/filters";
 import React from "react";
 import {
   IoAdd,
@@ -15,13 +19,29 @@ import {
   IoEllipsisVertical,
   IoMail,
   IoShieldCheckmark,
+  IoShieldCheckmarkSharp,
 } from "react-icons/io5";
 
 const HumanResource = () => {
   const [hrs, setHrs] = React.useState<Array<HRInterface>>();
   const [canCreateHR, setCanCreateHR] = React.useState(false);
   const [activeHRMenu, setActiveHRMenu] = React.useState(0);
-  const { searchData, handleSearchData } = useSearch("Name");
+
+  const { showFilters, handleShowFilters } = useFilters();
+  const { search, handleSearch } = useSearch("first_name");
+  const {
+    canShowSort,
+    sort,
+    handleCanShowSort,
+    handleSelectSort,
+    handleToggleAsc,
+  } = useSort("first_name");
+  const {
+    canShowCategories,
+    category,
+    handleCanShowCategories,
+    handleSelectCategory,
+  } = useCategory("verified", "all");
 
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -51,7 +71,11 @@ const HumanResource = () => {
             "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
             Authorization: `Bearer ${user?.token}`,
           },
-          params: { verified: true },
+          params: {
+            ...category,
+            ...sort,
+            ...search,
+          },
           withCredentials: true,
         });
 
@@ -60,16 +84,42 @@ const HumanResource = () => {
     } catch (error) {
       console.log(error);
     }
-  }, [url, user?.token]);
+  }, [url, user?.token, category, sort, search]);
 
-  const deactiveHR = async (id: number) => {
+  const verifyHR = async (id: number) => {
+    try {
+      const { token } = await getCSRFToken(url);
+
+      if (token) {
+        const { data: verified } = await axios.patch(
+          `${url}/admin/hr/update/${id}`,
+          { type: "verify" },
+          {
+            headers: {
+              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+              Authorization: `Bearer ${user?.token}`,
+            },
+            withCredentials: true,
+          }
+        );
+
+        if (verified.success) {
+          getAllHRs();
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const deactivateHR = async (id: number) => {
     try {
       const { token } = await getCSRFToken(url);
 
       if (token) {
         const { data: deactivated } = await axios.patch(
           `${url}/admin/hr/update/${id}`,
-          {},
+          { type: "deactivate" },
           {
             headers: {
               "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
@@ -134,13 +184,21 @@ const HumanResource = () => {
             </button>
             {hr.email_verified_at ? (
               <button
-                onClick={() => deactiveHR(hr.id)}
+                onClick={() => deactivateHR(hr.id)}
                 className="w-full p-1 rounded-sm text-sm hover:brightness-90 bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
               >
                 <IoBan className="text-red-600" />
                 Deactivate
               </button>
-            ) : null}
+            ) : (
+              <button
+                onClick={() => verifyHR(hr.id)}
+                className="w-full p-1 rounded-sm text-sm hover:brightness-90 bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
+              >
+                <IoShieldCheckmarkSharp className="text-green-600" />
+                Verify
+              </button>
+            )}
           </div>
         ) : null}
       </div>
@@ -160,13 +218,24 @@ const HumanResource = () => {
         className="w-full h-full flex flex-col items-center justify-start max-w-screen-l-l p-2
                   t:items-start t:p-4 gap-4 t:gap-8"
       >
-        <div className="w-full flex flex-row items-center justify-between gap-2">
-          <Search
-            searchKey={searchData.key}
-            searchValue={searchData.value}
-            onChange={handleSearchData}
-          />
-        </div>
+        <Filter
+          searchKey={search.searchKey}
+          searchValue={search.searchValue}
+          onChange={handleSearch}
+          showFilters={showFilters}
+          toggleShowFilters={handleShowFilters}
+          canShowCategories={canShowCategories}
+          categoryKeyValuePairs={ADMIN_HR_CATEGORY}
+          toggleShowCategories={handleCanShowCategories}
+          selectCategory={handleSelectCategory}
+          sortKey={sort.sortKey}
+          isAsc={sort.isAsc}
+          canShowSort={canShowSort}
+          sortKeyLabelPairs={ADMIN_HR_SORT}
+          toggleAsc={handleToggleAsc}
+          selectSort={handleSelectSort}
+          toggleShowSort={handleCanShowSort}
+        />
 
         <button
           onClick={handleCanCreateHR}

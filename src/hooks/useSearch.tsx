@@ -1,19 +1,19 @@
 import React from "react";
 
 export default function useSearch(initialSearchKey: string) {
-  const [searchData, setSearchData] = React.useState({
-    key: initialSearchKey,
-    value: "",
+  const [search, setSearch] = React.useState({
+    searchKey: initialSearchKey,
+    searchValue: "",
   });
 
-  const handleSearchData = React.useCallback(
+  const handleSearch = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target;
 
-      setSearchData((prev) => {
+      setSearch((prev) => {
         return {
           ...prev,
-          value: value,
+          searchValue: value,
         };
       });
     },
@@ -21,7 +21,7 @@ export default function useSearch(initialSearchKey: string) {
   );
 
   return {
-    searchData,
-    handleSearchData,
+    search,
+    handleSearch,
   };
 }
