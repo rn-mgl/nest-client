@@ -26,7 +26,7 @@ import {
   IoShieldCheckmarkSharp,
 } from "react-icons/io5";
 
-const HumanResource = () => {
+const AdminHR = () => {
   const [hrs, setHrs] = React.useState<Array<HRInterface>>();
   const [canCreateHR, setCanCreateHR] = React.useState(false);
   const [activeHRMenu, setActiveHRMenu] = React.useState(0);
@@ -271,4 +271,4 @@ const HumanResource = () => {
   );
 };
 
-export default HumanResource;
+export default AdminHR;
