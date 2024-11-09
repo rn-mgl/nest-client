@@ -1,16 +1,51 @@
 "use client";
 
-import React from "react";
 import Logo from "@/components/global/Logo";
-import { IoMenu } from "react-icons/io5";
 import { SideNav as SideNavInterface } from "@/interface/NavInterface";
+import useGlobalContext from "@/src/utils/context";
+import { getCSRFToken } from "@/src/utils/token";
+import axios from "axios";
+import { getCookie } from "cookies-next";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import React from "react";
+import { IoLogOut, IoMenu } from "react-icons/io5";
 
 const Nav: React.FC<SideNavInterface & { children: React.ReactNode }> = (
   props
 ) => {
   const [sideNavVisible, setSideNavVisible] = React.useState(false);
+  const path = usePathname();
+  const { url } = useGlobalContext();
+  const { data } = useSession({ required: true });
+  const user = data?.user;
+
+  const submitLogOut = async () => {
+    try {
+      const { token } = await getCSRFToken(url);
+
+      if (token) {
+        const { data: loggedOut } = await axios.post(
+          `${url}/${user?.role}/auth/logout`,
+          {},
+          {
+            headers: {
+              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+              Authorization: `Bearer ${user?.token}`,
+            },
+            withCredentials: true,
+          }
+        );
+
+        if (loggedOut.success) {
+          await signOut({ callbackUrl: "/", redirect: true });
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleSideNavVisible = (type: "button" | "link") => {
     setSideNavVisible((prev) => {
@@ -24,11 +59,9 @@ const Nav: React.FC<SideNavInterface & { children: React.ReactNode }> = (
     });
   };
 
-  const path = usePathname();
-
   const mappedLinks = props.navLinks.map((link) => {
     const activeLink =
-      link.url === "" ? path === props.home : path.includes(link.url);
+      link.url === "" ? path === props.home : path?.includes(link.url);
 
     return (
       <Link
@@ -90,8 +123,25 @@ const Nav: React.FC<SideNavInterface & { children: React.ReactNode }> = (
           </div>
         </div>
 
-        <div className="w-full flex flex-col items-center justify-start p-4 gap-2">
+        <div className="w-full h-full flex flex-col items-center justify-start p-4 gap-2">
           {mappedLinks}
+
+          <button
+            onClick={submitLogOut}
+            className={`p-4 rounded-md w-full flex flex-row items-center justify-start transition-all
+                     gap-2 h-14 bg-white hover mt-auto`}
+          >
+            <span className="text-neutral-500">
+              <IoLogOut />
+            </span>
+            <span
+              className={`text-neutral-950 ${
+                sideNavVisible ? "l-s:flex" : "l-s:hidden"
+              } transition-all truncate`}
+            >
+              Log Out
+            </span>
+          </button>
         </div>
       </div>
 

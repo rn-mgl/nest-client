@@ -84,6 +84,10 @@ const AdminLogin = () => {
           className="w-full h-full flex flex-col items-start justify-start gap-8 t:mx-auto l-s:max-w-full
                 l-s:justify-start l-s:items-start"
         >
+          <div className="l-s:hidden">
+            <Logo url="/" type="dark" />
+          </div>
+
           <div className="w-full flex flex-col items-start justify-center gap-8 max-w-screen-m-l t:justify-center t:mx-auto my-auto">
             <p className="font-bold text-2xl">Welcome back</p>
 
