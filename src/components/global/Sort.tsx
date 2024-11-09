@@ -3,15 +3,14 @@ import {
   Sort as SortInterface,
 } from "@/interface/FilterInterface";
 import React from "react";
-import { IoArrowUp } from "react-icons/io5";
-
+import { GoSortAsc, GoSortDesc } from "react-icons/go";
 const Sort: React.FC<SortInterface & FilterInterface> = (props) => {
   const mappedSorting = props.sortKeyLabelPairs.map((sort, index) => {
     return (
       <button
         key={index}
-        onClick={() => props.selectSort(props.sortKey)}
-        className="p-2 w-full hover:brightness-90 transition-all bg-neutral-200 rounded-sm shadow-md"
+        onClick={() => props.selectSort(props.sortKey, sort.label)}
+        className="p-2 w-full hover:brightness-90 transition-all bg-neutral-200 rounded-sm"
       >
         {sort.label}
       </button>
@@ -27,25 +26,26 @@ const Sort: React.FC<SortInterface & FilterInterface> = (props) => {
       <button
         onClick={props.toggleShowSort}
         className="p-2 rounded-md border-2 w-full"
+        title={`Sort: ${props.sortLabel}`}
       >
-        Sort
+        {props.sortLabel}
       </button>
 
       <button
         onClick={() => props.toggleAsc()}
         className="p-2 rounded-md border-2 w-14 flex flex-col items-center justify-center"
       >
-        <IoArrowUp
-          className={`${
-            props.isAsc ? "rotate-0" : "rotate-180"
-          } transition-all`}
-        />
+        {props.isAsc ? (
+          <GoSortAsc className="text-xl" />
+        ) : (
+          <GoSortDesc className="text-xl" />
+        )}
       </button>
 
       {props.canShowSort ? (
         <div
           className="w-full absolute top-0 left-0 flex flex-col items-center justify-start translate-y-14 z-20
-                rounded-md gap-4 animate-fade"
+                rounded-md gap-2 animate-fade bg-neutral-100 p-2 shadow-md"
         >
           {mappedSorting}
         </div>

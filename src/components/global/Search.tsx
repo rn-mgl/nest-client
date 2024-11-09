@@ -11,7 +11,7 @@ const Search: React.FC<SearchInterface & FilterInterface> = (props) => {
       <button
         key={index}
         onClick={() => props.selectSearch(search.key, search.label)}
-        className="p-2 w-full hover:brightness-90 transition-all bg-neutral-200 rounded-sm shadow-md"
+        className="p-2 w-full hover:brightness-90 transition-all bg-neutral-200 rounded-sm"
       >
         {search.label}
       </button>
@@ -56,7 +56,7 @@ const Search: React.FC<SearchInterface & FilterInterface> = (props) => {
       {props.canShowSearch ? (
         <div
           className="w-full absolute top-0 left-0 flex flex-col items-center justify-start translate-y-14 z-20
-                rounded-md gap-4 animate-fade"
+                rounded-md animate-fade bg-neutral-100 shadow-md p-2 gap-2"
         >
           {mappedSearch}
         </div>

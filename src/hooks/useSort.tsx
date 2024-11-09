@@ -1,12 +1,17 @@
 import React from "react";
 
-export default function useSort(initialSortKey: string) {
+export default function useSort(
+  initialSortKey: string,
+  initialSortLabel: string
+) {
   const [canShowSort, setCanShowSort] = React.useState(false);
   const [sort, setSort] = React.useState<{
     sortKey: string;
+    sortLabel: string;
     isAsc: boolean;
   }>({
     sortKey: initialSortKey,
+    sortLabel: initialSortLabel,
     isAsc: false,
   });
 
@@ -14,11 +19,12 @@ export default function useSort(initialSortKey: string) {
     return setCanShowSort((prev) => !prev);
   }, []);
 
-  const handleSelectSort = React.useCallback((key: string) => {
+  const handleSelectSort = React.useCallback((key: string, label: string) => {
     setSort((prev) => {
       return {
         ...prev,
         sortKey: key,
+        sortLabel: label,
       };
     });
   }, []);

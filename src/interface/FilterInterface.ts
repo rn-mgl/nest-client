@@ -13,17 +13,23 @@ export interface Search {
 }
 
 export interface Category {
+  categoryLabel: string;
   categoryKeyValuePairs: Array<{
     key: string;
     labelValue: Array<{ label: string; value: string | boolean | null }>;
   }>;
   canShowCategories: boolean;
   toggleShowCategories: () => void;
-  selectCategory: (key: string, value: string | boolean | null) => void;
+  selectCategory: (
+    key: string,
+    value: string | boolean | null,
+    label: string
+  ) => void;
 }
 
 export interface Sort {
   sortKey: string;
+  sortLabel: string;
   isAsc: boolean;
   sortKeyLabelPairs: Array<{
     key: string;
@@ -32,7 +38,7 @@ export interface Sort {
   canShowSort: boolean;
   toggleShowSort: () => void;
   toggleAsc: () => void;
-  selectSort: (key: string) => void;
+  selectSort: (key: string, label: string) => void;
 }
 
 export interface Filter {

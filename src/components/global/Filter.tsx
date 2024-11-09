@@ -37,6 +37,7 @@ const Filter: React.FC<
           sortKey={props.sortKey}
           isAsc={props.isAsc}
           showFilters={props.showFilters}
+          sortLabel={props.sortLabel}
           toggleShowFilters={props.toggleShowFilters}
           toggleShowSort={props.toggleShowSort}
           toggleAsc={props.toggleAsc}
@@ -46,6 +47,7 @@ const Filter: React.FC<
         />
 
         <Category
+          categoryLabel={props.categoryLabel}
           showFilters={props.showFilters}
           toggleShowFilters={props.toggleShowFilters}
           categoryKeyValuePairs={props.categoryKeyValuePairs}

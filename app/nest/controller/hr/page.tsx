@@ -7,15 +7,15 @@ import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { BaseUser as HRInterface } from "@/src/interface/UserInterface";
 import useGlobalContext from "@/src/utils/context";
+import {
+  ADMIN_HR_CATEGORY,
+  ADMIN_HR_SEARCH,
+  ADMIN_HR_SORT,
+} from "@/src/utils/filters";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { getCookie } from "cookies-next";
 import { useSession } from "next-auth/react";
-import {
-  ADMIN_HR_SORT,
-  ADMIN_HR_CATEGORY,
-  ADMIN_HR_SEARCH,
-} from "@/src/utils/filters";
 import React from "react";
 import {
   IoAdd,
@@ -45,13 +45,13 @@ const HumanResource = () => {
     handleCanShowSort,
     handleSelectSort,
     handleToggleAsc,
-  } = useSort("first_name");
+  } = useSort("first_name", "First Name");
   const {
     canShowCategories,
     category,
     handleCanShowCategories,
     handleSelectCategory,
-  } = useCategory("verified", "all");
+  } = useCategory("verified", "all", "Verified");
 
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -239,11 +239,13 @@ const HumanResource = () => {
           onChange={handleSearch}
           showFilters={showFilters}
           toggleShowFilters={handleShowFilters}
+          categoryLabel={category.categoryLabel}
           canShowCategories={canShowCategories}
           categoryKeyValuePairs={ADMIN_HR_CATEGORY}
           toggleShowCategories={handleCanShowCategories}
           selectCategory={handleSelectCategory}
           sortKey={sort.sortKey}
+          sortLabel={sort.sortLabel}
           isAsc={sort.isAsc}
           canShowSort={canShowSort}
           sortKeyLabelPairs={ADMIN_HR_SORT}
