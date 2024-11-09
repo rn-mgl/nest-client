@@ -29,7 +29,7 @@ const Hero = () => {
           <Link
             href="/auth/register"
             className="w-full p-2.5 rounded-md font-bold bg-accent-yellow
-                        hover:brightness-105 active:brightness-90 transition-all flex flex-row gap-2 items-center justify-center"
+                        hover:brightness-90 active:brightness-90 transition-all flex flex-row gap-2 items-center justify-center"
           >
             Start Now <HiMiniArrowTopRightOnSquare />
           </Link>

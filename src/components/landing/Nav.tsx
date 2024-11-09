@@ -11,7 +11,7 @@ const Nav = () => {
         <Link
           href="/auth/login"
           className="font-medium p-1.5 rounded-md px-2 bg-neutral-900 text-neutral-50 text-xs t:text-sm t:p-2 t:px-4
-                    hover:brightness-105 active:brightness-90"
+                    hover:brightness-90 active:brightness-90"
         >
           Log In
         </Link>

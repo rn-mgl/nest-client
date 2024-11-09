@@ -187,7 +187,7 @@ const HumanResource = () => {
           <div className="w-32 p-2 rounded-md top-12 right-6 shadow-md bg-neutral-200 absolute animate-fade z-20">
             <button
               onClick={() => sendMail(hr.email)}
-              className="w-full p-1 rounded-sm text-sm hover:brightness-90 bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
+              className="w-full p-1 rounded-sm text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
             >
               <IoMail className="text-accent-blue" />
               Mail
@@ -195,7 +195,7 @@ const HumanResource = () => {
             {hr.email_verified_at ? (
               <button
                 onClick={() => deactivateHR(hr.id)}
-                className="w-full p-1 rounded-sm text-sm hover:brightness-90 bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
+                className="w-full p-1 rounded-sm text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
               >
                 <IoBan className="text-red-600" />
                 Deactivate
@@ -203,7 +203,7 @@ const HumanResource = () => {
             ) : (
               <button
                 onClick={() => verifyHR(hr.id)}
-                className="w-full p-1 rounded-sm text-sm hover:brightness-90 bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
+                className="w-full p-1 rounded-sm text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
               >
                 <IoShieldCheckmarkSharp className="text-green-600" />
                 Verify
@@ -257,7 +257,7 @@ const HumanResource = () => {
         <button
           onClick={handleCanCreateHR}
           className="bg-accent-blue text-accent-yellow w-full p-2 rounded-md font-bold flex flex-row items-center justify-center 
-                  gap-2 t:w-40 hover:brightness-90 transition-all"
+                  gap-2 t:w-40 transition-all"
         >
           Create HR
           <IoAdd className="text-lg" />

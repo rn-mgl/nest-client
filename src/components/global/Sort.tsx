@@ -10,7 +10,7 @@ const Sort: React.FC<SortInterface & FilterInterface> = (props) => {
       <button
         key={index}
         onClick={() => props.selectSort(props.sortKey, sort.label)}
-        className="p-2 w-full hover:brightness-90 transition-all bg-neutral-200 rounded-sm"
+        className="p-2 w-full transition-all bg-neutral-200 rounded-sm"
       >
         {sort.label}
       </button>

@@ -11,7 +11,7 @@ const Search: React.FC<SearchInterface & FilterInterface> = (props) => {
       <button
         key={index}
         onClick={() => props.selectSearch(search.key, search.label)}
-        className="p-2 w-full hover:brightness-90 transition-all bg-neutral-200 rounded-sm"
+        className="p-2 w-full transition-all bg-neutral-200 rounded-sm"
       >
         {search.label}
       </button>
