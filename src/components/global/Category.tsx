@@ -2,7 +2,7 @@ import React from "react";
 import {
   Filter as FilterInterface,
   Category as CategoryInterface,
-} from "@/interface/NavInterface";
+} from "@/interface/FilterInterface";
 
 const Category: React.FC<CategoryInterface & FilterInterface> = (props) => {
   const mappedCategories = props.categoryKeyValuePairs.map((category) => {

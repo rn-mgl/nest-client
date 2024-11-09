@@ -11,7 +11,11 @@ import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { getCookie } from "cookies-next";
 import { useSession } from "next-auth/react";
-import { ADMIN_HR_SORT, ADMIN_HR_CATEGORY } from "@/src/utils/filters";
+import {
+  ADMIN_HR_SORT,
+  ADMIN_HR_CATEGORY,
+  ADMIN_HR_SEARCH,
+} from "@/src/utils/filters";
 import React from "react";
 import {
   IoAdd,
@@ -28,7 +32,13 @@ const HumanResource = () => {
   const [activeHRMenu, setActiveHRMenu] = React.useState(0);
 
   const { showFilters, handleShowFilters } = useFilters();
-  const { search, handleSearch } = useSearch("first_name");
+  const {
+    search,
+    canShowSearch,
+    handleSearch,
+    handleCanShowSearch,
+    handleSelectSearch,
+  } = useSearch("first_name", "First Name");
   const {
     canShowSort,
     sort,
@@ -220,7 +230,12 @@ const HumanResource = () => {
       >
         <Filter
           searchKey={search.searchKey}
+          searchLabel={search.searchLabel}
           searchValue={search.searchValue}
+          searchKeyLabelPairs={ADMIN_HR_SEARCH}
+          canShowSearch={canShowSearch}
+          selectSearch={handleSelectSearch}
+          toggleShowSearch={handleCanShowSearch}
           onChange={handleSearch}
           showFilters={showFilters}
           toggleShowFilters={handleShowFilters}

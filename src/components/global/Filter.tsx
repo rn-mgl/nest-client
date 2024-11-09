@@ -4,7 +4,7 @@ import {
   Filter as FilterInterface,
   Search as SearchInterface,
   Sort as SortInterface,
-} from "@/src/interface/NavInterface";
+} from "@/interface/FilterInterface";
 import Search from "./Search";
 import Sort from "./Sort";
 import Category from "./Category";
@@ -16,9 +16,14 @@ const Filter: React.FC<
   return (
     <div className="w-full flex flex-row items-center justify-between gap-4">
       <Search
+        searchLabel={props.searchLabel}
         showFilters={props.showFilters}
         searchKey={props.searchKey}
         searchValue={props.searchValue}
+        searchKeyLabelPairs={props.searchKeyLabelPairs}
+        canShowSearch={props.canShowSearch}
+        selectSearch={props.selectSearch}
+        toggleShowSearch={props.toggleShowSearch}
         onChange={props.onChange}
         toggleShowFilters={props.toggleShowFilters}
       />

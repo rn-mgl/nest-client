@@ -9,37 +9,3 @@ export interface SideNav {
   home: string;
   navLinks: Array<{ label: string; url: string; icon: React.ReactNode }>;
 }
-
-export interface Search {
-  searchKey: string;
-  searchValue: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}
-
-export interface Category {
-  categoryKeyValuePairs: Array<{
-    key: string;
-    labelValue: Array<{ label: string; value: string | boolean | null }>;
-  }>;
-  canShowCategories: boolean;
-  toggleShowCategories: () => void;
-  selectCategory: (key: string, value: string | boolean | null) => void;
-}
-
-export interface Sort {
-  sortKey: string;
-  isAsc: boolean;
-  sortKeyLabelPairs: Array<{
-    key: string;
-    label: string;
-  }>;
-  canShowSort: boolean;
-  toggleShowSort: () => void;
-  toggleAsc: () => void;
-  selectSort: (key: string) => void;
-}
-
-export interface Filter {
-  showFilters: boolean;
-  toggleShowFilters: () => void;
-}

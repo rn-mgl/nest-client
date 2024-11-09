@@ -1,7 +1,7 @@
 import {
   Filter as FilterInterface,
   Sort as SortInterface,
-} from "@/interface/NavInterface";
+} from "@/interface/FilterInterface";
 import React from "react";
 import { IoArrowUp } from "react-icons/io5";
 

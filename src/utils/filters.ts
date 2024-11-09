@@ -23,3 +23,18 @@ export const ADMIN_HR_SORT = [
     label: "Email",
   },
 ];
+
+export const ADMIN_HR_SEARCH = [
+  {
+    key: "first_name",
+    label: "First Name",
+  },
+  {
+    key: "last_name",
+    label: "Last Name",
+  },
+  {
+    key: "email",
+    label: "Email",
+  },
+];

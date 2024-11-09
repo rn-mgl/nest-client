@@ -1,10 +1,29 @@
 import React from "react";
 
-export default function useSearch(initialSearchKey: string) {
+export default function useSearch(
+  initialSearchKey: string,
+  initialSearchLabel: string
+) {
+  const [canShowSearch, setCanShowSearch] = React.useState(false);
   const [search, setSearch] = React.useState({
     searchKey: initialSearchKey,
+    searchLabel: initialSearchLabel,
     searchValue: "",
   });
+
+  const handleCanShowSearch = React.useCallback(() => {
+    setCanShowSearch((prev) => !prev);
+  }, []);
+
+  const handleSelectSearch = (key: string, label: string) => {
+    setSearch((prev) => {
+      return {
+        ...prev,
+        searchKey: key,
+        searchLabel: label,
+      };
+    });
+  };
 
   const handleSearch = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,6 +41,9 @@ export default function useSearch(initialSearchKey: string) {
 
   return {
     search,
+    canShowSearch,
     handleSearch,
+    handleCanShowSearch,
+    handleSelectSearch,
   };
 }
