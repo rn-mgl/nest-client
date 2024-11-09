@@ -20,7 +20,7 @@ const Search: React.FC<SearchInterface & FilterInterface> = (props) => {
 
   return (
     <div
-      className={`h-full w-full t:w-6/12 l-l:w-4/12 flex flex-row items-center justify-center gap-2 relative ${
+      className={`t:w-6/12 l-l:w-4/12 flex flex-row items-center justify-center gap-2 relative ${
         props.showFilters ? "w-fit t:w-full" : "w-full"
       } relative`}
     >

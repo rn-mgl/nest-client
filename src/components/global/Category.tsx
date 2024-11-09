@@ -25,11 +25,11 @@ const Category: React.FC<CategoryInterface & FilterInterface> = (props) => {
     <div
       className={`${
         props.showFilters ? "flex" : "hidden t:flex"
-      } w-full t:max-w-40 t:min-w-40 relative `}
+      } w-full t:w-40 t:max-w-40 t:min-w-40 relative `}
     >
       <button
         onClick={props.toggleShowCategories}
-        className="p-2 rounded-md border-2 w-full"
+        className="p-2 rounded-md border-2 w-full truncate"
       >
         {props.categoryLabel}
       </button>

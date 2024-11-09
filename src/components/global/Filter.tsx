@@ -14,7 +14,7 @@ const Filter: React.FC<
   FilterInterface & SearchInterface & CategoryInterface & SortInterface
 > = (props) => {
   return (
-    <div className="w-full flex flex-row items-center justify-between gap-4">
+    <div className="w-full flex flex-row items-start justify-between gap-2 t:gap-4">
       <Search
         searchLabel={props.searchLabel}
         showFilters={props.showFilters}
@@ -29,7 +29,7 @@ const Filter: React.FC<
       />
 
       <div
-        className={`flex flex-row items-center justify-end gap-2 t:gap-4 ${
+        className={`flex flex-row items-center justify-end gap-2 t:gap-4 flex-wrap ${
           props.showFilters ? "w-full" : "w-auto"
         }`}
       >

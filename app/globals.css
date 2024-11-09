@@ -5,6 +5,7 @@
 /* width */
 ::-webkit-scrollbar {
   width: 5px;
+  height: 5px;
 }
 
 /* Track */
@@ -15,6 +16,7 @@
 /* Handle */
 ::-webkit-scrollbar-thumb {
   background: #171717;
+  border-radius: 999rem;
 }
 
 input[type="password"]::-ms-reveal,

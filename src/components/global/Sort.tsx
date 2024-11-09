@@ -21,11 +21,11 @@ const Sort: React.FC<SortInterface & FilterInterface> = (props) => {
     <div
       className={`${
         props.showFilters ? "flex" : "hidden t:flex"
-      } w-full t:max-w-44 t:min-w-44 gap-2 relative`}
+      } w-full t:w-44 t:max-w-44 t:min-w-44 gap-2 relative`}
     >
       <button
         onClick={props.toggleShowSort}
-        className="p-2 rounded-md border-2 w-full"
+        className="p-2 rounded-md border-2 w-full truncate"
         title={`Sort: ${props.sortLabel}`}
       >
         {props.sortLabel}
