@@ -10,3 +10,14 @@ export interface InputString {
   label?: boolean;
   icon?: React.ReactNode;
 }
+
+export interface TextArea {
+  id: string;
+  value: string;
+  placeholder: string;
+  required: boolean;
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  rows?: number;
+  label?: boolean;
+  icon?: React.ReactNode;
+}

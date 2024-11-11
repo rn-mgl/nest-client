@@ -129,8 +129,6 @@ const HREmployee = () => {
     );
   });
 
-  console.log(employees);
-
   React.useEffect(() => {
     getAllEmployees();
   }, [getAllEmployees]);

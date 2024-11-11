@@ -1,6 +1,6 @@
 import Nav from "@/src/components/global/Nav";
 import { Metadata } from "next";
-import { IoApps, IoPeople } from "react-icons/io5";
+import { IoApps, IoArrowUndo, IoPeople } from "react-icons/io5";
 
 export const metadata: Metadata = {
   title: "Dashboard | HR",
@@ -16,6 +16,11 @@ const NAV_LINKS = [
     label: "Employees",
     url: "/employee",
     icon: <IoPeople />,
+  },
+  {
+    label: "Leaves",
+    url: "/leave",
+    icon: <IoArrowUndo />,
   },
 ];
 
