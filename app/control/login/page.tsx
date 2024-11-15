@@ -56,6 +56,7 @@ const AdminLogin = () => {
           const data = await signIn("admin-credentials", {
             token: login?.token,
             role: login?.role,
+            current: login?.current,
             redirect: false,
           });
 

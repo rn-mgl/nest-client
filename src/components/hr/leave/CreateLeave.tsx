@@ -1,15 +1,23 @@
-import React from "react";
-import { Modal as ModalInterface } from "@/interface/ModalInterface";
-import { IoClose, IoOptions, IoReader, IoText } from "react-icons/io5";
 import InputString from "@/components/form/InputString";
+import { Modal as ModalInterface } from "@/interface/ModalInterface";
 import { LeaveType as LeaveTypeInterface } from "@/src/interface/LeaveInterface";
+import React from "react";
+import { IoClose, IoOptions, IoReader } from "react-icons/io5";
 import TextArea from "../../form/TextArea";
+import { getCSRFToken } from "@/src/utils/token";
+import useGlobalContext from "@/src/utils/context";
+import { useSession } from "next-auth/react";
+import axios from "axios";
+import { getCookie } from "cookies-next";
 
 const CreateLeave: React.FC<ModalInterface> = (props) => {
   const [leave, setLeave] = React.useState<LeaveTypeInterface>({
     type: "",
     description: "",
   });
+  const { url } = useGlobalContext();
+  const { data } = useSession({ required: true });
+  const user = data?.user;
 
   const handleLeave = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -22,6 +30,32 @@ const CreateLeave: React.FC<ModalInterface> = (props) => {
         [name]: value,
       };
     });
+  };
+
+  const submitCreateLeave = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+      const { token } = await getCSRFToken(url);
+
+      if (token && user?.token) {
+        const { data: createdLeave } = await axios.post(
+          `${url}/hr/leave`,
+          { ...leave },
+          {
+            headers: {
+              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+              Authorization: `Bearer ${user.token}`,
+            },
+            withCredentials: true,
+          }
+        );
+        if (createdLeave.success) {
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -40,7 +74,7 @@ const CreateLeave: React.FC<ModalInterface> = (props) => {
           </button>
         </div>
         <form
-          //   onSubmit={(e) => submitCreateHR(e)}
+          onSubmit={(e) => submitCreateLeave(e)}
           className="w-full h-full p-4 flex flex-col items-center justify-start gap-4"
         >
           <InputString

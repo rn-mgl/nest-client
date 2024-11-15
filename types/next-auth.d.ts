@@ -11,12 +11,14 @@ declare module "next-auth" {
     user: {
       token: string;
       role: string;
+      current: number;
     };
   }
 
   interface User {
     token: string;
     role: string;
+    current: number;
   }
 }
 
@@ -26,6 +28,7 @@ declare module "next-auth/jwt" {
     user: {
       token: string;
       role: string;
+      current: number;
     };
   }
 }

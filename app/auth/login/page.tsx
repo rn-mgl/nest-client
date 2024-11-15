@@ -56,6 +56,7 @@ const Login = () => {
           const data = await signIn("base-credentials", {
             token: login?.token,
             role: login.role,
+            current: login?.current,
             redirect: false,
           });
 

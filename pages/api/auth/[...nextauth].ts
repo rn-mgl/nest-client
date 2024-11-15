@@ -10,6 +10,7 @@ export const authOptions: AuthOptions = {
       credentials: {
         token: { label: "Token", type: "text" },
         role: { label: "Role", type: "text" },
+        current: { label: "Current", type: "text" },
       },
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -18,6 +19,7 @@ export const authOptions: AuthOptions = {
           const user = {
             token: credentials?.token ?? "",
             role: credentials?.role ?? "",
+            current: credentials?.current ? parseInt(credentials?.current) : -1,
           };
           return user;
         } catch (error) {
@@ -34,6 +36,7 @@ export const authOptions: AuthOptions = {
       credentials: {
         token: { label: "Token", type: "text" },
         role: { label: "Role", type: "text" },
+        current: { label: "Current", type: "number" },
       },
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -42,6 +45,7 @@ export const authOptions: AuthOptions = {
           const user = {
             token: credentials?.token ?? "",
             role: credentials?.role ?? "",
+            current: credentials?.current ? parseInt(credentials?.current) : -1,
           };
           return user;
         } catch (error) {
