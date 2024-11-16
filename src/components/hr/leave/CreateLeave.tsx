@@ -97,7 +97,7 @@ const CreateLeave: React.FC<ModalInterface> = (props) => {
             onChange={handleLeave}
             placeholder="Description"
             required={true}
-            value={leave.type}
+            value={leave.description}
             rows={10}
             icon={<IoReader />}
           />

@@ -167,7 +167,13 @@ const HRLeave = () => {
         />
       ) : null}
 
-      {canEditLeave ? <EditLeave toggleModal={handleCanEditLeave} /> : null}
+      {canEditLeave ? (
+        <EditLeave
+          id={activeLeaveMenu}
+          refetchIndex={getLeaves}
+          toggleModal={handleCanEditLeave}
+        />
+      ) : null}
 
       {canDeleteLeave ? (
         <DeleteLeave toggleModal={handleCanDeleteLeave} />
