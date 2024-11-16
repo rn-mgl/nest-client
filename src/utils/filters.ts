@@ -79,3 +79,32 @@ export const HR_EMPLOYEE_SEARCH = [
     label: "Email",
   },
 ];
+
+export const HR_LEAVE_CATEGORY = [
+  {
+    key: "",
+    labelValue: [{ label: "", value: "all" }],
+  },
+];
+
+export const HR_LEAVE_SORT = [
+  {
+    key: "type",
+    label: "Leave Type",
+  },
+  {
+    key: "created_at",
+    label: "Created At",
+  },
+];
+
+export const HR_LEAVE_SEARCH = [
+  {
+    key: "type",
+    label: "Leave Type",
+  },
+  {
+    key: "description",
+    label: "Description",
+  },
+];

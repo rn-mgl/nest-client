@@ -43,5 +43,8 @@ export interface Sort {
 
 export interface Filter {
   showFilters: boolean;
+  showSearch?: boolean;
+  showSort?: boolean;
+  showCategory?: boolean;
   toggleShowFilters: () => void;
 }

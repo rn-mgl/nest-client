@@ -229,6 +229,9 @@ const AdminHR = () => {
                   t:items-start t:p-4 gap-4 t:gap-8"
       >
         <Filter
+          showSearch={true}
+          showSort={true}
+          showCategory={true}
           searchKey={search.searchKey}
           searchLabel={search.searchLabel}
           searchValue={search.searchValue}

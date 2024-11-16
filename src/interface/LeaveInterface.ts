@@ -1,5 +1,5 @@
 export interface LeaveType {
   type: string;
   description: string;
-  createdBy?: number;
+  created_by?: number;
 }
