@@ -51,6 +51,10 @@ const CreateLeave: React.FC<ModalInterface> = (props) => {
           }
         );
         if (createdLeave.success) {
+          if (props.refetchIndex) {
+            props.refetchIndex();
+          }
+          props.toggleModal();
         }
       }
     } catch (error) {
