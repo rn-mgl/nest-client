@@ -6,3 +6,7 @@ export interface Modal {
 export interface UpdateModal {
   id: number;
 }
+
+export interface DeleteModal {
+  id: number;
+}

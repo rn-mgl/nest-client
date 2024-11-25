@@ -1,9 +1,9 @@
 "use client";
 
 import Filter from "@/src/components/global/Filter";
-import CreateLeave from "@/src/components/hr/leave/CreateLeave";
-import DeleteLeave from "@/src/components/hr/leave/DeleteLeave";
-import EditLeave from "@/src/components/hr/leave/EditLeave";
+import CreateLeave from "@/src/components/hr/leaveType/CreateLeaveType";
+import DeleteLeave from "@/src/components/hr/leaveType/DeleteLeaveType";
+import EditLeave from "@/src/components/hr/leaveType/EditLeaveType";
 import useCategory from "@/src/hooks/useCategory";
 import useFilters from "@/src/hooks/useFilters";
 import useSearch from "@/src/hooks/useSearch";
@@ -74,7 +74,7 @@ const HRLeave = () => {
       const { token } = await getCSRFToken(url);
 
       if (token && user?.token) {
-        const { data: allLeaves } = await axios.get(`${url}/hr/leave`, {
+        const { data: allLeaves } = await axios.get(`${url}/hr/leave_type`, {
           headers: {
             "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
             Authorization: `Bearer ${user?.token}`,
@@ -176,7 +176,11 @@ const HRLeave = () => {
       ) : null}
 
       {canDeleteLeave ? (
-        <DeleteLeave toggleModal={handleCanDeleteLeave} />
+        <DeleteLeave
+          id={activeLeaveMenu}
+          refetchIndex={getLeaves}
+          toggleModal={handleCanDeleteLeave}
+        />
       ) : null}
       <div
         className="w-full h-full flex flex-col items-center justify-start max-w-screen-l-l p-2
