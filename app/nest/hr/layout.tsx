@@ -1,6 +1,15 @@
 import Nav from "@/src/components/global/Nav";
 import { Metadata } from "next";
-import { IoApps, IoArrowUndo, IoPeople } from "react-icons/io5";
+import {
+  IoApps,
+  IoArrowUndo,
+  IoCalendar,
+  IoFileTray,
+  IoFolder,
+  IoPeople,
+  IoStar,
+  IoTrendingUp,
+} from "react-icons/io5";
 
 export const metadata: Metadata = {
   title: "Dashboard | HR",
@@ -18,9 +27,34 @@ const NAV_LINKS = [
     icon: <IoPeople />,
   },
   {
+    label: "Attendance",
+    url: "/attendance",
+    icon: <IoCalendar />,
+  },
+  {
+    label: "Onboardings",
+    url: "/onboarding",
+    icon: <IoFileTray />,
+  },
+  {
     label: "Leaves",
     url: "/leave",
     icon: <IoArrowUndo />,
+  },
+  {
+    label: "Performances",
+    url: "/performance",
+    icon: <IoStar />,
+  },
+  {
+    label: "Trainings",
+    url: "/training",
+    icon: <IoTrendingUp />,
+  },
+  {
+    label: "Documents",
+    url: "/document",
+    icon: <IoFolder />,
   },
 ];
 
