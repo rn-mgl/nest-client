@@ -110,12 +110,14 @@ const HRLeave = () => {
           </div>
 
           <button
-            onClick={() => handleActiveLeaveMenu(leave.id)}
+            onClick={() =>
+              leave.leave_id && handleActiveLeaveMenu(leave.leave_id)
+            }
             className="p-2 rounded-full bg-neutral-100 transition-all"
           >
             <IoEllipsisVertical
               className={`${
-                activeLeaveMenu === leave.id
+                activeLeaveMenu === leave.leave_id
                   ? "text-accent-blue"
                   : "text-neutral-900"
               }`}
@@ -129,7 +131,7 @@ const HRLeave = () => {
           </p>
         </div>
 
-        {activeLeaveMenu === leave.id ? (
+        {activeLeaveMenu === leave.leave_id ? (
           <div className="w-32 p-2 rounded-md top-12 right-6 shadow-md bg-neutral-200 absolute animate-fade z-20">
             <button
               onClick={handleCanEditLeave}

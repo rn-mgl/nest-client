@@ -89,6 +89,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
           <input
             type="text"
             name="required_documents"
+            placeholder={`Required Document ${index + 1}`}
             onChange={(e) => handleDynamicFields(e, index)}
             value={req}
             className="w-full p-2 px-4 rounded-md border-2 outline-none focus:border-neutral-900 transition-all"
@@ -116,6 +117,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
           <input
             type="text"
             name="policy_acknowledgements"
+            placeholder={`Policy Acknowledgement ${index + 1}`}
             onChange={(e) => handleDynamicFields(e, index)}
             value={req}
             className="w-full p-2 px-4 rounded-md border-2 outline-none focus:border-neutral-900 transition-all"
@@ -144,22 +146,9 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
       const { token } = await getCSRFToken(url);
 
       if (token && user?.token) {
-        const {
-          title,
-          description,
-          required_documents,
-          policy_acknowledgements,
-        } = onboarding;
-        const attributes = {
-          title,
-          description,
-          required_documents: required_documents.join("\n"),
-          policy_acknowledgements: policy_acknowledgements.join("\n"),
-        };
-
         const { data: createdOnboarding } = await axios.post(
           `${url}/hr/onboarding`,
-          { ...attributes },
+          { ...onboarding },
           {
             headers: {
               Authorization: `Bearer ${user?.token}`,
@@ -170,7 +159,12 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
         );
 
         if (createdOnboarding.success) {
-          props.toggleModal();
+          if (props.refetchIndex) {
+            props.refetchIndex();
+          }
+          if (props.toggleModal) {
+            props.toggleModal();
+          }
         }
       }
     } catch (error) {
@@ -183,7 +177,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
         p-4 t:p-8 z-50 bg-gradient-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto"
     >
-      <div className="w-full h-auto my-auto max-w-screen-t bg-neutral-100 shadow-md rounded-lg ">
+      <div className="w-full my-auto h-auto max-w-screen-t bg-neutral-100 shadow-md rounded-lg ">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-blue rounded-t-lg font-bold text-accent-yellow">
           Create Onboarding
           <button
@@ -218,7 +212,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
             icon={<IoReader />}
           />
 
-          <div className="w-full flex flex-col items-center justify-start gap-2 max-h-52">
+          <div className="w-full flex flex-col items-center justify-start gap-2 max-h-48">
             <div className="w-full flex flex-row items-center justify-between">
               <label className="text-xs">Required Documents</label>
 
@@ -237,7 +231,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
             </div>
           </div>
 
-          <div className="w-full flex flex-col items-center justify-start gap-2 max-h-52">
+          <div className="w-full flex flex-col items-center justify-start gap-2 max-h-48">
             <div className="w-full flex flex-row items-center justify-between">
               <label className="text-xs">Policy Acknowledgements</label>
 

@@ -1,5 +1,6 @@
 export interface Modal {
-  toggleModal: () => void;
+  toggleModal?: () => void;
+  setActiveModal?: (id: number) => void;
   refetchIndex?: () => Promise<void>;
 }
 
