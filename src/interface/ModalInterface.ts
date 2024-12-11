@@ -1,7 +1,12 @@
 export interface Modal {
   toggleModal?: () => void;
-  setActiveModal?: (id: number) => void;
   refetchIndex?: () => Promise<void>;
+}
+
+export interface ShowModal {
+  label?: string;
+  id: number;
+  setActiveModal: (id: number) => void;
 }
 
 export interface UpdateModal {

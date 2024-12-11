@@ -149,7 +149,10 @@ const HROnboarding = () => {
       ) : null}
 
       {activeSeeMore ? (
-        <ShowOnboarding setActiveModal={handleActiveSeeMore} />
+        <ShowOnboarding
+          id={activeSeeMore}
+          setActiveModal={handleActiveSeeMore}
+        />
       ) : null}
 
       <div
