@@ -157,6 +157,7 @@ const HROnboarding = () => {
       {canEditOnboarding ? (
         <EditOnboarding
           id={activeOnboardingMenu}
+          refetchIndex={getOnboardings}
           toggleModal={handleCanEditonboarding}
         />
       ) : null}

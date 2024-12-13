@@ -105,13 +105,10 @@ const ShowOnboarding: React.FC<ShowModalInterface> = (props) => {
             </div>
           </div>
 
-          <div className="w-full flex flex-col items-center justify-center gap-4 l-s:flex-row">
+          <div className="w-full flex flex-col items-center justify-center gap-4 l-s:flex-row l-s:items-start">
             <div className="w-full flex flex-col items-start justify-center gap-1">
               <p className="text-xs">Required Documents</p>
               <div className="w-full flex flex-col gap-2 items-center justify-start h-full overflow-y-auto py-2 l-s:max-h-72">
-                {mappedRequiredDocuments}
-                {mappedRequiredDocuments}
-                {mappedRequiredDocuments}
                 {mappedRequiredDocuments}
               </div>
             </div>
@@ -119,9 +116,6 @@ const ShowOnboarding: React.FC<ShowModalInterface> = (props) => {
             <div className="w-full flex flex-col items-start justify-center gap-1">
               <p className="text-xs">Policy Acknowledgements</p>
               <div className="w-full flex flex-col gap-2 items-center justify-start h-full overflow-y-auto py-2 l-s:max-h-72">
-                {mappedPolicyAcknowledgements}
-                {mappedPolicyAcknowledgements}
-                {mappedPolicyAcknowledgements}
                 {mappedPolicyAcknowledgements}
               </div>
             </div>

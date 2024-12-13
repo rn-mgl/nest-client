@@ -7,6 +7,11 @@ import {
   UpdateModal as UpdateModalInterface,
 } from "@/src/interface/ModalInterface";
 import { Onboarding as OnboardingInterface } from "@/src/interface/OnboardingInterface";
+import useGlobalContext from "@/src/utils/context";
+import { getCSRFToken } from "@/src/utils/token";
+import axios from "axios";
+import { getCookie } from "cookies-next";
+import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd, IoClose, IoReader, IoText, IoTrash } from "react-icons/io5";
 
@@ -16,9 +21,35 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
   const [onboarding, setOnboarding] = React.useState<OnboardingInterface>({
     title: "",
     description: "",
-    policy_acknowledgements: [""],
     required_documents: [""],
+    policy_acknowledgements: [""],
   });
+
+  const { url } = useGlobalContext();
+  const { data } = useSession({ required: true });
+  const user = data?.user;
+
+  const getOnboarding = React.useCallback(async () => {
+    try {
+      const { token } = await getCSRFToken(url);
+
+      if (token && user?.token) {
+        const { data } = await axios.get(`${url}/hr/onboarding/${props.id}`, {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+            "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+          },
+          withCredentials: true,
+        });
+
+        if (data) {
+          setOnboarding(data.onboarding);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, [url, user?.token, props.id]);
 
   const handleOnboarding = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -83,6 +114,28 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
     e.preventDefault();
 
     try {
+      const { token } = await getCSRFToken(url);
+
+      if (token && user?.token) {
+        const { data: updatedOnboarding } = await axios.patch(
+          `${url}/hr/onboarding/${props.id}`,
+          { ...onboarding },
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+            },
+            withCredentials: true,
+          }
+        );
+
+        if (updatedOnboarding.success) {
+          if (props.refetchIndex) {
+            props.refetchIndex();
+          }
+          props.toggleModal();
+        }
+      }
     } catch (error) {
       console.log(error);
     }
@@ -145,6 +198,10 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
       );
     }
   );
+
+  React.useEffect(() => {
+    getOnboarding();
+  }, [getOnboarding]);
 
   return (
     <div
