@@ -78,7 +78,7 @@ const ShowOnboarding: React.FC<ShowModalInterface> = (props) => {
   return (
     <div
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
-    p-4 t:p-8 z-50 bg-gradient-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto"
+    p-4 t:p-8 z-50 bg-gradient-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade"
     >
       <div className="w-full my-auto h-auto max-w-screen-t bg-neutral-100 shadow-md rounded-lg ">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-purple rounded-t-lg font-bold text-neutral-100">
@@ -105,23 +105,25 @@ const ShowOnboarding: React.FC<ShowModalInterface> = (props) => {
             </div>
           </div>
 
-          <div className="w-full flex flex-col items-start justify-center gap-1">
-            <p className="text-xs">Required Documents</p>
-            <div className="w-full flex flex-col gap-2 items-center justify-start max-h-40 overflow-y-auto py-2">
-              {mappedRequiredDocuments}
-              {mappedRequiredDocuments}
-              {mappedRequiredDocuments}
-              {mappedRequiredDocuments}
+          <div className="w-full flex flex-col items-center justify-center gap-4 l-s:flex-row">
+            <div className="w-full flex flex-col items-start justify-center gap-1">
+              <p className="text-xs">Required Documents</p>
+              <div className="w-full flex flex-col gap-2 items-center justify-start h-full overflow-y-auto py-2 l-s:max-h-72">
+                {mappedRequiredDocuments}
+                {mappedRequiredDocuments}
+                {mappedRequiredDocuments}
+                {mappedRequiredDocuments}
+              </div>
             </div>
-          </div>
 
-          <div className="w-full flex flex-col items-start justify-center gap-1">
-            <p className="text-xs">Policy Acknowledgements</p>
-            <div className="w-full flex flex-col gap-2 items-center justify-start max-h-40 overflow-y-auto py-2">
-              {mappedPolicyAcknowledgements}
-              {mappedPolicyAcknowledgements}
-              {mappedPolicyAcknowledgements}
-              {mappedPolicyAcknowledgements}
+            <div className="w-full flex flex-col items-start justify-center gap-1">
+              <p className="text-xs">Policy Acknowledgements</p>
+              <div className="w-full flex flex-col gap-2 items-center justify-start h-full overflow-y-auto py-2 l-s:max-h-72">
+                {mappedPolicyAcknowledgements}
+                {mappedPolicyAcknowledgements}
+                {mappedPolicyAcknowledgements}
+                {mappedPolicyAcknowledgements}
+              </div>
             </div>
           </div>
         </div>

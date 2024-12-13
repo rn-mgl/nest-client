@@ -81,9 +81,7 @@ const EditLeaveType: React.FC<ModalInterface & UpdateModalInterface> = (
           if (props.refetchIndex) {
             props.refetchIndex();
           }
-          if (props.toggleModal) {
-            props.toggleModal();
-          }
+          props.toggleModal();
         }
       }
     } catch (error) {

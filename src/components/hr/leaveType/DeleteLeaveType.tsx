@@ -40,9 +40,7 @@ const DeleteLeaveType: React.FC<ModalInterface & DeleteModalInterface> = (
             props.refetchIndex();
           }
 
-          if (props.toggleModal) {
-            props.toggleModal();
-          }
+          props.toggleModal();
         }
       }
     } catch (error) {

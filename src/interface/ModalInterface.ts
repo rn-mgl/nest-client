@@ -1,5 +1,5 @@
 export interface Modal {
-  toggleModal?: () => void;
+  toggleModal: () => void;
   refetchIndex?: () => Promise<void>;
 }
 

@@ -1,6 +1,7 @@
 "use client";
 
 import CreateOnboarding from "@/src/components/hr/onboarding/CreateOnboarding";
+import EditOnboarding from "@/src/components/hr/onboarding/EditOnboarding";
 import ShowOnboarding from "@/src/components/hr/onboarding/ShowOnboarding";
 import { Onboarding as OnboardingInterface } from "@/src/interface/OnboardingInterface";
 import { BaseUser as UserInterface } from "@/src/interface/UserInterface";
@@ -22,6 +23,7 @@ const HROnboarding = () => {
   const [onboardings, setOnboardings] =
     React.useState<Array<OnboardingInterface & UserInterface>>();
   const [canCreateOnboarding, setCanCreateOnboarding] = React.useState(false);
+  const [canEditOnboarding, setCanEditOnboarding] = React.useState(false);
   const [activeOnboardingMenu, setActiveOnboardingMenu] = React.useState(0);
   const [activeSeeMore, setActiveSeeMore] = React.useState(0);
 
@@ -39,6 +41,10 @@ const HROnboarding = () => {
 
   const handleActiveSeeMore = (id: number) => {
     setActiveSeeMore((prev) => (id === prev ? 0 : id));
+  };
+
+  const handleCanEditonboarding = () => {
+    setCanEditOnboarding((prev) => !prev);
   };
 
   const getOnboardings = React.useCallback(async () => {
@@ -113,7 +119,7 @@ const HROnboarding = () => {
         {activeMenu ? (
           <div className="w-32 p-2 rounded-md top-12 right-6 shadow-md bg-neutral-200 absolute animate-fade z-20">
             <button
-              // onClick={handleCanEditonboarding}
+              onClick={handleCanEditonboarding}
               className="w-full p-1 rounded-sm text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
             >
               <IoPencil className="text-accent-blue" />
@@ -145,6 +151,13 @@ const HROnboarding = () => {
         <CreateOnboarding
           refetchIndex={getOnboardings}
           toggleModal={handleCanCreateOnboarding}
+        />
+      ) : null}
+
+      {canEditOnboarding ? (
+        <EditOnboarding
+          id={activeOnboardingMenu}
+          toggleModal={handleCanEditonboarding}
         />
       ) : null}
 

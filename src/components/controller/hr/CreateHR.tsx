@@ -59,9 +59,7 @@ const CreateHR: React.FC<ModalInterface> = (props) => {
           if (props.refetchIndex !== undefined) {
             props.refetchIndex();
           }
-          if (props.toggleModal) {
-            props.toggleModal();
-          }
+          props.toggleModal();
         }
       }
     } catch (error) {
