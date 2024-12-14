@@ -9,7 +9,7 @@ const Sort: React.FC<SortInterface & FilterInterface> = (props) => {
     return (
       <button
         key={index}
-        onClick={() => props.selectSort(props.sortKey, sort.label)}
+        onClick={() => props.selectSort(sort.key, sort.label)}
         className="p-2 w-full transition-all bg-neutral-200 rounded-sm"
       >
         {sort.label}
@@ -36,9 +36,9 @@ const Sort: React.FC<SortInterface & FilterInterface> = (props) => {
         className="p-2 rounded-md border-2 w-14 flex flex-col items-center justify-center"
       >
         {props.isAsc ? (
-          <GoSortAsc className="text-xl" />
-        ) : (
           <GoSortDesc className="text-xl" />
+        ) : (
+          <GoSortAsc className="text-xl" />
         )}
       </button>
 

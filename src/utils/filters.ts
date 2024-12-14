@@ -1,3 +1,4 @@
+// for admin to filter HR
 export const ADMIN_HR_CATEGORY = [
   {
     key: "verified",
@@ -39,6 +40,7 @@ export const ADMIN_HR_SEARCH = [
   },
 ];
 
+// for hr to filter employee
 export const HR_EMPLOYEE_CATEGORY = [
   {
     key: "verified",
@@ -80,6 +82,7 @@ export const HR_EMPLOYEE_SEARCH = [
   },
 ];
 
+// for hr to filter leave
 export const HR_LEAVE_CATEGORY = [
   {
     key: "",
@@ -102,6 +105,36 @@ export const HR_LEAVE_SEARCH = [
   {
     key: "type",
     label: "Leave Type",
+  },
+  {
+    key: "description",
+    label: "Description",
+  },
+];
+
+// for hr to filter onboarding
+export const HR_ONBOARDING_CATEGORY = [
+  {
+    key: "",
+    labelValue: [{ label: "", value: "all" }],
+  },
+];
+
+export const HR_ONBOARDING_SORT = [
+  {
+    key: "title",
+    label: "Title",
+  },
+  {
+    key: "created_at",
+    label: "Created At",
+  },
+];
+
+export const HR_ONBOARDING_SEARCH = [
+  {
+    key: "title",
+    label: "Title",
   },
   {
     key: "description",

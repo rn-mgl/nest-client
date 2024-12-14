@@ -47,12 +47,13 @@ const HRLeave = () => {
     handleSelectSort,
     handleToggleAsc,
   } = useSort("type", "Leave Type");
+  // not being used
   const {
     canShowCategories,
     category,
     handleCanShowCategories,
     handleSelectCategory,
-  } = useCategory("verified", "all", "All");
+  } = useCategory("", "", "");
   const { data } = useSession({ required: true });
   const { url } = useGlobalContext();
   const user = data?.user;

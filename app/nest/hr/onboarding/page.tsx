@@ -1,12 +1,22 @@
 "use client";
 
+import Filter from "@/src/components/global/Filter";
 import CreateOnboarding from "@/src/components/hr/onboarding/CreateOnboarding";
 import DeleteOnboarding from "@/src/components/hr/onboarding/DeleteOnboarding";
 import EditOnboarding from "@/src/components/hr/onboarding/EditOnboarding";
 import ShowOnboarding from "@/src/components/hr/onboarding/ShowOnboarding";
+import useCategory from "@/src/hooks/useCategory";
+import useFilters from "@/src/hooks/useFilters";
+import useSearch from "@/src/hooks/useSearch";
+import useSort from "@/src/hooks/useSort";
 import { Onboarding as OnboardingInterface } from "@/src/interface/OnboardingInterface";
 import { BaseUser as UserInterface } from "@/src/interface/UserInterface";
 import useGlobalContext from "@/src/utils/context";
+import {
+  HR_ONBOARDING_CATEGORY,
+  HR_ONBOARDING_SEARCH,
+  HR_ONBOARDING_SORT,
+} from "@/src/utils/filters";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { getCookie } from "cookies-next";
@@ -21,13 +31,38 @@ import {
 } from "react-icons/io5";
 
 const HROnboarding = () => {
-  const [onboardings, setOnboardings] =
-    React.useState<Array<OnboardingInterface & UserInterface>>();
+  const [onboardings, setOnboardings] = React.useState<
+    Array<OnboardingInterface & UserInterface>
+  >([]);
   const [canCreateOnboarding, setCanCreateOnboarding] = React.useState(false);
   const [canEditOnboarding, setCanEditOnboarding] = React.useState(false);
   const [canDeleteOnboarding, setCanDeleteOnboarding] = React.useState(false);
   const [activeOnboardingMenu, setActiveOnboardingMenu] = React.useState(0);
   const [activeSeeMore, setActiveSeeMore] = React.useState(0);
+
+  const { showFilters, handleShowFilters } = useFilters();
+  const {
+    search,
+    canShowSearch,
+    handleSearch,
+    handleCanShowSearch,
+    handleSelectSearch,
+  } = useSearch("title", "Title");
+  const {
+    sort,
+    canShowSort,
+    handleCanShowSort,
+    handleSelectSort,
+    handleToggleAsc,
+  } = useSort("title", "Title");
+  const {
+    category,
+    canShowCategories,
+    handleCanShowCategories,
+    handleSelectCategory,
+  } = useCategory("", "", "");
+
+  console.log(sort);
 
   const { url } = useGlobalContext();
   const { data } = useSession({ required: true });
@@ -66,6 +101,7 @@ const HROnboarding = () => {
               "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
             },
             withCredentials: true,
+            params: { ...search, ...sort },
           }
         );
 
@@ -74,7 +110,7 @@ const HROnboarding = () => {
     } catch (error) {
       console.log(error);
     }
-  }, [url, user?.token]);
+  }, [url, user?.token, search, sort]);
 
   const mappedOnboardings = onboardings?.map((onboarding, index) => {
     const activeMenu = activeOnboardingMenu === onboarding.onboarding_id;
@@ -187,6 +223,35 @@ const HROnboarding = () => {
         className="w-full h-full flex flex-col items-center justify-start max-w-screen-l-l p-2
           t:items-start t:p-4 gap-4 t:gap-8"
       >
+        <Filter
+          showSearch={true}
+          showSort={true}
+          showCategory={false}
+          searchKey={search.searchKey}
+          searchLabel={search.searchLabel}
+          searchValue={search.searchValue}
+          searchKeyLabelPairs={HR_ONBOARDING_SEARCH}
+          canShowSearch={canShowSearch}
+          selectSearch={handleSelectSearch}
+          toggleShowSearch={handleCanShowSearch}
+          onChange={handleSearch}
+          showFilters={showFilters}
+          toggleShowFilters={handleShowFilters}
+          sortKey={sort.sortKey}
+          sortLabel={sort.sortLabel}
+          isAsc={sort.isAsc}
+          canShowSort={canShowSort}
+          sortKeyLabelPairs={HR_ONBOARDING_SORT}
+          toggleAsc={handleToggleAsc}
+          selectSort={handleSelectSort}
+          toggleShowSort={handleCanShowSort}
+          //
+          categoryLabel={category.categoryLabel}
+          canShowCategories={canShowCategories}
+          categoryKeyValuePairs={HR_ONBOARDING_CATEGORY}
+          toggleShowCategories={handleCanShowCategories}
+          selectCategory={handleSelectCategory}
+        />
         <button
           onClick={handleCanCreateOnboarding}
           className="bg-accent-blue text-accent-yellow w-full p-2 rounded-md font-bold flex flex-row items-center justify-center 
