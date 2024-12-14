@@ -100,7 +100,7 @@ const HRLeave = () => {
     return (
       <div
         key={index}
-        className="w-full h-fit p-4 rounded-md bg-neutral-100 flex flex-col items-start justify-start gap-4 relative  max-h-56 max-w-full"
+        className="w-full h-full p-4 rounded-md bg-neutral-100 flex flex-col items-start justify-start gap-4 relative  max-h-56 max-w-full"
       >
         <div className="flex flex-row items-start justify-between w-full">
           <div className="flex flex-col items-start justify-start">
