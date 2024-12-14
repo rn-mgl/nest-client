@@ -62,8 +62,6 @@ const HROnboarding = () => {
     handleSelectCategory,
   } = useCategory("", "", "");
 
-  console.log(sort);
-
   const { url } = useGlobalContext();
   const { data } = useSession({ required: true });
   const user = data?.user;
