@@ -173,9 +173,9 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
   return (
     <div
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
-        p-4 t:p-8 z-50 bg-gradient-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto"
+        p-4 t:p-8 z-50 bg-gradient-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
-      <div className="w-full my-auto h-auto max-w-screen-t bg-neutral-100 shadow-md rounded-lg ">
+      <div className="w-full my-auto h-auto max-w-screen-t bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-blue rounded-t-lg font-bold text-accent-yellow">
           Create Onboarding
           <button
@@ -199,6 +199,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
             value={onboarding.title}
             icon={<IoText />}
           />
+
           <TextArea
             label={true}
             id="description"
@@ -210,41 +211,43 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
             icon={<IoReader />}
           />
 
-          <div className="w-full flex flex-col items-center justify-start gap-2 max-h-48">
-            <div className="w-full flex flex-row items-center justify-between">
-              <label className="text-xs">Required Documents</label>
+          <div className="w-full h-full flex flex-col items-center justify-start gap-4 l-s:flex-row l-s:items-start l-s:justify-center">
+            <div className="w-full flex flex-col items-center justify-start gap-2 max-h-40 l-l:max-h-64">
+              <div className="w-full flex flex-row items-center justify-between">
+                <label className="text-xs">Required Documents</label>
 
-              <button
-                type="button"
-                title="Add Required Documents Field"
-                className="p-2 rounded-md bg-neutral-100"
-                onClick={() => addDynamicFields("required_documents")}
-              >
-                <IoAdd />
-              </button>
+                <button
+                  type="button"
+                  title="Add Required Documents Field"
+                  className="p-2 rounded-md bg-neutral-100"
+                  onClick={() => addDynamicFields("required_documents")}
+                >
+                  <IoAdd />
+                </button>
+              </div>
+
+              <div className="w-full flex flex-col items-center justify-start gap-2 overflow-y-auto">
+                {mappedRequiredDocuments}
+              </div>
             </div>
 
-            <div className="w-full flex flex-col items-center justify-start gap-2 overflow-y-auto">
-              {mappedRequiredDocuments}
-            </div>
-          </div>
+            <div className="w-full h-full flex flex-col items-center justify-start gap-2 max-h-40 l-l:max-h-64">
+              <div className="w-full flex flex-row items-center justify-between">
+                <label className="text-xs">Policy Acknowledgements</label>
 
-          <div className="w-full flex flex-col items-center justify-start gap-2 max-h-48">
-            <div className="w-full flex flex-row items-center justify-between">
-              <label className="text-xs">Policy Acknowledgements</label>
+                <button
+                  type="button"
+                  title="Add Required Documents Field"
+                  className="p-2 rounded-md bg-neutral-100"
+                  onClick={() => addDynamicFields("policy_acknowledgements")}
+                >
+                  <IoAdd />
+                </button>
+              </div>
 
-              <button
-                type="button"
-                title="Add Required Documents Field"
-                className="p-2 rounded-md bg-neutral-100"
-                onClick={() => addDynamicFields("policy_acknowledgements")}
-              >
-                <IoAdd />
-              </button>
-            </div>
-
-            <div className="w-full flex flex-col items-center justify-start gap-2 overflow-y-auto">
-              {mappedPolicyAcknowledgements}
+              <div className="w-full flex flex-col items-center justify-start gap-2 overflow-y-auto">
+                {mappedPolicyAcknowledgements}
+              </div>
             </div>
           </div>
 

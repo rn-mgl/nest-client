@@ -1,6 +1,7 @@
 "use client";
 
 import CreateOnboarding from "@/src/components/hr/onboarding/CreateOnboarding";
+import DeleteOnboarding from "@/src/components/hr/onboarding/DeleteOnboarding";
 import EditOnboarding from "@/src/components/hr/onboarding/EditOnboarding";
 import ShowOnboarding from "@/src/components/hr/onboarding/ShowOnboarding";
 import { Onboarding as OnboardingInterface } from "@/src/interface/OnboardingInterface";
@@ -24,6 +25,7 @@ const HROnboarding = () => {
     React.useState<Array<OnboardingInterface & UserInterface>>();
   const [canCreateOnboarding, setCanCreateOnboarding] = React.useState(false);
   const [canEditOnboarding, setCanEditOnboarding] = React.useState(false);
+  const [canDeleteOnboarding, setCanDeleteOnboarding] = React.useState(false);
   const [activeOnboardingMenu, setActiveOnboardingMenu] = React.useState(0);
   const [activeSeeMore, setActiveSeeMore] = React.useState(0);
 
@@ -43,8 +45,12 @@ const HROnboarding = () => {
     setActiveSeeMore((prev) => (id === prev ? 0 : id));
   };
 
-  const handleCanEditonboarding = () => {
+  const handleCanEditOnboarding = () => {
     setCanEditOnboarding((prev) => !prev);
+  };
+
+  const handleCanDeleteOnboarding = () => {
+    setCanDeleteOnboarding((prev) => !prev);
   };
 
   const getOnboardings = React.useCallback(async () => {
@@ -119,7 +125,7 @@ const HROnboarding = () => {
         {activeMenu ? (
           <div className="w-32 p-2 rounded-md top-12 right-6 shadow-md bg-neutral-200 absolute animate-fade z-20">
             <button
-              onClick={handleCanEditonboarding}
+              onClick={handleCanEditOnboarding}
               className="w-full p-1 rounded-sm text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
             >
               <IoPencil className="text-accent-blue" />
@@ -128,7 +134,7 @@ const HROnboarding = () => {
 
             {createdBy ? (
               <button
-                // onClick={handleCanDeleteonboarding}
+                onClick={handleCanDeleteOnboarding}
                 className="w-full p-1 rounded-sm text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
               >
                 <IoTrash className="text-red-600" />
@@ -158,7 +164,15 @@ const HROnboarding = () => {
         <EditOnboarding
           id={activeOnboardingMenu}
           refetchIndex={getOnboardings}
-          toggleModal={handleCanEditonboarding}
+          toggleModal={handleCanEditOnboarding}
+        />
+      ) : null}
+
+      {canDeleteOnboarding ? (
+        <DeleteOnboarding
+          id={activeOnboardingMenu}
+          refetchIndex={getOnboardings}
+          toggleModal={handleCanDeleteOnboarding}
         />
       ) : null}
 
