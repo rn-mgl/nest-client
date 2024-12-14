@@ -19,7 +19,9 @@ const DeleteOnboarding: React.FC<ModalInterface & DeleteModalInterface> = (
   const { data } = useSession({ required: true });
   const user = data?.user;
 
-  const submitDeleteLeaveType = async (e: React.FormEvent<HTMLFormElement>) => {
+  const submitDeleteOnboarding = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
 
     try {
@@ -57,7 +59,7 @@ const DeleteOnboarding: React.FC<ModalInterface & DeleteModalInterface> = (
     >
       <div className="w-full h-auto max-w-screen-t bg-neutral-100 shadow-md rounded-lg ">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-red-600 rounded-t-lg font-bold text-neutral-100">
-          Delete Leave
+          Delete Onboarding
           <button
             onClick={props.toggleModal}
             className="p-2 rounded-full hover:bg-accent-blue/20 transition-all text-xl"
@@ -66,7 +68,7 @@ const DeleteOnboarding: React.FC<ModalInterface & DeleteModalInterface> = (
           </button>
         </div>
         <form
-          onSubmit={(e) => submitDeleteLeaveType(e)}
+          onSubmit={(e) => submitDeleteOnboarding(e)}
           className="w-full h-full p-4 flex flex-col items-center justify-start gap-4 text-center"
         >
           <p className="font-bold">
