@@ -80,7 +80,7 @@ const HREmployee = () => {
   const mappedEmployees = employees?.map((employee) => {
     return (
       <div
-        key={employee.id}
+        key={employee.user_id}
         className="w-full p-4 rounded-md bg-neutral-100 flex flex-row items-start justify-start gap-4 relative"
       >
         <div className="w-12 h-12 min-w-12 min-h-12 bg-gradient-to-b from-accent-yellow to-accent-blue rounded-full"></div>
@@ -102,19 +102,19 @@ const HREmployee = () => {
           </p>
         </div>
         <button
-          onClick={() => handleActiveEmployeeMenu(employee.id)}
+          onClick={() => handleActiveEmployeeMenu(employee.user_id)}
           className="p-2 text-xs hover:bg-neutral-200 rounded-full transition-all"
         >
           <IoEllipsisVertical
             className={`${
-              activeUserMenu === employee.id
+              activeUserMenu === employee.user_id
                 ? "text-accent-blue"
                 : "text-neutral-900"
             }`}
           />
         </button>
 
-        {activeUserMenu === employee.id ? (
+        {activeUserMenu === employee.user_id ? (
           <div className="w-32 p-2 rounded-md top-12 right-6 shadow-md bg-neutral-200 absolute animate-fade z-20">
             <button
               onClick={() => sendMail(employee.email)}
