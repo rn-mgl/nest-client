@@ -3,7 +3,7 @@ import React from "react";
 import { IoClose, IoEye, IoEyeOff, IoMail, IoPeople } from "react-icons/io5";
 import { Register as RegisterInterface } from "@/src/interface/AuthInterface";
 import { Modal as ModalInterface } from "@/src/interface/ModalInterface";
-import InputString from "@/components/form/InputString";
+import Input from "@/components/form/Input";
 import useShowPassword from "@/src/hooks/useShowPassword";
 import { getCSRFToken } from "@/src/utils/token";
 import useGlobalContext from "@/src/utils/context";
@@ -87,7 +87,7 @@ const CreateHR: React.FC<ModalInterface> = (props) => {
           onSubmit={(e) => submitCreateHR(e)}
           className="w-full h-full p-4 flex flex-col items-center justify-start gap-4"
         >
-          <InputString
+          <Input
             label={true}
             id="first_name"
             onChange={handleCredentials}
@@ -98,7 +98,7 @@ const CreateHR: React.FC<ModalInterface> = (props) => {
             icon={<IoPeople />}
           />
 
-          <InputString
+          <Input
             label={true}
             id="last_name"
             onChange={handleCredentials}
@@ -109,7 +109,7 @@ const CreateHR: React.FC<ModalInterface> = (props) => {
             icon={<IoPeople />}
           />
 
-          <InputString
+          <Input
             label={true}
             id="email"
             onChange={handleCredentials}
@@ -120,7 +120,7 @@ const CreateHR: React.FC<ModalInterface> = (props) => {
             icon={<IoMail />}
           />
 
-          <InputString
+          <Input
             label={true}
             id="password"
             onChange={handleCredentials}
@@ -143,7 +143,7 @@ const CreateHR: React.FC<ModalInterface> = (props) => {
             }
           />
 
-          <InputString
+          <Input
             label={true}
             id="password_confirmation"
             onChange={handleCredentials}

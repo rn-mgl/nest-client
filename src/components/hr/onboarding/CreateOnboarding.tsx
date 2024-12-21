@@ -1,4 +1,4 @@
-import InputString from "@/components/form/InputString";
+import Input from "@/components/form/Input";
 import TextArea from "@/components/form/TextArea";
 import { Modal as ModalInterface } from "@/src/interface/ModalInterface";
 import { Onboarding as OnboardingInterface } from "@/src/interface/OnboardingInterface";
@@ -189,7 +189,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
           onSubmit={(e) => submitCreateOnboarding(e)}
           className="w-full h-full p-4 flex flex-col items-center justify-start gap-4"
         >
-          <InputString
+          <Input
             label={true}
             id="title"
             onChange={handleOnboarding}

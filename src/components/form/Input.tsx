@@ -1,7 +1,7 @@
 import React from "react";
-import { InputString as InputStringInterface } from "@/src/interface/FormInterface";
+import { Input as InputInterface } from "@/src/interface/FormInterface";
 
-const InputString: React.FC<InputStringInterface> = (props) => {
+const Input: React.FC<InputInterface> = (props) => {
   return (
     <div className="w-full flex flex-col items-start justify-center gap-1">
       {props.label ? (
@@ -32,4 +32,4 @@ const InputString: React.FC<InputStringInterface> = (props) => {
   );
 };
 
-export default InputString;
+export default Input;

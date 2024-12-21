@@ -1,4 +1,4 @@
-import InputString from "@/components/form/InputString";
+import Input from "@/components/form/Input";
 import { Modal as ModalInterface } from "@/interface/ModalInterface";
 import { LeaveType as LeaveTypeInterface } from "@/src/interface/LeaveInterface";
 import React from "react";
@@ -81,7 +81,7 @@ const CreateLeaveType: React.FC<ModalInterface> = (props) => {
           onSubmit={(e) => submitCreateLeaveType(e)}
           className="w-full h-full p-4 flex flex-col items-center justify-start gap-4"
         >
-          <InputString
+          <Input
             label={true}
             id="type"
             onChange={handleLeave}

@@ -1,6 +1,6 @@
 "use client";
 
-import InputString from "@/src/components/form/InputString";
+import Input from "@/src/components/form/Input";
 import Logo from "@/src/components/global/Logo";
 import useShowPassword from "@/src/hooks/useShowPassword";
 import { Login as LoginInterface } from "@/src/interface/AuthInterface";
@@ -96,7 +96,7 @@ const AdminLogin = () => {
               onSubmit={(e) => submitLogin(e)}
               className="flex flex-col items-start justify-start w-full gap-4 "
             >
-              <InputString
+              <Input
                 label={true}
                 id="email"
                 placeholder="E-Mail"
@@ -107,7 +107,7 @@ const AdminLogin = () => {
                 icon={<IoMail className="text-xl text-neutral-950" />}
               />
 
-              <InputString
+              <Input
                 label={true}
                 id="password"
                 placeholder="Password"

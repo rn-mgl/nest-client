@@ -1,6 +1,6 @@
 "use client";
 
-import InputString from "@/src/components/form/InputString";
+import Input from "@/src/components/form/Input";
 import Logo from "@/src/components/global/Logo";
 import useShowPassword from "@/src/hooks/useShowPassword";
 import { Register as RegisterInterface } from "@/src/interface/AuthInterface";
@@ -80,7 +80,7 @@ const Register = () => {
               onSubmit={(e) => submitRegister(e)}
               className="flex flex-col items-start justify-start w-full gap-4 "
             >
-              <InputString
+              <Input
                 label={true}
                 id="first_name"
                 placeholder="First Name"
@@ -91,7 +91,7 @@ const Register = () => {
                 icon={<IoPersonCircle className="text-xl text-neutral-950" />}
               />
 
-              <InputString
+              <Input
                 label={true}
                 id="last_name"
                 placeholder="Last Name"
@@ -102,7 +102,7 @@ const Register = () => {
                 icon={<IoPersonCircle className="text-xl text-neutral-950" />}
               />
 
-              <InputString
+              <Input
                 label={true}
                 id="email"
                 placeholder="E-Mail"
@@ -113,7 +113,7 @@ const Register = () => {
                 icon={<IoMail className="text-xl text-neutral-950" />}
               />
 
-              <InputString
+              <Input
                 label={true}
                 id="password"
                 placeholder="Password"
@@ -136,7 +136,7 @@ const Register = () => {
                 }
               />
 
-              <InputString
+              <Input
                 label={true}
                 id="password_confirmation"
                 placeholder="Confirm Password"

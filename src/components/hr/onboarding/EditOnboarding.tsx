@@ -1,6 +1,6 @@
 "use client";
 
-import InputString from "@/components/form/InputString";
+import Input from "@/components/form/Input";
 import TextArea from "@/components/form/TextArea";
 import {
   Modal as ModalInterface,
@@ -222,7 +222,7 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
           onSubmit={(e) => submitUpdateOnboarding(e)}
           className="w-full h-full p-4 flex flex-col items-center justify-start gap-4"
         >
-          <InputString
+          <Input
             label={true}
             id="title"
             onChange={handleOnboarding}

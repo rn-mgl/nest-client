@@ -10,8 +10,8 @@ import useGlobalContext from "@/src/utils/context";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import { getCookie } from "cookies-next";
-import InputString from "../../form/InputString";
-import TextArea from "../../form/TextArea";
+import Input from "@/components/form/Input";
+import TextArea from "@/components/form/TextArea";
 
 const EditLeaveType: React.FC<ModalInterface & UpdateModalInterface> = (
   props
@@ -112,7 +112,7 @@ const EditLeaveType: React.FC<ModalInterface & UpdateModalInterface> = (
           onSubmit={(e) => submitUpdateLeave(e)}
           className="w-full h-full p-4 flex flex-col items-center justify-start gap-4"
         >
-          <InputString
+          <Input
             label={true}
             id="type"
             onChange={handleLeave}
