@@ -24,6 +24,10 @@ input[type="password"]::-ms-clear {
   display: none;
 }
 
+button:disabled:hover {
+  filter: brightness(100%);
+}
+
 button:hover {
   filter: brightness(90%);
 }

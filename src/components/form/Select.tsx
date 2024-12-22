@@ -1,5 +1,3 @@
-"use client";
-
 import { Select as SelectInterface } from "@/src/interface/FormInterface";
 import React from "react";
 
@@ -20,7 +18,7 @@ const Select: React.FC<SelectInterface<number>> = (props) => {
   });
 
   return (
-    <div className="w-full gap-2 relative ">
+    <div className="w-full gap-2 relative">
       <button
         onClick={props.toggleSelect}
         className="w-full flex flex-col items-start justify-center p-2 rounded-md border-2 relative"

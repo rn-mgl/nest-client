@@ -13,6 +13,7 @@ const config: Config = {
         "accent-yellow": "#c2ff9c",
         "accent-purple": "#524ee5",
         "accent-blue": "#0039c7",
+        "accent-green": "#6abaa3",
       },
       screens: {
         "m-s": "320px",

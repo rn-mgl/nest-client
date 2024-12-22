@@ -2,10 +2,19 @@
 
 import Input from "@/src/components/form/Input";
 import Select from "@/src/components/form/Select";
+import ShowAttendance from "@/src/components/hr/attendance/ShowAttendance";
+import { AttendanceStatistics as AttendanceStatisticsInterface } from "@/src/interface/AttendanceInterface";
 import React from "react";
-import { IoCalendar } from "react-icons/io5";
+import { IoArrowForward, IoCalendar } from "react-icons/io5";
 
 const HRAttendance = () => {
+  const [attendanceStatistics, setAttendanceStatistics] =
+    React.useState<AttendanceStatisticsInterface>({
+      in: 0,
+      out: 0,
+      late: 0,
+      absent: 0,
+    });
   const [currentDate, setCurrentDate] = React.useState(new Date().getDate());
   const [currentYear, setCurrentYear] = React.useState(
     new Date().getFullYear()
@@ -15,6 +24,7 @@ const HRAttendance = () => {
     value: new Date().getMonth(),
   });
   const [activeSelect, setActiveSelect] = React.useState(false);
+  const [activeSeeMore, setActiveSeeMore] = React.useState(0);
 
   const daysOfWeek = ["S", "M", "T", "W", "T", "F", "S"];
   const monthOptions = [
@@ -57,6 +67,10 @@ const HRAttendance = () => {
     setCurrentDate(date);
   };
 
+  const handleActiveSeeMore = (date: number) => {
+    setActiveSeeMore((prev) => (date === prev ? 0 : date));
+  };
+
   const startDay = getStartDayOfMonth(currentYear, currentMonth.value);
   const daysInMonth = getDaysInMonth(currentYear, currentMonth.value);
   const calendar = [];
@@ -87,15 +101,32 @@ const HRAttendance = () => {
   });
 
   const mappedCalendar = calendar.map((date, index) => {
-    return (
+    const selectedDate = currentDate === date;
+    return selectedDate ? (
+      <div
+        key={index}
+        className="w-full h-full aspect-square l-l:aspect-video flex flex-col 
+              items-center justify-center rounded-sm t:rounded-md text-xs t:text-sm 
+              bg-accent-blue text-accent-yellow border-0 font-bold animate-fade
+              relative l-s:text-lg"
+      >
+        {date}
+
+        <button
+          onClick={() => handleActiveSeeMore(date)}
+          className="absolute hidden bottom-2 t:flex text-xs font-light text-white gap-1 
+                  items-center justify-center hover:border-b-[0.5px] transition-all"
+        >
+          See More <IoArrowForward />
+        </button>
+      </div>
+    ) : (
       <button
         key={index}
         onClick={() => handleCurrentDate(Number(date))}
-        className={`w-full h-full aspect-square l-l:aspect-video border-2 flex flex-col 
-                  items-center justify-center rounded-sm t:rounded-md text-xs t:text-sm ${
-                    date === currentDate &&
-                    "bg-accent-blue text-accent-yellow border-0 font-bold"
-                  }`}
+        disabled={date === null}
+        className="w-full h-full aspect-square l-l:aspect-video border-2 flex flex-col bg-white 
+                 items-center justify-center rounded-sm t:rounded-md text-xs t:text-sm l-s:text-lg"
       >
         {date}
       </button>
@@ -104,6 +135,12 @@ const HRAttendance = () => {
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
+      {activeSeeMore ? (
+        <ShowAttendance
+          id={activeSeeMore}
+          setActiveModal={handleActiveSeeMore}
+        />
+      ) : null}
       <div
         className="w-full h-full flex flex-col items-center justify-start max-w-screen-l-l p-2
           t:items-start t:p-4 gap-4 t:gap-8"
@@ -135,6 +172,33 @@ const HRAttendance = () => {
               onChange={handleCurrentYear}
               icon={<IoCalendar />}
             />
+          </div>
+
+          <div className="w-full flex flex-row items-start justify-between gap-2">
+            <div className="w-full aspect-video bg-accent-blue text-accent-yellow p-2 rounded-md flex flex-col items-center justify-center max-h-32">
+              <p className="text-xs t:text-sm">Ins</p>
+              <p className="text-xl t:text-3xl font-bold">
+                {attendanceStatistics.in}
+              </p>
+            </div>
+            <div className="w-full aspect-video bg-accent-yellow text-neutral-900 p-2 rounded-md flex flex-col items-center justify-center max-h-32">
+              <p className="text-xs t:text-sm">Outs</p>
+              <p className="text-xl t:text-3xl font-bold">
+                {attendanceStatistics.out}
+              </p>
+            </div>
+            <div className="w-full aspect-video  bg-accent-green text-neutral-900 p-2 rounded-md flex flex-col items-center justify-center max-h-32">
+              <p className="text-xs t:text-sm">Lates</p>
+              <p className="text-xl t:text-3xl font-bold">
+                {attendanceStatistics.late}
+              </p>
+            </div>
+            <div className="w-full aspect-video  bg-accent-purple text-neutral-100 p-2 rounded-md flex flex-col items-center justify-center max-h-32">
+              <p className="text-xs t:text-sm">Absents</p>
+              <p className="text-xl t:text-3xl font-bold">
+                {attendanceStatistics.absent}
+              </p>
+            </div>
           </div>
 
           <div className="w-full grid grid-cols-7 gap-1 t:gap-2">
