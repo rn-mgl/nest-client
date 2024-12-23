@@ -9,6 +9,7 @@ export interface Input {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   label?: boolean;
   icon?: React.ReactNode;
+  min?: number;
 }
 
 export interface TextArea {

@@ -4,16 +4,21 @@ import Input from "@/src/components/form/Input";
 import Select from "@/src/components/form/Select";
 import ShowAttendance from "@/src/components/hr/attendance/ShowAttendance";
 import { AttendanceStatistics as AttendanceStatisticsInterface } from "@/src/interface/AttendanceInterface";
+import useGlobalContext from "@/src/utils/context";
+import { getCSRFToken } from "@/src/utils/token";
+import axios from "axios";
+import { getCookie } from "cookies-next";
+import { useSession } from "next-auth/react";
 import React from "react";
 import { IoArrowForward, IoCalendar } from "react-icons/io5";
 
 const HRAttendance = () => {
   const [attendanceStatistics, setAttendanceStatistics] =
     React.useState<AttendanceStatisticsInterface>({
-      in: 0,
-      out: 0,
-      late: 0,
-      absent: 0,
+      ins: 0,
+      outs: 0,
+      lates: 0,
+      absents: 0,
     });
   const [currentDate, setCurrentDate] = React.useState(new Date().getDate());
   const [currentYear, setCurrentYear] = React.useState(
@@ -25,6 +30,10 @@ const HRAttendance = () => {
   });
   const [activeSelect, setActiveSelect] = React.useState(false);
   const [activeSeeMore, setActiveSeeMore] = React.useState(0);
+
+  const { url } = useGlobalContext();
+  const { data } = useSession({ required: true });
+  const user = data?.user;
 
   const daysOfWeek = ["S", "M", "T", "W", "T", "F", "S"];
   const monthOptions = [
@@ -70,6 +79,33 @@ const HRAttendance = () => {
   const handleActiveSeeMore = (date: number) => {
     setActiveSeeMore((prev) => (date === prev ? 0 : date));
   };
+
+  const getAttendanceStatistics = React.useCallback(async () => {
+    try {
+      const { token } = await getCSRFToken(url);
+
+      if (token && user?.token) {
+        const { data: statistics } = await axios.get(`${url}/hr/attendance`, {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+            "X-XSRF-TOKEN": getCookie("XSRF-TOKEn"),
+          },
+          withCredentials: true,
+          params: {
+            currentDate,
+            currentMonth: currentMonth.value + 1,
+            currentYear,
+          },
+        });
+
+        if (statistics) {
+          setAttendanceStatistics(statistics.attendances);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, [url, user?.token, currentDate, currentMonth, currentYear]);
 
   const startDay = getStartDayOfMonth(currentYear, currentMonth.value);
   const daysInMonth = getDaysInMonth(currentYear, currentMonth.value);
@@ -133,6 +169,10 @@ const HRAttendance = () => {
     );
   });
 
+  React.useEffect(() => {
+    getAttendanceStatistics();
+  }, [getAttendanceStatistics]);
+
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
       {activeSeeMore ? (
@@ -171,32 +211,42 @@ const HRAttendance = () => {
               value={currentYear}
               onChange={handleCurrentYear}
               icon={<IoCalendar />}
+              min={2000}
             />
+          </div>
+
+          <div className="w-full flex flex-col items-center justify-center t:hidden">
+            <button
+              onClick={() => handleActiveSeeMore(currentDate)}
+              className="w-full p-2 rounded-md bg-accent-blue text-accent-yellow font-bold"
+            >
+              View Attendance Details
+            </button>
           </div>
 
           <div className="w-full flex flex-row items-start justify-between gap-2">
             <div className="w-full aspect-video bg-accent-blue text-accent-yellow p-2 rounded-md flex flex-col items-center justify-center max-h-32">
               <p className="text-xs t:text-sm">Ins</p>
               <p className="text-xl t:text-3xl font-bold">
-                {attendanceStatistics.in}
+                {attendanceStatistics.ins}
               </p>
             </div>
             <div className="w-full aspect-video bg-accent-yellow text-neutral-900 p-2 rounded-md flex flex-col items-center justify-center max-h-32">
               <p className="text-xs t:text-sm">Outs</p>
               <p className="text-xl t:text-3xl font-bold">
-                {attendanceStatistics.out}
+                {attendanceStatistics.outs}
               </p>
             </div>
             <div className="w-full aspect-video  bg-accent-green text-neutral-900 p-2 rounded-md flex flex-col items-center justify-center max-h-32">
               <p className="text-xs t:text-sm">Lates</p>
               <p className="text-xl t:text-3xl font-bold">
-                {attendanceStatistics.late}
+                {attendanceStatistics.lates}
               </p>
             </div>
             <div className="w-full aspect-video  bg-accent-purple text-neutral-100 p-2 rounded-md flex flex-col items-center justify-center max-h-32">
               <p className="text-xs t:text-sm">Absents</p>
               <p className="text-xl t:text-3xl font-bold">
-                {attendanceStatistics.absent}
+                {attendanceStatistics.absents}
               </p>
             </div>
           </div>

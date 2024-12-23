@@ -19,6 +19,7 @@ const Input: React.FC<InputInterface> = (props) => {
           required={props.required}
           value={props.value}
           onChange={(e) => props.onChange(e)}
+          min={props.min}
           className="w-full p-2 px-4 rounded-md border-2 outline-none focus:border-neutral-900 transition-all"
         />
 
