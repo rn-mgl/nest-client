@@ -178,6 +178,9 @@ const HRAttendance = () => {
       {activeSeeMore ? (
         <ShowAttendance
           id={activeSeeMore}
+          date={currentDate}
+          month={currentMonth.value}
+          year={currentYear}
           setActiveModal={handleActiveSeeMore}
         />
       ) : null}
