@@ -2,7 +2,6 @@ export interface PerformanceInterface {
   performance_review_id?: number;
   title: string;
   description: string;
-  surveys: Array<string>;
 }
 
 export interface PerformanceContentInterface {

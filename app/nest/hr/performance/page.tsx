@@ -1,21 +1,62 @@
 "use client";
 
 import CreatePerformance from "@/src/components/hr/performance/CreatePerformance";
+import useGlobalContext from "@/src/utils/context";
+import { getCSRFToken } from "@/src/utils/token";
+import axios from "axios";
+import { getCookie } from "cookies-next";
+import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd } from "react-icons/io5";
 
 const Performance = () => {
   const [canCreatePerformance, setCanCreatePerformance] = React.useState(false);
-  // const [performances, setPerformances] = React.useState([]);
+  const [performances, setPerformances] = React.useState([]);
+
+  const { url } = useGlobalContext();
+  const { data } = useSession({ required: true });
+  const user = data?.user;
 
   const handleCanCreatePerformance = () => {
     setCanCreatePerformance((prev) => !prev);
   };
 
+  const getPerformances = React.useCallback(async () => {
+    try {
+      const { token } = await getCSRFToken(url);
+
+      if (token && user?.token) {
+        const { data: allPerformances } = await axios.get(
+          `${url}/hr/performance`,
+          {
+            headers: {
+              Authorization: `Bearer ${user?.token}`,
+              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+            },
+            withCredentials: true,
+          }
+        );
+
+        if (allPerformances.performances) {
+          setPerformances(allPerformances.performances);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, [url, user?.token]);
+
+  React.useEffect(() => {
+    getPerformances();
+  }, [getPerformances]);
+
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
       {canCreatePerformance ? (
-        <CreatePerformance toggleModal={handleCanCreatePerformance} />
+        <CreatePerformance
+          refetchIndex={getPerformances}
+          toggleModal={handleCanCreatePerformance}
+        />
       ) : null}
       <div
         className="w-full h-full flex flex-col items-center justify-start max-w-screen-l-l p-2

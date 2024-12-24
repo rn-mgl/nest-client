@@ -10,8 +10,14 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd, IoClose, IoReader, IoText, IoTrash } from "react-icons/io5";
 
+interface PerformanceContent {
+  surveys: Array<string>;
+}
+
 const CreatePerformance: React.FC<ModalInterface> = (props) => {
-  const [performance, setPerformance] = React.useState<PerformanceInterface>({
+  const [performance, setPerformance] = React.useState<
+    PerformanceInterface & PerformanceContent
+  >({
     title: "",
     description: "",
     surveys: [""],
