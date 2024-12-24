@@ -1,5 +1,5 @@
 import React from "react";
-import { AppContext as AppContextInterface } from "@/interface/ContextInterface";
+import { AppContextInterface } from "@/interface/ContextInterface";
 
 const AppContext = React.createContext<AppContextInterface | null>({ url: "" });
 

@@ -1,8 +1,8 @@
 "use client";
 
-import { Attendance as AttendanceInterface } from "@/src/interface/AttendanceInterface";
-import { ShowModal as ShowModalInterface } from "@/src/interface/ModalInterface";
-import { BaseUser } from "@/src/interface/UserInterface";
+import { AttendanceInterface as AttendanceInterface } from "@/src/interface/AttendanceInterface";
+import { ShowModalInterface } from "@/src/interface/ModalInterface";
+import { UserInterface } from "@/src/interface/UserInterface";
 import useGlobalContext from "@/src/utils/context";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
@@ -21,7 +21,7 @@ const ShowAttendance: React.FC<ShowModalInterface & AttendanceDate> = (
   props
 ) => {
   const [attendanceDetails, setAttendanceDetails] = React.useState<
-    Array<AttendanceInterface & BaseUser>
+    Array<AttendanceInterface & UserInterface>
   >([]);
 
   const { url } = useGlobalContext();

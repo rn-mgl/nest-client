@@ -1,4 +1,4 @@
-export interface Register {
+export interface RegisterInterface {
   first_name: string;
   last_name: string;
   email: string;
@@ -6,7 +6,7 @@ export interface Register {
   password_confirmation: string;
 }
 
-export interface Login {
+export interface LoginInterface {
   email: string;
   password: string;
 }

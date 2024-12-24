@@ -1,6 +1,6 @@
 import React from "react";
 
-export interface Input {
+export interface InputInterface {
   id: string;
   value: string | number;
   placeholder: string;
@@ -12,7 +12,7 @@ export interface Input {
   min?: number;
 }
 
-export interface TextArea {
+export interface TextAreaInterface {
   id: string;
   value: string;
   placeholder: string;
@@ -23,7 +23,7 @@ export interface TextArea {
   icon?: React.ReactNode;
 }
 
-export interface Select<T = string | number> {
+export interface SelectInterface<T = string | number> {
   id: string;
   value: string | number;
   options: Array<{ value: string | number; label: string }>;

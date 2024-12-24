@@ -1,10 +1,10 @@
 import React from "react";
 import {
-  Modal as ModalInterface,
-  UpdateModal as UpdateModalInterface,
+  ModalInterface,
+  UpdateModalInterface,
 } from "@/src/interface/ModalInterface";
 import { IoClose, IoOptions, IoReader } from "react-icons/io5";
-import { LeaveType as LeaveTypeInterface } from "@/src/interface/LeaveInterface";
+import { LeaveTypeInterface } from "@/src/interface/LeaveInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import useGlobalContext from "@/src/utils/context";
 import { useSession } from "next-auth/react";

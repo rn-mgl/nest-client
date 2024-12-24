@@ -1,9 +1,9 @@
 import React from "react";
 import {
-  Category as CategoryInterface,
-  Filter as FilterInterface,
-  Search as SearchInterface,
-  Sort as SortInterface,
+  CategoryInterface,
+  FilterInterface,
+  SearchInterface,
+  SortInterface,
 } from "@/interface/FilterInterface";
 import Search from "./Search";
 import Sort from "./Sort";

@@ -3,7 +3,7 @@
 import Input from "@/src/components/form/Input";
 import Select from "@/src/components/form/Select";
 import ShowAttendance from "@/src/components/hr/attendance/ShowAttendance";
-import { AttendanceStatistics as AttendanceStatisticsInterface } from "@/src/interface/AttendanceInterface";
+import { AttendanceStatisticsInterface } from "@/src/interface/AttendanceInterface";
 import useGlobalContext from "@/src/utils/context";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
@@ -185,11 +185,11 @@ const HRAttendance = () => {
         />
       ) : null}
       <div
-        className="w-full h-full flex flex-col items-center justify-start max-w-screen-l-l p-2
+        className="w-full flex flex-col items-center justify-start max-w-screen-l-l p-2
           t:items-start t:p-4 gap-4 t:gap-8"
       >
         <div
-          className="w-full h-full flex flex-col items-center justify-start max-w-screen-l-l p-2
+          className="w-full flex flex-col items-center justify-start max-w-screen-l-l p-2
               t:items-start t:p-4 gap-4 t:gap-8"
         >
           <div className="w-full flex flex-row items-start justify-between gap-2 t:gap-4 t:w-96 t:max-w-96 t:min-w-96">

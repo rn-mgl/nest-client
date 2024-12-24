@@ -1,4 +1,4 @@
-import { Select as SelectInterface } from "@/src/interface/FormInterface";
+import { SelectInterface } from "@/src/interface/FormInterface";
 import React from "react";
 
 const Select: React.FC<SelectInterface<number>> = (props) => {

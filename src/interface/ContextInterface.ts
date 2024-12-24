@@ -1,3 +1,3 @@
-export interface AppContext {
+export interface AppContextInterface {
   url: string;
 }

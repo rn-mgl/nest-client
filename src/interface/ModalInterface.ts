@@ -1,18 +1,18 @@
-export interface Modal {
+export interface ModalInterface {
   toggleModal: () => void;
   refetchIndex?: () => Promise<void>;
 }
 
-export interface ShowModal {
+export interface ShowModalInterface {
   label?: string;
   id: number;
   setActiveModal: (id: number) => void;
 }
 
-export interface UpdateModal {
+export interface UpdateModalInterface {
   id: number;
 }
 
-export interface DeleteModal {
+export interface DeleteModalInterface {
   id: number;
 }

@@ -1,8 +1,8 @@
 "use client";
 
 import {
-  DeleteModal as DeleteModalInterface,
-  Modal as ModalInterface,
+  DeleteModalInterface,
+  ModalInterface,
 } from "@/src/interface/ModalInterface";
 import useGlobalContext from "@/src/utils/context";
 import { getCSRFToken } from "@/src/utils/token";

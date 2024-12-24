@@ -5,7 +5,7 @@ import useCategory from "@/src/hooks/useCategory";
 import useFilters from "@/src/hooks/useFilters";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
-import { BaseUser as HRInterface } from "@/src/interface/UserInterface";
+import { UserInterface } from "@/src/interface/UserInterface";
 import useGlobalContext from "@/src/utils/context";
 import {
   ADMIN_HR_CATEGORY,
@@ -27,7 +27,7 @@ import {
 } from "react-icons/io5";
 
 const AdminHR = () => {
-  const [hrs, setHrs] = React.useState<Array<HRInterface>>();
+  const [hrs, setHrs] = React.useState<Array<UserInterface>>();
   const [canCreateHR, setCanCreateHR] = React.useState(false);
   const [activeHRMenu, setActiveHRMenu] = React.useState(0);
 

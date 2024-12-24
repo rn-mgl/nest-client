@@ -3,7 +3,7 @@
 import Input from "@/src/components/form/Input";
 import Logo from "@/src/components/global/Logo";
 import useShowPassword from "@/src/hooks/useShowPassword";
-import { Register as RegisterInterface } from "@/src/interface/AuthInterface";
+import { RegisterInterface } from "@/src/interface/AuthInterface";
 import useGlobalContext from "@/src/utils/context";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";

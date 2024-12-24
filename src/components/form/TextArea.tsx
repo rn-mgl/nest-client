@@ -1,5 +1,5 @@
 import React from "react";
-import { TextArea as TextAreaInterface } from "@/src/interface/FormInterface";
+import { TextAreaInterface } from "@/src/interface/FormInterface";
 
 const TextArea: React.FC<TextAreaInterface> = (props) => {
   return (

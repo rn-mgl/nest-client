@@ -1,7 +1,7 @@
 "use client";
 
-import { ShowModal as ShowModalInterface } from "@/src/interface/ModalInterface";
-import { Onboarding as OnboardingInterface } from "@/src/interface/OnboardingInterface";
+import { ShowModalInterface } from "@/src/interface/ModalInterface";
+import { OnboardingInterface } from "@/src/interface/OnboardingInterface";
 import useGlobalContext from "@/src/utils/context";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";

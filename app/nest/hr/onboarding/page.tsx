@@ -9,8 +9,8 @@ import useCategory from "@/src/hooks/useCategory";
 import useFilters from "@/src/hooks/useFilters";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
-import { Onboarding as OnboardingInterface } from "@/src/interface/OnboardingInterface";
-import { BaseUser as UserInterface } from "@/src/interface/UserInterface";
+import { OnboardingInterface } from "@/src/interface/OnboardingInterface";
+import { UserInterface } from "@/src/interface/UserInterface";
 import useGlobalContext from "@/src/utils/context";
 import {
   HR_ONBOARDING_CATEGORY,
@@ -218,7 +218,7 @@ const HROnboarding = () => {
       ) : null}
 
       <div
-        className="w-full h-full flex flex-col items-center justify-start max-w-screen-l-l p-2
+        className="w-full flex flex-col items-center justify-start max-w-screen-l-l p-2
           t:items-start t:p-4 gap-4 t:gap-8"
       >
         <Filter

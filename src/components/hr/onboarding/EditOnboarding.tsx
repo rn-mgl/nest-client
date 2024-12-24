@@ -3,10 +3,10 @@
 import Input from "@/components/form/Input";
 import TextArea from "@/components/form/TextArea";
 import {
-  Modal as ModalInterface,
-  UpdateModal as UpdateModalInterface,
+  ModalInterface,
+  UpdateModalInterface,
 } from "@/src/interface/ModalInterface";
-import { Onboarding as OnboardingInterface } from "@/src/interface/OnboardingInterface";
+import { OnboardingInterface } from "@/src/interface/OnboardingInterface";
 import useGlobalContext from "@/src/utils/context";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";

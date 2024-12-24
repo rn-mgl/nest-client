@@ -1,5 +1,5 @@
 import React from "react";
-import { Input as InputInterface } from "@/src/interface/FormInterface";
+import { InputInterface } from "@/src/interface/FormInterface";
 
 const Input: React.FC<InputInterface> = (props) => {
   return (

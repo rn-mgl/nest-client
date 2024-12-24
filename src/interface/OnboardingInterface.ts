@@ -1,4 +1,4 @@
-export interface Onboarding {
+export interface OnboardingInterface {
   onboarding_id?: number;
   title: string;
   description: string;

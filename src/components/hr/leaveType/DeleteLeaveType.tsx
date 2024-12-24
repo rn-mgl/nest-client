@@ -1,7 +1,7 @@
 import React from "react";
 import {
-  Modal as ModalInterface,
-  DeleteModal as DeleteModalInterface,
+  ModalInterface,
+  DeleteModalInterface,
 } from "@/src/interface/ModalInterface";
 import { IoClose } from "react-icons/io5";
 import useGlobalContext from "@/src/utils/context";

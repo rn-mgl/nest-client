@@ -1,4 +1,4 @@
-export interface Search {
+export interface SearchInterface {
   searchKey: string;
   searchValue: string;
   searchLabel: string;
@@ -12,7 +12,7 @@ export interface Search {
   selectSearch: (key: string, label: string) => void;
 }
 
-export interface Category {
+export interface CategoryInterface {
   categoryLabel: string;
   categoryKeyValuePairs: Array<{
     key: string;
@@ -27,7 +27,7 @@ export interface Category {
   ) => void;
 }
 
-export interface Sort {
+export interface SortInterface {
   sortKey: string;
   sortLabel: string;
   isAsc: boolean;
@@ -41,7 +41,7 @@ export interface Sort {
   selectSort: (key: string, label: string) => void;
 }
 
-export interface Filter {
+export interface FilterInterface {
   showFilters: boolean;
   showSearch?: boolean;
   showSort?: boolean;

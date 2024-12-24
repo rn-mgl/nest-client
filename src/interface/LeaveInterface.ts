@@ -1,4 +1,4 @@
-export interface LeaveType {
+export interface LeaveTypeInterface {
   leave_id?: number;
   type: string;
   description: string;

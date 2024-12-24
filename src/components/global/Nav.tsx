@@ -1,7 +1,7 @@
 "use client";
 
 import Logo from "@/components/global/Logo";
-import { SideNav as SideNavInterface } from "@/interface/NavInterface";
+import { SideNavInterface } from "@/interface/NavInterface";
 import useGlobalContext from "@/src/utils/context";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";

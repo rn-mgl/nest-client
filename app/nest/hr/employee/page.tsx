@@ -5,7 +5,7 @@ import useCategory from "@/src/hooks/useCategory";
 import useFilters from "@/src/hooks/useFilters";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
-import { BaseUser as EmployeeInterface } from "@/src/interface/UserInterface";
+import { UserInterface } from "@/src/interface/UserInterface";
 import useGlobalContext from "@/src/utils/context";
 import {
   HR_EMPLOYEE_CATEGORY,
@@ -20,7 +20,7 @@ import React from "react";
 import { IoEllipsisVertical, IoMail, IoShieldCheckmark } from "react-icons/io5";
 
 const HREmployee = () => {
-  const [employees, setEmployees] = React.useState<Array<EmployeeInterface>>();
+  const [employees, setEmployees] = React.useState<Array<UserInterface>>();
   const [activeUserMenu, setActiveUserMenu] = React.useState(0);
   const { showFilters, handleShowFilters } = useFilters();
   const {
@@ -136,7 +136,7 @@ const HREmployee = () => {
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
       <div
-        className="w-full h-full flex flex-col items-center justify-start max-w-screen-l-l p-2
+        className="w-full flex flex-col items-center justify-start max-w-screen-l-l p-2
               t:items-start t:p-4 gap-4 t:gap-8"
       >
         <Filter
