@@ -126,7 +126,7 @@ const HRLeave = () => {
           </button>
         </div>
 
-        <div className="w-full h-full flex flex-col items-center justify-start overflow-y-auto">
+        <div className="w-full h-full flex flex-col items-center justify-start overflow-y-auto p-2 bg-neutral-200 rounded-sm">
           <p className="text-sm w-full text-wrap break-words">
             {leave.description}
           </p>

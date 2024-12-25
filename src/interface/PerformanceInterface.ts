@@ -2,6 +2,7 @@ export interface PerformanceInterface {
   performance_review_id?: number;
   title: string;
   description: string;
+  created_by?: number;
 }
 
 export interface PerformanceContentInterface {

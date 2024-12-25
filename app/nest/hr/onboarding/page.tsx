@@ -38,7 +38,8 @@ const HROnboarding = () => {
   const [canEditOnboarding, setCanEditOnboarding] = React.useState(false);
   const [canDeleteOnboarding, setCanDeleteOnboarding] = React.useState(false);
   const [activeOnboardingMenu, setActiveOnboardingMenu] = React.useState(0);
-  const [activeSeeMore, setActiveSeeMore] = React.useState(0);
+  const [activeOnboardingSeeMore, setActiveOnboardingSeeMore] =
+    React.useState(0);
 
   const { showFilters, handleShowFilters } = useFilters();
   const {
@@ -74,8 +75,8 @@ const HROnboarding = () => {
     setActiveOnboardingMenu((prev) => (id === prev ? 0 : id));
   };
 
-  const handleActiveSeeMore = (id: number) => {
-    setActiveSeeMore((prev) => (id === prev ? 0 : id));
+  const handleActiveOnboardingSeeMore = (id: number) => {
+    setActiveOnboardingSeeMore((prev) => (id === prev ? 0 : id));
   };
 
   const handleCanEditOnboarding = () => {
@@ -149,7 +150,7 @@ const HROnboarding = () => {
         <button
           onClick={() =>
             onboarding.onboarding_id &&
-            handleActiveSeeMore(onboarding.onboarding_id)
+            handleActiveOnboardingSeeMore(onboarding.onboarding_id)
           }
           className="text-xs hover:underline transition-all underline-offset-2 flex flex-row items-center justify-start gap-1"
         >
@@ -210,10 +211,10 @@ const HROnboarding = () => {
         />
       ) : null}
 
-      {activeSeeMore ? (
+      {activeOnboardingSeeMore ? (
         <ShowOnboarding
-          id={activeSeeMore}
-          setActiveModal={handleActiveSeeMore}
+          id={activeOnboardingSeeMore}
+          setActiveModal={handleActiveOnboardingSeeMore}
         />
       ) : null}
 
