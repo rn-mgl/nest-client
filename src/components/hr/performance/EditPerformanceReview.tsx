@@ -1,7 +1,15 @@
+import {
+  ModalInterface,
+  UpdateModalInterface,
+} from "@/src/interface/ModalInterface";
+
 import Input from "@/components/form/Input";
 import TextArea from "@/components/form/TextArea";
-import { ModalInterface } from "@/src/interface/ModalInterface";
-import { PerformanceInterface } from "@/src/interface/PerformanceInterface";
+import {
+  PerformanceReviewContentInterface,
+  PerformanceReviewInterface,
+  PerformanceReviewSurveysInterface,
+} from "@/src/interface/PerformanceReviewInterface";
 import useGlobalContext from "@/src/utils/context";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
@@ -10,29 +18,28 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd, IoClose, IoReader, IoText, IoTrash } from "react-icons/io5";
 
-interface PerformanceContent {
-  surveys: Array<string>;
-}
-
-const CreatePerformance: React.FC<ModalInterface> = (props) => {
-  const [performance, setPerformance] = React.useState<
-    PerformanceInterface & PerformanceContent
+const EditPerformanceReview: React.FC<ModalInterface & UpdateModalInterface> = (
+  props
+) => {
+  const [performance, setPerformanceReview] = React.useState<
+    PerformanceReviewInterface & PerformanceReviewContentInterface
   >({
     title: "",
     description: "",
-    surveys: [""],
+    contents: [],
   });
+  const [surveyToDelete, setSurveyToDelete] = React.useState<Array<number>>([]);
 
   const { url } = useGlobalContext();
   const { data } = useSession({ required: true });
   const user = data?.user;
 
-  const handlePerformance = (
+  const handlePerformanceReview = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
 
-    setPerformance((prev) => {
+    setPerformanceReview((prev) => {
       return {
         ...prev,
         [name]: value,
@@ -41,40 +48,12 @@ const CreatePerformance: React.FC<ModalInterface> = (props) => {
   };
 
   const addDynamicFields = (name: string) => {
-    setPerformance((prev) => {
-      const field = prev[name as keyof object] ?? [];
-
-      const newField = [...field, ""];
-
-      return {
-        ...prev,
-        [name]: newField,
+    setPerformanceReview((prev) => {
+      const newField: PerformanceReviewSurveysInterface = {
+        survey: "",
       };
-    });
-  };
-
-  const removeDynamicFields = (name: string, index: number) => {
-    setPerformance((prev) => {
-      const field: Array<string> = prev[name as keyof object];
-      field.splice(index, 1);
-
-      return {
-        ...prev,
-        [name]: field,
-      };
-    });
-  };
-
-  const handleDynamicFields = (
-    e: React.ChangeEvent<HTMLTextAreaElement>,
-    index: number
-  ) => {
-    const { name, value } = e.target;
-
-    setPerformance((prev) => {
-      const currentField = prev[name as keyof object];
-      const updatedField = [...currentField] as string[];
-      updatedField[index] = value;
+      const currentField = performance[name as keyof object] ?? [];
+      const updatedField = [...currentField, newField];
 
       return {
         ...prev,
@@ -83,18 +62,51 @@ const CreatePerformance: React.FC<ModalInterface> = (props) => {
     });
   };
 
-  const submitCreatePerformance = async (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
-    e.preventDefault();
+  const removeDynamicFields = (name: string, index: number) => {
+    setPerformanceReview((prev) => {
+      const updatedField: Array<string> = performance[name as keyof object];
+      updatedField.splice(index, 1);
 
+      return {
+        ...prev,
+        [name]: [...updatedField],
+      };
+    });
+  };
+
+  const handleSurveyToDelete = (id: number | undefined) => {
+    if (!id) return;
+    setSurveyToDelete((prev) => [...prev, id]);
+  };
+
+  const handleDynamicFields = (
+    e: React.ChangeEvent<HTMLTextAreaElement>,
+    index: number
+  ) => {
+    const { name, value } = e.target;
+
+    setPerformanceReview((prev) => {
+      const currentField = prev[name as keyof object];
+      const updatedField: Array<PerformanceReviewSurveysInterface> = [
+        ...currentField,
+      ];
+
+      updatedField[index]["survey"] = value;
+
+      return {
+        ...prev,
+        [name]: [...updatedField],
+      };
+    });
+  };
+
+  const getPerformanceReview = React.useCallback(async () => {
     try {
       const { token } = await getCSRFToken(url);
 
       if (token && user?.token) {
-        const { data: createdPerformance } = await axios.post(
-          `${url}/hr/performance`,
-          { ...performance },
+        const { data: performanceDetails } = await axios.get(
+          `${url}/hr/performance_review/${props.id}`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
@@ -104,7 +116,66 @@ const CreatePerformance: React.FC<ModalInterface> = (props) => {
           }
         );
 
-        if (createdPerformance.success) {
+        if (performanceDetails) {
+          setPerformanceReview(performanceDetails.performance);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, [url, user?.token, props.id]);
+
+  const mappedSurveys = performance.contents.map((content, index) => {
+    return (
+      <div
+        key={index}
+        className="w-full flex flex-row gap-2 items-center justify-center"
+      >
+        <textarea
+          name="contents"
+          placeholder={`Survey ${index + 1}`}
+          onChange={(e) => handleDynamicFields(e, index)}
+          value={content.survey}
+          rows={3}
+          className="w-full p-2 px-4 pr-8 rounded-md border-2 outline-none focus:border-neutral-900 transition-all resize-none"
+        />
+
+        <button
+          type="button"
+          onClick={() => {
+            removeDynamicFields("contents", index);
+            handleSurveyToDelete(content.performance_review_content_id);
+          }}
+          className="p-3 border-2 border-neutral-100 rounded-md bg-neutral-100"
+        >
+          <IoTrash />
+        </button>
+      </div>
+    );
+  });
+
+  const submitUpdatePerformanceReview = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
+    e.preventDefault();
+
+    try {
+      const { token } = await getCSRFToken(url);
+
+      if (token && user?.token) {
+        const { data: updatedPerformanceReview } = await axios.patch(
+          `${url}/hr/performance_review/${props.id}`,
+          { ...performance, surveyToDelete },
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+            },
+            withCredentials: true,
+          }
+        );
+
+        if (updatedPerformanceReview.success) {
           if (props.refetchIndex) {
             props.refetchIndex();
           }
@@ -117,40 +188,18 @@ const CreatePerformance: React.FC<ModalInterface> = (props) => {
     }
   };
 
-  const mappedSurveys = performance.surveys.map((survey, index) => {
-    return (
-      <div
-        key={index}
-        className="w-full flex flex-row gap-2 items-center justify-center"
-      >
-        <textarea
-          name="surveys"
-          placeholder={`Survey ${index + 1}`}
-          onChange={(e) => handleDynamicFields(e, index)}
-          value={survey}
-          rows={3}
-          className="w-full p-2 px-4 pr-8 rounded-md border-2 outline-none focus:border-neutral-900 transition-all resize-none"
-        />
-
-        <button
-          type="button"
-          onClick={() => removeDynamicFields("surveys", index)}
-          className="p-3 border-2 border-neutral-100 rounded-md bg-neutral-100"
-        >
-          <IoTrash />
-        </button>
-      </div>
-    );
-  });
+  React.useEffect(() => {
+    getPerformanceReview();
+  }, [getPerformanceReview]);
 
   return (
     <div
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
-          p-4 t:p-8 z-50 bg-gradient-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
+      p-4 t:p-8 z-50 bg-gradient-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
       <div className="w-full my-auto h-auto max-w-screen-t bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
-        <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-blue rounded-t-lg font-bold text-accent-yellow">
-          Create Onboarding
+        <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-yellow rounded-t-lg font-bold text-accent-blue">
+          Edit Performance Review
           <button
             onClick={props.toggleModal}
             className="p-2 rounded-full hover:bg-accent-yellow/20 transition-all text-xl"
@@ -159,7 +208,7 @@ const CreatePerformance: React.FC<ModalInterface> = (props) => {
           </button>
         </div>
         <form
-          onSubmit={(e) => submitCreatePerformance(e)}
+          onSubmit={(e) => submitUpdatePerformanceReview(e)}
           className="w-full h-full p-4 flex flex-col items-center justify-start gap-4"
         >
           <Input
@@ -170,11 +219,11 @@ const CreatePerformance: React.FC<ModalInterface> = (props) => {
             label={true}
             icon={<IoText />}
             value={performance.title}
-            onChange={handlePerformance}
+            onChange={handlePerformanceReview}
           />
           <TextArea
             id="description"
-            onChange={handlePerformance}
+            onChange={handlePerformanceReview}
             placeholder="Description"
             required={true}
             label={true}
@@ -192,7 +241,7 @@ const CreatePerformance: React.FC<ModalInterface> = (props) => {
                   type="button"
                   title="Add Required Documents Field"
                   className="p-2 rounded-md bg-neutral-100"
-                  onClick={() => addDynamicFields("surveys")}
+                  onClick={() => addDynamicFields("contents")}
                 >
                   <IoAdd />
                 </button>
@@ -204,8 +253,8 @@ const CreatePerformance: React.FC<ModalInterface> = (props) => {
             </div>
           </div>
 
-          <button className="w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2">
-            Create
+          <button className="w-full font-bold text-center rounded-md p-2 bg-accent-yellow text-accent-blue mt-2">
+            Update
           </button>
         </form>
       </div>
@@ -213,4 +262,4 @@ const CreatePerformance: React.FC<ModalInterface> = (props) => {
   );
 };
 
-export default CreatePerformance;
+export default EditPerformanceReview;

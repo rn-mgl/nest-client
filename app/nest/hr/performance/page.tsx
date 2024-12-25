@@ -1,10 +1,10 @@
 "use client";
 
-import CreatePerformance from "@/src/components/hr/performance/CreatePerformance";
-import DeletePerformance from "@/src/components/hr/performance/DeletePerformance";
-import EditPerformance from "@/src/components/hr/performance/EditPerformance";
-import ShowPerformance from "@/src/components/hr/performance/ShowPerformance";
-import { PerformanceInterface } from "@/src/interface/PerformanceInterface";
+import CreatePerformanceReview from "@/src/components/hr/performance/CreatePerformanceReview";
+import DeletePerformanceReview from "@/src/components/hr/performance/DeletePerformanceReview";
+import EditPerformanceReview from "@/src/components/hr/performance/EditPerformanceReview";
+import ShowPerformanceReview from "@/src/components/hr/performance/ShowPerformanceReview";
+import { PerformanceReviewInterface } from "@/src/interface/PerformanceReviewInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import useGlobalContext from "@/src/utils/context";
 import { getCSRFToken } from "@/src/utils/token";
@@ -20,48 +20,52 @@ import {
   IoTrash,
 } from "react-icons/io5";
 
-const Performance = () => {
-  const [performances, setPerformances] = React.useState<
-    Array<PerformanceInterface & UserInterface>
+const PerformanceReview = () => {
+  const [performances, setPerformanceReviews] = React.useState<
+    Array<PerformanceReviewInterface & UserInterface>
   >([]);
-  const [canCreatePerformance, setCanCreatePerformance] = React.useState(false);
-  const [activePerformanceMenu, setActivePerformanceMenu] = React.useState(0);
-  const [activePerformanceSeeMore, setActivePerformanceSeeMore] =
+  const [canCreatePerformanceReview, setCanCreatePerformanceReview] =
+    React.useState(false);
+  const [activePerformanceReviewMenu, setActivePerformanceReviewMenu] =
     React.useState(0);
-  const [canEditPerformance, setCanEditPerformance] = React.useState(false);
-  const [canDeletePerformance, setCanDeletePerformance] = React.useState(false);
+  const [activePerformanceReviewSeeMore, setActivePerformanceReviewSeeMore] =
+    React.useState(0);
+  const [canEditPerformanceReview, setCanEditPerformanceReview] =
+    React.useState(false);
+  const [canDeletePerformanceReview, setCanDeletePerformanceReview] =
+    React.useState(false);
 
   const { url } = useGlobalContext();
   const { data } = useSession({ required: true });
   const user = data?.user;
 
-  const handleCanCreatePerformance = () => {
-    setCanCreatePerformance((prev) => !prev);
+  const handleCanCreatePerformanceReview = () => {
+    setCanCreatePerformanceReview((prev) => !prev);
   };
 
-  const handleActivePerformanceMenu = (id: number) => {
-    setActivePerformanceMenu((prev) => (prev === id ? 0 : id));
+  const handleActivePerformanceReviewMenu = (id: number) => {
+    setActivePerformanceReviewMenu((prev) => (prev === id ? 0 : id));
   };
 
-  const handleActivePerformanceSeeMore = (id: number) => {
-    setActivePerformanceSeeMore((prev) => (prev === id ? 0 : id));
+  const handleActivePerformanceReviewSeeMore = (id: number) => {
+    setActivePerformanceReviewSeeMore((prev) => (prev === id ? 0 : id));
   };
 
-  const handleCanEditPerformance = () => {
-    setCanEditPerformance((prev) => !prev);
+  const handleCanEditPerformanceReview = () => {
+    setCanEditPerformanceReview((prev) => !prev);
   };
 
-  const handleCanDeletePerformance = () => {
-    setCanDeletePerformance((prev) => !prev);
+  const handleCanDeletePerformanceReview = () => {
+    setCanDeletePerformanceReview((prev) => !prev);
   };
 
-  const getPerformances = React.useCallback(async () => {
+  const getPerformanceReviews = React.useCallback(async () => {
     try {
       const { token } = await getCSRFToken(url);
 
       if (token && user?.token) {
-        const { data: allPerformances } = await axios.get(
-          `${url}/hr/performance`,
+        const { data: allPerformanceReviews } = await axios.get(
+          `${url}/hr/performance_review`,
           {
             headers: {
               Authorization: `Bearer ${user?.token}`,
@@ -71,8 +75,8 @@ const Performance = () => {
           }
         );
 
-        if (allPerformances.performances) {
-          setPerformances(allPerformances.performances);
+        if (allPerformanceReviews.performances) {
+          setPerformanceReviews(allPerformanceReviews.performances);
         }
       }
     } catch (error) {
@@ -80,9 +84,9 @@ const Performance = () => {
     }
   }, [url, user?.token]);
 
-  const mappedPerformances = performances.map((performance, index) => {
+  const mappedPerformanceReviews = performances.map((performance, index) => {
     const activeMenu =
-      activePerformanceMenu === performance.performance_review_id;
+      activePerformanceReviewMenu === performance.performance_review_id;
     const createdBy = performance.created_by === user?.current;
     return (
       <div
@@ -98,7 +102,9 @@ const Performance = () => {
           <button
             onClick={() =>
               performance.performance_review_id &&
-              handleActivePerformanceMenu(performance.performance_review_id)
+              handleActivePerformanceReviewMenu(
+                performance.performance_review_id
+              )
             }
             className="p-2 rounded-full bg-neutral-100 transition-all"
           >
@@ -119,7 +125,9 @@ const Performance = () => {
         <button
           onClick={() =>
             performance.performance_review_id &&
-            handleActivePerformanceSeeMore(performance.performance_review_id)
+            handleActivePerformanceReviewSeeMore(
+              performance.performance_review_id
+            )
           }
           className="text-xs hover:underline transition-all underline-offset-2 flex flex-row items-center justify-start gap-1"
         >
@@ -129,7 +137,7 @@ const Performance = () => {
         {activeMenu ? (
           <div className="w-32 p-2 rounded-md top-12 right-6 shadow-md bg-neutral-200 absolute animate-fade z-20">
             <button
-              onClick={handleCanEditPerformance}
+              onClick={handleCanEditPerformanceReview}
               className="w-full p-1 rounded-sm text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
             >
               <IoPencil className="text-accent-blue" />
@@ -138,7 +146,7 @@ const Performance = () => {
 
             {createdBy ? (
               <button
-                onClick={handleCanDeletePerformance}
+                onClick={handleCanDeletePerformanceReview}
                 className="w-full p-1 rounded-sm text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
               >
                 <IoTrash className="text-red-600" />
@@ -152,41 +160,47 @@ const Performance = () => {
   });
 
   React.useEffect(() => {
-    getPerformances();
-  }, [getPerformances]);
+    getPerformanceReviews();
+  }, [getPerformanceReviews]);
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
-      {canCreatePerformance ? (
-        <CreatePerformance
-          refetchIndex={getPerformances}
-          toggleModal={handleCanCreatePerformance}
+      {canCreatePerformanceReview ? (
+        <CreatePerformanceReview
+          refetchIndex={getPerformanceReviews}
+          toggleModal={handleCanCreatePerformanceReview}
         />
       ) : null}
 
-      {canEditPerformance ? <EditPerformance /> : null}
+      {canEditPerformanceReview ? (
+        <EditPerformanceReview
+          id={activePerformanceReviewMenu}
+          refetchIndex={getPerformanceReviews}
+          toggleModal={handleCanEditPerformanceReview}
+        />
+      ) : null}
 
-      {canDeletePerformance ? <DeletePerformance /> : null}
+      {canDeletePerformanceReview ? <DeletePerformanceReview /> : null}
 
-      {activePerformanceSeeMore ? <ShowPerformance /> : null}
+      {activePerformanceReviewSeeMore ? <ShowPerformanceReview /> : null}
       <div
         className="w-full h-full flex flex-col items-center justify-start max-w-screen-l-l p-2
           t:items-start t:p-4 gap-4 t:gap-8"
       >
         <button
-          onClick={handleCanCreatePerformance}
+          onClick={handleCanCreatePerformanceReview}
           className="bg-accent-blue text-accent-yellow w-full p-2 rounded-md font-bold flex flex-row items-center justify-center 
                   gap-2 t:w-fit t:px-4 transition-all"
         >
-          Create Performance <IoAdd />
+          Create Performance Review <IoAdd />
         </button>
 
         <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">
-          {mappedPerformances}
+          {mappedPerformanceReviews}
         </div>
       </div>
     </div>
   );
 };
 
-export default Performance;
+export default PerformanceReview;
