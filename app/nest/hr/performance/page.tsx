@@ -180,7 +180,13 @@ const PerformanceReview = () => {
         />
       ) : null}
 
-      {canDeletePerformanceReview ? <DeletePerformanceReview /> : null}
+      {canDeletePerformanceReview ? (
+        <DeletePerformanceReview
+          id={activePerformanceReviewMenu}
+          refetchIndex={getPerformanceReviews}
+          toggleModal={handleCanDeletePerformanceReview}
+        />
+      ) : null}
 
       {activePerformanceReviewSeeMore ? <ShowPerformanceReview /> : null}
       <div
