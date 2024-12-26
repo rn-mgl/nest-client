@@ -92,7 +92,7 @@ const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: createdPerformanceReview } = await axios.post(
-          `${url}/hr/performance`,
+          `${url}/hr/performance_review`,
           { ...performance },
           {
             headers: {
