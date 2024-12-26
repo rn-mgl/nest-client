@@ -6,9 +6,9 @@ import {
 import Input from "@/components/form/Input";
 import TextArea from "@/components/form/TextArea";
 import {
-  PerformanceReviewContentInterface,
+  PerformanceReviewContentsSetInterface,
   PerformanceReviewInterface,
-  PerformanceReviewSurveysInterface,
+  PerformanceReviewSurveySetInterface,
 } from "@/src/interface/PerformanceReviewInterface";
 import useGlobalContext from "@/src/utils/context";
 import { getCSRFToken } from "@/src/utils/token";
@@ -22,7 +22,7 @@ const EditPerformanceReview: React.FC<ModalInterface & UpdateModalInterface> = (
   props
 ) => {
   const [performance, setPerformanceReview] = React.useState<
-    PerformanceReviewInterface & PerformanceReviewContentInterface
+    PerformanceReviewInterface & PerformanceReviewContentsSetInterface
   >({
     title: "",
     description: "",
@@ -49,7 +49,7 @@ const EditPerformanceReview: React.FC<ModalInterface & UpdateModalInterface> = (
 
   const addDynamicFields = (name: string) => {
     setPerformanceReview((prev) => {
-      const newField: PerformanceReviewSurveysInterface = {
+      const newField: PerformanceReviewSurveySetInterface = {
         survey: "",
       };
       const currentField = performance[name as keyof object] ?? [];
@@ -87,7 +87,7 @@ const EditPerformanceReview: React.FC<ModalInterface & UpdateModalInterface> = (
 
     setPerformanceReview((prev) => {
       const currentField = prev[name as keyof object];
-      const updatedField: Array<PerformanceReviewSurveysInterface> = [
+      const updatedField: Array<PerformanceReviewSurveySetInterface> = [
         ...currentField,
       ];
 

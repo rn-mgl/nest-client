@@ -188,7 +188,12 @@ const PerformanceReview = () => {
         />
       ) : null}
 
-      {activePerformanceReviewSeeMore ? <ShowPerformanceReview /> : null}
+      {activePerformanceReviewSeeMore ? (
+        <ShowPerformanceReview
+          id={activePerformanceReviewSeeMore}
+          setActiveModal={handleActivePerformanceReviewSeeMore}
+        />
+      ) : null}
       <div
         className="w-full h-full flex flex-col items-center justify-start max-w-screen-l-l p-2
           t:items-start t:p-4 gap-4 t:gap-8"
