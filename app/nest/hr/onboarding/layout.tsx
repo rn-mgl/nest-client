@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Onboarding | HR",
+  title: "Onboardings | HR",
 };
 
 export default function RootLayout({

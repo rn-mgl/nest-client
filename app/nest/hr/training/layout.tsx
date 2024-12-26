@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Performance Reviews | HR",
+  title: "Trainings | HR",
 };
 
 export default function RootLayout({
