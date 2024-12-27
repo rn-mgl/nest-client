@@ -128,8 +128,10 @@ const Nav: React.FC<SideNavInterface & { children: React.ReactNode }> = (
 
           <button
             onClick={submitLogOut}
-            className={`p-4 rounded-md w-full flex flex-row items-center justify-start transition-all
-                     gap-2 h-14 bg-white hover mt-auto`}
+            className={`p-4 rounded-md w-full flex flex-row items-center transition-all
+                     gap-2 h-14 bg-white hover mt-auto ${
+                       sideNavVisible ? "justify-start" : "justify-center"
+                     }`}
           >
             <span className="text-neutral-500">
               <IoLogOut />
