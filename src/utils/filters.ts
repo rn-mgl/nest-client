@@ -141,3 +141,34 @@ export const HR_ONBOARDING_SEARCH = [
     label: "Description",
   },
 ];
+
+// for hr to filter performance reviews
+
+export const HR_PERFORMANCE_CATEGORY = [
+  {
+    key: "",
+    labelValue: [{ label: "", value: "all" }],
+  },
+];
+
+export const HR_PERFORMANCE_SORT = [
+  {
+    key: "title",
+    label: "Title",
+  },
+  {
+    key: "created_at",
+    label: "Created At",
+  },
+];
+
+export const HR_PERFORMANCE_SEARCH = [
+  {
+    key: "title",
+    label: "Title",
+  },
+  {
+    key: "description",
+    label: "Description",
+  },
+];
