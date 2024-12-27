@@ -1,7 +1,10 @@
 "use client";
 
 import { ShowModalInterface } from "@/src/interface/ModalInterface";
-import { OnboardingInterface } from "@/src/interface/OnboardingInterface";
+import {
+  OnboardingContentsSetInterface,
+  OnboardingInterface,
+} from "@/src/interface/OnboardingInterface";
 import useGlobalContext from "@/src/utils/context";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
@@ -11,11 +14,13 @@ import React from "react";
 import { IoCaretForwardSharp, IoClose } from "react-icons/io5";
 
 const ShowOnboarding: React.FC<ShowModalInterface> = (props) => {
-  const [onboarding, setOnboarding] = React.useState<OnboardingInterface>({
+  const [onboarding, setOnboarding] = React.useState<
+    OnboardingInterface & OnboardingContentsSetInterface
+  >({
     title: "",
     description: "",
-    policy_acknowledgements: [""],
-    required_documents: [""],
+    required_documents: [],
+    policy_acknowledgements: [],
   });
 
   const { url } = useGlobalContext();
@@ -51,7 +56,9 @@ const ShowOnboarding: React.FC<ShowModalInterface> = (props) => {
           className="w-full flex flex-row items-center justify-start bg-white p-2 rounded-md gap-2 border-2"
         >
           <IoCaretForwardSharp />
-          <p className="w-full overflow-y-auto max-h-24 h-full">{req}</p>
+          <p className="w-full overflow-y-auto max-h-24 h-full">
+            {req.document}
+          </p>
         </div>
       );
     }
@@ -65,7 +72,7 @@ const ShowOnboarding: React.FC<ShowModalInterface> = (props) => {
           className="w-full flex flex-row items-center justify-start bg-white p-2 rounded-md gap-2 border-2"
         >
           <IoCaretForwardSharp />
-          <p className="w-full overflow-y-auto max-h-24 h-full">{ack}</p>
+          <p className="w-full overflow-y-auto max-h-24 h-full">{ack.policy}</p>
         </div>
       );
     }

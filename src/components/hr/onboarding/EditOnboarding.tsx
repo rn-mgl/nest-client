@@ -6,7 +6,12 @@ import {
   ModalInterface,
   UpdateModalInterface,
 } from "@/src/interface/ModalInterface";
-import { OnboardingInterface } from "@/src/interface/OnboardingInterface";
+import {
+  OnboardingContentsSetInterface,
+  OnboardingInterface,
+  OnboardingPolicyAcknowledgemenSetInterface,
+  OnboardingRequiredDocumentSetInterface,
+} from "@/src/interface/OnboardingInterface";
 import useGlobalContext from "@/src/utils/context";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
@@ -18,12 +23,20 @@ import { IoAdd, IoClose, IoReader, IoText, IoTrash } from "react-icons/io5";
 const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
   props
 ) => {
-  const [onboarding, setOnboarding] = React.useState<OnboardingInterface>({
+  const [onboarding, setOnboarding] = React.useState<
+    OnboardingInterface & OnboardingContentsSetInterface
+  >({
     title: "",
     description: "",
-    required_documents: [""],
-    policy_acknowledgements: [""],
+    required_documents: [],
+    policy_acknowledgements: [],
   });
+  const [documentsToDelete, setDocumentsToDelete] = React.useState<
+    Array<number>
+  >([]);
+  const [policiesToDelete, setPoliciesToDelete] = React.useState<Array<number>>(
+    []
+  );
 
   const { url } = useGlobalContext();
   const { data } = useSession({ required: true });
@@ -71,27 +84,54 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
     const { name, value } = e.target;
 
     setOnboarding((prev) => {
-      const currentField = prev[name as keyof object];
+      if (name === "required_documents") {
+        const currentField = prev[name as keyof object];
 
-      const updatedField = [...currentField] as string[];
-      updatedField[index] = value;
+        const updatedField: Array<OnboardingRequiredDocumentSetInterface> = [
+          ...currentField,
+        ];
 
-      return {
-        ...prev,
-        [name]: [...updatedField],
-      };
+        updatedField[index]["document"] = value;
+
+        return {
+          ...prev,
+          [name]: [...updatedField],
+        };
+      } else if (name === "policy_acknowledgements") {
+        const currentField = prev[name as keyof object];
+
+        const updatedField: Array<OnboardingPolicyAcknowledgemenSetInterface> =
+          [...currentField];
+
+        updatedField[index]["policy"] = value;
+
+        return {
+          ...prev,
+          [name]: [...updatedField],
+        };
+      }
+
+      return prev;
     });
   };
 
   const addDynamicFields = (name: string) => {
     setOnboarding((prev) => {
+      const newField:
+        | OnboardingPolicyAcknowledgemenSetInterface
+        | OnboardingRequiredDocumentSetInterface =
+        name === "required_documents"
+          ? { document: "" }
+          : name === "policy_acknowledgements"
+          ? { policy: "" }
+          : { document: "", policy: "" };
       const field: Array<string> = prev[name as keyof object] ?? [];
 
-      const newField = [...field, ""];
+      const updatedField = [...field, newField];
 
       return {
         ...prev,
-        [name]: newField,
+        [name]: updatedField,
       };
     });
   };
@@ -108,6 +148,20 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
     });
   };
 
+  const handleDocumentsToDelete = (id: number | undefined) => {
+    if (!id) return;
+
+    setDocumentsToDelete((prev) => [...prev, id]);
+  };
+
+  const handlePoliciesToDelete = (id: number | undefined) => {
+    if (!id) return;
+
+    setPoliciesToDelete((prev) => [...prev, id]);
+  };
+
+  console.log(policiesToDelete);
+
   const submitUpdateOnboarding = async (
     e: React.FormEvent<HTMLFormElement>
   ) => {
@@ -119,7 +173,7 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
       if (token && user?.token) {
         const { data: updatedOnboarding } = await axios.patch(
           `${url}/hr/onboarding/${props.id}`,
-          { ...onboarding },
+          { ...onboarding, documentsToDelete, policiesToDelete },
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
@@ -153,13 +207,16 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
             name="required_documents"
             placeholder={`Required Document ${index + 1}`}
             onChange={(e) => handleDynamicFields(e, index)}
-            value={req}
+            value={req.document}
             className="w-full p-2 px-4 rounded-md border-2 outline-none focus:border-neutral-900 transition-all"
           />
 
           <button
             type="button"
-            onClick={() => removeDynamicFields("required_documents", index)}
+            onClick={() => {
+              removeDynamicFields("required_documents", index);
+              handleDocumentsToDelete(req.onboarding_required_documents_id);
+            }}
             className="p-3 border-2 border-neutral-100 rounded-md bg-neutral-100"
           >
             <IoTrash />
@@ -170,7 +227,7 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
   );
 
   const mappedPolicyAcknowledgements = onboarding.policy_acknowledgements.map(
-    (req, index) => {
+    (ack, index) => {
       return (
         <div
           key={index}
@@ -181,15 +238,16 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
             name="policy_acknowledgements"
             placeholder={`Policy Acknowledgement ${index + 1}`}
             onChange={(e) => handleDynamicFields(e, index)}
-            value={req}
+            value={ack.policy}
             className="w-full p-2 px-4 rounded-md border-2 outline-none focus:border-neutral-900 transition-all"
           />
 
           <button
             type="button"
-            onClick={() =>
-              removeDynamicFields("policy_acknowledgements", index)
-            }
+            onClick={() => {
+              removeDynamicFields("policy_acknowledgements", index);
+              handlePoliciesToDelete(ack.onboarding_policy_acknowledgements_id);
+            }}
             className="p-3 border-2 border-neutral-100 rounded-md bg-neutral-100"
           >
             <IoTrash />

@@ -1,7 +1,10 @@
 import Input from "@/components/form/Input";
 import TextArea from "@/components/form/TextArea";
 import { ModalInterface } from "@/src/interface/ModalInterface";
-import { OnboardingInterface } from "@/src/interface/OnboardingInterface";
+import {
+  OnboardingContentsInterface,
+  OnboardingInterface,
+} from "@/src/interface/OnboardingInterface";
 import useGlobalContext from "@/src/utils/context";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
@@ -11,7 +14,9 @@ import React from "react";
 import { IoAdd, IoClose, IoReader, IoText, IoTrash } from "react-icons/io5";
 
 const CreateOnboarding: React.FC<ModalInterface> = (props) => {
-  const [onboarding, setOnboarding] = React.useState<OnboardingInterface>({
+  const [onboarding, setOnboarding] = React.useState<
+    OnboardingInterface & OnboardingContentsInterface
+  >({
     title: "",
     description: "",
     required_documents: [""],
