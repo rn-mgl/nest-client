@@ -95,7 +95,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
             placeholder={`Description ${index + 1}`}
             onChange={(e) => handleDynamicFields(e, "description", index)}
             value={content.description}
-            rows={3}
+            rows={5}
             className="w-full p-2 px-4 pr-8 rounded-md border-2 outline-none focus:border-neutral-900 transition-all resize-none"
           />
 
@@ -104,7 +104,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
             placeholder={`Content ${index + 1}`}
             onChange={(e) => handleDynamicFields(e, "content", index)}
             value={content.content}
-            rows={3}
+            rows={5}
             className="w-full p-2 px-4 pr-8 rounded-md border-2 outline-none focus:border-neutral-900 transition-all resize-none"
           />
         </div>
@@ -137,7 +137,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
         </div>
         <form
           // onSubmit={(e) => submitCreatePerformanceReview(e)}
-          className="w-full h-full p-4 grid grid-cols-1 gap-4 l-s:grid-cols-2"
+          className="w-full h-full p-4 grid grid-cols-1 gap-4 t:grid-cols-2"
         >
           <div className="w-full h-full flex flex-col items-center justify-start gap-4">
             <Input
@@ -164,8 +164,8 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
           </div>
 
           <div className="w-full h-full flex flex-col items-center justify-start gap-4 l-s:flex-row l-s:items-start l-s:justify-center">
-            <div className="w-full flex flex-col items-center justify-start gap-1 max-h-52 l-s:min-h-96 l-l:max-h-64">
-              <div className="w-full flex flex-row items-center justify-between">
+            <div className="w-full flex flex-col items-center justify-start gap-1 max-h-60 t:min-h-[28rem] t:max-h-[28rem] l-l:min-h-[32rem] l-l:max-h-[32rem]">
+              <div className="w-full flex flex-row items-center justify-between pr-2">
                 <label className="text-xs">Contents</label>
 
                 <button
@@ -178,11 +178,15 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
                 </button>
               </div>
 
-              <div className="w-full flex flex-col items-center justify-start gap-8 overflow-y-auto">
+              <div className="w-full flex flex-col items-center justify-start gap-4 overflow-y-auto">
                 {mappedContents}
               </div>
             </div>
           </div>
+
+          <button className="col-span-2 w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2">
+            Create
+          </button>
         </form>
       </div>
     </div>

@@ -146,7 +146,7 @@ const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
           p-4 t:p-8 z-50 bg-gradient-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
-      <div className="w-full my-auto h-auto max-w-screen-t bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
+      <div className="w-full my-auto h-auto max-w-screen-l-s bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-blue rounded-t-lg font-bold text-accent-yellow">
           Create Performance Review
           <button
@@ -158,31 +158,33 @@ const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
         </div>
         <form
           onSubmit={(e) => submitCreatePerformanceReview(e)}
-          className="w-full h-full p-4 flex flex-col items-center justify-start gap-4"
+          className="w-full h-full p-4 grid grid-cols-1 t:grid-cols-2 gap-4"
         >
-          <Input
-            id="title"
-            placeholder="Title"
-            required={true}
-            type="text"
-            label={true}
-            icon={<IoText />}
-            value={performance.title}
-            onChange={handlePerformanceReview}
-          />
-          <TextArea
-            id="description"
-            onChange={handlePerformanceReview}
-            placeholder="Description"
-            required={true}
-            label={true}
-            value={performance.description}
-            icon={<IoReader />}
-            rows={5}
-          />
+          <div className="w-full flex flex-col items-center justify-start gap-4">
+            <Input
+              id="title"
+              placeholder="Title"
+              required={true}
+              type="text"
+              label={true}
+              icon={<IoText />}
+              value={performance.title}
+              onChange={handlePerformanceReview}
+            />
+            <TextArea
+              id="description"
+              onChange={handlePerformanceReview}
+              placeholder="Description"
+              required={true}
+              label={true}
+              value={performance.description}
+              icon={<IoReader />}
+              rows={5}
+            />
+          </div>
 
           <div className="w-full h-full flex flex-col items-center justify-start gap-4 l-s:flex-row l-s:items-start l-s:justify-center">
-            <div className="w-full flex flex-col items-center justify-start gap-2 max-h-52 l-l:max-h-64">
+            <div className="w-full flex flex-col items-center justify-start gap-2 max-h-52 t:min-h-[28rem] t:max-h-[28rem]">
               <div className="w-full flex flex-row items-center justify-between">
                 <label className="text-xs">Required Documents</label>
 
@@ -202,7 +204,7 @@ const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
             </div>
           </div>
 
-          <button className="w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2">
+          <button className="col-span-2 w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2">
             Create
           </button>
         </form>

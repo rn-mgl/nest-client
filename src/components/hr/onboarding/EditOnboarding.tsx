@@ -265,7 +265,7 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
     p-4 t:p-8 z-50 bg-gradient-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
-      <div className="w-full my-auto h-auto max-w-screen-t bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
+      <div className="w-full my-auto h-auto max-w-screen-l-s bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-yellow rounded-t-lg font-bold text-accent-blue">
           Edit Onboarding
           <button
@@ -277,32 +277,34 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
         </div>
         <form
           onSubmit={(e) => submitUpdateOnboarding(e)}
-          className="w-full h-full p-4 flex flex-col items-center justify-start gap-4"
+          className="w-full h-full p-4 grid grid-cols-1 t:grid-cols-2 gap-4"
         >
-          <Input
-            label={true}
-            id="title"
-            onChange={handleOnboarding}
-            placeholder="Title"
-            required={true}
-            type="text"
-            value={onboarding.title}
-            icon={<IoText />}
-          />
+          <div className="w-full flex flex-col items-center justify-start">
+            <Input
+              label={true}
+              id="title"
+              onChange={handleOnboarding}
+              placeholder="Title"
+              required={true}
+              type="text"
+              value={onboarding.title}
+              icon={<IoText />}
+            />
 
-          <TextArea
-            label={true}
-            id="description"
-            onChange={handleOnboarding}
-            placeholder="Description"
-            required={true}
-            value={onboarding.description}
-            rows={5}
-            icon={<IoReader />}
-          />
+            <TextArea
+              label={true}
+              id="description"
+              onChange={handleOnboarding}
+              placeholder="Description"
+              required={true}
+              value={onboarding.description}
+              rows={5}
+              icon={<IoReader />}
+            />
+          </div>
 
-          <div className="w-full flex flex-col items-center justify-start gap-4 l-s:flex-row l-s:items-start l-s:justify-center">
-            <div className="w-full flex flex-col items-center justify-start gap-2 max-h-40 l-l:max-h-64">
+          <div className="w-full flex flex-col items-center justify-start gap-4 l-s:items-start l-s:justify-center">
+            <div className="w-full flex flex-col items-center justify-start gap-2 max-h-40 t:min-h-56 t:max-h-56 l-l:min-h-60 l-l:max-h-60">
               <div className="w-full flex flex-row items-center justify-between">
                 <label className="text-xs">Required Documents</label>
 
@@ -321,7 +323,7 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
               </div>
             </div>
 
-            <div className="w-full flex flex-col items-center justify-start gap-2 max-h-40 l-l:max-h-64">
+            <div className="w-full flex flex-col items-center justify-start gap-2 max-h-40 t:min-h-56 t:max-h-56 l-l:min-h-60 l-l:max-h-60">
               <div className="w-full flex flex-row items-center justify-between">
                 <label className="text-xs">Policy Acknowledgements</label>
 
@@ -341,7 +343,7 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
             </div>
           </div>
 
-          <button className="w-full font-bold text-center rounded-md p-2 bg-accent-yellow text-accent-blue mt-2">
+          <button className="col-span-2 w-full font-bold text-center rounded-md p-2 bg-accent-yellow text-accent-blue mt-2">
             Update
           </button>
         </form>
