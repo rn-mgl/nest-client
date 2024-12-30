@@ -1,7 +1,6 @@
 "use client";
 
 import Logo from "@/src/components/global/Logo";
-import useGlobalContext from "@/src/utils/context";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { getCookie } from "cookies-next";
@@ -17,7 +16,7 @@ import { IoChevronForward } from "react-icons/io5";
 const Verify = () => {
   const [status, setStatus] = React.useState("processing");
   const params = useParams();
-  const candidateToken = params.token;
+  const candidateToken = params && params.token;
   const url = process.env.URL;
 
   const verifyAccount = React.useCallback(async () => {

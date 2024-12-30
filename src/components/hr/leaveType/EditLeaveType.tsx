@@ -6,7 +6,6 @@ import {
 import { IoClose, IoOptions, IoReader } from "react-icons/io5";
 import { LeaveTypeInterface } from "@/src/interface/LeaveInterface";
 import { getCSRFToken } from "@/src/utils/token";
-import useGlobalContext from "@/src/utils/context";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import { getCookie } from "cookies-next";

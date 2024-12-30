@@ -11,7 +11,6 @@ import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { PerformanceReviewInterface } from "@/src/interface/PerformanceReviewInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
-import useGlobalContext from "@/src/utils/context";
 import {
   HR_PERFORMANCE_CATEGORY,
   HR_PERFORMANCE_SEARCH,

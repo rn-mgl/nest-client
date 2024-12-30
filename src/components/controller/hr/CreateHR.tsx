@@ -6,7 +6,6 @@ import { ModalInterface } from "@/src/interface/ModalInterface";
 import Input from "@/components/form/Input";
 import useShowPassword from "@/src/hooks/useShowPassword";
 import { getCSRFToken } from "@/src/utils/token";
-import useGlobalContext from "@/src/utils/context";
 import axios from "axios";
 import { getCookie } from "cookies-next";
 import { useSession } from "next-auth/react";

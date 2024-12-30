@@ -2,7 +2,6 @@
 
 import sending from "@/public/global/sending.svg";
 import Logo from "@/src/components/global/Logo";
-import useGlobalContext from "@/src/utils/context";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { getCookie } from "cookies-next";
@@ -10,8 +9,8 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 
 const Message = () => {
-  const param = useSearchParams();
-  const type = param.get("type");
+  const params = useSearchParams();
+  const type = params && params.get("type");
   const url = process.env.URL;
 
   const message = {

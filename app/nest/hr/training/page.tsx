@@ -1,7 +1,6 @@
 "use client";
 
 import CreateTraining from "@/src/components/hr/training/CreateTraining";
-import useGlobalContext from "@/src/utils/context";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd } from "react-icons/io5";

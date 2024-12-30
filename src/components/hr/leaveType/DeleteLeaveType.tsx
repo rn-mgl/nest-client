@@ -4,7 +4,6 @@ import {
   DeleteModalInterface,
 } from "@/src/interface/ModalInterface";
 import { IoClose } from "react-icons/io5";
-import useGlobalContext from "@/src/utils/context";
 import { useSession } from "next-auth/react";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";

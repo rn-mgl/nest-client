@@ -10,7 +10,6 @@ import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { LeaveTypeInterface } from "@/src/interface/LeaveInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
-import useGlobalContext from "@/src/utils/context";
 import {
   HR_LEAVE_CATEGORY,
   HR_LEAVE_SEARCH,

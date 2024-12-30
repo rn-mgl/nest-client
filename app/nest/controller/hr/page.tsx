@@ -6,7 +6,6 @@ import useFilters from "@/src/hooks/useFilters";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { UserInterface } from "@/src/interface/UserInterface";
-import useGlobalContext from "@/src/utils/context";
 import {
   ADMIN_HR_CATEGORY,
   ADMIN_HR_SEARCH,
@@ -71,7 +70,7 @@ const AdminHR = () => {
 
   const getAllHRs = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken(url);
+      const { token } = await getCSRFToken();
 
       if (token && user?.token) {
         const {
@@ -98,7 +97,7 @@ const AdminHR = () => {
 
   const verifyHR = async (id: number) => {
     try {
-      const { token } = await getCSRFToken(url);
+      const { token } = await getCSRFToken();
 
       if (token) {
         const { data: verified } = await axios.patch(
@@ -124,7 +123,7 @@ const AdminHR = () => {
 
   const deactivateHR = async (id: number) => {
     try {
-      const { token } = await getCSRFToken(url);
+      const { token } = await getCSRFToken();
 
       if (token) {
         const { data: deactivated } = await axios.patch(

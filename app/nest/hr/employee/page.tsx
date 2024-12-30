@@ -6,7 +6,6 @@ import useFilters from "@/src/hooks/useFilters";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { UserInterface } from "@/src/interface/UserInterface";
-import useGlobalContext from "@/src/utils/context";
 import {
   HR_EMPLOYEE_CATEGORY,
   HR_EMPLOYEE_SEARCH,

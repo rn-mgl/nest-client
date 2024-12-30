@@ -5,7 +5,6 @@ import React from "react";
 import { IoClose, IoOptions, IoReader } from "react-icons/io5";
 import TextArea from "../../form/TextArea";
 import { getCSRFToken } from "@/src/utils/token";
-import useGlobalContext from "@/src/utils/context";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import { getCookie } from "cookies-next";

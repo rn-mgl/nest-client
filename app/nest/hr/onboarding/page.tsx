@@ -11,7 +11,6 @@ import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { OnboardingInterface } from "@/src/interface/OnboardingInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
-import useGlobalContext from "@/src/utils/context";
 import {
   HR_ONBOARDING_CATEGORY,
   HR_ONBOARDING_SEARCH,
