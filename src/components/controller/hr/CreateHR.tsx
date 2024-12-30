@@ -23,7 +23,7 @@ const CreateHR: React.FC<ModalInterface> = (props) => {
   const { data } = useSession({ required: true });
   const user = data?.user;
 
-  const { url } = useGlobalContext();
+  const url = process.env.URL;
 
   const handleCredentials = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -40,7 +40,7 @@ const CreateHR: React.FC<ModalInterface> = (props) => {
     e.preventDefault();
 
     try {
-      const { token } = await getCSRFToken(url);
+      const { token } = await getCSRFToken();
 
       if (token && user?.token) {
         const { data: createHR } = await axios.post(

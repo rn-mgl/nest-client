@@ -24,13 +24,13 @@ const ShowAttendance: React.FC<ShowModalInterface & AttendanceDate> = (
     Array<AttendanceInterface & UserInterface>
   >([]);
 
-  const { url } = useGlobalContext();
+  const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
 
   const getAttendanceDetails = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken(url);
+      const { token } = await getCSRFToken();
 
       if (token && user?.token) {
         const stringDate = `${props.year}-${props.month + 1}-${props.date}`;

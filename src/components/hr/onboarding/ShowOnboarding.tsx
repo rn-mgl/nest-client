@@ -23,13 +23,13 @@ const ShowOnboarding: React.FC<ShowModalInterface> = (props) => {
     policy_acknowledgements: [],
   });
 
-  const { url } = useGlobalContext();
+  const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
 
   const getOnboarding = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken(url);
+      const { token } = await getCSRFToken();
       if (token) {
         const { data } = await axios.get(`${url}/hr/onboarding/${props.id}`, {
           headers: {

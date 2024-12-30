@@ -15,7 +15,7 @@ import { IoClose } from "react-icons/io5";
 const DeleteOnboarding: React.FC<ModalInterface & DeleteModalInterface> = (
   props
 ) => {
-  const { url } = useGlobalContext();
+  const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
 
@@ -25,7 +25,7 @@ const DeleteOnboarding: React.FC<ModalInterface & DeleteModalInterface> = (
     e.preventDefault();
 
     try {
-      const { token } = await getCSRFToken(url);
+      const { token } = await getCSRFToken();
 
       if (token && user?.token) {
         const { data: deletedOnboarding } = await axios.delete(

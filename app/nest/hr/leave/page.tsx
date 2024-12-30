@@ -55,7 +55,7 @@ const HRLeave = () => {
     handleSelectCategory,
   } = useCategory("", "", "");
   const { data } = useSession({ required: true });
-  const { url } = useGlobalContext();
+  const url = process.env.URL;
   const user = data?.user;
 
   const handleActiveLeaveMenu = (id: number) => {
@@ -72,7 +72,7 @@ const HRLeave = () => {
 
   const getLeaves = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken(url);
+      const { token } = await getCSRFToken();
 
       if (token && user?.token) {
         const { data: allLeaves } = await axios.get(`${url}/hr/leave_type`, {

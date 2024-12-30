@@ -8,7 +8,7 @@ import { IoAdd } from "react-icons/io5";
 
 const HRTraining = () => {
   const [canCreateTraining, setCanCreateTraining] = React.useState(false);
-  const { url } = useGlobalContext();
+  const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
 

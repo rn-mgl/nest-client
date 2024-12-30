@@ -67,7 +67,7 @@ const PerformanceReview = () => {
     handleSelectCategory,
   } = useCategory("", "", "");
 
-  const { url } = useGlobalContext();
+  const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
 
@@ -93,7 +93,7 @@ const PerformanceReview = () => {
 
   const getPerformanceReviews = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken(url);
+      const { token } = await getCSRFToken();
 
       if (token && user?.token) {
         const { data: allPerformanceReviews } = await axios.get(

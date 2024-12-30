@@ -20,7 +20,7 @@ const EditLeaveType: React.FC<ModalInterface & UpdateModalInterface> = (
     type: "",
     description: "",
   });
-  const { url } = useGlobalContext();
+  const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
 
@@ -38,7 +38,7 @@ const EditLeaveType: React.FC<ModalInterface & UpdateModalInterface> = (
 
   const getLeave = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken(url);
+      const { token } = await getCSRFToken();
 
       if (token && user?.token) {
         const { data: leaveData } = await axios.get(
@@ -62,7 +62,7 @@ const EditLeaveType: React.FC<ModalInterface & UpdateModalInterface> = (
   const submitUpdateLeave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const { token } = await getCSRFToken(url);
+      const { token } = await getCSRFToken();
 
       if (token) {
         const { data: updatedLeave } = await axios.patch(

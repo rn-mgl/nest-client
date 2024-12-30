@@ -21,7 +21,7 @@ const AdminLogin = () => {
 
   const { showPassword, handleShowPassword } = useShowPassword();
 
-  const { url } = useGlobalContext();
+  const url = process.env.URL;
 
   const router = useRouter();
 
@@ -40,7 +40,7 @@ const AdminLogin = () => {
     e.preventDefault();
 
     try {
-      const { token } = await getCSRFToken(url);
+      const { token } = await getCSRFToken();
 
       if (token) {
         const { data: login } = await axios.post(

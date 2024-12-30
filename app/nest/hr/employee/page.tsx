@@ -44,7 +44,7 @@ const HREmployee = () => {
     handleSelectCategory,
   } = useCategory("verified", "all", "All");
 
-  const { url } = useGlobalContext();
+  const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
 
@@ -58,7 +58,7 @@ const HREmployee = () => {
 
   const getAllEmployees = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken(url);
+      const { token } = await getCSRFToken();
 
       if (token && user?.token) {
         const { data } = await axios.get(`${url}/hr/employee`, {

@@ -22,13 +22,13 @@ const ShowPerformanceReview: React.FC<ShowModalInterface> = (props) => {
     contents: [],
   });
 
-  const { url } = useGlobalContext();
+  const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
 
   const getPerformanceReview = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken(url);
+      const { token } = await getCSRFToken();
 
       if (token && user?.token) {
         const { data: performanceDetails } = await axios.get(

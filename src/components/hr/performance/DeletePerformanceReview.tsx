@@ -13,7 +13,7 @@ import { IoClose } from "react-icons/io5";
 const DeletePerformanceReview: React.FC<
   DeleteModalInterface & ModalInterface
 > = (props) => {
-  const { url } = useGlobalContext();
+  const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
 
@@ -23,7 +23,7 @@ const DeletePerformanceReview: React.FC<
     e.preventDefault();
 
     try {
-      const { token } = await getCSRFToken(url);
+      const { token } = await getCSRFToken();
 
       if (token && user?.token) {
         const { data: deletedPerformanceReview } = await axios.delete(

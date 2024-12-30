@@ -12,7 +12,7 @@ import { useSearchParams } from "next/navigation";
 const Message = () => {
   const param = useSearchParams();
   const type = param.get("type");
-  const { url } = useGlobalContext();
+  const url = process.env.URL;
 
   const message = {
     verification: {
@@ -27,7 +27,7 @@ const Message = () => {
 
   const resendVerificationMail = async () => {
     try {
-      const { token } = await getCSRFToken(url);
+      const { token } = await getCSRFToken();
 
       if (token) {
         const { data } = await axios.post(

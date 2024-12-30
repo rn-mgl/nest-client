@@ -18,11 +18,11 @@ const Verify = () => {
   const [status, setStatus] = React.useState("processing");
   const params = useParams();
   const candidateToken = params.token;
-  const { url } = useGlobalContext();
+  const url = process.env.URL;
 
   const verifyAccount = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken(url);
+      const { token } = await getCSRFToken();
 
       if (token) {
         const { data: verify } = await axios.patch(

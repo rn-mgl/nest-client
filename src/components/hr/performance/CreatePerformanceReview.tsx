@@ -22,7 +22,7 @@ const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
     surveys: [""],
   });
 
-  const { url } = useGlobalContext();
+  const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
 
@@ -88,7 +88,7 @@ const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
     e.preventDefault();
 
     try {
-      const { token } = await getCSRFToken(url);
+      const { token } = await getCSRFToken();
 
       if (token && user?.token) {
         const { data: createdPerformanceReview } = await axios.post(

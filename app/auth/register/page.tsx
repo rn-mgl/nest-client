@@ -22,7 +22,7 @@ const Register = () => {
   });
   const { showPassword, handleShowPassword } = useShowPassword();
 
-  const { url } = useGlobalContext();
+  const url = process.env.URL;
   const route = useRouter();
 
   const handleRegisterData = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,7 +40,7 @@ const Register = () => {
     e.preventDefault();
 
     try {
-      const { token } = await getCSRFToken(url);
+      const { token } = await getCSRFToken();
 
       if (token) {
         const { data: register } = await axios.post(

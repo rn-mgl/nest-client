@@ -30,7 +30,7 @@ const EditPerformanceReview: React.FC<ModalInterface & UpdateModalInterface> = (
   });
   const [surveyToDelete, setSurveyToDelete] = React.useState<Array<number>>([]);
 
-  const { url } = useGlobalContext();
+  const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
 
@@ -102,7 +102,7 @@ const EditPerformanceReview: React.FC<ModalInterface & UpdateModalInterface> = (
 
   const getPerformanceReview = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken(url);
+      const { token } = await getCSRFToken();
 
       if (token && user?.token) {
         const { data: performanceDetails } = await axios.get(
@@ -160,7 +160,7 @@ const EditPerformanceReview: React.FC<ModalInterface & UpdateModalInterface> = (
     e.preventDefault();
 
     try {
-      const { token } = await getCSRFToken(url);
+      const { token } = await getCSRFToken();
 
       if (token && user?.token) {
         const { data: updatedPerformanceReview } = await axios.patch(

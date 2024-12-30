@@ -55,7 +55,7 @@ const AdminHR = () => {
 
   const { data } = useSession({ required: true });
   const user = data?.user;
-  const { url } = useGlobalContext();
+  const url = process.env.URL;
 
   const handleCanCreateHR = () => {
     setCanCreateHR((prev) => !prev);
@@ -151,7 +151,7 @@ const AdminHR = () => {
   const mappedHRs = hrs?.map((hr) => {
     return (
       <div
-        key={hr.id}
+        key={hr.user_id}
         className="w-full p-4 rounded-md bg-neutral-100 flex flex-row items-start justify-start gap-4 relative"
       >
         <div className="w-12 h-12 min-w-12 min-h-12 bg-gradient-to-b from-accent-yellow to-accent-blue rounded-full"></div>
@@ -173,17 +173,19 @@ const AdminHR = () => {
           </p>
         </div>
         <button
-          onClick={() => handleActiveHRMenu(hr.id)}
+          onClick={() => handleActiveHRMenu(hr.user_id)}
           className="p-2 text-xs hover:bg-neutral-200 rounded-full transition-all"
         >
           <IoEllipsisVertical
             className={`${
-              activeHRMenu === hr.id ? "text-accent-blue" : "text-neutral-900"
+              activeHRMenu === hr.user_id
+                ? "text-accent-blue"
+                : "text-neutral-900"
             }`}
           />
         </button>
 
-        {activeHRMenu === hr.id ? (
+        {activeHRMenu === hr.user_id ? (
           <div className="w-32 p-2 rounded-md top-12 right-6 shadow-md bg-neutral-200 absolute animate-fade z-20">
             <button
               onClick={() => sendMail(hr.email)}
@@ -194,7 +196,7 @@ const AdminHR = () => {
             </button>
             {hr.email_verified_at ? (
               <button
-                onClick={() => deactivateHR(hr.id)}
+                onClick={() => deactivateHR(hr.user_id)}
                 className="w-full p-1 rounded-sm text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
               >
                 <IoBan className="text-red-600" />
@@ -202,7 +204,7 @@ const AdminHR = () => {
               </button>
             ) : (
               <button
-                onClick={() => verifyHR(hr.id)}
+                onClick={() => verifyHR(hr.user_id)}
                 className="w-full p-1 rounded-sm text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
               >
                 <IoShieldCheckmarkSharp className="text-green-600" />

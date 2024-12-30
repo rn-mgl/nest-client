@@ -38,13 +38,13 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
     []
   );
 
-  const { url } = useGlobalContext();
+  const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
 
   const getOnboarding = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken(url);
+      const { token } = await getCSRFToken();
 
       if (token && user?.token) {
         const { data } = await axios.get(`${url}/hr/onboarding/${props.id}`, {
@@ -168,7 +168,7 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
     e.preventDefault();
 
     try {
-      const { token } = await getCSRFToken(url);
+      const { token } = await getCSRFToken();
 
       if (token && user?.token) {
         const { data: updatedOnboarding } = await axios.patch(

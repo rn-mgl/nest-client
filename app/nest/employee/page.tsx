@@ -9,11 +9,11 @@ import React from "react";
 const Employee = () => {
   const [test, setTest] = React.useState({});
 
-  const { url } = useGlobalContext();
+  const url = process.env.URL;
 
   const getTest = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken(url);
+      const { token } = await getCSRFToken();
 
       if (token) {
         const { data } = await axios.get(`${url}/employee/dashboard`, {

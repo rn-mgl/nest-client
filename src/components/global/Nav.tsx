@@ -17,13 +17,13 @@ const Nav: React.FC<SideNavInterface & { children: React.ReactNode }> = (
 ) => {
   const [sideNavVisible, setSideNavVisible] = React.useState(false);
   const path = usePathname();
-  const { url } = useGlobalContext();
+  const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
 
   const submitLogOut = async () => {
     try {
-      const { token } = await getCSRFToken(url);
+      const { token } = await getCSRFToken();
 
       if (token) {
         const { data: loggedOut } = await axios.post(

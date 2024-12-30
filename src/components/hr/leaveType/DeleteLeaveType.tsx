@@ -13,7 +13,7 @@ import { getCookie } from "cookies-next";
 const DeleteLeaveType: React.FC<ModalInterface & DeleteModalInterface> = (
   props
 ) => {
-  const { url } = useGlobalContext();
+  const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
 
@@ -21,7 +21,7 @@ const DeleteLeaveType: React.FC<ModalInterface & DeleteModalInterface> = (
     e.preventDefault();
 
     try {
-      const { token } = await getCSRFToken(url);
+      const { token } = await getCSRFToken();
 
       if (token && user?.token) {
         const { data: deletedLeave } = await axios.delete(

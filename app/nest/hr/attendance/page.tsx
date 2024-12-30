@@ -31,7 +31,7 @@ const HRAttendance = () => {
   const [activeSelect, setActiveSelect] = React.useState(false);
   const [activeSeeMore, setActiveSeeMore] = React.useState(0);
 
-  const { url } = useGlobalContext();
+  const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
 
@@ -82,7 +82,7 @@ const HRAttendance = () => {
 
   const getAttendanceStatistics = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken(url);
+      const { token } = await getCSRFToken();
 
       if (token && user?.token) {
         const { data: statistics } = await axios.get(`${url}/hr/attendance`, {
