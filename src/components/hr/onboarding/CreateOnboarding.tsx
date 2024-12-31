@@ -257,7 +257,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
             </div>
           </div>
 
-          <button className="col-span-2 w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2">
+          <button className="t:col-span-2 w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2">
             Create
           </button>
         </form>

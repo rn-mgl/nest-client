@@ -343,7 +343,7 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
             </div>
           </div>
 
-          <button className="col-span-2 w-full font-bold text-center rounded-md p-2 bg-accent-yellow text-accent-blue mt-2">
+          <button className="t:col-span-2 w-full font-bold text-center rounded-md p-2 bg-accent-yellow text-accent-blue mt-2">
             Update
           </button>
         </form>

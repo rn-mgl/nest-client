@@ -6,7 +6,16 @@ import {
   TrainingInterface,
 } from "@/src/interface/TrainingInterface";
 import React from "react";
-import { IoAdd, IoClose, IoReader, IoText, IoTrash } from "react-icons/io5";
+import {
+  IoAdd,
+  IoClose,
+  IoFolder,
+  IoImage,
+  IoReader,
+  IoText,
+  IoTrash,
+  IoVideocam,
+} from "react-icons/io5";
 
 const CreateTraining: React.FC<ModalInterface> = (props) => {
   const [training, setTraining] = React.useState<
@@ -16,6 +25,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
     description: "",
     contents: [{ title: "", description: "", content: "", type: "text" }],
   });
+  const [canAddContent, setCanAddContent] = React.useState(false);
 
   const addDynamicFields = (name: string, type: string) => {
     setTraining((prev) => {
@@ -74,13 +84,68 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
     });
   };
 
+  const handleCanAddContent = () => {
+    setCanAddContent((prev) => !prev);
+  };
+
   const mappedContents = training.contents.map((content, index) => {
+    const dynamicContent =
+      content.type === "text" ? (
+        <textarea
+          name="contents"
+          placeholder={`Content ${index + 1}`}
+          onChange={(e) => handleDynamicFields(e, "content", index)}
+          value={content.content}
+          rows={5}
+          className="w-full p-2 px-4 pr-8 rounded-md border-2 outline-none focus:border-neutral-900 transition-all resize-none"
+        />
+      ) : content.type === "image" ? (
+        <label className="cursor-pointer">
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            id={`content_${index}`}
+          />
+
+          <span>
+            <IoImage />
+          </span>
+        </label>
+      ) : content.type === "video" ? (
+        <label className="cursor-pointer">
+          <input
+            type="file"
+            accept="video/*"
+            className="hidden"
+            id={`content_${index}`}
+          />
+
+          <span>
+            <IoVideocam />
+          </span>
+        </label>
+      ) : content.type === "file" ? (
+        <label className="cursor-pointer">
+          <input
+            type="file"
+            accept=".pdf"
+            className="hidden peer-checked"
+            id={`content_${index}`}
+          />
+
+          <span>
+            <IoFolder />
+          </span>
+        </label>
+      ) : null;
+
     return (
       <div
         key={index}
         className="w-full flex flex-row gap-2 items-start justify-center"
       >
-        <div className="w-full flex flex-col gap-2 items-center justify-center">
+        <div className="w-full flex flex-col gap-2 items-start justify-center">
           <input
             type="text"
             name="contents"
@@ -99,14 +164,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
             className="w-full p-2 px-4 pr-8 rounded-md border-2 outline-none focus:border-neutral-900 transition-all resize-none"
           />
 
-          <textarea
-            name="contents"
-            placeholder={`Content ${index + 1}`}
-            onChange={(e) => handleDynamicFields(e, "content", index)}
-            value={content.content}
-            rows={5}
-            className="w-full p-2 px-4 pr-8 rounded-md border-2 outline-none focus:border-neutral-900 transition-all resize-none"
-          />
+          {dynamicContent}
         </div>
 
         <button
@@ -164,18 +222,60 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
           </div>
 
           <div className="w-full h-full flex flex-col items-center justify-start gap-4 l-s:flex-row l-s:items-start l-s:justify-center">
-            <div className="w-full flex flex-col items-center justify-start gap-1 max-h-60 t:min-h-[28rem] t:max-h-[28rem] l-l:min-h-[32rem] l-l:max-h-[32rem]">
-              <div className="w-full flex flex-row items-center justify-between pr-2">
-                <label className="text-xs">Contents</label>
+            <div className="w-full flex flex-col items-center justify-start max-h-60 t:min-h-[28rem] t:max-h-[28rem] l-l:min-h-[32rem] l-l:max-h-[32rem]">
+              <div className="w-full flex flex-col items-center justify-between">
+                <div className="w-full flex flex-row items-center justify-between pr-1.5 t:pr-0.5">
+                  <label className="text-xs">Contents</label>
 
-                <button
-                  type="button"
-                  title="Add Required Documents Field"
-                  className="p-3 rounded-md bg-neutral-100"
-                  onClick={() => addDynamicFields("contents", "text")}
-                >
-                  <IoAdd />
-                </button>
+                  <button
+                    type="button"
+                    title="Add Required Documents Field"
+                    className="p-3 rounded-md bg-neutral-100"
+                    onClick={handleCanAddContent}
+                  >
+                    <IoAdd />
+                  </button>
+                </div>
+
+                {canAddContent ? (
+                  <div className="w-full flex flex-row items-center justify-start gap-4 animate-fade mb-2.5">
+                    <button
+                      type="button"
+                      title="Add Required Documents Field"
+                      className="p-2 rounded-md bg-neutral-100"
+                      onClick={() => addDynamicFields("contents", "text")}
+                    >
+                      <IoText className="text-sm" />
+                    </button>
+
+                    <button
+                      type="button"
+                      title="Add Required Documents Field"
+                      className="p-2 rounded-md bg-neutral-100"
+                      onClick={() => addDynamicFields("contents", "image")}
+                    >
+                      <IoImage className="text-sm" />
+                    </button>
+
+                    <button
+                      type="button"
+                      title="Add Required Documents Field"
+                      className="p-2 rounded-md bg-neutral-100"
+                      onClick={() => addDynamicFields("contents", "video")}
+                    >
+                      <IoVideocam className="text-sm" />
+                    </button>
+
+                    <button
+                      type="button"
+                      title="Add Required Documents Field"
+                      className="p-2 rounded-md bg-neutral-100"
+                      onClick={() => addDynamicFields("contents", "file")}
+                    >
+                      <IoFolder className="text-sm" />
+                    </button>
+                  </div>
+                ) : null}
               </div>
 
               <div className="w-full flex flex-col items-center justify-start gap-4 overflow-y-auto">
@@ -184,7 +284,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
             </div>
           </div>
 
-          <button className="col-span-2 w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2">
+          <button className="t:col-span-2 w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2">
             Create
           </button>
         </form>
