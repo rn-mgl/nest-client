@@ -26,6 +26,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
     contents: [{ title: "", description: "", content: "", type: "text" }],
   });
   const [canAddContent, setCanAddContent] = React.useState(false);
+  const inputRefs = React.useRef<Array<HTMLInputElement | null>>([]);
 
   const addDynamicFields = (name: string, type: string) => {
     setTraining((prev) => {
@@ -106,6 +107,9 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
             accept="image/*"
             className="hidden"
             id={`content_${index}`}
+            ref={(el) => {
+              inputRefs.current[index] = el;
+            }}
           />
 
           <span>
@@ -119,6 +123,9 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
             accept="video/*"
             className="hidden"
             id={`content_${index}`}
+            ref={(el) => {
+              inputRefs.current[index] = el;
+            }}
           />
 
           <span>
@@ -132,6 +139,9 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
             accept=".pdf"
             className="hidden peer-checked"
             id={`content_${index}`}
+            ref={(el) => {
+              inputRefs.current[index] = el;
+            }}
           />
 
           <span>
@@ -177,6 +187,12 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
       </div>
     );
   });
+
+  React.useEffect(() => {
+    inputRefs.current = training.contents.map((_, i) => {
+      return inputRefs.current[i] || null;
+    });
+  }, [training.contents]);
 
   return (
     <div
