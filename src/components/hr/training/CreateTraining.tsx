@@ -5,11 +5,11 @@ import {
   TrainingContentsInterface,
   TrainingInterface,
 } from "@/src/interface/TrainingInterface";
+import Image from "next/image";
 import React from "react";
+import { AiFillFilePdf } from "react-icons/ai";
 import {
-  IoAdd,
   IoClose,
-  IoFolder,
   IoImage,
   IoReader,
   IoText,
@@ -25,7 +25,10 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
     description: "",
     contents: [{ title: "", description: "", content: "", type: "text" }],
   });
-  const [canAddContent, setCanAddContent] = React.useState(false);
+  const [contentFiles, setContentFiles] = React.useState<
+    Array<{ rawFile: File; fileURL: string } | null>
+  >([null]);
+
   const inputRefs = React.useRef<Array<HTMLInputElement | null>>([]);
 
   const addDynamicFields = (name: string, type: string) => {
@@ -51,6 +54,14 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
         ...prev,
         [name]: [...updatedField],
       };
+    });
+
+    // also splice the content files in the specified index
+    setContentFiles(() => {
+      const updatedContentFiles = [...contentFiles];
+      updatedContentFiles.splice(index, 1);
+
+      return [...updatedContentFiles];
     });
   };
 
@@ -85,11 +96,43 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
     });
   };
 
-  const handleCanAddContent = () => {
-    setCanAddContent((prev) => !prev);
+  const handleContentFiles = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    const { files } = e.target;
+
+    if (!files || !files.length) {
+      return;
+    }
+
+    const file = files[0];
+
+    const url = URL.createObjectURL(file);
+    const updatedContentFields = [...contentFiles];
+    updatedContentFields[index] = { rawFile: file, fileURL: url };
+
+    setContentFiles(updatedContentFields);
+  };
+
+  const removeSelectedFile = (index: number) => {
+    setContentFiles(() => {
+      const updatedContentFiles = [...contentFiles];
+      updatedContentFiles[index] = null;
+
+      return [...updatedContentFiles];
+    });
+
+    if (inputRefs.current[index]) {
+      inputRefs.current[index].files = null;
+      inputRefs.current[index].value = "";
+    }
   };
 
   const mappedContents = training.contents.map((content, index) => {
+    const contentFile = contentFiles[index];
+    const fileURL = contentFile?.fileURL;
+
     const dynamicContent =
       content.type === "text" ? (
         <textarea
@@ -101,53 +144,112 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
           className="w-full p-2 px-4 pr-8 rounded-md border-2 outline-none focus:border-neutral-900 transition-all resize-none"
         />
       ) : content.type === "image" ? (
-        <label className="cursor-pointer">
-          <input
-            type="file"
-            accept="image/*"
-            className="hidden"
-            id={`content_${index}`}
-            ref={(el) => {
-              inputRefs.current[index] = el;
-            }}
-          />
+        <div className="w-full flex flex-col items-start justify-center gap-2">
+          {fileURL && (
+            <div className="relative flex flex-col items-center justify-center">
+              <Image
+                src={fileURL}
+                alt="file"
+                width={100}
+                height={100}
+                className="rounded-md w-full"
+              />
 
-          <span>
-            <IoImage />
-          </span>
-        </label>
+              <button
+                type="button"
+                onClick={() => removeSelectedFile(index)}
+                className="p-1 rounded-full bg-red-500 shadow-md absolute -top-1 -right-1"
+              >
+                <IoClose className="text-xs" />
+              </button>
+            </div>
+          )}
+
+          <div className="w-full flex flex-row items-center justify-between">
+            <label className="cursor-pointer">
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                id={`content_${index}`}
+                onChange={(e) => handleContentFiles(e, index)}
+                ref={(el) => {
+                  inputRefs.current[index] = el;
+                }}
+              />
+
+              <span>
+                <IoImage className="text-accent-blue" />
+              </span>
+            </label>
+          </div>
+        </div>
       ) : content.type === "video" ? (
-        <label className="cursor-pointer">
-          <input
-            type="file"
-            accept="video/*"
-            className="hidden"
-            id={`content_${index}`}
-            ref={(el) => {
-              inputRefs.current[index] = el;
-            }}
-          />
+        <div className="w-full flex flex-col items-start justify-center gap-2">
+          {fileURL && (
+            <div className="relative flex flex-col items-center justify-center">
+              <video src={fileURL} controls className="rounded-md w-full" />
 
-          <span>
-            <IoVideocam />
-          </span>
-        </label>
+              <button
+                type="button"
+                onClick={() => removeSelectedFile(index)}
+                className="p-1 rounded-full bg-red-500 shadow-md absolute -top-1 -right-1"
+              >
+                <IoClose className="text-xs" />
+              </button>
+            </div>
+          )}
+
+          <label className="cursor-pointer">
+            <input
+              type="file"
+              accept="video/*"
+              className="hidden"
+              id={`content_${index}`}
+              onChange={(e) => handleContentFiles(e, index)}
+              ref={(el) => {
+                inputRefs.current[index] = el;
+              }}
+            />
+
+            <span>
+              <IoVideocam className="text-accent-blue" />
+            </span>
+          </label>
+        </div>
       ) : content.type === "file" ? (
-        <label className="cursor-pointer">
-          <input
-            type="file"
-            accept=".pdf"
-            className="hidden peer-checked"
-            id={`content_${index}`}
-            ref={(el) => {
-              inputRefs.current[index] = el;
-            }}
-          />
+        <div className="w-full flex flex-col items-start justify-center gap-2">
+          {fileURL && (
+            <div className="relative flex flex-col items-center justify-center">
+              <embed src={fileURL} className="rounded-md w-fit h-fit"></embed>
 
-          <span>
-            <IoFolder />
-          </span>
-        </label>
+              <button
+                type="button"
+                onClick={() => removeSelectedFile(index)}
+                className="p-1 rounded-full bg-red-500 shadow-md absolute -top-1 -right-1"
+              >
+                <IoClose className="text-xs" />
+              </button>
+            </div>
+          )}
+
+          <label className="cursor-pointer">
+            <input
+              type="file"
+              accept=".pdf"
+              className="hidden peer-checked"
+              id={`content_${index}`}
+              onChange={(e) => handleContentFiles(e, index)}
+              ref={(el) => {
+                inputRefs.current[index] = el;
+              }}
+            />
+
+            <span>
+              <AiFillFilePdf className="text-accent-blue" />
+            </span>
+          </label>
+        </div>
       ) : null;
 
     return (
@@ -239,59 +341,46 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
 
           <div className="w-full h-full flex flex-col items-center justify-start gap-4 l-s:flex-row l-s:items-start l-s:justify-center">
             <div className="w-full flex flex-col items-center justify-start max-h-60 t:min-h-[28rem] t:max-h-[28rem] l-l:min-h-[32rem] l-l:max-h-[32rem]">
-              <div className="w-full flex flex-col items-center justify-between">
-                <div className="w-full flex flex-row items-center justify-between pr-1.5 t:pr-0.5">
-                  <label className="text-xs">Contents</label>
+              <div className="w-full flex flex-row items-center justify-between ">
+                <label className="text-xs">Contents</label>
+
+                <div className="flex flex-row items-center justify-start gap-4">
+                  <button
+                    type="button"
+                    title="Add Required Documents Field"
+                    className="p-3 rounded-md bg-neutral-100"
+                    onClick={() => addDynamicFields("contents", "text")}
+                  >
+                    <IoText className="text-sm" />
+                  </button>
 
                   <button
                     type="button"
                     title="Add Required Documents Field"
                     className="p-3 rounded-md bg-neutral-100"
-                    onClick={handleCanAddContent}
+                    onClick={() => addDynamicFields("contents", "image")}
                   >
-                    <IoAdd />
+                    <IoImage className="text-sm" />
+                  </button>
+
+                  <button
+                    type="button"
+                    title="Add Required Documents Field"
+                    className="p-3 rounded-md bg-neutral-100"
+                    onClick={() => addDynamicFields("contents", "video")}
+                  >
+                    <IoVideocam className="text-sm" />
+                  </button>
+
+                  <button
+                    type="button"
+                    title="Add Required Documents Field"
+                    className="p-3 rounded-md bg-neutral-100"
+                    onClick={() => addDynamicFields("contents", "file")}
+                  >
+                    <AiFillFilePdf className="text-sm" />
                   </button>
                 </div>
-
-                {canAddContent ? (
-                  <div className="w-full flex flex-row items-center justify-start gap-4 animate-fade mb-2.5">
-                    <button
-                      type="button"
-                      title="Add Required Documents Field"
-                      className="p-2 rounded-md bg-neutral-100"
-                      onClick={() => addDynamicFields("contents", "text")}
-                    >
-                      <IoText className="text-sm" />
-                    </button>
-
-                    <button
-                      type="button"
-                      title="Add Required Documents Field"
-                      className="p-2 rounded-md bg-neutral-100"
-                      onClick={() => addDynamicFields("contents", "image")}
-                    >
-                      <IoImage className="text-sm" />
-                    </button>
-
-                    <button
-                      type="button"
-                      title="Add Required Documents Field"
-                      className="p-2 rounded-md bg-neutral-100"
-                      onClick={() => addDynamicFields("contents", "video")}
-                    >
-                      <IoVideocam className="text-sm" />
-                    </button>
-
-                    <button
-                      type="button"
-                      title="Add Required Documents Field"
-                      className="p-2 rounded-md bg-neutral-100"
-                      onClick={() => addDynamicFields("contents", "file")}
-                    >
-                      <IoFolder className="text-sm" />
-                    </button>
-                  </div>
-                ) : null}
               </div>
 
               <div className="w-full flex flex-col items-center justify-start gap-4 overflow-y-auto">
