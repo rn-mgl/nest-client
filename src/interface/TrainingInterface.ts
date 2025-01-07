@@ -1,6 +1,8 @@
 export interface TrainingInterface {
   title: string;
+  deadlineDays: number;
   description: string;
+  certificate: { rawFile: File; fileURL: string } | null;
 }
 
 export interface TrainingContentsInterface {

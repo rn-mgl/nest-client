@@ -13,6 +13,7 @@ import Image from "next/image";
 import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
 import {
+  IoCalendar,
   IoClose,
   IoImage,
   IoReader,
@@ -27,10 +28,16 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
   >({
     title: "",
     description: "",
+    deadlineDays: 30,
     contents: [{ title: "", description: "", content: "", type: "text" }],
+    certificate: null,
   });
+  const [activeFormPage, setActiveFormPage] = React.useState<
+    "information" | "contents"
+  >("information");
 
   const inputRefs = React.useRef<Array<HTMLInputElement | null>>([]);
+  const certificateRef = React.useRef<HTMLInputElement | null>(null);
 
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -66,12 +73,32 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setTraining((prev) => {
-      return {
-        ...prev,
-        [name]: value,
-      };
-    });
+
+    if (name === "certificate") {
+      const { files } = e.target as HTMLInputElement;
+
+      if (!files || !files.length) {
+        return;
+      }
+
+      const file = files[0];
+      const url = URL.createObjectURL(file);
+      const certificateValue = { rawFile: file, fileURL: url };
+
+      setTraining((prev) => {
+        return {
+          ...prev,
+          [name]: certificateValue,
+        };
+      });
+    } else {
+      setTraining((prev) => {
+        return {
+          ...prev,
+          [name]: value,
+        };
+      });
+    }
   };
 
   const handleDynamicFields = (
@@ -112,6 +139,20 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
     setTraining(updatedTraining);
   };
 
+  const removeSelectedCertificate = () => {
+    setTraining(() => {
+      const updatedTraining = { ...training };
+      updatedTraining.certificate = null;
+
+      return { ...updatedTraining };
+    });
+
+    if (certificateRef.current) {
+      certificateRef.current.files = null;
+      certificateRef.current.value = "";
+    }
+  };
+
   const removeSelectedFile = (index: number) => {
     setTraining(() => {
       const updatedTraining = { ...training };
@@ -126,12 +167,18 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
     }
   };
 
+  const handleActiveFormPage = (formPage: "information" | "contents") => {
+    setActiveFormPage(formPage);
+  };
+
   const submitCreateTraining = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const formData = new FormData();
     formData.append("title", training.title);
     formData.append("description", training.description);
+    formData.append("deadline_days", training.deadlineDays.toString());
+    formData.append("certificate", training.certificate?.rawFile || "");
     training.contents.forEach((content, index) => {
       // ensure training content is using string value for content kvp
       const trainingContent = {
@@ -154,16 +201,20 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
-        const { data } = await axios.post(`${url}/hr/training`, formData, {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-            "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-            "Content-Type": "multipart/form-data",
-          },
-          withCredentials: true,
-        });
+        const { data: createdTraining } = await axios.post(
+          `${url}/hr/training`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+              "Content-Type": "multipart/form-data",
+            },
+            withCredentials: true,
+          }
+        );
 
-        if (data) {
+        if (createdTraining.success) {
           if (props.refetchIndex) {
             props.refetchIndex();
           }
@@ -348,7 +399,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
             p-4 t:p-8 z-50 bg-gradient-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
-      <div className="w-full my-auto h-auto max-w-screen-l-s bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
+      <div className="w-full my-auto h-full max-w-screen-l-s bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start overflow-hidden">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-blue rounded-t-lg font-bold text-accent-yellow">
           Create Training
           <button
@@ -358,44 +409,119 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
             <IoClose />
           </button>
         </div>
+
         <form
           onSubmit={(e) => submitCreateTraining(e)}
-          className="w-full h-full p-4 grid grid-cols-1 gap-4 t:grid-cols-2"
+          className="w-full h-full p-4 flex flex-col gap-4 overflow-hidden items-start justify-start"
         >
-          <div className="w-full h-full flex flex-col items-center justify-start gap-4">
-            <Input
-              id="title"
-              placeholder="Title"
-              required={true}
-              type="text"
-              label={true}
-              icon={<IoText />}
-              value={training.title}
-              onChange={handleTraining}
-            />
+          <div className="w-full flex flex-row items-center justify-between gap-4 border-b-2">
+            <button
+              className={`w-full p-2 rounded-t-md text-sm hover:bg-neutral-200 transition-all ${
+                activeFormPage === "information"
+                  ? "border-2 border-accent-blue text-accent-blue font-bold shadow-md"
+                  : null
+              }`}
+              onClick={() => handleActiveFormPage("information")}
+              type="button"
+            >
+              Information
+            </button>
 
-            <TextArea
-              id="description"
-              placeholder="Description"
-              value={training.description}
-              onChange={handleTraining}
-              icon={<IoReader />}
-              label={true}
-              required={true}
-              rows={5}
-            />
+            <button
+              className={`w-full p-2 rounded-t-md text-sm hover:bg-neutral-200 transition-all ${
+                activeFormPage === "contents"
+                  ? "border-2 border-accent-blue text-accent-blue font-bold shadow-md"
+                  : null
+              }`}
+              onClick={() => handleActiveFormPage("contents")}
+              type="button"
+            >
+              Contents
+            </button>
           </div>
 
-          <div className="w-full h-full flex flex-col items-center justify-start gap-4 l-s:flex-row l-s:items-start l-s:justify-center">
-            <div className="w-full flex flex-col items-center justify-start max-h-60 t:min-h-[28rem] t:max-h-[28rem] l-l:min-h-[32rem] l-l:max-h-[32rem]">
-              <div className="w-full flex flex-row items-center justify-between ">
-                <label className="text-xs">Contents</label>
+          {activeFormPage === "information" ? (
+            <div className="w-full h-full flex flex-col items-center justify-start gap-4 overflow-y-auto p-2">
+              <Input
+                id="title"
+                placeholder="Title"
+                required={true}
+                type="text"
+                label={true}
+                icon={<IoText />}
+                value={training.title}
+                onChange={handleTraining}
+              />
 
-                <div className="flex flex-row items-center justify-start gap-4">
+              <Input
+                id="deadline"
+                placeholder="Deadline Days"
+                required={true}
+                type="number"
+                label={true}
+                icon={<IoCalendar />}
+                value={training.deadlineDays}
+                onChange={handleTraining}
+              />
+
+              <TextArea
+                id="description"
+                placeholder="Description"
+                value={training.description}
+                onChange={handleTraining}
+                icon={<IoReader />}
+                label={true}
+                required={true}
+                rows={5}
+              />
+
+              <div className="w-full h-full flex flex-col items-start justify-center gap-1">
+                <label className="text-xs">Certificate</label>
+                <div
+                  style={{
+                    backgroundImage: training.certificate?.fileURL
+                      ? `url(${training.certificate?.fileURL})`
+                      : "",
+                  }}
+                  className="w-full h-full p-2 rounded-md border-2 aspect-video bg-white flex flex-col items-center justify-center bg-center bg-cover relative"
+                >
+                  {training.certificate?.rawFile ? (
+                    <button
+                      type="button"
+                      onClick={removeSelectedCertificate}
+                      className="absolute -top-1 -right-1 bg-red-500 p-1 rounded-full"
+                    >
+                      <IoClose className="text-sm" />
+                    </button>
+                  ) : (
+                    <IoImage className="text-accent-purple text-2xl opacity-50" />
+                  )}
+                </div>
+
+                <div className="w-full flex flex-row items-center justify-between">
+                  <label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      name="certificate"
+                      className="hidden"
+                      ref={certificateRef}
+                      onChange={(e) => handleTraining(e)}
+                    />
+
+                    <IoImage className="text-accent-blue" />
+                  </label>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-start overflow-y-auto gap-4 p-2">
+              <div className="w-full h-full flex flex-col items-center justify-start">
+                <div className="w-full flex flex-row items-center justify-between">
                   <button
                     type="button"
                     title="Add Required Documents Field"
-                    className="p-3 rounded-md bg-neutral-100"
+                    className="p-2 rounded-md bg-neutral-100"
                     onClick={() => addDynamicFields("contents", "text")}
                   >
                     <IoText className="text-sm" />
@@ -404,7 +530,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
                   <button
                     type="button"
                     title="Add Required Documents Field"
-                    className="p-3 rounded-md bg-neutral-100"
+                    className="p-2 rounded-md bg-neutral-100"
                     onClick={() => addDynamicFields("contents", "image")}
                   >
                     <IoImage className="text-sm" />
@@ -413,7 +539,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
                   <button
                     type="button"
                     title="Add Required Documents Field"
-                    className="p-3 rounded-md bg-neutral-100"
+                    className="p-2 rounded-md bg-neutral-100"
                     onClick={() => addDynamicFields("contents", "video")}
                   >
                     <IoVideocam className="text-sm" />
@@ -422,21 +548,21 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
                   <button
                     type="button"
                     title="Add Required Documents Field"
-                    className="p-3 rounded-md bg-neutral-100"
+                    className="p-2 rounded-md bg-neutral-100"
                     onClick={() => addDynamicFields("contents", "file")}
                   >
                     <AiFillFilePdf className="text-sm" />
                   </button>
                 </div>
-              </div>
 
-              <div className="w-full flex flex-col items-center justify-start gap-4 overflow-y-auto">
-                {mappedContents}
+                <div className="w-full h-full flex flex-col items-center justify-start gap-4 overflow-y-auto">
+                  {mappedContents}
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
-          <button className="t:col-span-2 w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2">
+          <button className="w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2">
             Create
           </button>
         </form>
