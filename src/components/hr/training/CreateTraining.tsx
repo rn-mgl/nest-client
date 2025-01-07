@@ -5,6 +5,10 @@ import {
   TrainingContentsInterface,
   TrainingInterface,
 } from "@/src/interface/TrainingInterface";
+import { getCSRFToken } from "@/src/utils/token";
+import axios from "axios";
+import { getCookie } from "cookies-next";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
@@ -25,11 +29,12 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
     description: "",
     contents: [{ title: "", description: "", content: "", type: "text" }],
   });
-  const [contentFiles, setContentFiles] = React.useState<
-    Array<{ rawFile: File; fileURL: string } | null>
-  >([null]);
 
   const inputRefs = React.useRef<Array<HTMLInputElement | null>>([]);
+
+  const { data } = useSession({ required: true });
+  const user = data?.user;
+  const url = process.env.URL;
 
   const addDynamicFields = (name: string, type: string) => {
     setTraining((prev) => {
@@ -54,14 +59,6 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
         ...prev,
         [name]: [...updatedField],
       };
-    });
-
-    // also splice the content files in the specified index
-    setContentFiles(() => {
-      const updatedContentFiles = [...contentFiles];
-      updatedContentFiles.splice(index, 1);
-
-      return [...updatedContentFiles];
     });
   };
 
@@ -109,18 +106,18 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
     const file = files[0];
 
     const url = URL.createObjectURL(file);
-    const updatedContentFields = [...contentFiles];
-    updatedContentFields[index] = { rawFile: file, fileURL: url };
+    const updatedTraining = { ...training };
+    updatedTraining.contents[index].content = { rawFile: file, fileURL: url };
 
-    setContentFiles(updatedContentFields);
+    setTraining(updatedTraining);
   };
 
   const removeSelectedFile = (index: number) => {
-    setContentFiles(() => {
-      const updatedContentFiles = [...contentFiles];
-      updatedContentFiles[index] = null;
+    setTraining(() => {
+      const updatedTraining = { ...training };
+      updatedTraining.contents[index].content = "";
 
-      return [...updatedContentFiles];
+      return { ...updatedTraining };
     });
 
     if (inputRefs.current[index]) {
@@ -129,9 +126,59 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
     }
   };
 
+  const submitCreateTraining = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("title", training.title);
+    formData.append("description", training.description);
+    training.contents.forEach((content, index) => {
+      // ensure training content is using string value for content kvp
+      const trainingContent = {
+        title: content.title,
+        description: content.description,
+        content: typeof content.content === "string" ? content.content : "",
+        type: content.type,
+      };
+      // ensure training file is using rawFile value if it is object
+      const trainingFile =
+        typeof content.content === "object" && "rawFile" in content.content
+          ? content.content.rawFile
+          : "";
+
+      formData.append(`contents[${index}]`, JSON.stringify(trainingContent));
+      formData.append(`contentFile[${index}]`, trainingFile);
+    });
+
+    try {
+      const { token } = await getCSRFToken();
+
+      if (token && user?.token) {
+        const { data } = await axios.post(`${url}/hr/training`, formData, {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+            "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true,
+        });
+
+        if (data) {
+          if (props.refetchIndex) {
+            props.refetchIndex();
+          }
+
+          props.toggleModal();
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const mappedContents = training.contents.map((content, index) => {
-    const contentFile = contentFiles[index];
-    const fileURL = contentFile?.fileURL;
+    const contentFile = content.content as { rawFile: File; fileURL: string };
+    const fileURL = contentFile.fileURL;
 
     const dynamicContent =
       content.type === "text" ? (
@@ -139,7 +186,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
           name="contents"
           placeholder={`Content ${index + 1}`}
           onChange={(e) => handleDynamicFields(e, "content", index)}
-          value={content.content}
+          value={content.content as string}
           rows={5}
           className="w-full p-2 px-4 pr-8 rounded-md border-2 outline-none focus:border-neutral-900 transition-all resize-none"
         />
@@ -312,7 +359,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
           </button>
         </div>
         <form
-          // onSubmit={(e) => submitCreatePerformanceReview(e)}
+          onSubmit={(e) => submitCreateTraining(e)}
           className="w-full h-full p-4 grid grid-cols-1 gap-4 t:grid-cols-2"
         >
           <div className="w-full h-full flex flex-col items-center justify-start gap-4">

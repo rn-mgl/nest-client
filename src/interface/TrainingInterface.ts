@@ -7,7 +7,7 @@ export interface TrainingContentsInterface {
   contents: Array<{
     title: string;
     description: string;
-    content: string;
+    content: { rawFile: File; fileURL: string } | string;
     type: string;
   }>;
 }
