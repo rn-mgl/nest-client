@@ -35,3 +35,9 @@ export interface SelectInterface<T = string | number> {
   label: string;
   icon?: React.ReactNode;
 }
+
+export interface ModalNavInterface {
+  activeFormPage: string;
+  pages: Array<string>;
+  handleActiveFormPage: (page: string) => void;
+}

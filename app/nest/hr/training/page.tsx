@@ -157,7 +157,12 @@ const HRTraining = () => {
         />
       ) : null}
 
-      {activeTrainingSeeMore ? <ShowTraining /> : null}
+      {activeTrainingSeeMore ? (
+        <ShowTraining
+          id={activeTrainingSeeMore}
+          setActiveModal={handleActiveTrainingSeeMore}
+        />
+      ) : null}
 
       {canEditTraining ? <EditTraining /> : null}
 

@@ -22,6 +22,8 @@ import {
   IoTrash,
   IoVideocam,
 } from "react-icons/io5";
+import ModalNav from "@/components/global/ModalNav";
+import useModalNav from "@/src/hooks/useModalNav";
 
 const CreateTraining: React.FC<ModalInterface> = (props) => {
   const [training, setTraining] = React.useState<
@@ -33,9 +35,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
     contents: [{ title: "", description: "", content: "", type: "text" }],
     certificate: null,
   });
-  const [activeFormPage, setActiveFormPage] = React.useState<
-    "information" | "contents"
-  >("information");
+  const { activeFormPage, handleActiveFormPage } = useModalNav("information");
 
   const inputRefs = React.useRef<Array<HTMLInputElement | null>>([]);
   const certificateRef = React.useRef<HTMLInputElement | null>(null);
@@ -166,10 +166,6 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
       inputRefs.current[index].files = null;
       inputRefs.current[index].value = "";
     }
-  };
-
-  const handleActiveFormPage = (formPage: "information" | "contents") => {
-    setActiveFormPage(formPage);
   };
 
   const submitCreateTraining = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -421,33 +417,13 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
 
         <form
           onSubmit={(e) => submitCreateTraining(e)}
-          className="w-full h-full p-4 flex flex-col gap-4 overflow-hidden items-start justify-start"
+          className="w-full h-full p-4 flex flex-col gap-4 overflow-hidden items-center justify-start"
         >
-          <div className="w-full flex flex-row items-center justify-between gap-4 border-b-2">
-            <button
-              className={`w-full p-2 rounded-t-md text-sm hover:bg-neutral-200 transition-all ${
-                activeFormPage === "information"
-                  ? "border-2 border-accent-blue text-accent-blue font-bold shadow-md"
-                  : null
-              }`}
-              onClick={() => handleActiveFormPage("information")}
-              type="button"
-            >
-              Information
-            </button>
-
-            <button
-              className={`w-full p-2 rounded-t-md text-sm hover:bg-neutral-200 transition-all ${
-                activeFormPage === "contents"
-                  ? "border-2 border-accent-blue text-accent-blue font-bold shadow-md"
-                  : null
-              }`}
-              onClick={() => handleActiveFormPage("contents")}
-              type="button"
-            >
-              Contents
-            </button>
-          </div>
+          <ModalNav
+            activeFormPage={activeFormPage}
+            pages={["information", "contents"]}
+            handleActiveFormPage={handleActiveFormPage}
+          />
 
           {activeFormPage === "information" ? (
             <div className="w-full h-full flex flex-col items-center justify-start gap-4 overflow-y-auto p-2">
