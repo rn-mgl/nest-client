@@ -1,8 +1,9 @@
 export interface TrainingInterface {
+  training_id?: number;
   title: string;
-  deadlineDays: number;
+  deadline_days: number;
   description: string;
-  certificate: { rawFile: File; fileURL: string } | null;
+  certificate: { rawFile: File; fileURL: string } | string | null;
 }
 
 export interface TrainingContentsInterface {

@@ -29,7 +29,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
   >({
     title: "",
     description: "",
-    deadlineDays: 30,
+    deadline_days: 30,
     contents: [{ title: "", description: "", content: "", type: "text" }],
     certificate: null,
   });
@@ -176,10 +176,14 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
     e.preventDefault();
 
     const formData = new FormData();
+    const certificate =
+      training.certificate && typeof training.certificate === "object"
+        ? training.certificate.rawFile
+        : "";
     formData.append("title", training.title);
     formData.append("description", training.description);
-    formData.append("deadline_days", training.deadlineDays.toString());
-    formData.append("certificate", training.certificate?.rawFile || "");
+    formData.append("deadline_days", training.deadline_days.toString());
+    formData.append("certificate", certificate);
     training.contents.forEach((content, index) => {
       // ensure training content is using string value for content kvp
       const trainingContent = {
@@ -459,13 +463,13 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
               />
 
               <Input
-                id="deadline"
+                id="deadline_days"
                 placeholder="Deadline Days"
                 required={true}
                 type="number"
                 label={true}
                 icon={<IoCalendar />}
-                value={training.deadlineDays}
+                value={training.deadline_days}
                 onChange={handleTraining}
               />
 
@@ -483,7 +487,10 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
               <div className="w-full flex flex-col items-start justify-center gap-1">
                 <label className="text-xs">Certificate</label>
 
-                {training.certificate?.rawFile ? (
+                {/* check if training.certificate instance is the rawFile filURL object */}
+                {training.certificate &&
+                typeof training.certificate === "object" &&
+                training.certificate?.rawFile ? (
                   <div className="p-2 w-full rounded-md border-2 bg-white flex flex-col items-center justify-center bg-center bg-cover relative">
                     <div className="w-full flex flex-row items-center justify-start gap-2">
                       <div className="aspect-square p-2.5 rounded-sm bg-accent-blue/50">
