@@ -13,6 +13,7 @@ import Image from "next/image";
 import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
 import {
+  IoAdd,
   IoCalendar,
   IoClose,
   IoImage,
@@ -318,9 +319,13 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
       ) : content.type === "file" ? (
         <div className="w-full flex flex-col items-start justify-center gap-2">
           {fileURL && (
-            <div className="relative flex flex-col items-center justify-center">
-              <embed src={fileURL} className="rounded-md w-fit h-fit"></embed>
-
+            <div className="p-2 w-full rounded-md border-2 bg-white flex flex-col items-center justify-center bg-center bg-cover relative">
+              <div className="w-full flex flex-row items-center justify-start gap-2">
+                <div className="aspect-square p-2.5 rounded-sm bg-accent-blue/50">
+                  <AiFillFilePdf className="text-white text-2xl" />
+                </div>
+                <p className="truncate text-sm">{contentFile.rawFile.name}</p>
+              </div>
               <button
                 type="button"
                 onClick={() => removeSelectedFile(index)}
@@ -475,17 +480,19 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
                 rows={5}
               />
 
-              <div className="w-full h-full flex flex-col items-start justify-center gap-1">
+              <div className="w-full flex flex-col items-start justify-center gap-1">
                 <label className="text-xs">Certificate</label>
-                <div
-                  style={{
-                    backgroundImage: training.certificate?.fileURL
-                      ? `url(${training.certificate?.fileURL})`
-                      : "",
-                  }}
-                  className="w-full h-full p-2 rounded-md border-2 aspect-video bg-white flex flex-col items-center justify-center bg-center bg-cover relative"
-                >
-                  {training.certificate?.rawFile ? (
+
+                {training.certificate?.rawFile ? (
+                  <div className="p-2 w-full rounded-md border-2 bg-white flex flex-col items-center justify-center bg-center bg-cover relative">
+                    <div className="w-full flex flex-row items-center justify-start gap-2">
+                      <div className="aspect-square p-2.5 rounded-sm bg-accent-blue/50">
+                        <AiFillFilePdf className="text-white text-2xl" />
+                      </div>
+                      <p className="truncate text-sm">
+                        {training.certificate?.rawFile.name}
+                      </p>
+                    </div>
                     <button
                       type="button"
                       onClick={removeSelectedCertificate}
@@ -493,31 +500,37 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
                     >
                       <IoClose className="text-sm" />
                     </button>
-                  ) : (
-                    <IoImage className="text-accent-purple text-2xl opacity-50" />
-                  )}
-                </div>
+                  </div>
+                ) : (
+                  <div
+                    className="p-2 w-full h-16 rounded-md border-2 bg-white flex flex-row items-center 
+                              justify-center  text-accent-purple gap-1"
+                  >
+                    <span className="text-sm">Attach Certificate</span>
+                    <IoAdd />
+                  </div>
+                )}
 
                 <div className="w-full flex flex-row items-center justify-between">
-                  <label>
+                  <label className="cursor-pointer">
                     <input
                       type="file"
-                      accept="image/*"
+                      accept=".pdf"
                       name="certificate"
                       className="hidden"
                       ref={certificateRef}
                       onChange={(e) => handleTraining(e)}
                     />
 
-                    <IoImage className="text-accent-blue" />
+                    <AiFillFilePdf className="text-accent-blue" />
                   </label>
                 </div>
               </div>
             </div>
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-start overflow-y-auto gap-4 p-2">
-              <div className="w-full h-full flex flex-col items-center justify-start">
-                <div className="w-full flex flex-row items-center justify-between">
+              <div className="w-full h-full flex flex-col items-center justify-start t:items-start">
+                <div className="w-full flex flex-row items-center justify-between t:w-60">
                   <button
                     type="button"
                     title="Add Required Documents Field"
