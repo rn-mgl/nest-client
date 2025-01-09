@@ -166,7 +166,13 @@ const HRTraining = () => {
 
       {canEditTraining ? <EditTraining /> : null}
 
-      {canDeleteTraining ? <DeleteTraining /> : null}
+      {canDeleteTraining ? (
+        <DeleteTraining
+          id={activeTrainingMenu}
+          refetchIndex={getTrainings}
+          toggleModal={handleCanDeleteTraining}
+        />
+      ) : null}
 
       <div
         className="w-full flex flex-col items-center justify-start max-w-screen-l-l p-2
