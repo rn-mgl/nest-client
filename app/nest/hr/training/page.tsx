@@ -164,7 +164,13 @@ const HRTraining = () => {
         />
       ) : null}
 
-      {canEditTraining ? <EditTraining /> : null}
+      {canEditTraining ? (
+        <EditTraining
+          id={activeTrainingMenu}
+          toggleModal={handleCanEditTraining}
+          refetchIndex={getTrainings}
+        />
+      ) : null}
 
       {canDeleteTraining ? (
         <DeleteTraining

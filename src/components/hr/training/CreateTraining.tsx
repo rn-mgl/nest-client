@@ -2,6 +2,7 @@ import Input from "@/components/form/Input";
 import TextArea from "@/components/form/TextArea";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
+  TrainingContentSetInterface,
   TrainingContentsInterface,
   TrainingInterface,
 } from "@/src/interface/TrainingInterface";
@@ -59,13 +60,13 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
 
   const removeDynamicFields = (name: string, index: number) => {
     setTraining((prev) => {
-      const updatedField: Array<TrainingContentsInterface> =
+      const updatedField: Array<TrainingContentSetInterface> =
         prev[name as keyof object];
       updatedField.splice(index, 1);
 
       return {
         ...prev,
-        [name]: [...updatedField],
+        [name]: updatedField,
       };
     });
   };
