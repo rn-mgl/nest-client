@@ -7,6 +7,7 @@ export interface TrainingInterface {
 }
 
 export interface TrainingContentSetInterface {
+  training_content_id?: number;
   title: string;
   description: string;
   content: { rawFile: File; fileURL: string } | string;

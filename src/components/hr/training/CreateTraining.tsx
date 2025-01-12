@@ -318,14 +318,16 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
           </label>
         </div>
       ) : content.type === "file" ? (
-        <div className="w-full flex flex-col items-start justify-center gap-2">
+        <div className="w-full flex flex-col items-start justify-start gap-2">
           {fileURL && (
-            <div className="p-2 w-full rounded-md border-2 bg-white flex flex-col items-center justify-center bg-center bg-cover relative">
+            <div className="p-2 w-full rounded-md border-2 bg-white flex flex-col items-start justify-start relative">
               <div className="w-full flex flex-row items-center justify-start gap-2">
-                <div className="aspect-square p-2.5 rounded-sm bg-accent-blue/50">
+                <div className="p-2.5 rounded-sm bg-accent-blue/50">
                   <AiFillFilePdf className="text-white text-2xl" />
                 </div>
-                <p className="truncate text-sm">{contentFile.rawFile.name}</p>
+                <p className="truncate text-sm m-s:w-[10ch] m-m:w-[17ch] m-l:w-[20ch] t:w-full">
+                  {contentFile.rawFile.name}
+                </p>
               </div>
               <button
                 type="button"

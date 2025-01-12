@@ -1,3 +1,6 @@
+import Input from "@/components/form/Input";
+import TextArea from "@/components/form/TextArea";
+import ModalNav from "@/components/global/ModalNav";
 import useModalNav from "@/src/hooks/useModalNav";
 import {
   ModalInterface,
@@ -26,9 +29,6 @@ import {
   IoTrash,
   IoVideocam,
 } from "react-icons/io5";
-import Input from "../../form/Input";
-import TextArea from "../../form/TextArea";
-import ModalNav from "../../global/ModalNav";
 
 const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
   props
@@ -42,6 +42,9 @@ const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
     deadline_days: 30,
     contents: [{ content: "", description: "", title: "", type: "text" }],
   });
+  const [contentsToDelete, setContentsToDelete] = React.useState<Array<number>>(
+    []
+  );
   const certificateRef = React.useRef<HTMLInputElement | null>(null);
   const inputRefs = React.useRef<Array<HTMLInputElement | null>>([]);
 
@@ -81,12 +84,30 @@ const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
   ) => {
     const { name, value } = e.target;
 
-    setTraining((prev) => {
-      return {
-        ...prev,
-        [name]: value,
-      };
-    });
+    if (name === "certificate") {
+      const { files } = e.target as HTMLInputElement;
+
+      if (!files || !files.length) {
+        return;
+      }
+
+      const file = files[0];
+      const url = URL.createObjectURL(file);
+
+      setTraining((prev) => {
+        return {
+          ...prev,
+          [name]: { rawFile: file, fileURL: url },
+        };
+      });
+    } else {
+      setTraining((prev) => {
+        return {
+          ...prev,
+          [name]: value,
+        };
+      });
+    }
   };
 
   const removeSelectedCertificate = () => {
@@ -193,9 +214,80 @@ const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
     });
   };
 
+  const handleContentsToDelete = (id: number) => {
+    setContentsToDelete((prev) => [...prev, id]);
+  };
+
+  const submitUpdateTraining = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+      const formData = new FormData();
+      formData.append("title", training.title);
+      formData.append("description", training.description);
+      formData.append(
+        "certificate",
+        training.certificate && typeof training.certificate === "object"
+          ? training.certificate?.rawFile
+          : typeof training.certificate === "string"
+          ? training.certificate
+          : ""
+      );
+      formData.append("deadline_days", training.deadline_days.toString());
+      training.contents.forEach((content, index) => {
+        const trainingContent = { ...content };
+        trainingContent.content =
+          typeof content.content === "string" ? content.content : "";
+
+        // handle updated files and unupdated files
+        const trainingFile =
+          typeof content.content === "object" ? content.content.rawFile : "";
+
+        formData.append(`contents[${index}]`, JSON.stringify(trainingContent));
+        formData.append(`contentFile[${index}]`, trainingFile);
+      });
+      contentsToDelete.forEach((toDelete, index) => {
+        formData.append(`contentsToDelete[${index}]`, toDelete.toString());
+      });
+      formData.append("_method", "PATCH");
+
+      const { token } = await getCSRFToken();
+
+      if (token && user?.token) {
+        const { data: updated } = await axios.post(
+          `${url}/hr/training/${props.id}`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+              "Content-Type": "multipart/form-data",
+            },
+            withCredentials: true,
+          }
+        );
+
+        if (updated.success) {
+          if (props.refetchIndex) {
+            props.refetchIndex();
+          }
+
+          props.toggleModal();
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const mappedContents = training.contents.map((content, index) => {
-    const contentFile = content.content as { rawFile: File; fileURL: string };
-    const fileURL = contentFile.fileURL;
+    const contentFile = content.content;
+    const fileURL =
+      typeof contentFile === "object"
+        ? contentFile.fileURL
+        : typeof contentFile === "string"
+        ? contentFile
+        : "";
 
     const dynamicContent =
       content.type === "text" ? (
@@ -210,12 +302,12 @@ const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
       ) : content.type === "image" ? (
         <div className="w-full flex flex-col items-start justify-center gap-2">
           {fileURL && (
-            <div className="relative flex flex-col items-center justify-center">
+            <div className="relative flex flex-col items-center justify-center w-full">
               <Image
                 src={fileURL}
                 alt="file"
-                width={100}
-                height={100}
+                width={1500}
+                height={1500}
                 className="rounded-md w-full"
               />
 
@@ -282,14 +374,18 @@ const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
           </label>
         </div>
       ) : content.type === "file" ? (
-        <div className="w-full flex flex-col items-start justify-center gap-2">
+        <div className="w-full flex flex-col items-start justify-start gap-2">
           {fileURL && (
-            <div className="p-2 w-full rounded-md border-2 bg-white flex flex-col items-center justify-center bg-center bg-cover relative">
+            <div className="p-2 w-full rounded-md border-2 bg-white flex flex-col items-start justify-start relative">
               <div className="w-full flex flex-row items-center justify-start gap-2">
                 <div className="aspect-square p-2.5 rounded-sm bg-accent-blue/50">
                   <AiFillFilePdf className="text-white text-2xl" />
                 </div>
-                <p className="truncate text-sm">{contentFile.rawFile.name}</p>
+                <p className="truncate text-sm m-s:w-[10ch] m-m:w-[17ch] m-l:w-[20ch] t:w-full">
+                  {typeof contentFile === "object"
+                    ? contentFile.rawFile.name
+                    : `View File`}
+                </p>
               </div>
               <button
                 type="button"
@@ -349,7 +445,12 @@ const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
 
         <button
           type="button"
-          onClick={() => removeDynamicFields("contents", index)}
+          onClick={() => {
+            removeDynamicFields("contents", index);
+            if (content.training_content_id) {
+              handleContentsToDelete(content.training_content_id);
+            }
+          }}
           className="p-3 border-2 border-neutral-100 rounded-md bg-neutral-100"
         >
           <IoTrash />
@@ -384,8 +485,8 @@ const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
           </button>
         </div>
         <form
-          // onSubmit={(e) => submitUpdatePerformanceReview(e)}
-          className="w-full h-full p-4 flex flex-col items-center justify-start gap-4"
+          onSubmit={(e) => submitUpdateTraining(e)}
+          className="w-full h-full p-4 flex flex-col items-center justify-start gap-4 overflow-hidden"
         >
           <ModalNav
             activeFormPage={activeFormPage}
@@ -464,7 +565,7 @@ const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
                         <AiFillFilePdf className="text-white" />
                       </div>
                       <span className="group-hover:underline underline-offset-2 transition-all text-sm">
-                        View {training.title} Certificate
+                        View Training Certificate
                       </span>
                     </Link>
 
