@@ -44,11 +44,16 @@ export default function useDynamicFields<T>(initialState: T[]) {
     });
   };
 
+  const populateFields = React.useCallback((fields: T[]) => {
+    setFields(fields);
+  }, []);
+
   return {
     fields,
     addField,
     removeField,
     handleField,
     removeTargetFieldValue,
+    populateFields,
   };
 }

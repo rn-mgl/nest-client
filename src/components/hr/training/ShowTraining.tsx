@@ -56,8 +56,6 @@ const ShowTraining: React.FC<ShowModalInterface> = (props) => {
     }
   }, [user?.token, props.id, url]);
 
-  console.log(training.contents);
-
   const mappedContents = training.contents.map((content, index) => {
     const currentContent =
       typeof content.content === "string" ? content.content : "";

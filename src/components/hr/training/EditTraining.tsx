@@ -1,6 +1,7 @@
 import Input from "@/components/form/Input";
 import TextArea from "@/components/form/TextArea";
 import ModalNav from "@/components/global/ModalNav";
+import useDynamicFields from "@/src/hooks/useDynamicFields";
 import useModalNav from "@/src/hooks/useModalNav";
 import {
   ModalInterface,
@@ -33,14 +34,11 @@ import {
 const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
   props
 ) => {
-  const [training, setTraining] = React.useState<
-    TrainingInterface & TrainingContentsInterface
-  >({
+  const [training, setTraining] = React.useState<TrainingInterface>({
     title: "",
     description: "",
     certificate: "",
     deadline_days: 30,
-    contents: [{ content: "", description: "", title: "", type: "text" }],
   });
   const [contentsToDelete, setContentsToDelete] = React.useState<Array<number>>(
     []
@@ -49,6 +47,14 @@ const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
   const inputRefs = React.useRef<Array<HTMLInputElement | null>>([]);
 
   const { activeFormPage, handleActiveFormPage } = useModalNav("information");
+  const {
+    fields,
+    addField,
+    handleField,
+    removeField,
+    removeTargetFieldValue,
+    populateFields,
+  } = useDynamicFields<TrainingContentSetInterface>([]);
 
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -59,25 +65,25 @@ const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
-        const { data: details } = await axios.get(
-          `${url}/hr/training/${props.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-            },
-            withCredentials: true,
-          }
-        );
+        const { data: details } = await axios.get<{
+          training: TrainingInterface & TrainingContentsInterface;
+        }>(`${url}/hr/training/${props.id}`, {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+            "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+          },
+          withCredentials: true,
+        });
 
         if (details.training) {
           setTraining(details.training);
+          populateFields(details.training.contents);
         }
       }
     } catch (error) {
       console.log(error);
     }
-  }, [user?.token, url, props.id]);
+  }, [user?.token, url, props.id, populateFields]);
 
   const handleTraining = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -131,78 +137,6 @@ const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
     }
   };
 
-  const handleDynamicFields = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    target: "title" | "description" | "content",
-    index: number
-  ) => {
-    const { name, value } = e.target;
-
-    setTraining((prev) => {
-      const currentField = prev[name as keyof TrainingContentsInterface];
-      const updatedField = [...currentField];
-      updatedField[index][target] = value;
-
-      return {
-        ...prev,
-        [name]: [...updatedField],
-      };
-    });
-  };
-
-  const handleContentFiles = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number
-  ) => {
-    const { files } = e.target;
-
-    if (!files || !files.length) {
-      return;
-    }
-
-    const file = files[0];
-    const url = URL.createObjectURL(file);
-
-    const updatedTraining = { ...training };
-    updatedTraining.contents[index].content = { rawFile: file, fileURL: url };
-
-    setTraining(updatedTraining);
-  };
-
-  const removeSelectedFile = (index: number) => {
-    const updatedField = { ...training };
-    updatedField.contents[index].content = "";
-
-    setTraining(updatedField);
-  };
-
-  const removeDynamicFields = (name: string, index: number) => {
-    setTraining((prev) => {
-      const updatedField: Array<TrainingContentSetInterface> =
-        prev[name as keyof object];
-      updatedField.splice(index, 1);
-
-      return {
-        ...prev,
-        [name]: updatedField,
-      };
-    });
-  };
-
-  const addDynamicFields = (name: string, type: string) => {
-    setTraining((prev) => {
-      const newField = { content: "", description: "", title: "", type };
-      const currentField: Array<TrainingContentSetInterface> =
-        prev[name as keyof object];
-      const updatedField = [...currentField, newField];
-
-      return {
-        ...prev,
-        [name]: updatedField,
-      };
-    });
-  };
-
   const removeUploadedCertificate = () => {
     setTraining((prev) => {
       const trainingData = { ...prev };
@@ -212,6 +146,13 @@ const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
         ...trainingData,
       };
     });
+  };
+
+  const removeSelectedFile = (index: number) => {
+    if (inputRefs.current[index]) {
+      inputRefs.current[index].files = null;
+      inputRefs.current[index].value = "";
+    }
   };
 
   const handleContentsToDelete = (id: number) => {
@@ -234,7 +175,7 @@ const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
           : ""
       );
       formData.append("deadline_days", training.deadline_days.toString());
-      training.contents.forEach((content, index) => {
+      fields.forEach((content, index) => {
         const trainingContent = { ...content };
         trainingContent.content =
           typeof content.content === "string" ? content.content : "";
@@ -280,7 +221,7 @@ const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
     }
   };
 
-  const mappedContents = training.contents.map((content, index) => {
+  const mappedContents = fields.map((content, index) => {
     const contentFile = content.content;
     const fileURL =
       typeof contentFile === "object"
@@ -294,7 +235,7 @@ const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
         <textarea
           name="contents"
           placeholder={`Content ${index + 1}`}
-          onChange={(e) => handleDynamicFields(e, "content", index)}
+          onChange={(e) => handleField(e, "content", index)}
           value={content.content as string}
           rows={5}
           className="w-full p-2 px-4 pr-8 rounded-md border-2 outline-none focus:border-neutral-900 transition-all resize-none"
@@ -313,7 +254,10 @@ const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
 
               <button
                 type="button"
-                onClick={() => removeSelectedFile(index)}
+                onClick={() => {
+                  removeTargetFieldValue("content", index);
+                  removeSelectedFile(index);
+                }}
                 className="p-1 rounded-full bg-red-500 shadow-md absolute -top-1 -right-1"
               >
                 <IoClose className="text-xs" />
@@ -328,7 +272,7 @@ const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
                 accept="image/*"
                 className="hidden"
                 id={`content_${index}`}
-                onChange={(e) => handleContentFiles(e, index)}
+                onChange={(e) => handleField(e, "content", index)}
                 ref={(el) => {
                   inputRefs.current[index] = el;
                 }}
@@ -348,7 +292,10 @@ const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
 
               <button
                 type="button"
-                onClick={() => removeSelectedFile(index)}
+                onClick={() => {
+                  removeTargetFieldValue("content", index);
+                  removeSelectedFile(index);
+                }}
                 className="p-1 rounded-full bg-red-500 shadow-md absolute -top-1 -right-1"
               >
                 <IoClose className="text-xs" />
@@ -362,7 +309,7 @@ const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
               accept="video/*"
               className="hidden"
               id={`content_${index}`}
-              onChange={(e) => handleContentFiles(e, index)}
+              onChange={(e) => handleField(e, "content", index)}
               ref={(el) => {
                 inputRefs.current[index] = el;
               }}
@@ -389,7 +336,10 @@ const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
               </div>
               <button
                 type="button"
-                onClick={() => removeSelectedFile(index)}
+                onClick={() => {
+                  removeTargetFieldValue("content", index);
+                  removeSelectedFile(index);
+                }}
                 className="p-1 rounded-full bg-red-500 shadow-md absolute -top-1 -right-1"
               >
                 <IoClose className="text-xs" />
@@ -403,7 +353,7 @@ const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
               accept=".pdf"
               className="hidden peer-checked"
               id={`content_${index}`}
-              onChange={(e) => handleContentFiles(e, index)}
+              onChange={(e) => handleField(e, "content", index)}
               ref={(el) => {
                 inputRefs.current[index] = el;
               }}
@@ -426,7 +376,7 @@ const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
             type="text"
             name="contents"
             placeholder={`Title ${index + 1}`}
-            onChange={(e) => handleDynamicFields(e, "title", index)}
+            onChange={(e) => handleField(e, "title", index)}
             value={content.title}
             className="w-full p-2 px-4 rounded-md border-2 outline-none focus:border-neutral-900 transition-all"
           />
@@ -434,7 +384,7 @@ const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
           <textarea
             name="contents"
             placeholder={`Description ${index + 1}`}
-            onChange={(e) => handleDynamicFields(e, "description", index)}
+            onChange={(e) => handleField(e, "description", index)}
             value={content.description}
             rows={5}
             className="w-full p-2 px-4 pr-8 rounded-md border-2 outline-none focus:border-neutral-900 transition-all resize-none"
@@ -446,7 +396,7 @@ const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
         <button
           type="button"
           onClick={() => {
-            removeDynamicFields("contents", index);
+            removeField(index);
             if (content.training_content_id) {
               handleContentsToDelete(content.training_content_id);
             }
@@ -464,10 +414,10 @@ const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
   }, [getTraining]);
 
   React.useEffect(() => {
-    inputRefs.current = training.contents.map((_, index) => {
+    inputRefs.current = fields.map((_, index) => {
       return inputRefs.current[index] || null;
     });
-  }, [training.contents]);
+  }, [fields]);
 
   return (
     <div
@@ -611,7 +561,14 @@ const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
                     type="button"
                     title="Add Required Documents Field"
                     className="p-2 rounded-md bg-neutral-100"
-                    onClick={() => addDynamicFields("contents", "text")}
+                    onClick={() =>
+                      addField({
+                        title: "",
+                        content: "",
+                        description: "",
+                        type: "text",
+                      })
+                    }
                   >
                     <IoText className="text-sm" />
                   </button>
@@ -620,7 +577,14 @@ const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
                     type="button"
                     title="Add Required Documents Field"
                     className="p-2 rounded-md bg-neutral-100"
-                    onClick={() => addDynamicFields("contents", "image")}
+                    onClick={() =>
+                      addField({
+                        title: "",
+                        content: "",
+                        description: "",
+                        type: "image",
+                      })
+                    }
                   >
                     <IoImage className="text-sm" />
                   </button>
@@ -629,7 +593,14 @@ const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
                     type="button"
                     title="Add Required Documents Field"
                     className="p-2 rounded-md bg-neutral-100"
-                    onClick={() => addDynamicFields("contents", "video")}
+                    onClick={() =>
+                      addField({
+                        title: "",
+                        content: "",
+                        description: "",
+                        type: "video",
+                      })
+                    }
                   >
                     <IoVideocam className="text-sm" />
                   </button>
@@ -638,7 +609,14 @@ const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
                     type="button"
                     title="Add Required Documents Field"
                     className="p-2 rounded-md bg-neutral-100"
-                    onClick={() => addDynamicFields("contents", "file")}
+                    onClick={() =>
+                      addField({
+                        title: "",
+                        content: "",
+                        description: "",
+                        type: "file",
+                      })
+                    }
                   >
                     <AiFillFilePdf className="text-sm" />
                   </button>
