@@ -100,8 +100,8 @@ const ShowTraining: React.FC<ShowModalInterface> = (props) => {
                 <Image
                   src={currentContent}
                   alt="content"
-                  width={200}
-                  height={200}
+                  width={1920}
+                  height={1920}
                   className="w-full rounded-md"
                 />
               </Link>
