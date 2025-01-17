@@ -2,6 +2,7 @@
 
 import Input from "@/components/form/Input";
 import TextArea from "@/components/form/TextArea";
+import useModalNav from "@/src/hooks/useModalNav";
 import {
   ModalInterface,
   UpdateModalInterface,
@@ -18,6 +19,7 @@ import { getCookie } from "cookies-next";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd, IoClose, IoReader, IoText, IoTrash } from "react-icons/io5";
+import ModalNav from "../../global/ModalNav";
 
 const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
   props
@@ -36,6 +38,8 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
   const [policiesToDelete, setPoliciesToDelete] = React.useState<Array<number>>(
     []
   );
+
+  const { activeFormPage, handleActiveFormPage } = useModalNav("information");
 
   const url = process.env.URL;
   const { data } = useSession({ required: true });
@@ -159,8 +163,6 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
     setPoliciesToDelete((prev) => [...prev, id]);
   };
 
-  console.log(policiesToDelete);
-
   const submitUpdateOnboarding = async (
     e: React.FormEvent<HTMLFormElement>
   ) => {
@@ -265,7 +267,7 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
     p-4 t:p-8 z-50 bg-gradient-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
-      <div className="w-full my-auto h-auto max-w-screen-l-s bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
+      <div className="w-full my-auto h-full max-w-screen-l-s bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-yellow rounded-t-lg font-bold text-accent-blue">
           Edit Onboarding
           <button
@@ -277,71 +279,79 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
         </div>
         <form
           onSubmit={(e) => submitUpdateOnboarding(e)}
-          className="w-full h-full p-4 grid grid-cols-1 t:grid-cols-2 gap-4"
+          className="w-full h-full p-4 flex flex-col items-center justify-start gap-4 overflow-hidden"
         >
-          <div className="w-full flex flex-col items-center justify-start">
-            <Input
-              label={true}
-              id="title"
-              onChange={handleOnboarding}
-              placeholder="Title"
-              required={true}
-              type="text"
-              value={onboarding.title}
-              icon={<IoText />}
-            />
+          <ModalNav
+            activeFormPage={activeFormPage}
+            pages={["information", "requirements"]}
+            handleActiveFormPage={handleActiveFormPage}
+          />
 
-            <TextArea
-              label={true}
-              id="description"
-              onChange={handleOnboarding}
-              placeholder="Description"
-              required={true}
-              value={onboarding.description}
-              rows={5}
-              icon={<IoReader />}
-            />
-          </div>
+          {activeFormPage === "information" ? (
+            <div className="w-full h-full flex flex-col items-center justify-start">
+              <Input
+                label={true}
+                id="title"
+                onChange={handleOnboarding}
+                placeholder="Title"
+                required={true}
+                type="text"
+                value={onboarding.title}
+                icon={<IoText />}
+              />
 
-          <div className="w-full flex flex-col items-center justify-start gap-4 l-s:items-start l-s:justify-center">
-            <div className="w-full flex flex-col items-center justify-start gap-2 max-h-40 t:min-h-56 t:max-h-56 l-l:min-h-60 l-l:max-h-60">
-              <div className="w-full flex flex-row items-center justify-between">
-                <label className="text-xs">Required Documents</label>
+              <TextArea
+                label={true}
+                id="description"
+                onChange={handleOnboarding}
+                placeholder="Description"
+                required={true}
+                value={onboarding.description}
+                rows={5}
+                icon={<IoReader />}
+              />
+            </div>
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-start gap-4 l-s:items-start l-s:justify-center t:flex-row overflow-hidden">
+              <div className="w-full flex flex-col items-center justify-start gap-2 h-full overflow-hidden">
+                <div className="w-full flex flex-row items-center justify-between">
+                  <label className="text-xs">Required Documents</label>
 
-                <button
-                  type="button"
-                  title="Add Required Documents Field"
-                  className="p-2 rounded-md bg-neutral-100"
-                  onClick={() => addDynamicFields("required_documents")}
-                >
-                  <IoAdd />
-                </button>
+                  <button
+                    type="button"
+                    title="Add Required Documents Field"
+                    className="p-2 rounded-md bg-neutral-100"
+                    onClick={() => addDynamicFields("required_documents")}
+                  >
+                    <IoAdd />
+                  </button>
+                </div>
+
+                <div className="w-full flex flex-col items-center justify-start gap-2 h-full overflow-y-auto">
+                  {mappedRequiredDocuments}
+                </div>
               </div>
 
-              <div className="w-full flex flex-col items-center justify-start gap-2 overflow-y-auto">
-                {mappedRequiredDocuments}
+              <div className="w-full flex flex-col items-center justify-start gap-2 h-full overflow-hidden">
+                <div className="w-full flex flex-row items-center justify-between">
+                  <label className="text-xs">Policy Acknowledgements</label>
+
+                  <button
+                    type="button"
+                    title="Add Required Documents Field"
+                    className="p-2 rounded-md bg-neutral-100"
+                    onClick={() => addDynamicFields("policy_acknowledgements")}
+                  >
+                    <IoAdd />
+                  </button>
+                </div>
+
+                <div className="w-full flex flex-col items-center justify-start gap-2 h-full overflow-y-auto">
+                  {mappedPolicyAcknowledgements}
+                </div>
               </div>
             </div>
-
-            <div className="w-full flex flex-col items-center justify-start gap-2 max-h-40 t:min-h-56 t:max-h-56 l-l:min-h-60 l-l:max-h-60">
-              <div className="w-full flex flex-row items-center justify-between">
-                <label className="text-xs">Policy Acknowledgements</label>
-
-                <button
-                  type="button"
-                  title="Add Required Documents Field"
-                  className="p-2 rounded-md bg-neutral-100"
-                  onClick={() => addDynamicFields("policy_acknowledgements")}
-                >
-                  <IoAdd />
-                </button>
-              </div>
-
-              <div className="w-full flex flex-col items-center justify-start gap-2 overflow-y-auto">
-                {mappedPolicyAcknowledgements}
-              </div>
-            </div>
-          </div>
+          )}
 
           <button className="t:col-span-2 w-full font-bold text-center rounded-md p-2 bg-accent-yellow text-accent-blue mt-2">
             Update

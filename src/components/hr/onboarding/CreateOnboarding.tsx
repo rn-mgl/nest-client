@@ -1,5 +1,6 @@
 import Input from "@/components/form/Input";
 import TextArea from "@/components/form/TextArea";
+import useModalNav from "@/src/hooks/useModalNav";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
   OnboardingContentsInterface,
@@ -11,6 +12,7 @@ import { getCookie } from "cookies-next";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd, IoClose, IoReader, IoText, IoTrash } from "react-icons/io5";
+import ModalNav from "../../global/ModalNav";
 
 const CreateOnboarding: React.FC<ModalInterface> = (props) => {
   const [onboarding, setOnboarding] = React.useState<
@@ -21,6 +23,8 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
     required_documents: [""],
     policy_acknowledgements: [""],
   });
+
+  const { activeFormPage, handleActiveFormPage } = useModalNav("information");
 
   const url = process.env.URL;
   const { data } = useSession({ required: true });
@@ -179,7 +183,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
         p-4 t:p-8 z-50 bg-gradient-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
-      <div className="w-full my-auto h-auto max-w-screen-l-s bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
+      <div className="w-full my-auto h-full max-w-screen-l-s bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-blue rounded-t-lg font-bold text-accent-yellow">
           Create Onboarding
           <button
@@ -191,73 +195,80 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
         </div>
         <form
           onSubmit={(e) => submitCreateOnboarding(e)}
-          className="w-full h-full p-4 grid grid-cols-1 t:grid-cols-2 gap-4"
+          className="w-full h-full p-4 flex flex-col items-center justify-center gap-4 overflow-hidden"
         >
-          <div className="w-full flex flex-col items-center justify-start">
-            <Input
-              label={true}
-              id="title"
-              onChange={handleOnboarding}
-              placeholder="Title"
-              required={true}
-              type="text"
-              value={onboarding.title}
-              icon={<IoText />}
-            />
+          <ModalNav
+            activeFormPage={activeFormPage}
+            pages={["information", "requirements"]}
+            handleActiveFormPage={handleActiveFormPage}
+          />
+          {activeFormPage === "information" ? (
+            <div className="w-full h-full flex flex-col items-center justify-start gap-2 p-2">
+              <Input
+                label={true}
+                id="title"
+                onChange={handleOnboarding}
+                placeholder="Title"
+                required={true}
+                type="text"
+                value={onboarding.title}
+                icon={<IoText />}
+              />
 
-            <TextArea
-              label={true}
-              id="description"
-              onChange={handleOnboarding}
-              placeholder="Description"
-              required={true}
-              value={onboarding.description}
-              rows={5}
-              icon={<IoReader />}
-            />
-          </div>
+              <TextArea
+                label={true}
+                id="description"
+                onChange={handleOnboarding}
+                placeholder="Description"
+                required={true}
+                value={onboarding.description}
+                rows={5}
+                icon={<IoReader />}
+              />
+            </div>
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-start gap-4 l-s:items-start l-s:justify-center overflow-y-hidden t:flex-row">
+              <div className="w-full flex flex-col items-center justify-start h-full gap-2 overflow-hidden">
+                <div className="w-full flex flex-row items-center justify-between">
+                  <label className="text-xs">Required Documents</label>
 
-          <div className="w-full h-full flex flex-col items-center justify-start gap-4 l-s:items-start l-s:justify-center">
-            <div className="w-full flex flex-col items-center justify-start gap-2 max-h-40 t:min-h-52 t:max-h-52 l-l:min-h-60 l-l:max-h-60">
-              <div className="w-full flex flex-row items-center justify-between">
-                <label className="text-xs">Required Documents</label>
+                  <button
+                    type="button"
+                    title="Add Required Documents Field"
+                    className="p-2 rounded-md bg-neutral-100"
+                    onClick={() => addDynamicFields("required_documents")}
+                  >
+                    <IoAdd />
+                  </button>
+                </div>
 
-                <button
-                  type="button"
-                  title="Add Required Documents Field"
-                  className="p-2 rounded-md bg-neutral-100"
-                  onClick={() => addDynamicFields("required_documents")}
-                >
-                  <IoAdd />
-                </button>
+                <div className="w-full flex flex-col items-center justify-start gap-2 overflow-y-auto">
+                  {mappedRequiredDocuments}
+                </div>
               </div>
 
-              <div className="w-full flex flex-col items-center justify-start gap-2 overflow-y-auto">
-                {mappedRequiredDocuments}
+              <div className="w-full flex flex-col items-center justify-start h-full gap-2 overflow-hidden">
+                <div className="w-full flex flex-row items-center justify-between">
+                  <label className="text-xs">Policy Acknowledgements</label>
+
+                  <button
+                    type="button"
+                    title="Add Required Documents Field"
+                    className="p-2 rounded-md bg-neutral-100"
+                    onClick={() => addDynamicFields("policy_acknowledgements")}
+                  >
+                    <IoAdd />
+                  </button>
+                </div>
+
+                <div className="w-full flex flex-col items-center justify-start gap-2 overflow-y-auto">
+                  {mappedPolicyAcknowledgements}
+                </div>
               </div>
             </div>
+          )}
 
-            <div className="w-full h-full flex flex-col items-center justify-start gap-2 max-h-40 t:min-h-52 t:max-h-52 l-l:min-h-60 l-l:max-h-60">
-              <div className="w-full flex flex-row items-center justify-between">
-                <label className="text-xs">Policy Acknowledgements</label>
-
-                <button
-                  type="button"
-                  title="Add Required Documents Field"
-                  className="p-2 rounded-md bg-neutral-100"
-                  onClick={() => addDynamicFields("policy_acknowledgements")}
-                >
-                  <IoAdd />
-                </button>
-              </div>
-
-              <div className="w-full flex flex-col items-center justify-start gap-2 overflow-y-auto">
-                {mappedPolicyAcknowledgements}
-              </div>
-            </div>
-          </div>
-
-          <button className="t:col-span-2 w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2">
+          <button className="w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2">
             Create
           </button>
         </form>
