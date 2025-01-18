@@ -9,11 +9,11 @@ export interface PerformanceReviewContentsInterface {
   surveys: Array<string>;
 }
 
-export interface PerformanceReviewSurveySetInterface {
+export interface PerformanceReviewSurveyInterface {
   performance_review_content_id?: number;
   survey: string;
 }
 
 export interface PerformanceReviewContentsSetInterface {
-  contents: Array<PerformanceReviewSurveySetInterface>;
+  contents: Array<PerformanceReviewSurveyInterface>;
 }
