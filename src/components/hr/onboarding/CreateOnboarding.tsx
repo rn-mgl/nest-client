@@ -1,10 +1,12 @@
 import Input from "@/components/form/Input";
 import TextArea from "@/components/form/TextArea";
+import useDynamicFields from "@/src/hooks/useDynamicFields";
 import useModalNav from "@/src/hooks/useModalNav";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
-  OnboardingContentsInterface,
   OnboardingInterface,
+  OnboardingPolicyAcknowledgemenInterface,
+  OnboardingRequiredDocumentsInterface,
 } from "@/src/interface/OnboardingInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
@@ -15,14 +17,28 @@ import { IoAdd, IoClose, IoReader, IoText, IoTrash } from "react-icons/io5";
 import ModalNav from "../../global/ModalNav";
 
 const CreateOnboarding: React.FC<ModalInterface> = (props) => {
-  const [onboarding, setOnboarding] = React.useState<
-    OnboardingInterface & OnboardingContentsInterface
-  >({
+  const [onboarding, setOnboarding] = React.useState<OnboardingInterface>({
     title: "",
     description: "",
-    required_documents: [""],
-    policy_acknowledgements: [""],
   });
+
+  const {
+    fields: required_documents,
+    addField: addDocumentField,
+    handleField: handleDocumentField,
+    removeField: removeDocumentField,
+  } = useDynamicFields<OnboardingRequiredDocumentsInterface>([
+    { document: "" },
+  ]);
+
+  const {
+    fields: policy_acknowledgements,
+    addField: addPolicyField,
+    handleField: handlePolicyField,
+    removeField: removePolicyField,
+  } = useDynamicFields<OnboardingPolicyAcknowledgemenInterface>([
+    { policy: "" },
+  ]);
 
   const { activeFormPage, handleActiveFormPage } = useModalNav("information");
 
@@ -43,79 +59,33 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
     });
   };
 
-  const handleDynamicFields = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number
-  ) => {
-    const { name, value } = e.target;
+  const mappedRequiredDocuments = required_documents.map((req, index) => {
+    return (
+      <div
+        key={index}
+        className="w-full flex flex-row gap-2 items-center justify-center"
+      >
+        <input
+          type="text"
+          name="required_documents"
+          placeholder={`Required Document ${index + 1}`}
+          onChange={(e) => handleDocumentField(e, "document", index)}
+          value={req.document}
+          className="w-full p-2 px-4 rounded-md border-2 outline-none focus:border-neutral-900 transition-all"
+        />
 
-    setOnboarding((prev) => {
-      const currentField = prev[name as keyof object];
-
-      const updatedField = [...currentField] as string[];
-      updatedField[index] = value;
-
-      return {
-        ...prev,
-        [name]: [...updatedField],
-      };
-    });
-  };
-
-  const addDynamicFields = (name: string) => {
-    setOnboarding((prev) => {
-      const field: Array<string> = prev[name as keyof object] ?? [];
-
-      const newField = [...field, ""];
-
-      return {
-        ...prev,
-        [name]: newField,
-      };
-    });
-  };
-
-  const removeDynamicFields = (name: string, index: number) => {
-    setOnboarding((prev) => {
-      const field: Array<string> = prev[name as keyof object];
-      field.splice(index, 1);
-
-      return {
-        ...prev,
-        [name]: field,
-      };
-    });
-  };
-
-  const mappedRequiredDocuments = onboarding.required_documents.map(
-    (req, index) => {
-      return (
-        <div
-          key={index}
-          className="w-full flex flex-row gap-2 items-center justify-center"
+        <button
+          type="button"
+          onClick={() => removeDocumentField(index)}
+          className="p-3 border-2 border-neutral-100 rounded-md bg-neutral-100"
         >
-          <input
-            type="text"
-            name="required_documents"
-            placeholder={`Required Document ${index + 1}`}
-            onChange={(e) => handleDynamicFields(e, index)}
-            value={req}
-            className="w-full p-2 px-4 rounded-md border-2 outline-none focus:border-neutral-900 transition-all"
-          />
+          <IoTrash />
+        </button>
+      </div>
+    );
+  });
 
-          <button
-            type="button"
-            onClick={() => removeDynamicFields("required_documents", index)}
-            className="p-3 border-2 border-neutral-100 rounded-md bg-neutral-100"
-          >
-            <IoTrash />
-          </button>
-        </div>
-      );
-    }
-  );
-
-  const mappedPolicyAcknowledgements = onboarding.policy_acknowledgements.map(
+  const mappedPolicyAcknowledgements = policy_acknowledgements.map(
     (req, index) => {
       return (
         <div
@@ -126,16 +96,14 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
             type="text"
             name="policy_acknowledgements"
             placeholder={`Policy Acknowledgement ${index + 1}`}
-            onChange={(e) => handleDynamicFields(e, index)}
-            value={req}
+            onChange={(e) => handlePolicyField(e, "policy", index)}
+            value={req.policy}
             className="w-full p-2 px-4 rounded-md border-2 outline-none focus:border-neutral-900 transition-all"
           />
 
           <button
             type="button"
-            onClick={() =>
-              removeDynamicFields("policy_acknowledgements", index)
-            }
+            onClick={() => removePolicyField(index)}
             className="p-3 border-2 border-neutral-100 rounded-md bg-neutral-100"
           >
             <IoTrash />
@@ -156,7 +124,11 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
       if (token && user?.token) {
         const { data: createdOnboarding } = await axios.post(
           `${url}/hr/onboarding`,
-          { ...onboarding },
+          {
+            ...onboarding,
+            required_documents,
+            policy_acknowledgements,
+          },
           {
             headers: {
               Authorization: `Bearer ${user?.token}`,
@@ -236,7 +208,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
                     type="button"
                     title="Add Required Documents Field"
                     className="p-2 rounded-md bg-neutral-100"
-                    onClick={() => addDynamicFields("required_documents")}
+                    onClick={() => addDocumentField({ document: "" })}
                   >
                     <IoAdd />
                   </button>
@@ -255,7 +227,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
                     type="button"
                     title="Add Required Documents Field"
                     className="p-2 rounded-md bg-neutral-100"
-                    onClick={() => addDynamicFields("policy_acknowledgements")}
+                    onClick={() => addPolicyField({ policy: "" })}
                   >
                     <IoAdd />
                   </button>

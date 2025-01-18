@@ -5,6 +5,16 @@ export interface OnboardingInterface {
   created_by?: number;
 }
 
+export interface OnboardingRequiredDocumentsInterface {
+  onboarding_required_documents_id?: number;
+  document: string;
+}
+
+export interface OnboardingPolicyAcknowledgemenInterface {
+  onboarding_policy_acknowledgements_id?: number;
+  policy: string;
+}
+
 export interface OnboardingContentsInterface {
   required_documents: Array<string>;
   policy_acknowledgements: Array<string>;
