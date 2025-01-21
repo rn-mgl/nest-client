@@ -2,13 +2,13 @@
 
 import Input from "@/components/form/Input";
 import TextArea from "@/components/form/TextArea";
+import useDynamicFields from "@/src/hooks/useDynamicFields";
 import useModalNav from "@/src/hooks/useModalNav";
 import {
   ModalInterface,
   UpdateModalInterface,
 } from "@/src/interface/ModalInterface";
 import {
-  OnboardingContentsSetInterface,
   OnboardingInterface,
   OnboardingPolicyAcknowledgemenSetInterface,
   OnboardingRequiredDocumentSetInterface,
@@ -24,13 +24,9 @@ import ModalNav from "../../global/ModalNav";
 const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
   props
 ) => {
-  const [onboarding, setOnboarding] = React.useState<
-    OnboardingInterface & OnboardingContentsSetInterface
-  >({
+  const [onboarding, setOnboarding] = React.useState<OnboardingInterface>({
     title: "",
     description: "",
-    required_documents: [],
-    policy_acknowledgements: [],
   });
   const [documentsToDelete, setDocumentsToDelete] = React.useState<
     Array<number>
@@ -39,6 +35,20 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
     []
   );
 
+  const {
+    fields: required_documents,
+    addField: addDocumentField,
+    removeField: removeDocumentField,
+    handleField: handleDocumentField,
+    populateFields: populateDocumentFields,
+  } = useDynamicFields<OnboardingRequiredDocumentSetInterface>([]);
+  const {
+    fields: policy_acknowledgements,
+    addField: addPolicyField,
+    removeField: removePolicyField,
+    handleField: handlePolicyField,
+    populateFields: populatePolicyFields,
+  } = useDynamicFields<OnboardingPolicyAcknowledgemenSetInterface>([]);
   const { activeFormPage, handleActiveFormPage } = useModalNav("information");
 
   const url = process.env.URL;
@@ -50,7 +60,14 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
-        const { data } = await axios.get(`${url}/hr/onboarding/${props.id}`, {
+        const {
+          data: { onboarding },
+        } = await axios.get<{
+          onboarding: OnboardingInterface & {
+            required_documents: OnboardingRequiredDocumentSetInterface[];
+            policy_acknowledgements: OnboardingPolicyAcknowledgemenSetInterface[];
+          };
+        }>(`${url}/hr/onboarding/${props.id}`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
             "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
@@ -58,14 +75,22 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
           withCredentials: true,
         });
 
-        if (data) {
-          setOnboarding(data.onboarding);
+        if (onboarding) {
+          setOnboarding(onboarding);
+          populateDocumentFields(onboarding.required_documents);
+          populatePolicyFields(onboarding.policy_acknowledgements);
         }
       }
     } catch (error) {
       console.log(error);
     }
-  }, [url, user?.token, props.id]);
+  }, [
+    url,
+    user?.token,
+    props.id,
+    populateDocumentFields,
+    populatePolicyFields,
+  ]);
 
   const handleOnboarding = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -76,77 +101,6 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
       return {
         ...prev,
         [name]: value,
-      };
-    });
-  };
-
-  const handleDynamicFields = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number
-  ) => {
-    const { name, value } = e.target;
-
-    setOnboarding((prev) => {
-      if (name === "required_documents") {
-        const currentField = prev[name as keyof object];
-
-        const updatedField: Array<OnboardingRequiredDocumentSetInterface> = [
-          ...currentField,
-        ];
-
-        updatedField[index]["document"] = value;
-
-        return {
-          ...prev,
-          [name]: [...updatedField],
-        };
-      } else if (name === "policy_acknowledgements") {
-        const currentField = prev[name as keyof object];
-
-        const updatedField: Array<OnboardingPolicyAcknowledgemenSetInterface> =
-          [...currentField];
-
-        updatedField[index]["policy"] = value;
-
-        return {
-          ...prev,
-          [name]: [...updatedField],
-        };
-      }
-
-      return prev;
-    });
-  };
-
-  const addDynamicFields = (name: string) => {
-    setOnboarding((prev) => {
-      const newField:
-        | OnboardingPolicyAcknowledgemenSetInterface
-        | OnboardingRequiredDocumentSetInterface =
-        name === "required_documents"
-          ? { document: "" }
-          : name === "policy_acknowledgements"
-          ? { policy: "" }
-          : { document: "", policy: "" };
-      const field: Array<string> = prev[name as keyof object] ?? [];
-
-      const updatedField = [...field, newField];
-
-      return {
-        ...prev,
-        [name]: updatedField,
-      };
-    });
-  };
-
-  const removeDynamicFields = (name: string, index: number) => {
-    setOnboarding((prev) => {
-      const field: Array<string> = prev[name as keyof object];
-      field.splice(index, 1);
-
-      return {
-        ...prev,
-        [name]: field,
       };
     });
   };
@@ -174,7 +128,13 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
       if (token && user?.token) {
         const { data: updatedOnboarding } = await axios.patch(
           `${url}/hr/onboarding/${props.id}`,
-          { ...onboarding, documentsToDelete, policiesToDelete },
+          {
+            ...onboarding,
+            required_documents,
+            policy_acknowledgements,
+            documentsToDelete,
+            policiesToDelete,
+          },
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
@@ -196,38 +156,36 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
     }
   };
 
-  const mappedRequiredDocuments = onboarding.required_documents.map(
-    (req, index) => {
-      return (
-        <div
-          key={index}
-          className="w-full flex flex-row gap-2 items-center justify-center"
+  const mappedRequiredDocuments = required_documents.map((req, index) => {
+    return (
+      <div
+        key={index}
+        className="w-full flex flex-row gap-2 items-center justify-center"
+      >
+        <input
+          type="text"
+          name="required_documents"
+          placeholder={`Required Document ${index + 1}`}
+          onChange={(e) => handleDocumentField(e, "document", index)}
+          value={req.document}
+          className="w-full p-2 px-4 rounded-md border-2 outline-none focus:border-neutral-900 transition-all"
+        />
+
+        <button
+          type="button"
+          onClick={() => {
+            removeDocumentField(index);
+            handleDocumentsToDelete(req.onboarding_required_documents_id);
+          }}
+          className="p-3 border-2 border-neutral-100 rounded-md bg-neutral-100"
         >
-          <input
-            type="text"
-            name="required_documents"
-            placeholder={`Required Document ${index + 1}`}
-            onChange={(e) => handleDynamicFields(e, index)}
-            value={req.document}
-            className="w-full p-2 px-4 rounded-md border-2 outline-none focus:border-neutral-900 transition-all"
-          />
+          <IoTrash />
+        </button>
+      </div>
+    );
+  });
 
-          <button
-            type="button"
-            onClick={() => {
-              removeDynamicFields("required_documents", index);
-              handleDocumentsToDelete(req.onboarding_required_documents_id);
-            }}
-            className="p-3 border-2 border-neutral-100 rounded-md bg-neutral-100"
-          >
-            <IoTrash />
-          </button>
-        </div>
-      );
-    }
-  );
-
-  const mappedPolicyAcknowledgements = onboarding.policy_acknowledgements.map(
+  const mappedPolicyAcknowledgements = policy_acknowledgements.map(
     (ack, index) => {
       return (
         <div
@@ -238,7 +196,7 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
             type="text"
             name="policy_acknowledgements"
             placeholder={`Policy Acknowledgement ${index + 1}`}
-            onChange={(e) => handleDynamicFields(e, index)}
+            onChange={(e) => handlePolicyField(e, "policy", index)}
             value={ack.policy}
             className="w-full p-2 px-4 rounded-md border-2 outline-none focus:border-neutral-900 transition-all"
           />
@@ -246,7 +204,7 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
           <button
             type="button"
             onClick={() => {
-              removeDynamicFields("policy_acknowledgements", index);
+              removePolicyField(index);
               handlePoliciesToDelete(ack.onboarding_policy_acknowledgements_id);
             }}
             className="p-3 border-2 border-neutral-100 rounded-md bg-neutral-100"
@@ -321,7 +279,7 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
                     type="button"
                     title="Add Required Documents Field"
                     className="p-2 rounded-md bg-neutral-100"
-                    onClick={() => addDynamicFields("required_documents")}
+                    onClick={() => addDocumentField({ document: "" })}
                   >
                     <IoAdd />
                   </button>
@@ -340,7 +298,7 @@ const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
                     type="button"
                     title="Add Required Documents Field"
                     className="p-2 rounded-md bg-neutral-100"
-                    onClick={() => addDynamicFields("policy_acknowledgements")}
+                    onClick={() => addPolicyField({ policy: "" })}
                   >
                     <IoAdd />
                   </button>
