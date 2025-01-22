@@ -12,12 +12,22 @@ import { getCookie } from "cookies-next";
 import { useSession } from "next-auth/react";
 import React from "react";
 import {
+  HR_TRAINING_CATEGORY,
+  HR_TRAINING_SEARCH,
+  HR_TRAINING_SORT,
+} from "@/utils/filters";
+import {
   IoAdd,
   IoArrowForward,
   IoEllipsisVertical,
   IoPencil,
   IoTrash,
 } from "react-icons/io5";
+import useFilters from "@/src/hooks/useFilters";
+import useSearch from "@/src/hooks/useSearch";
+import useSort from "@/src/hooks/useSort";
+import useCategory from "@/src/hooks/useCategory";
+import Filter from "@/src/components/global/Filter";
 
 const HRTraining = () => {
   const [trainings, setTrainings] = React.useState<
@@ -28,6 +38,29 @@ const HRTraining = () => {
   const [canEditTraining, setCanEditTraining] = React.useState(false);
   const [canDeleteTraining, setCanDeleteTraining] = React.useState(false);
   const [canCreateTraining, setCanCreateTraining] = React.useState(false);
+
+  const { showFilters, handleShowFilters } = useFilters();
+  const {
+    search,
+    canShowSearch,
+    handleSearch,
+    handleCanShowSearch,
+    handleSelectSearch,
+  } = useSearch("title", "Title");
+  const {
+    canShowSort,
+    sort,
+    handleCanShowSort,
+    handleSelectSort,
+    handleToggleAsc,
+  } = useSort("created_at", "Created At");
+  const {
+    canShowCategories,
+    category,
+    handleCanShowCategories,
+    handleSelectCategory,
+  } = useCategory("", "", "");
+
   const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -62,6 +95,7 @@ const HRTraining = () => {
             Authorization: `Bearer ${user.token}`,
             "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
           },
+          params: { ...search, ...sort },
           withCredentials: true,
         });
 
@@ -72,7 +106,7 @@ const HRTraining = () => {
     } catch (error) {
       console.log(error);
     }
-  }, [user?.token, url]);
+  }, [user?.token, url, search, sort]);
 
   const mappedTrainings = trainings.map((training, index) => {
     const createdBy = training.user_id === user?.current;
@@ -184,6 +218,36 @@ const HRTraining = () => {
         className="w-full flex flex-col items-center justify-start max-w-screen-l-l p-2
           t:items-start t:p-4 gap-4 t:gap-8"
       >
+        <Filter
+          showSearch={true}
+          showSort={true}
+          showCategory={false}
+          searchKey={search.searchKey}
+          searchLabel={search.searchLabel}
+          searchValue={search.searchValue}
+          searchKeyLabelPairs={HR_TRAINING_SEARCH}
+          canShowSearch={canShowSearch}
+          selectSearch={handleSelectSearch}
+          toggleShowSearch={handleCanShowSearch}
+          onChange={handleSearch}
+          showFilters={showFilters}
+          toggleShowFilters={handleShowFilters}
+          sortKey={sort.sortKey}
+          sortLabel={sort.sortLabel}
+          isAsc={sort.isAsc}
+          canShowSort={canShowSort}
+          sortKeyLabelPairs={HR_TRAINING_SORT}
+          toggleAsc={handleToggleAsc}
+          selectSort={handleSelectSort}
+          toggleShowSort={handleCanShowSort}
+          //
+          categoryLabel={category.categoryLabel}
+          canShowCategories={canShowCategories}
+          categoryKeyValuePairs={HR_TRAINING_CATEGORY}
+          toggleShowCategories={handleCanShowCategories}
+          selectCategory={handleSelectCategory}
+        />
+
         <button
           onClick={handleCanCreateTraining}
           className="bg-accent-blue text-accent-yellow w-full p-2 rounded-md font-bold flex flex-row items-center justify-center 

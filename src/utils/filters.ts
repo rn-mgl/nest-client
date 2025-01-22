@@ -172,3 +172,34 @@ export const HR_PERFORMANCE_SEARCH = [
     label: "Description",
   },
 ];
+
+// for hr to filter training
+
+export const HR_TRAINING_CATEGORY = [
+  {
+    key: "",
+    labelValue: [{ label: "", value: "all" }],
+  },
+];
+
+export const HR_TRAINING_SORT = [
+  {
+    key: "title",
+    label: "Title",
+  },
+  {
+    key: "created_at",
+    label: "Created At",
+  },
+];
+
+export const HR_TRAINING_SEARCH = [
+  {
+    key: "title",
+    label: "Title",
+  },
+  {
+    key: "description",
+    label: "Description",
+  },
+];
