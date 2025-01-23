@@ -34,6 +34,7 @@ const AdminHR = () => {
   const {
     search,
     canShowSearch,
+    debounceSearch,
     handleSearch,
     handleCanShowSearch,
     handleSelectSearch,
@@ -233,9 +234,9 @@ const AdminHR = () => {
           showSearch={true}
           showSort={true}
           showCategory={true}
-          searchKey={search.searchKey}
-          searchLabel={search.searchLabel}
-          searchValue={search.searchValue}
+          searchKey={debounceSearch.searchKey}
+          searchLabel={debounceSearch.searchLabel}
+          searchValue={debounceSearch.searchValue}
           searchKeyLabelPairs={ADMIN_HR_SEARCH}
           canShowSearch={canShowSearch}
           selectSearch={handleSelectSearch}

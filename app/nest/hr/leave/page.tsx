@@ -35,6 +35,7 @@ const HRLeave = () => {
   const {
     search,
     canShowSearch,
+    debounceSearch,
     handleSearch,
     handleCanShowSearch,
     handleSelectSearch,
@@ -192,9 +193,9 @@ const HRLeave = () => {
           showSearch={true}
           showSort={true}
           showCategory={false}
-          searchKey={search.searchKey}
-          searchLabel={search.searchLabel}
-          searchValue={search.searchValue}
+          searchKey={debounceSearch.searchKey}
+          searchLabel={debounceSearch.searchLabel}
+          searchValue={debounceSearch.searchValue}
           searchKeyLabelPairs={HR_LEAVE_SEARCH}
           canShowSearch={canShowSearch}
           selectSearch={handleSelectSearch}
