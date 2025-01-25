@@ -1,6 +1,6 @@
 "use client";
 
-import { AttendanceInterface as AttendanceInterface } from "@/src/interface/AttendanceInterface";
+import { AttendanceInterface } from "@/src/interface/AttendanceInterface";
 import { ShowModalInterface } from "@/src/interface/ModalInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import { getCSRFToken } from "@/src/utils/token";
@@ -71,7 +71,12 @@ const ShowAttendance: React.FC<ShowModalInterface & AttendanceDate> = (
           ).toLocaleTimeString()}`
         : "-";
 
-      const late = attendanceDetails.late ? "Yes" : "No";
+      const late =
+        attendanceDetails.late === null
+          ? "-"
+          : attendanceDetails.late
+          ? "Yes"
+          : "No";
       const absent = attendanceDetails.absent ? "Yes" : "No";
 
       return (

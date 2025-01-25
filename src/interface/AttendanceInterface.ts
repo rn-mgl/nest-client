@@ -9,6 +9,6 @@ export interface AttendanceInterface {
   attendance_id?: number;
   login_time: string;
   logout_time: string;
-  late: boolean;
+  late: boolean | null;
   absent: boolean;
 }
