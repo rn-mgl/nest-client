@@ -37,6 +37,9 @@ const config: Config = {
         fade: "fade ease-in-out 150ms",
         float: "float ease-in-out 2s infinite alternate",
       },
+      padding: {
+        "1.75": "0.4rem",
+      },
     },
   },
   plugins: [],
