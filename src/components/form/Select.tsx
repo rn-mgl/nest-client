@@ -6,11 +6,12 @@ const Select: React.FC<SelectInterface<number>> = (props) => {
     return (
       <button
         key={index}
+        disabled={props.value === option.value}
         onClick={() => {
           props.onChange(Number(option.value), props.label);
           props.toggleSelect();
         }}
-        className="p-2 w-full transition-all bg-neutral-200 rounded-sm"
+        className="p-2 w-full transition-all bg-neutral-200 rounded-sm disabled:bg-accent-blue/20"
       >
         {option.label}
       </button>
@@ -20,6 +21,7 @@ const Select: React.FC<SelectInterface<number>> = (props) => {
   return (
     <div className="w-full gap-2 relative bg-white">
       <button
+        type="button"
         onClick={props.toggleSelect}
         className="w-full flex flex-col items-start justify-center p-2 rounded-md border-2 relative"
       >

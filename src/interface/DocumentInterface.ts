@@ -2,8 +2,8 @@ export interface DocumentInterface {
   id?: number;
   name: string;
   description: string;
-  path: number;
-  document: { rawFile: File | null; fileURL: string } | string;
+  path: { label: string; value: number };
+  document: { rawFile: File; fileURL: string } | string | null;
   created_by?: number;
   type: string;
 }

@@ -432,17 +432,10 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
                     </button>
                   </div>
                 ) : (
-                  <div
+                  <label
                     className="p-2 w-full h-16 rounded-md border-2 bg-white flex flex-row items-center 
-                              justify-center  text-accent-purple gap-1"
+              justify-center  text-accent-purple gap-1 cursor-pointer"
                   >
-                    <span className="text-sm">Attach Certificate</span>
-                    <IoAdd />
-                  </div>
-                )}
-
-                <div className="w-full flex flex-row items-center justify-between">
-                  <label className="cursor-pointer">
                     <input
                       type="file"
                       accept=".pdf"
@@ -451,10 +444,10 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
                       ref={certificateRef}
                       onChange={(e) => handleTraining(e)}
                     />
-
-                    <AiFillFilePdf className="text-accent-blue" />
+                    <span className="text-sm">Attach Certificate</span>
+                    <IoAdd />
                   </label>
-                </div>
+                )}
               </div>
             </div>
           ) : (

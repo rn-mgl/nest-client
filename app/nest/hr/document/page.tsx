@@ -64,6 +64,7 @@ const HRDocument = () => {
             "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
           },
           withCredentials: true,
+          params: { path: 0 },
         });
 
         if (documents) {
