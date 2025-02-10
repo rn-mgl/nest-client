@@ -243,14 +243,14 @@ const CreateDocument: React.FC<ModalInterface> = (props) => {
               </div>
             ) : (
               <label
-                className="p-2 w-full h-16 rounded-md border-2 bg-white flex flex-row items-center 
-              justify-center  text-accent-purple gap-1 cursor-pointer"
+                className="p-2 w-full h-16 rounded-md border-2  flex flex-row items-center 
+              justify-center  text-accent-purple gap-1 cursor-pointer bg-white"
               >
                 <input
                   type="file"
                   accept=".pdf"
                   name="document"
-                  className="hidden"
+                  className="hidden "
                   ref={documentRef}
                   onChange={(e) => handleDocument(e)}
                 />

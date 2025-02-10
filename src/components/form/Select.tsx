@@ -19,11 +19,11 @@ const Select: React.FC<SelectInterface<number>> = (props) => {
   });
 
   return (
-    <div className="w-full gap-2 relative bg-white">
+    <div className="w-full gap-2 relative ">
       <button
         type="button"
         onClick={props.toggleSelect}
-        className="w-full flex flex-col items-start justify-center p-2 rounded-md border-2 relative"
+        className="w-full flex flex-col items-start justify-center p-2 rounded-md border-2 relative bg-white"
       >
         {props.label}
 
@@ -37,7 +37,7 @@ const Select: React.FC<SelectInterface<number>> = (props) => {
       {props.activeSelect ? (
         <div
           className="w-full absolute top-0 left-0 flex flex-col items-center justify-start translate-y-14 z-20
-                rounded-md gap-2 animate-fade bg-neutral-100 p-2 shadow-md"
+                rounded-md gap-2 animate-fade bg-neutral-100 p-2 shadow-md overflow-y-auto max-h-48"
         >
           {mappedOptions}
         </div>

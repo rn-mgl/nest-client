@@ -53,7 +53,7 @@ const NAV_LINKS = [
   },
   {
     label: "Documents",
-    url: "/document",
+    url: "/document/0",
     icon: <IoFolder />,
   },
 ];
