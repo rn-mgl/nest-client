@@ -2,7 +2,7 @@ export interface DocumentInterface {
   id?: number;
   name: string;
   description: string;
-  path: { label: string; value: number };
+  path?: number;
   document: { rawFile: File; fileURL: string } | string | null;
   created_by?: number;
   type: string;
@@ -11,6 +11,6 @@ export interface DocumentInterface {
 export interface DocumentFolderInterface {
   id?: number;
   name: string;
-  path: number;
+  path?: number;
   created_by?: number;
 }

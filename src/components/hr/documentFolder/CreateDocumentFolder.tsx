@@ -7,16 +7,18 @@ import { getCSRFToken } from "@/src/utils/token";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import { getCookie } from "cookies-next";
+import { useParams } from "next/navigation";
 
 const CreateDocumentFolder: React.FC<ModalInterface> = (props) => {
   const [folder, setFolder] = React.useState<DocumentFolderInterface>({
     name: "",
-    path: 0,
   });
 
   const { data } = useSession({ required: true });
   const user = data?.user;
   const url = process.env.URL;
+  const params = useParams();
+  const folderId = params?.folder_id ?? 0;
 
   const handleFolder = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -40,7 +42,7 @@ const CreateDocumentFolder: React.FC<ModalInterface> = (props) => {
           data: { success },
         } = await axios.post(
           `${url}/hr/document_folder`,
-          { ...folder },
+          { ...folder, path: folderId },
           {
             headers: {
               Authorization: `Bearer ${user.token}`,

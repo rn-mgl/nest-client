@@ -8,58 +8,24 @@ import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
 import { IoAdd, IoClose, IoText } from "react-icons/io5";
 import Input from "../../form/Input";
-import Select from "../../form/Select";
 import TextArea from "../../form/TextArea";
+import { useParams } from "next/navigation";
 
 const CreateDocument: React.FC<ModalInterface> = (props) => {
   const [document, setDocument] = React.useState<DocumentInterface>({
     name: "",
     description: "",
     type: "",
-    path: { label: "Home", value: 0 },
     document: null,
   });
-  const [pathOptions, setPathOptions] = React.useState<
-    { label: string; value: number }[]
-  >([{ label: "Home", value: 0 }]);
-  const [activeSelect, setActiveSelect] = React.useState(false);
 
   const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
+  const params = useParams();
+  const folderId = params?.folder_id ?? 0;
 
   const documentRef = React.useRef<HTMLInputElement | null>(null);
-
-  const getPaths = React.useCallback(async () => {
-    try {
-      const { token } = await getCSRFToken();
-
-      if (token && user?.token) {
-        const {
-          data: { paths },
-        } = await axios.get<{ paths: { label: string; value: number }[] }>(
-          `${url}/hr/document_folder/paths`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-            },
-            withCredentials: true,
-          }
-        );
-
-        const defaultPath = { label: "Home", value: 0 };
-
-        setPathOptions([defaultPath, ...paths]);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [url, user?.token]);
-
-  const handleActiveSelect = () => {
-    setActiveSelect((prev) => !prev);
-  };
 
   const handleDocument = (
     e:
@@ -111,10 +77,7 @@ const CreateDocument: React.FC<ModalInterface> = (props) => {
       formData.append("name", document.name);
       formData.append("description", document.description);
       formData.append("type", document.type);
-      formData.append(
-        "path",
-        document.path.value ? document.path.value.toString() : "0"
-      );
+      formData.append("path", folderId.toString());
       formData.append("document", attachment);
 
       if (token && user?.token) {
@@ -143,14 +106,6 @@ const CreateDocument: React.FC<ModalInterface> = (props) => {
     }
   };
 
-  const handlePath = (path: number) => {
-    const newPath = pathOptions.find((option) => {
-      return option.value === path;
-    }) ?? { label: "Home", value: 0 };
-
-    setDocument((prev) => ({ ...prev, path: newPath }));
-  };
-
   const removeSelectedDocument = () => {
     if (documentRef.current) {
       documentRef.current.value = "";
@@ -164,10 +119,6 @@ const CreateDocument: React.FC<ModalInterface> = (props) => {
       };
     });
   };
-
-  React.useEffect(() => {
-    getPaths();
-  }, [getPaths]);
 
   return (
     <div
@@ -206,18 +157,6 @@ const CreateDocument: React.FC<ModalInterface> = (props) => {
             onChange={handleDocument}
             placeholder="Description"
             value={document.description}
-          />
-
-          <Select
-            activeSelect={activeSelect}
-            label={document.path.label}
-            id="path"
-            onChange={handlePath}
-            options={pathOptions}
-            required={true}
-            placeholder="Path"
-            toggleSelect={handleActiveSelect}
-            value={document.path.value}
           />
 
           <div className="w-full flex flex-col items-start justify-between gap-4">

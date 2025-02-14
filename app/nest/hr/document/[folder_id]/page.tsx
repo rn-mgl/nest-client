@@ -17,6 +17,7 @@ import React from "react";
 import {
   IoAdd,
   IoArrowBack,
+  IoArrowForward,
   IoEllipsisVertical,
   IoPencil,
   IoTrash,
@@ -176,11 +177,17 @@ const HRDocument = () => {
             ) : null}
           </div>
         ) : null}
+
+        <div className="w-full flex flex-col items-center justify-center ">
+          <button className="text-xs flex flex-row items-center justify-center gap-1 hover:underline underline-offset-2">
+            See More <IoArrowForward />
+          </button>
+        </div>
       </div>
     ) : (
       <div
         key={index}
-        className="w-full h-full p-4 rounded-md bg-neutral-100 flex flex-col items-start justify-start gap-4 relative  max-h-56 max-w-full"
+        className="w-full h-full p-4 rounded-md bg-gradient-to-br from-accent-yellow/30 to-accent-blue/30 flex flex-col items-start justify-start gap-4 relative  max-h-56 max-w-full"
       >
         <div className="flex flex-row items-start justify-between w-full">
           <div className="flex flex-col items-start justify-start">
@@ -199,7 +206,7 @@ const HRDocument = () => {
             onClick={() =>
               document.id && handleActiveDocumentMenu(type, document.id)
             }
-            className="p-2 rounded-full bg-neutral-100 transition-all"
+            className="p-2 rounded-full hover:bg-white transition-all"
           >
             <IoEllipsisVertical
               className={`${
@@ -284,7 +291,10 @@ const HRDocument = () => {
 
         {folderId ? (
           <div className="w-full flex flex-row items-center justify-between">
-            <Link href={`/nest/hr/document/${folder.path}`}>
+            <Link
+              href={`/nest/hr/document/${folder.path}`}
+              className="p-2 rounded-full hover:bg-neutral-100 transition-all"
+            >
               <IoArrowBack />
             </Link>
 
