@@ -23,14 +23,14 @@ export interface TextAreaInterface {
   icon?: React.ReactNode;
 }
 
-export interface SelectInterface<T = string | number> {
+export interface SelectInterface {
   id: string;
-  value: string | number;
-  options: Array<{ value: string | number; label: string }>;
+  value: number;
+  options: Array<{ value: number; label: string }>;
   placeholder: string;
   required: boolean;
   activeSelect: boolean;
-  onChange: (value: T, label: string) => void;
+  onChange: (value: number, label: string) => void;
   toggleSelect: () => void;
   label: string;
   icon?: React.ReactNode;

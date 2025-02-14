@@ -1,7 +1,9 @@
 "use client";
 
 import CreateDocument from "@/src/components/hr/document/CreateDocument";
+import EditDocument from "@/src/components/hr/document/EditDocument";
 import CreateDocumentFolder from "@/src/components/hr/documentFolder/CreateDocumentFolder";
+import EditFolder from "@/src/components/hr/documentFolder/EditFolder";
 import {
   DocumentFolderInterface,
   DocumentInterface,
@@ -27,7 +29,7 @@ const HRDocument = () => {
   const [canCreateDocument, setCanCreateDocument] = React.useState(false);
   const [folder, setFolder] = React.useState<DocumentFolderInterface>({
     name: "",
-    path: 0,
+    path: { label: "Home", value: 0 },
   });
   const [canCreateFolder, setCanCreateFolder] = React.useState(false);
   const [activeDocumentMenu, setActiveDocumentMenu] = React.useState<{
@@ -40,6 +42,8 @@ const HRDocument = () => {
       | (DocumentFolderInterface & UserInterface)
     >
   >([]);
+  const [canEditDocument, setCanEditDocument] = React.useState(false);
+  const [canEditFolder, setCanEditFolder] = React.useState(false);
 
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -54,6 +58,14 @@ const HRDocument = () => {
 
   const handleCanCreateFolder = () => {
     setCanCreateFolder((prev) => !prev);
+  };
+
+  const handleCanEditDocument = () => {
+    setCanEditDocument((prev) => !prev);
+  };
+
+  const handleCanEditFolder = () => {
+    setCanEditFolder((prev) => !prev);
   };
 
   const handleActiveDocumentMenu = (type: string, id: number) => {
@@ -159,7 +171,7 @@ const HRDocument = () => {
         {activeMenu ? (
           <div className="w-32 p-2 rounded-md top-12 right-6 shadow-md bg-neutral-200 absolute animate-fade z-20">
             <button
-              // onClick={handleCanEditDocument}
+              onClick={handleCanEditDocument}
               className="w-full p-1 rounded-sm text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
             >
               <IoPencil className="text-accent-blue" />
@@ -218,7 +230,7 @@ const HRDocument = () => {
           {activeMenu ? (
             <div className="w-32 p-2 rounded-md top-12 right-6 shadow-md bg-neutral-200 absolute animate-fade z-20">
               <button
-                // onClick={handleCanEditDocument}
+                onClick={handleCanEditFolder}
                 className="w-full p-1 rounded-sm text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
               >
                 <IoPencil className="text-accent-blue" />
@@ -265,6 +277,16 @@ const HRDocument = () => {
         />
       ) : null}
 
+      {canEditDocument ? <EditDocument /> : null}
+
+      {canEditFolder ? (
+        <EditFolder
+          id={activeDocumentMenu.id}
+          toggleModal={handleCanEditFolder}
+          refetchIndex={getDocuments}
+        />
+      ) : null}
+
       <div
         className="w-full flex flex-col items-center justify-start max-w-screen-l-l p-2
           t:items-start t:p-4 gap-4 t:gap-8"
@@ -292,7 +314,9 @@ const HRDocument = () => {
         {folderId ? (
           <div className="w-full flex flex-row items-center justify-between">
             <Link
-              href={`/nest/hr/document/${folder.path}`}
+              href={`/nest/hr/document/${
+                folder.path && typeof folder.path === "number" ? folder.path : 0
+              }`}
               className="p-2 rounded-full hover:bg-neutral-100 transition-all"
             >
               <IoArrowBack />

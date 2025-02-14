@@ -1,14 +1,14 @@
 import { SelectInterface } from "@/src/interface/FormInterface";
 import React from "react";
 
-const Select: React.FC<SelectInterface<number>> = (props) => {
+const Select: React.FC<SelectInterface> = (props) => {
   const mappedOptions = props.options.map((option, index) => {
     return (
       <button
         key={index}
         disabled={props.value === option.value}
         onClick={() => {
-          props.onChange(Number(option.value), props.label);
+          props.onChange(option.value, option.label);
           props.toggleSelect();
         }}
         className="p-2 w-full transition-all bg-neutral-200 rounded-sm disabled:bg-accent-blue/20"
