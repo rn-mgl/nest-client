@@ -156,7 +156,7 @@ const EditFolder: React.FC<ModalInterface & UpdateModalInterface> = (props) => {
     >
       <div className="w-full h-auto max-w-screen-t bg-neutral-100 shadow-md rounded-lg ">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-yellow rounded-t-lg font-bold text-accent-blue">
-          Update Leave
+          Update Folder
           <button
             onClick={props.toggleModal}
             className="p-2 rounded-full hover:bg-accent-blue/20 transition-all text-xl"

@@ -277,7 +277,13 @@ const HRDocument = () => {
         />
       ) : null}
 
-      {canEditDocument ? <EditDocument /> : null}
+      {canEditDocument ? (
+        <EditDocument
+          id={activeDocumentMenu.id}
+          toggleModal={handleCanEditDocument}
+          refetchIndex={getDocuments}
+        />
+      ) : null}
 
       {canEditFolder ? (
         <EditFolder

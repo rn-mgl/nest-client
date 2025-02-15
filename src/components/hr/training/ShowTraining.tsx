@@ -117,7 +117,7 @@ const ShowTraining: React.FC<ShowModalInterface> = (props) => {
               <Link
                 href={currentContent}
                 target="_blank"
-                className="flex flex-row items-center justify-center gap-2 group transition-all"
+                className="flex flex-row items-center justify-center gap-2 group transition-all hover:underline underline-offset-2"
               >
                 <div className="text-2xl aspect-square rounded-sm bg-accent-purple/50 p-2 group-hover:bg-accent-purple/80 transition-all">
                   <AiFillFilePdf className="text-white" />
