@@ -79,7 +79,24 @@ const EditDocument: React.FC<ModalInterface & UpdateModalInterface> = (
         });
 
         if (folders.paths) {
+          // start off with Home
+          folders.paths.unshift({ label: "Home", value: 0 });
           setPaths(folders.paths);
+
+          const pathValue = folders.paths.find((path) => {
+            return (
+              document.path &&
+              typeof document.path === "number" &&
+              document.path === path.value
+            );
+          });
+
+          setDocument((prev) => {
+            return {
+              ...prev,
+              path: pathValue,
+            };
+          });
         }
       }
     } catch (error) {
@@ -260,6 +277,8 @@ const EditDocument: React.FC<ModalInterface & UpdateModalInterface> = (
             value={
               document.path && typeof document.path === "object"
                 ? document.path.value
+                : typeof document.path === "number"
+                ? document.path
                 : 0
             }
             onChange={handlePaths}

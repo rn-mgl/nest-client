@@ -133,6 +133,7 @@ const EditFolder: React.FC<ModalInterface & UpdateModalInterface> = (props) => {
         });
 
         if (folders.paths) {
+          folders.paths.unshift({ label: "Home", value: 0 });
           setPaths(folders.paths);
         }
       }

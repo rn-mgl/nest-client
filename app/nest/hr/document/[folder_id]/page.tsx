@@ -1,8 +1,10 @@
 "use client";
 
 import CreateDocument from "@/src/components/hr/document/CreateDocument";
+import DeleteDocument from "@/src/components/hr/document/DeleteDocument";
 import EditDocument from "@/src/components/hr/document/EditDocument";
 import CreateDocumentFolder from "@/src/components/hr/documentFolder/CreateDocumentFolder";
+import DeleteFolder from "@/src/components/hr/documentFolder/DeleteFolder";
 import EditFolder from "@/src/components/hr/documentFolder/EditFolder";
 import {
   DocumentFolderInterface,
@@ -43,7 +45,9 @@ const HRDocument = () => {
     >
   >([]);
   const [canEditDocument, setCanEditDocument] = React.useState(false);
+  const [canDeleteDocument, setCanDeleteDocument] = React.useState(false);
   const [canEditFolder, setCanEditFolder] = React.useState(false);
+  const [canDeleteFolder, setCanDeleteFolder] = React.useState(false);
 
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -66,6 +70,14 @@ const HRDocument = () => {
 
   const handleCanEditFolder = () => {
     setCanEditFolder((prev) => !prev);
+  };
+
+  const handleCanDeleteFolder = () => {
+    setCanDeleteFolder((prev) => !prev);
+  };
+
+  const handleCanDeleteDocument = () => {
+    setCanDeleteDocument((prev) => !prev);
   };
 
   const handleActiveDocumentMenu = (type: string, id: number) => {
@@ -180,7 +192,7 @@ const HRDocument = () => {
 
             {createdBy ? (
               <button
-                // onClick={handleCanDeleteDocument}
+                onClick={handleCanDeleteDocument}
                 className="w-full p-1 rounded-sm text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
               >
                 <IoTrash className="text-red-600" />
@@ -239,7 +251,7 @@ const HRDocument = () => {
 
               {createdBy ? (
                 <button
-                  // onClick={handleCanDeleteDocument}
+                  onClick={handleCanDeleteFolder}
                   className="w-full p-1 rounded-sm text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
                 >
                   <IoTrash className="text-red-600" />
@@ -289,6 +301,22 @@ const HRDocument = () => {
         <EditFolder
           id={activeDocumentMenu.id}
           toggleModal={handleCanEditFolder}
+          refetchIndex={getDocuments}
+        />
+      ) : null}
+
+      {canDeleteDocument ? (
+        <DeleteDocument
+          id={activeDocumentMenu.id}
+          toggleModal={handleCanDeleteDocument}
+          refetchIndex={getDocuments}
+        />
+      ) : null}
+
+      {canDeleteFolder ? (
+        <DeleteFolder
+          id={activeDocumentMenu.id}
+          toggleModal={handleCanDeleteFolder}
           refetchIndex={getDocuments}
         />
       ) : null}
