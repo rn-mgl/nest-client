@@ -133,14 +133,17 @@ const EditFolder: React.FC<ModalInterface & UpdateModalInterface> = (props) => {
         });
 
         if (folders.paths) {
-          folders.paths.unshift({ label: "Home", value: 0 });
-          setPaths(folders.paths);
+          const filteredFolders = folders.paths.filter(
+            (path) => path.value !== props.id
+          );
+          filteredFolders.unshift({ label: "Home", value: 0 });
+          setPaths(filteredFolders);
         }
       }
     } catch (error) {
       console.log(error);
     }
-  }, [url, user?.token, folder.path]);
+  }, [url, user?.token, folder.path, props.id]);
 
   React.useEffect(() => {
     getFolder();
