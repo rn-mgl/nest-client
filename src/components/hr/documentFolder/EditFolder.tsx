@@ -133,17 +133,30 @@ const EditFolder: React.FC<ModalInterface & UpdateModalInterface> = (props) => {
         });
 
         if (folders.paths) {
-          const filteredFolders = folders.paths.filter(
-            (path) => path.value !== props.id
-          );
-          filteredFolders.unshift({ label: "Home", value: 0 });
-          setPaths(filteredFolders);
+          folders.paths.unshift({ label: "Home", value: 0 });
+
+          setPaths(folders.paths);
+
+          const pathValue = folders.paths.find((path) => {
+            return (
+              folder.path &&
+              typeof folder.path === "number" &&
+              path.value === folder.path
+            );
+          });
+
+          setFolder((prev) => {
+            return {
+              ...prev,
+              path: pathValue,
+            };
+          });
         }
       }
     } catch (error) {
       console.log(error);
     }
-  }, [url, user?.token, folder.path, props.id]);
+  }, [url, user?.token, folder.path]);
 
   React.useEffect(() => {
     getFolder();
@@ -198,6 +211,8 @@ const EditFolder: React.FC<ModalInterface & UpdateModalInterface> = (props) => {
             value={
               folder.path && typeof folder.path === "object"
                 ? folder.path.value
+                : typeof folder.path === "number"
+                ? folder.path
                 : 0
             }
             onChange={handlePaths}
