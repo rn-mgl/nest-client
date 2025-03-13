@@ -1,16 +1,27 @@
 "use client";
 
+import Filter from "@/src/components/global/Filter";
 import CreateDocument from "@/src/components/hr/document/CreateDocument";
 import DeleteDocument from "@/src/components/hr/document/DeleteDocument";
 import EditDocument from "@/src/components/hr/document/EditDocument";
 import CreateDocumentFolder from "@/src/components/hr/documentFolder/CreateDocumentFolder";
 import DeleteFolder from "@/src/components/hr/documentFolder/DeleteFolder";
 import EditFolder from "@/src/components/hr/documentFolder/EditFolder";
+import useCategory from "@/src/hooks/useCategory";
+import useFilters from "@/src/hooks/useFilters";
+import useSearch from "@/src/hooks/useSearch";
+import useSort from "@/src/hooks/useSort";
 import {
   DocumentFolderInterface,
   DocumentInterface,
 } from "@/src/interface/DocumentInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
+import {
+  HR_DOCUMENTS_CATEGORY,
+  HR_DOCUMENTS_SEARCH,
+  HR_DOCUMENTS_SORT,
+  HR_FOLDERS_SEARCH,
+} from "@/src/utils/filters";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { getCookie } from "cookies-next";
@@ -48,6 +59,29 @@ const HRDocument = () => {
   const [canDeleteDocument, setCanDeleteDocument] = React.useState(false);
   const [canEditFolder, setCanEditFolder] = React.useState(false);
   const [canDeleteFolder, setCanDeleteFolder] = React.useState(false);
+
+  const {
+    canShowSearch,
+    debounceSearch,
+    search,
+    handleCanShowSearch,
+    handleSearch,
+    handleSelectSearch,
+  } = useSearch("name", "Name");
+  const { showFilters, handleShowFilters } = useFilters();
+  const {
+    category,
+    canShowCategories,
+    handleCanShowCategories,
+    handleSelectCategory,
+  } = useCategory("all", "all", "All");
+  const {
+    sort,
+    canShowSort,
+    handleCanShowSort,
+    handleSelectSort,
+    handleToggleAsc,
+  } = useSort("name", "Name");
 
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -103,7 +137,7 @@ const HRDocument = () => {
             "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
           },
           withCredentials: true,
-          params: { path: folderId },
+          params: { path: folderId, ...search, ...sort, ...category },
         });
 
         if (documents) {
@@ -113,7 +147,7 @@ const HRDocument = () => {
     } catch (error) {
       console.log(error);
     }
-  }, [url, user?.token, folderId]);
+  }, [url, user?.token, folderId, search, sort, category]);
 
   const getFolder = React.useCallback(async () => {
     try {
@@ -325,6 +359,40 @@ const HRDocument = () => {
         className="w-full flex flex-col items-center justify-start max-w-screen-l-l p-2
           t:items-start t:p-4 gap-4 t:gap-8"
       >
+        <Filter
+          showSearch={true}
+          showSort={true}
+          showCategory={true}
+          searchKey={debounceSearch.searchKey}
+          searchLabel={debounceSearch.searchLabel}
+          searchValue={debounceSearch.searchValue}
+          searchKeyLabelPairs={
+            category.categoryValue === "all" ||
+            category.categoryValue === "documents"
+              ? HR_DOCUMENTS_SEARCH
+              : HR_FOLDERS_SEARCH
+          }
+          canShowSearch={canShowSearch}
+          selectSearch={handleSelectSearch}
+          toggleShowSearch={handleCanShowSearch}
+          onChange={handleSearch}
+          showFilters={showFilters}
+          toggleShowFilters={handleShowFilters}
+          categoryLabel={category.categoryLabel}
+          canShowCategories={canShowCategories}
+          categoryKeyValuePairs={HR_DOCUMENTS_CATEGORY}
+          toggleShowCategories={handleCanShowCategories}
+          selectCategory={handleSelectCategory}
+          sortKey={sort.sortKey}
+          sortLabel={sort.sortLabel}
+          isAsc={sort.isAsc}
+          canShowSort={canShowSort}
+          sortKeyLabelPairs={HR_DOCUMENTS_SORT}
+          toggleAsc={handleToggleAsc}
+          selectSort={handleSelectSort}
+          toggleShowSort={handleCanShowSort}
+        />
+
         <div className="w-full flex flex-col items-center justify-start gap-2 t:flex-row">
           <button
             onClick={handleCanCreateDocument}

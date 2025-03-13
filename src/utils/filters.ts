@@ -203,3 +203,45 @@ export const HR_TRAINING_SEARCH = [
     label: "Description",
   },
 ];
+
+// for hr to filter docoments
+
+export const HR_DOCUMENTS_CATEGORY = [
+  {
+    key: "-",
+    labelValue: [
+      { label: "All", value: "all" },
+      { label: "Documents", value: "documents" },
+      { label: "Folders", value: "folders" },
+    ],
+  },
+];
+
+export const HR_DOCUMENTS_SORT = [
+  {
+    key: "name",
+    label: "Name",
+  },
+  {
+    key: "created_at",
+    label: "Created At",
+  },
+];
+
+export const HR_DOCUMENTS_SEARCH = [
+  {
+    key: "name",
+    label: "Name",
+  },
+  {
+    key: "description",
+    label: "Description",
+  },
+];
+
+export const HR_FOLDERS_SEARCH = [
+  {
+    key: "name",
+    label: "Name",
+  },
+];
