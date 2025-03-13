@@ -1,7 +1,4 @@
-import {
-  Filter as FilterInterface,
-  Sort as SortInterface,
-} from "@/interface/FilterInterface";
+import { FilterInterface, SortInterface } from "@/interface/FilterInterface";
 import React from "react";
 import { GoSortAsc, GoSortDesc } from "react-icons/go";
 const Sort: React.FC<SortInterface & FilterInterface> = (props) => {

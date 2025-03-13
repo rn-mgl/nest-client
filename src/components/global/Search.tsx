@@ -1,7 +1,4 @@
-import {
-  Filter as FilterInterface,
-  Search as SearchInterface,
-} from "@/interface/FilterInterface";
+import { FilterInterface, SearchInterface } from "@/interface/FilterInterface";
 import React from "react";
 import { IoFilter, IoSearch } from "react-icons/io5";
 

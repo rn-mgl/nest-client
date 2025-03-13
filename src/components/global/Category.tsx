@@ -1,7 +1,7 @@
 import React from "react";
 import {
-  Filter as FilterInterface,
-  Category as CategoryInterface,
+  FilterInterface,
+  CategoryInterface,
 } from "@/interface/FilterInterface";
 
 const Category: React.FC<CategoryInterface & FilterInterface> = (props) => {

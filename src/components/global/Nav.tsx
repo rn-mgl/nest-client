@@ -122,7 +122,7 @@ const Nav: React.FC<SideNavInterface & { children: React.ReactNode }> = (
           </div>
         </div>
 
-        <div className="w-full h-full flex flex-col items-center justify-start p-4 gap-2">
+        <div className="w-full h-full flex flex-col items-center justify-start p-4 gap-2 overflow-y-auto">
           {mappedLinks}
 
           <button
