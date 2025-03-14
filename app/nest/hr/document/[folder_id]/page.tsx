@@ -4,6 +4,7 @@ import Filter from "@/src/components/global/Filter";
 import CreateDocument from "@/src/components/hr/document/CreateDocument";
 import DeleteDocument from "@/src/components/hr/document/DeleteDocument";
 import EditDocument from "@/src/components/hr/document/EditDocument";
+import ShowDocument from "@/src/components/hr/document/ShowDocument";
 import CreateDocumentFolder from "@/src/components/hr/documentFolder/CreateDocumentFolder";
 import DeleteFolder from "@/src/components/hr/documentFolder/DeleteFolder";
 import EditFolder from "@/src/components/hr/documentFolder/EditFolder";
@@ -59,6 +60,7 @@ const HRDocument = () => {
   const [canDeleteDocument, setCanDeleteDocument] = React.useState(false);
   const [canEditFolder, setCanEditFolder] = React.useState(false);
   const [canDeleteFolder, setCanDeleteFolder] = React.useState(false);
+  const [activeDocumentSeeMore, setActiveDocumentSeeMore] = React.useState(0);
 
   const {
     canShowSearch,
@@ -112,6 +114,10 @@ const HRDocument = () => {
 
   const handleCanDeleteDocument = () => {
     setCanDeleteDocument((prev) => !prev);
+  };
+
+  const handleActiveDocumentSeeMore = (id: number) => {
+    setActiveDocumentSeeMore((prev) => (prev === id ? 0 : id));
   };
 
   const handleActiveDocumentMenu = (type: string, id: number) => {
@@ -237,7 +243,10 @@ const HRDocument = () => {
         ) : null}
 
         <div className="w-full flex flex-col items-center justify-center ">
-          <button className="text-xs flex flex-row items-center justify-center gap-1 hover:underline underline-offset-2">
+          <button
+            onClick={() => handleActiveDocumentSeeMore(document.id as number)}
+            className="text-xs flex flex-row items-center justify-center gap-1 hover:underline underline-offset-2"
+          >
             See More <IoArrowForward />
           </button>
         </div>
@@ -352,6 +361,13 @@ const HRDocument = () => {
           id={activeDocumentMenu.id}
           toggleModal={handleCanDeleteFolder}
           refetchIndex={getDocuments}
+        />
+      ) : null}
+
+      {activeDocumentSeeMore ? (
+        <ShowDocument
+          id={activeDocumentSeeMore}
+          setActiveModal={handleActiveDocumentSeeMore}
         />
       ) : null}
 

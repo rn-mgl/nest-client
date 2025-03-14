@@ -134,8 +134,11 @@ const EditFolder: React.FC<ModalInterface & UpdateModalInterface> = (props) => {
 
         if (folders.paths) {
           folders.paths.unshift({ label: "Home", value: 0 });
+          const folderPaths = folders.paths.filter(
+            (path) => path.value !== props.id
+          );
 
-          setPaths(folders.paths);
+          setPaths(folderPaths);
 
           const pathValue = folders.paths.find((path) => {
             return (
@@ -156,7 +159,7 @@ const EditFolder: React.FC<ModalInterface & UpdateModalInterface> = (props) => {
     } catch (error) {
       console.log(error);
     }
-  }, [url, user?.token, folder.path]);
+  }, [url, user?.token, folder.path, props.id]);
 
   React.useEffect(() => {
     getFolder();
