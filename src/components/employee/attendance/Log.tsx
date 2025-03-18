@@ -1,4 +1,7 @@
-import { ModalInterface } from "@/src/interface/ModalInterface";
+import {
+  ModalInterface,
+  UpdateModalInterface,
+} from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { getCookie } from "cookies-next";
@@ -6,7 +9,9 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose } from "react-icons/io5";
 
-const Log: React.FC<ModalInterface> = (props) => {
+const Log: React.FC<
+  ModalInterface & UpdateModalInterface & { logType: "in" | "out" }
+> = ({ id, logType, toggleModal, refetchIndex }) => {
   const [percentage, setPercentage] = React.useState(0);
   const [status, setStatus] = React.useState<
     "base" | "logging" | "done" | "failed"
@@ -39,7 +44,7 @@ const Log: React.FC<ModalInterface> = (props) => {
       if (token && user?.token) {
         const { data: logged } = await axios.post(
           `${url}/employee/attendance`,
-          { type: "in" },
+          { type: logType, attendance_id: id },
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
@@ -50,6 +55,10 @@ const Log: React.FC<ModalInterface> = (props) => {
         );
 
         if (logged.success) {
+          if (refetchIndex) {
+            setPercentage(0);
+            refetchIndex();
+          }
           setStatus("done");
         }
       }
@@ -57,7 +66,7 @@ const Log: React.FC<ModalInterface> = (props) => {
       setStatus("failed");
       console.log(error);
     }
-  }, [url, user?.token]);
+  }, [url, user?.token, logType, refetchIndex, id]);
 
   React.useEffect(() => {
     if (percentage === 100) {
@@ -76,7 +85,7 @@ const Log: React.FC<ModalInterface> = (props) => {
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-blue rounded-t-lg font-bold text-accent-yellow">
           Log Attendance
           <button
-            onClick={props.toggleModal}
+            onClick={toggleModal}
             className="p-2 rounded-full hover:bg-accent-yellow/20 transition-all text-xl"
           >
             <IoClose />
@@ -84,7 +93,7 @@ const Log: React.FC<ModalInterface> = (props) => {
         </div>
         <div className="w-full p-4 rounded-b-md flex flex-col items-center justify-start gap-4">
           <p className="text-center font-bold">
-            Hold the button to process your log in.
+            Hold the button to process your log {logType}.
           </p>
 
           {status === "base" ? (
@@ -95,9 +104,9 @@ const Log: React.FC<ModalInterface> = (props) => {
               onMouseLeave={removeHold}
               onTouchEnd={removeHold}
               onTouchCancel={removeHold}
-              className="w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2"
+              className="w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2 capitalize"
             >
-              Log In
+              Log {logType}
             </button>
           ) : status === "logging" ? (
             <div>Logging</div>
@@ -110,7 +119,7 @@ const Log: React.FC<ModalInterface> = (props) => {
           <div className="w-full rounded-full h-2 bg-neutral-200 relative flex flex-col items-start justify-center">
             <div
               style={{ width: `${percentage}%` }}
-              className="absolute bg-gradient-to-r from-accent-blue to-accent-yellow transition-all rounded-full w-0 h-2"
+              className="absolute bg-gradient-to-r from-accent-blue to-accent-green transition-all rounded-full w-0 h-2"
             ></div>
           </div>
         </div>

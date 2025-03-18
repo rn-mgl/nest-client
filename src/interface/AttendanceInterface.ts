@@ -7,8 +7,8 @@ export interface AttendanceStatisticsInterface {
 
 export interface AttendanceInterface {
   attendance_id?: number;
-  login_time: string;
-  logout_time: string;
+  login_time: string | null;
+  logout_time: string | null;
   late: boolean | null;
   absent: boolean;
 }
