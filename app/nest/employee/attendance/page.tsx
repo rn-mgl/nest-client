@@ -36,11 +36,6 @@ const Attendance = () => {
     currentMonth === activeMonth.value &&
     currentYear === activeYear;
 
-  const activeLessThenCurrentFullDate =
-    currentDate > activeDate ||
-    currentMonth > activeMonth.value ||
-    currentYear > activeYear;
-
   const activeGreaterThenCurrentFullDate =
     currentDate < activeDate ||
     currentMonth < activeMonth.value ||
@@ -136,19 +131,22 @@ const Attendance = () => {
         key={index}
         className={`w-full h-full aspect-square l-l:aspect-video flex flex-col 
         items-center justify-center rounded-sm t:rounded-md text-xs t:text-sm 
-        border-neutral-300 border-2 bg-neutral-100 font-bold animate-fade
+        border-2 font-bold animate-fade
         relative l-s:text-lg`}
-      >
-        {date}
-      </div>
+      />
     ) : (
       <button
         key={index}
         onClick={() => handleActiveDate(date)}
         className={`w-full h-full aspect-square l-l:aspect-video flex flex-col 
         items-center justify-center rounded-sm t:rounded-md text-xs t:text-sm 
-        border-accent-blue border-2 text-accent-blue font-bold animate-fade
-        relative l-s:text-lg`}
+        border-2 animate-fade relative l-s:text-lg hover:bg-neutral-100 ${
+          date === currentDate &&
+          currentMonth === activeMonth.value &&
+          currentYear === activeYear
+            ? "border-accent-blue/50"
+            : ""
+        }`}
       >
         {date}
       </button>
@@ -255,29 +253,31 @@ const Attendance = () => {
               className="w-full flex flex-col items-center justify-center p-2 rounded-md 
                       text-accent-blue border-accent-blue border-2 font-bold t:w-fit t:px-4"
             >
-              <p className="">
-                Attendance Completed{attendance.late ? ": Late" : null}
-              </p>
-            </div>
-          ) : activeLessThenCurrentFullDate ? (
-            <div
-              className="w-full flex flex-col items-center justify-center p-2 rounded-md 
-                  text-red-600 border-red-600 border-2 font-bold t:w-fit t:px-4"
-            >
-              <p className="">
-                Attendance Overdue:{" "}
-                {attendance.absent
-                  ? "Absent"
-                  : attendance.late
-                  ? "Late"
-                  : !attendance.login_time
-                  ? "No Log In"
-                  : !attendance.logout_time
-                  ? "No Log Out"
-                  : "Completed"}
-              </p>
+              <p>Attendance Completed</p>
             </div>
           ) : null}
+        </div>
+
+        <div className="w-full flex flex-col items-center justify-center text-xs t:text-sm">
+          <div
+            className="w-full grid grid-cols-4 items-center justify-center *:flex *:flex-col *:items-center 
+                      *:justify-center bg-neutral-200 p-2 rounded-t-sm font-bold t:rounded-t-md t:p-4"
+          >
+            <p>Log In</p>
+            <p>Log Out</p>
+            <p>Late</p>
+            <p>Absent</p>
+          </div>
+
+          <div
+            className="w-full grid grid-cols-4 items-center justify-center *:flex *:flex-col *:items-center 
+                      *:justify-center bg-white p-2 rounded-b-sm border-[1px] border-t-0 *:text-center t:rounded-b-md t:p-4"
+          >
+            <p>{attendance.login_time ?? "-"}</p>
+            <p>{attendance.logout_time ?? "-"}</p>
+            <p>{attendance.absent ? "-" : attendance.late ? "Yes" : "No"}</p>
+            <p>{attendance.absent ? "Yes" : "No"}</p>
+          </div>
         </div>
 
         <div className="grid grid-cols-7 w-full gap-1 t:gap-2">
