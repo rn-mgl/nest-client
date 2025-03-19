@@ -13,9 +13,9 @@ const Log: React.FC<
   ModalInterface & UpdateModalInterface & { logType: "in" | "out" }
 > = ({ id, logType, toggleModal, refetchIndex }) => {
   const [percentage, setPercentage] = React.useState(0);
-  const [status, setStatus] = React.useState<
-    "base" | "logging" | "done" | "failed"
-  >("base");
+  const [status, setStatus] = React.useState<"base" | "logging" | "failed">(
+    "base"
+  );
 
   const timerRef = React.useRef<NodeJS.Timeout>();
 
@@ -55,18 +55,18 @@ const Log: React.FC<
         );
 
         if (logged.success) {
+          toggleModal();
           if (refetchIndex) {
             setPercentage(0);
             refetchIndex();
           }
-          setStatus("done");
         }
       }
     } catch (error) {
       setStatus("failed");
       console.log(error);
     }
-  }, [url, user?.token, logType, refetchIndex, id]);
+  }, [url, user?.token, logType, refetchIndex, toggleModal, id]);
 
   React.useEffect(() => {
     if (percentage === 100) {
@@ -82,18 +82,30 @@ const Log: React.FC<
                 p-4 t:p-8 z-50 bg-gradient-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade"
     >
       <div className="w-full h-auto max-w-screen-l-s bg-neutral-100 shadow-md rounded-lg ">
-        <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-blue rounded-t-lg font-bold text-accent-yellow">
+        <div
+          className={`w-full flex flex-row items-center justify-between p-4  rounded-t-lg font-bold 
+            ${
+              logType === "in"
+                ? "bg-accent-blue text-accent-yellow"
+                : "bg-red-600 text-white"
+            }`}
+        >
           Log Attendance
           <button
             onClick={toggleModal}
-            className="p-2 rounded-full hover:bg-accent-yellow/20 transition-all text-xl"
+            className={`p-2 rounded-full  transition-all text-xl
+              ${
+                logType === "in"
+                  ? "hover:bg-accent-yellow/20"
+                  : "hover:bg-accent-blue/20"
+              }`}
           >
             <IoClose />
           </button>
         </div>
         <div className="w-full p-4 rounded-b-md flex flex-col items-center justify-start gap-4">
           <p className="text-center font-bold">
-            Hold the button to process your log {logType}.
+            Hold the button to log {logType}.
           </p>
 
           {status === "base" ? (
@@ -104,22 +116,30 @@ const Log: React.FC<
               onMouseLeave={removeHold}
               onTouchEnd={removeHold}
               onTouchCancel={removeHold}
-              className="w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2 capitalize"
+              className={`w-full font-bold text-center rounded-md p-2 mt-2 capitalize
+                 ${
+                   logType === "in"
+                     ? "bg-accent-blue text-accent-yellow"
+                     : "bg-red-600 text-white"
+                 }`}
             >
               Log {logType}
             </button>
           ) : status === "logging" ? (
             <div>Logging</div>
-          ) : status === "done" ? (
-            <div>Done</div>
           ) : (
-            <div>{status}</div>
+            <div className="capitalize">{status}</div>
           )}
 
           <div className="w-full rounded-full h-2 bg-neutral-200 relative flex flex-col items-start justify-center">
             <div
               style={{ width: `${percentage}%` }}
-              className="absolute bg-gradient-to-r from-accent-blue to-accent-green transition-all rounded-full w-0 h-2"
+              className={`absolute bg-gradient-to-r transition-all rounded-full w-0 h-2
+                 ${
+                   logType === "in"
+                     ? "from-accent-blue to-accent-green"
+                     : "from-red-500 to-orange-500"
+                 }`}
             ></div>
           </div>
         </div>

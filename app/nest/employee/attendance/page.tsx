@@ -13,16 +13,38 @@ import { IoCalendar } from "react-icons/io5";
 
 const Attendance = () => {
   const [canLog, setCanLog] = React.useState(false);
-  const [currentMonth, setCurrentMonth] = React.useState({
+  const [activeMonth, setActiveMonth] = React.useState({
     label: new Date().toLocaleDateString("default", { month: "long" }),
     value: new Date().getMonth(),
   });
-  const [currentDate, setCurrentDate] = React.useState(new Date().getDate());
-  const [currentYear, setCurrentYear] = React.useState(
-    new Date().getFullYear()
-  );
+  const [activeDate, setActiveDate] = React.useState(new Date().getDate());
+  const [activeYear, setActiveYear] = React.useState(new Date().getFullYear());
   const [activeSelect, setActiveSelect] = React.useState(false);
-  const [logToday, setLogToday] = React.useState<AttendanceInterface>({});
+  const [attendance, setAttendance] = React.useState<AttendanceInterface>({
+    absent: false,
+    late: false,
+    login_time: "",
+    logout_time: "",
+  });
+
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
+  const currentDate = new Date().getDate();
+
+  const equalActiveAndCurrentFullDate =
+    currentDate === activeDate &&
+    currentMonth === activeMonth.value &&
+    currentYear === activeYear;
+
+  const activeLessThenCurrentFullDate =
+    currentDate > activeDate ||
+    currentMonth > activeMonth.value ||
+    currentYear > activeYear;
+
+  const activeGreaterThenCurrentFullDate =
+    currentDate < activeDate ||
+    currentMonth < activeMonth.value ||
+    currentYear < activeYear;
 
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -56,25 +78,25 @@ const Attendance = () => {
     setCanLog((prev) => !prev);
   };
 
-  const handleCurrentMonth = (month: number) => {
-    setCurrentMonth({ label: monthOptions[month].label, value: month });
+  const handleActiveMonth = (month: number) => {
+    setActiveMonth({ label: monthOptions[month].label, value: month });
   };
 
-  const handleCurrentYear = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleActiveYear = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    setCurrentYear(Number(value));
+    setActiveYear(Number(value));
   };
 
-  const handleCurrentDate = (date: number) => {
-    setCurrentDate(date);
+  const handleActiveDate = (date: number) => {
+    setActiveDate(date);
   };
 
   const handleActiveSelect = () => {
     setActiveSelect((prev) => !prev);
   };
 
-  const daysInMonth = getDaysInMonth(currentYear, currentMonth.value);
-  const startDay = getStartDayOfMonth(currentYear, currentMonth.value);
+  const daysInMonth = getDaysInMonth(activeYear, activeMonth.value);
+  const startDay = getStartDayOfMonth(activeYear, activeMonth.value);
   const calendar = [];
 
   for (let i = 0; i < startDay; i++) {
@@ -99,28 +121,49 @@ const Attendance = () => {
   });
 
   const mappedCalendar = calendar.map((date, index) => {
-    return (
+    return date === activeDate ? (
       <div
         key={index}
-        className="w-full h-full aspect-square l-l:aspect-video flex flex-col 
+        className={`w-full h-full aspect-square l-l:aspect-video flex flex-col 
           items-center justify-center rounded-sm t:rounded-md text-xs t:text-sm 
-          bg-accent-blue text-accent-yellow border-0 font-bold animate-fade
-          relative l-s:text-lg"
+          border-accent-blue border-2 bg-accent-blue text-accent-yellow font-bold animate-fade
+          relative l-s:text-lg`}
       >
         {date}
       </div>
+    ) : date === null ? (
+      <div
+        key={index}
+        className={`w-full h-full aspect-square l-l:aspect-video flex flex-col 
+        items-center justify-center rounded-sm t:rounded-md text-xs t:text-sm 
+        border-neutral-300 border-2 bg-neutral-100 font-bold animate-fade
+        relative l-s:text-lg`}
+      >
+        {date}
+      </div>
+    ) : (
+      <button
+        key={index}
+        onClick={() => handleActiveDate(date)}
+        className={`w-full h-full aspect-square l-l:aspect-video flex flex-col 
+        items-center justify-center rounded-sm t:rounded-md text-xs t:text-sm 
+        border-accent-blue border-2 text-accent-blue font-bold animate-fade
+        relative l-s:text-lg`}
+      >
+        {date}
+      </button>
     );
   });
 
-  const getLogToday = React.useCallback(async () => {
+  const getAttendance = React.useCallback(async () => {
+    if (activeGreaterThenCurrentFullDate) return;
+
     try {
       const { token } = await getCSRFToken();
-      const stringDate = `${currentYear}-${
-        currentMonth.value + 1
-      }-${currentDate}`;
+      const stringDate = `${activeYear}-${activeMonth.value + 1}-${activeDate}`;
 
       if (token && user?.token) {
-        const { data: logToday } = await axios.get(
+        const { data: attendance } = await axios.get(
           `${url}/employee/attendance/${stringDate}`,
           {
             headers: {
@@ -131,27 +174,34 @@ const Attendance = () => {
           }
         );
 
-        if (logToday.attendance) {
-          setLogToday(logToday.attendance);
+        if (attendance.attendance) {
+          setAttendance(attendance.attendance);
         }
       }
     } catch (error) {
       console.log(error);
     }
-  }, [url, user?.token, currentYear, currentMonth, currentDate]);
+  }, [
+    url,
+    user?.token,
+    activeYear,
+    activeMonth,
+    activeDate,
+    activeGreaterThenCurrentFullDate,
+  ]);
 
   React.useEffect(() => {
-    getLogToday();
-  }, [getLogToday]);
+    getAttendance();
+  }, [getAttendance]);
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
       {canLog ? (
         <Log
-          id={logToday.attendance_id ?? 0}
+          id={attendance.attendance_id ?? 0}
           toggleModal={handleCanLog}
-          logType={!logToday.login_time ? "in" : "out"}
-          refetchIndex={getLogToday}
+          logType={!attendance.login_time ? "in" : "out"}
+          refetchIndex={getAttendance}
         />
       ) : null}
 
@@ -159,44 +209,76 @@ const Attendance = () => {
         className="w-full flex flex-col items-center justify-start max-w-screen-l-l p-2
           t:items-start t:p-4 gap-4 t:gap-8"
       >
-        <div className="w-full flex flex-row items-start justify-between gap-2 t:gap-4 t:w-96 t:max-w-96 t:min-w-96">
-          <Select
-            id="month"
-            options={monthOptions}
-            placeholder="Month"
-            value={currentMonth.value}
-            onChange={handleCurrentMonth}
-            required={false}
-            icon={<IoCalendar />}
-            label={currentMonth.label}
-            activeSelect={activeSelect}
-            toggleSelect={handleActiveSelect}
-          />
+        <div className="flex flex-col w-full items-center justify-center gap-4 t:gap-8 t:flex-row t:justify-between">
+          <div className="w-full flex flex-row items-start justify-between gap-2 t:gap-4 t:w-96 t:max-w-96 t:min-w-96">
+            <Select
+              id="month"
+              options={monthOptions}
+              placeholder="Month"
+              value={activeMonth.value}
+              onChange={handleActiveMonth}
+              required={false}
+              icon={<IoCalendar />}
+              label={activeMonth.label}
+              activeSelect={activeSelect}
+              toggleSelect={handleActiveSelect}
+            />
 
-          <Input
-            id="year"
-            placeholder="Year"
-            required={false}
-            type="number"
-            value={currentYear}
-            onChange={handleCurrentYear}
-            icon={<IoCalendar />}
-            min={2000}
-          />
+            <Input
+              id="year"
+              placeholder="Year"
+              required={false}
+              type="number"
+              value={activeYear}
+              onChange={handleActiveYear}
+              icon={<IoCalendar />}
+              min={2000}
+            />
+          </div>
+
+          {equalActiveAndCurrentFullDate &&
+          (!attendance.login_time || !attendance.logout_time) ? (
+            <button
+              onClick={handleCanLog}
+              className={`${
+                !attendance.login_time
+                  ? "bg-accent-blue text-accent-yellow"
+                  : "bg-red-600 text-white"
+              }  w-full p-2 rounded-md font-bold flex flex-row items-center justify-center 
+                          gap-2 t:w-fit t:px-4 transition-all`}
+            >
+              {!attendance.login_time ? "Log In" : "Log Out"}
+              <IoCalendar className="text-lg" />
+            </button>
+          ) : equalActiveAndCurrentFullDate ? (
+            <div
+              className="w-full flex flex-col items-center justify-center p-2 rounded-md 
+                      text-accent-blue border-accent-blue border-2 font-bold t:w-fit t:px-4"
+            >
+              <p className="">
+                Attendance Completed{attendance.late ? ": Late" : null}
+              </p>
+            </div>
+          ) : activeLessThenCurrentFullDate ? (
+            <div
+              className="w-full flex flex-col items-center justify-center p-2 rounded-md 
+                  text-red-600 border-red-600 border-2 font-bold t:w-fit t:px-4"
+            >
+              <p className="">
+                Attendance Overdue:{" "}
+                {attendance.absent
+                  ? "Absent"
+                  : attendance.late
+                  ? "Late"
+                  : !attendance.login_time
+                  ? "No Log In"
+                  : !attendance.logout_time
+                  ? "No Log Out"
+                  : "Completed"}
+              </p>
+            </div>
+          ) : null}
         </div>
-
-        {!logToday.login_time || !logToday.logout_time ? (
-          <button
-            onClick={handleCanLog}
-            className="bg-accent-blue text-accent-yellow w-full p-2 rounded-md font-bold flex flex-row items-center justify-center 
-                          gap-2 t:w-fit t:px-4 transition-all"
-          >
-            {!logToday.login_time ? "Log In" : "Log Out"}
-            <IoCalendar className="text-lg" />
-          </button>
-        ) : (
-          <p>Done</p>
-        )}
 
         <div className="grid grid-cols-7 w-full gap-1 t:gap-2">
           {mappedDaysOfWeek}
