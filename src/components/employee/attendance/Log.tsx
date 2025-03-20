@@ -1,7 +1,4 @@
-import {
-  ModalInterface,
-  UpdateModalInterface,
-} from "@/src/interface/ModalInterface";
+import { ModalInterface } from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { getCookie } from "cookies-next";
@@ -9,9 +6,12 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose } from "react-icons/io5";
 
-const Log: React.FC<
-  ModalInterface & UpdateModalInterface & { logType: "in" | "out" }
-> = ({ id, logType, toggleModal, refetchIndex }) => {
+const Log: React.FC<ModalInterface & { logType: "in" | "out" }> = ({
+  id,
+  logType,
+  toggleModal,
+  refetchIndex,
+}) => {
   const [percentage, setPercentage] = React.useState(0);
   const [status, setStatus] = React.useState<"base" | "logging" | "failed">(
     "base"

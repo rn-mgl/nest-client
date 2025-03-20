@@ -3,10 +3,7 @@ import TextArea from "@/components/form/TextArea";
 import ModalNav from "@/components/global/ModalNav";
 import useDynamicFields from "@/src/hooks/useDynamicFields";
 import useModalNav from "@/src/hooks/useModalNav";
-import {
-  ModalInterface,
-  UpdateModalInterface,
-} from "@/src/interface/ModalInterface";
+import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
   TrainingContentSetInterface,
   TrainingContentsInterface,
@@ -31,9 +28,7 @@ import {
   IoVideocam,
 } from "react-icons/io5";
 
-const EditTraining: React.FC<ModalInterface & UpdateModalInterface> = (
-  props
-) => {
+const EditTraining: React.FC<ModalInterface> = (props) => {
   const [training, setTraining] = React.useState<TrainingInterface>({
     title: "",
     description: "",

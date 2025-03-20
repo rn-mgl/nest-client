@@ -1,22 +1,17 @@
 import React from "react";
-import {
-  ModalInterface,
-  DeleteModalInterface,
-} from "@/src/interface/ModalInterface";
+import { ModalInterface } from "@/src/interface/ModalInterface";
 import { IoClose } from "react-icons/io5";
 import { useSession } from "next-auth/react";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { getCookie } from "cookies-next";
 
-const DeleteLeaveType: React.FC<ModalInterface & DeleteModalInterface> = (
-  props
-) => {
+const DeleteLeave: React.FC<ModalInterface> = (props) => {
   const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
 
-  const submitDeleteLeaveType = async (e: React.FormEvent<HTMLFormElement>) => {
+  const submitDeleteLeave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
@@ -63,7 +58,7 @@ const DeleteLeaveType: React.FC<ModalInterface & DeleteModalInterface> = (
           </button>
         </div>
         <form
-          onSubmit={(e) => submitDeleteLeaveType(e)}
+          onSubmit={(e) => submitDeleteLeave(e)}
           className="w-full h-full p-4 flex flex-col items-center justify-start gap-4 text-center"
         >
           <p className="font-bold">
@@ -79,4 +74,4 @@ const DeleteLeaveType: React.FC<ModalInterface & DeleteModalInterface> = (
   );
 };
 
-export default DeleteLeaveType;
+export default DeleteLeave;

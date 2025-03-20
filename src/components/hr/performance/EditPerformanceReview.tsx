@@ -1,7 +1,4 @@
-import {
-  ModalInterface,
-  UpdateModalInterface,
-} from "@/src/interface/ModalInterface";
+import { ModalInterface } from "@/src/interface/ModalInterface";
 
 import Input from "@/components/form/Input";
 import TextArea from "@/components/form/TextArea";
@@ -19,9 +16,7 @@ import React from "react";
 import { IoAdd, IoClose, IoReader, IoText, IoTrash } from "react-icons/io5";
 import ModalNav from "../../global/ModalNav";
 
-const EditPerformanceReview: React.FC<ModalInterface & UpdateModalInterface> = (
-  props
-) => {
+const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
   const [performance, setPerformanceReview] =
     React.useState<PerformanceReviewInterface>({
       title: "",

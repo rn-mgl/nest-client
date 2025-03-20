@@ -1,8 +1,5 @@
 import { DocumentInterface } from "@/src/interface/DocumentInterface";
-import {
-  ModalInterface,
-  UpdateModalInterface,
-} from "@/src/interface/ModalInterface";
+import { ModalInterface } from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { getCookie } from "cookies-next";
@@ -16,9 +13,7 @@ import Link from "next/link";
 import useSelect from "@/src/hooks/useSelect";
 import Select from "../../form/Select";
 
-const EditDocument: React.FC<ModalInterface & UpdateModalInterface> = (
-  props
-) => {
+const EditDocument: React.FC<ModalInterface> = (props) => {
   const [document, setDocument] = React.useState<DocumentInterface>({
     name: "",
     description: "",

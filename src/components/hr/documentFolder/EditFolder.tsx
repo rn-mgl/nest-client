@@ -1,9 +1,6 @@
 import useSelect from "@/src/hooks/useSelect";
 import { DocumentFolderInterface } from "@/src/interface/DocumentInterface";
-import {
-  ModalInterface,
-  UpdateModalInterface,
-} from "@/src/interface/ModalInterface";
+import { ModalInterface } from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { getCookie } from "cookies-next";
@@ -13,7 +10,7 @@ import { IoClose, IoText } from "react-icons/io5";
 import Input from "../../form/Input";
 import Select from "../../form/Select";
 
-const EditFolder: React.FC<ModalInterface & UpdateModalInterface> = (props) => {
+const EditFolder: React.FC<ModalInterface> = (props) => {
   const [folder, setFolder] = React.useState<DocumentFolderInterface>({
     name: "",
     path: 0,

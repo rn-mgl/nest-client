@@ -4,10 +4,7 @@ import Input from "@/components/form/Input";
 import TextArea from "@/components/form/TextArea";
 import useDynamicFields from "@/src/hooks/useDynamicFields";
 import useModalNav from "@/src/hooks/useModalNav";
-import {
-  ModalInterface,
-  UpdateModalInterface,
-} from "@/src/interface/ModalInterface";
+import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
   OnboardingInterface,
   OnboardingPolicyAcknowledgemenSetInterface,
@@ -21,9 +18,7 @@ import React from "react";
 import { IoAdd, IoClose, IoReader, IoText, IoTrash } from "react-icons/io5";
 import ModalNav from "../../global/ModalNav";
 
-const EditOnboarding: React.FC<ModalInterface & UpdateModalInterface> = (
-  props
-) => {
+const EditOnboarding: React.FC<ModalInterface> = (props) => {
   const [onboarding, setOnboarding] = React.useState<OnboardingInterface>({
     title: "",
     description: "",

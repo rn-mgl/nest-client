@@ -1,14 +1,15 @@
 "use client";
 
 import Filter from "@/src/components/global/Filter";
-import CreateLeave from "@/src/components/hr/leaveType/CreateLeaveType";
-import DeleteLeave from "@/src/components/hr/leaveType/DeleteLeaveType";
-import EditLeave from "@/src/components/hr/leaveType/EditLeaveType";
+import AssignLeave from "@/src/components/hr/leave/AssignLeave";
+import CreateLeave from "@/src/components/hr/leave/CreateLeave";
+import DeleteLeave from "@/src/components/hr/leave/DeleteLeave";
+import EditLeave from "@/src/components/hr/leave/EditLeave";
 import useCategory from "@/src/hooks/useCategory";
 import useFilters from "@/src/hooks/useFilters";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
-import { LeaveTypeInterface } from "@/src/interface/LeaveInterface";
+import { LeaveInterface } from "@/src/interface/LeaveInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import {
   HR_LEAVE_CATEGORY,
@@ -20,15 +21,22 @@ import axios from "axios";
 import { getCookie } from "cookies-next";
 import { useSession } from "next-auth/react";
 import React from "react";
-import { IoAdd, IoEllipsisVertical, IoPencil, IoTrash } from "react-icons/io5";
+import {
+  IoAdd,
+  IoEllipsisVertical,
+  IoPencil,
+  IoPersonAdd,
+  IoTrash,
+} from "react-icons/io5";
 
 const HRLeave = () => {
   const [canCreateLeave, setCanCreateLeave] = React.useState(false);
   const [canEditLeave, setCanEditLeave] = React.useState(false);
   const [canDeleteLeave, setCanDeleteLeave] = React.useState(false);
+  const [canAssignLeave, setCanAssignLeave] = React.useState(false);
   const [activeLeaveMenu, setActiveLeaveMenu] = React.useState(0);
   const [leaves, setLeaves] = React.useState<
-    Array<LeaveTypeInterface & UserInterface>
+    Array<LeaveInterface & UserInterface>
   >([]);
 
   const { showFilters, handleShowFilters } = useFilters();
@@ -68,6 +76,10 @@ const HRLeave = () => {
 
   const handleCanDeleteLeave = () => {
     setCanDeleteLeave((prev) => !prev);
+  };
+
+  const handleCanAssignLeave = () => {
+    setCanAssignLeave((prev) => !prev);
   };
 
   const getLeaves = React.useCallback(async () => {
@@ -142,6 +154,14 @@ const HRLeave = () => {
               Edit
             </button>
 
+            <button
+              onClick={handleCanAssignLeave}
+              className="w-full p-1 rounded-sm text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
+            >
+              <IoPersonAdd className="text-accent-blue" />
+              Assign
+            </button>
+
             {createdBy ? (
               <button
                 onClick={handleCanDeleteLeave}
@@ -184,6 +204,10 @@ const HRLeave = () => {
           refetchIndex={getLeaves}
           toggleModal={handleCanDeleteLeave}
         />
+      ) : null}
+
+      {canAssignLeave ? (
+        <AssignLeave id={activeLeaveMenu} toggleModal={handleCanAssignLeave} />
       ) : null}
       <div
         className="w-full flex flex-col items-center justify-start max-w-screen-l-l p-2
