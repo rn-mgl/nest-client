@@ -41,3 +41,9 @@ export interface ModalNavInterface {
   pages: Array<string>;
   handleActiveFormPage: (page: string) => void;
 }
+
+export interface CheckBoxInterface {
+  value: number;
+  isChecked: boolean;
+  onChange: (value: number) => void;
+}

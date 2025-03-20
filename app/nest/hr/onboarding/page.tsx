@@ -1,6 +1,7 @@
 "use client";
 
 import Filter from "@/src/components/global/Filter";
+import AssignOnboarding from "@/src/components/hr/onboarding/AssignOnboarding";
 import CreateOnboarding from "@/src/components/hr/onboarding/CreateOnboarding";
 import DeleteOnboarding from "@/src/components/hr/onboarding/DeleteOnboarding";
 import EditOnboarding from "@/src/components/hr/onboarding/EditOnboarding";
@@ -26,6 +27,7 @@ import {
   IoArrowForward,
   IoEllipsisVertical,
   IoPencil,
+  IoPersonAdd,
   IoTrash,
 } from "react-icons/io5";
 
@@ -36,6 +38,7 @@ const HROnboarding = () => {
   const [canCreateOnboarding, setCanCreateOnboarding] = React.useState(false);
   const [canEditOnboarding, setCanEditOnboarding] = React.useState(false);
   const [canDeleteOnboarding, setCanDeleteOnboarding] = React.useState(false);
+  const [canAssignOnboarding, setCanAssignOnboarding] = React.useState(false);
   const [activeOnboardingMenu, setActiveOnboardingMenu] = React.useState(0);
   const [activeOnboardingSeeMore, setActiveOnboardingSeeMore] =
     React.useState(0);
@@ -87,6 +90,10 @@ const HROnboarding = () => {
     setCanDeleteOnboarding((prev) => !prev);
   };
 
+  const handleCanAssignOnboarding = () => {
+    setCanAssignOnboarding((prev) => !prev);
+  };
+
   const getOnboardings = React.useCallback(async () => {
     try {
       const { token } = await getCSRFToken();
@@ -124,6 +131,9 @@ const HROnboarding = () => {
         <div className="flex flex-row items-start justify-between w-full">
           <div className="flex flex-col items-start justify-start">
             <p className="font-bold truncate">{onboarding.title}</p>
+            <p className="text-xs">
+              created by {createdBy ? "you" : `${onboarding.first_name}`}
+            </p>
           </div>
 
           <button
@@ -167,7 +177,15 @@ const HROnboarding = () => {
               Edit
             </button>
 
-            {createdBy ? (
+            <button
+              onClick={handleCanAssignOnboarding}
+              className="w-full p-1 rounded-sm text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
+            >
+              <IoPersonAdd className="text-accent-blue" />
+              Assign
+            </button>
+
+            {createdBy && (
               <button
                 onClick={handleCanDeleteOnboarding}
                 className="w-full p-1 rounded-sm text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
@@ -175,7 +193,7 @@ const HROnboarding = () => {
                 <IoTrash className="text-red-600" />
                 Delete
               </button>
-            ) : null}
+            )}
           </div>
         ) : null}
       </div>
@@ -215,6 +233,13 @@ const HROnboarding = () => {
         <ShowOnboarding
           id={activeOnboardingSeeMore}
           setActiveModal={handleActiveOnboardingSeeMore}
+        />
+      ) : null}
+
+      {canAssignOnboarding ? (
+        <AssignOnboarding
+          id={activeOnboardingMenu}
+          toggleModal={handleCanAssignOnboarding}
         />
       ) : null}
 
