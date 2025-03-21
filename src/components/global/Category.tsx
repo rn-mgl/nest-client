@@ -13,7 +13,7 @@ const Category: React.FC<CategoryInterface & FilterInterface> = (props) => {
             props.selectCategory(category.key, label.value, label.label)
           }
           key={index}
-          className="p-2 w-full transition-all bg-neutral-200 rounded-sm"
+          className="p-2 w-full transition-all bg-neutral-200 rounded-xs"
         >
           {label.label}
         </button>

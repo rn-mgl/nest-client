@@ -69,8 +69,8 @@ const Message = () => {
 
 const Sending = () => {
   return (
-    <div className="w-full h-screen flex flex-col items-center justify-start bg-gradient-to-b from-accent-purple/50 to-accent-blue/30">
-      <div className="w-full h-full flex flex-col items-start justify-start max-w-screen-l-l p-4">
+    <div className="w-full h-screen flex flex-col items-center justify-start bg-linear-to-b from-accent-purple/50 to-accent-blue/30">
+      <div className="w-full h-full flex flex-col items-start justify-start max-w-(--breakpoint-l-l) p-4">
         <Logo type="dark" url="/" />
         <div className="w-full h-full flex flex-col items-center justify-center pb-10">
           <div className="w-full max-w-96 animate-float">

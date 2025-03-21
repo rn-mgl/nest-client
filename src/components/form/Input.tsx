@@ -20,7 +20,7 @@ const Input: React.FC<InputInterface> = (props) => {
           value={props.value}
           onChange={(e) => props.onChange(e)}
           min={props.min}
-          className="w-full p-2 px-4 rounded-md border-2 outline-none focus:border-neutral-900 transition-all"
+          className="w-full p-2 px-4 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all"
         />
 
         {props.icon ? (

@@ -47,9 +47,9 @@ const DeletePerformanceReview: React.FC<ModalInterface> = (props) => {
   return (
     <div
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex items-center justify-center 
-                      p-4 t:p-8 z-50 bg-gradient-to-b from-accent-yellow/30 to-accent-purple/30 animate-fade"
+                      p-4 t:p-8 z-50 bg-linear-to-b from-accent-yellow/30 to-accent-purple/30 animate-fade"
     >
-      <div className="w-full h-auto max-w-screen-t bg-neutral-100 shadow-md rounded-lg ">
+      <div className="w-full h-auto max-w-(--breakpoint-t) bg-neutral-100 shadow-md rounded-lg ">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-red-600 rounded-t-lg font-bold text-neutral-100">
           Delete Performance Review
           <button

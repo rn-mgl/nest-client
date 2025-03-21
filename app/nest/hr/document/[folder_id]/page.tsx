@@ -214,7 +214,7 @@ const HRDocument = () => {
           </button>
         </div>
 
-        <div className="w-full h-full flex flex-col items-center justify-start overflow-y-auto p-2 bg-neutral-200 rounded-sm">
+        <div className="w-full h-full flex flex-col items-center justify-start overflow-y-auto p-2 bg-neutral-200 rounded-xs">
           <p className="text-sm w-full text-wrap break-words">
             {"description" in document ? document.description : null}
           </p>
@@ -224,7 +224,7 @@ const HRDocument = () => {
           <div className="w-32 p-2 rounded-md top-12 right-6 shadow-md bg-neutral-200 absolute animate-fade z-20">
             <button
               onClick={handleCanEditDocument}
-              className="w-full p-1 rounded-sm text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
+              className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
             >
               <IoPencil className="text-accent-blue" />
               Edit
@@ -233,7 +233,7 @@ const HRDocument = () => {
             {createdBy ? (
               <button
                 onClick={handleCanDeleteDocument}
-                className="w-full p-1 rounded-sm text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
+                className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
               >
                 <IoTrash className="text-red-600" />
                 Delete
@@ -254,7 +254,7 @@ const HRDocument = () => {
     ) : (
       <div
         key={index}
-        className="w-full h-full p-4 rounded-md bg-gradient-to-br from-accent-yellow/30 to-accent-blue/30 flex flex-col items-start justify-start gap-4 relative  max-h-56 max-w-full"
+        className="w-full h-full p-4 rounded-md bg-linear-to-br from-accent-yellow/30 to-accent-blue/30 flex flex-col items-start justify-start gap-4 relative  max-h-56 max-w-full"
       >
         <div className="flex flex-row items-start justify-between w-full">
           <div className="flex flex-col items-start justify-start">
@@ -286,7 +286,7 @@ const HRDocument = () => {
             <div className="w-32 p-2 rounded-md top-12 right-6 shadow-md bg-neutral-200 absolute animate-fade z-20">
               <button
                 onClick={handleCanEditFolder}
-                className="w-full p-1 rounded-sm text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
+                className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
               >
                 <IoPencil className="text-accent-blue" />
                 Edit
@@ -295,7 +295,7 @@ const HRDocument = () => {
               {createdBy ? (
                 <button
                   onClick={handleCanDeleteFolder}
-                  className="w-full p-1 rounded-sm text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
+                  className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
                 >
                   <IoTrash className="text-red-600" />
                   Delete
@@ -372,7 +372,7 @@ const HRDocument = () => {
       ) : null}
 
       <div
-        className="w-full flex flex-col items-center justify-start max-w-screen-l-l p-2
+        className="w-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2
           t:items-start t:p-4 gap-4 t:gap-8"
       >
         <Filter

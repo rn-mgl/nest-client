@@ -46,8 +46,8 @@ const Verify = () => {
   }, [verifyAccount]);
 
   return (
-    <div className="w-full h-dvh flex flex-col items-center justify-start bg-gradient-to-b from-accent-blue/40 to-accent-yellow/40">
-      <div className="w-full h-full flex flex-col items-start justify-between max-w-screen-l-l gap-4 p-4 t:p-8">
+    <div className="w-full h-dvh flex flex-col items-center justify-start bg-linear-to-b from-accent-blue/40 to-accent-yellow/40">
+      <div className="w-full h-full flex flex-col items-start justify-between max-w-(--breakpoint-l-l) gap-4 p-4 t:p-8">
         <Logo url="/" type="dark" />
         <div className="w-full h-full flex flex-col items-center justify-center gap-8">
           <div className="w-full max-w-80 animate-float">

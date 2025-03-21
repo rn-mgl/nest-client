@@ -19,7 +19,7 @@ const TextArea: React.FC<TextAreaInterface> = (props) => {
           value={props.value}
           onChange={(e) => props.onChange(e)}
           rows={props.rows ?? 5}
-          className="w-full p-2 px-4 pr-8 rounded-md border-2 outline-none focus:border-neutral-900 transition-all resize-none h-full"
+          className="w-full p-2 px-4 pr-8 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all resize-none h-full"
         />
 
         {props.icon ? (

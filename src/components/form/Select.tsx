@@ -11,7 +11,7 @@ const Select: React.FC<SelectInterface> = (props) => {
           props.onChange(option.value, option.label);
           props.toggleSelect();
         }}
-        className="p-2 w-full transition-all bg-neutral-200 rounded-sm disabled:bg-accent-blue/20"
+        className="p-2 w-full transition-all bg-neutral-200 rounded-xs disabled:bg-accent-blue/20"
       >
         {option.label}
       </button>

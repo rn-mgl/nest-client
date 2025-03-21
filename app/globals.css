@@ -1,43 +1,104 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-/* width */
-::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+@theme {
+  --font-nest: var(--font-figtree);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-accent-yellow: #c2ff9c;
+  --color-accent-purple: #524ee5;
+  --color-accent-blue: #0039c7;
+  --color-accent-green: #6abaa3;
+
+  --breakpoint-m-s: 320px;
+  --breakpoint-m-m: 375px;
+  --breakpoint-m-l: 425px;
+  --breakpoint-t: 768px;
+  --breakpoint-l-s: 1024px;
+  --breakpoint-l-l: 1440px;
+
+  --animate-fade: fade ease-in-out 150ms;
+  --animate-float: float ease-in-out 2s infinite alternate;
+
+  --padding-1_75: 0.4rem;
+
+  @keyframes fade {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes float {
+    0% {
+      transform: translateY(-1rem);
+    }
+    100% {
+      transform: translateY(1rem);
+    }
+  }
 }
 
-/* Track */
-::-webkit-scrollbar-track {
-  background: #fafafa;
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
 }
 
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: #171717;
-  border-radius: 999rem;
-}
-
-input[type="password"]::-ms-reveal,
-input[type="password"]::-ms-clear {
-  display: none;
-}
-
-button:disabled:hover {
-  filter: brightness(100%);
-}
-
-button:hover {
-  filter: brightness(90%);
-}
-
-button:active {
-  filter: brightness(105%);
+@utility text-balance {
+  text-wrap: balance;
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  /* width */
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #fafafa;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #171717;
+    border-radius: 999rem;
+  }
+
+  input[type="password"]::-ms-reveal,
+  input[type="password"]::-ms-clear {
+    display: none;
+  }
+
+  button:disabled:hover {
+    filter: brightness(100%);
+  }
+
+  button:hover {
+    filter: brightness(90%);
+  }
+
+  button:active {
+    filter: brightness(105%);
+  }
+
+  button {
+    cursor: pointer;
   }
 }

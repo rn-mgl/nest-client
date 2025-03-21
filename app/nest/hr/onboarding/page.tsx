@@ -151,7 +151,7 @@ const HROnboarding = () => {
           </button>
         </div>
 
-        <div className="w-full h-40 max-h-40 min-h-40 flex flex-col items-center justify-start overflow-y-auto bg-neutral-200 p-2 rounded-sm">
+        <div className="w-full h-40 max-h-40 min-h-40 flex flex-col items-center justify-start overflow-y-auto bg-neutral-200 p-2 rounded-xs">
           <p className="text-sm w-full text-wrap break-words">
             {onboarding.description}
           </p>
@@ -171,7 +171,7 @@ const HROnboarding = () => {
           <div className="w-32 p-2 rounded-md top-12 right-6 shadow-md bg-neutral-200 absolute animate-fade z-20">
             <button
               onClick={handleCanEditOnboarding}
-              className="w-full p-1 rounded-sm text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
+              className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
             >
               <IoPencil className="text-accent-blue" />
               Edit
@@ -179,7 +179,7 @@ const HROnboarding = () => {
 
             <button
               onClick={handleCanAssignOnboarding}
-              className="w-full p-1 rounded-sm text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
+              className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
             >
               <IoPersonAdd className="text-accent-blue" />
               Assign
@@ -188,7 +188,7 @@ const HROnboarding = () => {
             {createdBy && (
               <button
                 onClick={handleCanDeleteOnboarding}
-                className="w-full p-1 rounded-sm text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
+                className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
               >
                 <IoTrash className="text-red-600" />
                 Delete
@@ -244,7 +244,7 @@ const HROnboarding = () => {
       ) : null}
 
       <div
-        className="w-full flex flex-col items-center justify-start max-w-screen-l-l p-2
+        className="w-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2
           t:items-start t:p-4 gap-4 t:gap-8"
       >
         <Filter

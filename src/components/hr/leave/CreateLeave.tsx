@@ -64,9 +64,9 @@ const CreateLeave: React.FC<ModalInterface> = (props) => {
   return (
     <div
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex items-center justify-center 
-            p-4 t:p-8 z-50 bg-gradient-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade"
+            p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade"
     >
-      <div className="w-full h-auto max-w-screen-l-s bg-neutral-100 shadow-md rounded-lg ">
+      <div className="w-full h-auto max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg ">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-blue rounded-t-lg font-bold text-accent-yellow">
           Create Leave
           <button

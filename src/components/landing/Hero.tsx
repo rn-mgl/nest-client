@@ -8,7 +8,7 @@ const Hero = () => {
                 bg-accent-purple"
     >
       <div
-        className="w-full h-full flex flex-col items-start justify-center max-w-screen-l-s text-left p-4 gap-8
+        className="w-full h-full flex flex-col items-start justify-center max-w-(--breakpoint-l-s) text-left p-4 gap-8
                     t:items-center t:justify-start t:text-center "
       >
         <div className="w-full flex flex-col items-start justify-start gap-4 t:items-center t:justify-center mt-auto text-neutral-50">
@@ -35,7 +35,7 @@ const Hero = () => {
           </Link>
         </div>
 
-        <div className="aspect-video w-full bg-white rounded-t-md t:max-w-screen-t"></div>
+        <div className="aspect-video w-full bg-white rounded-t-md t:max-w-(--breakpoint-t)"></div>
       </div>
     </div>
   );

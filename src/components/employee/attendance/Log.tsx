@@ -79,9 +79,9 @@ const Log: React.FC<ModalInterface & { logType: "in" | "out" }> = ({
   return (
     <div
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex items-center justify-center 
-                p-4 t:p-8 z-50 bg-gradient-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade"
+                p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade"
     >
-      <div className="w-full h-auto max-w-screen-l-s bg-neutral-100 shadow-md rounded-lg ">
+      <div className="w-full h-auto max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg ">
         <div
           className={`w-full flex flex-row items-center justify-between p-4  rounded-t-lg font-bold 
             ${
@@ -134,7 +134,7 @@ const Log: React.FC<ModalInterface & { logType: "in" | "out" }> = ({
           <div className="w-full rounded-full h-2 bg-neutral-200 relative flex flex-col items-start justify-center">
             <div
               style={{ width: `${percentage}%` }}
-              className={`absolute bg-gradient-to-r transition-all rounded-full w-0 h-2
+              className={`absolute bg-linear-to-r transition-all rounded-full w-0 h-2
                  ${
                    logType === "in"
                      ? "from-accent-blue to-accent-green"

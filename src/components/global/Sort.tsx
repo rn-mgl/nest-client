@@ -7,7 +7,7 @@ const Sort: React.FC<SortInterface & FilterInterface> = (props) => {
       <button
         key={index}
         onClick={() => props.selectSort(sort.key, sort.label)}
-        className="p-2 w-full transition-all bg-neutral-200 rounded-sm"
+        className="p-2 w-full transition-all bg-neutral-200 rounded-xs"
       >
         {sort.label}
       </button>

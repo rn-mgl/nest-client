@@ -4,8 +4,8 @@ import Link from "next/link";
 
 const Nav = () => {
   return (
-    <div className="w-full p-2 bg-neutral-50/70 flex flex-row items-center justify-center sticky top-0 t:p-4 backdrop-blur-sm">
-      <div className="w-full flex flex-row items-center justify-between max-w-screen-l-l">
+    <div className="w-full p-2 bg-neutral-50/70 flex flex-row items-center justify-center sticky top-0 t:p-4 backdrop-blur-xs">
+      <div className="w-full flex flex-row items-center justify-between max-w-(--breakpoint-l-l)">
         <Logo url="/" type="dark" />
 
         <Link

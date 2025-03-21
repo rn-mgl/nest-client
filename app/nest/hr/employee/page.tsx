@@ -83,7 +83,7 @@ const HREmployee = () => {
         key={employee.user_id}
         className="w-full p-4 rounded-md bg-neutral-100 flex flex-row items-start justify-start gap-4 relative"
       >
-        <div className="w-12 h-12 min-w-12 min-h-12 bg-gradient-to-b from-accent-yellow to-accent-blue rounded-full"></div>
+        <div className="w-12 h-12 min-w-12 min-h-12 bg-linear-to-b from-accent-yellow to-accent-blue rounded-full"></div>
         <div className="flex flex-col items-start justify-center gap-1 w-full overflow-hidden">
           <p
             title={`${employee.first_name} ${employee.last_name} `}
@@ -118,7 +118,7 @@ const HREmployee = () => {
           <div className="w-32 p-2 rounded-md top-12 right-6 shadow-md bg-neutral-200 absolute animate-fade z-20">
             <button
               onClick={() => sendMail(employee.email)}
-              className="w-full p-1 rounded-sm text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
+              className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
             >
               <IoMail className="text-accent-blue" />
               Mail
@@ -136,7 +136,7 @@ const HREmployee = () => {
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
       <div
-        className="w-full flex flex-col items-center justify-start max-w-screen-l-l p-2
+        className="w-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2
               t:items-start t:p-4 gap-4 t:gap-8"
       >
         <Filter

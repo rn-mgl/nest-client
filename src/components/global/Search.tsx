@@ -8,7 +8,7 @@ const Search: React.FC<SearchInterface & FilterInterface> = (props) => {
       <button
         key={index}
         onClick={() => props.selectSearch(search.key, search.label)}
-        className="p-2 w-full transition-all bg-neutral-200 rounded-sm"
+        className="p-2 w-full transition-all bg-neutral-200 rounded-xs"
       >
         {search.label}
       </button>
@@ -29,7 +29,7 @@ const Search: React.FC<SearchInterface & FilterInterface> = (props) => {
         value={props.searchValue}
         required={true}
         onChange={(e) => props.onChange(e)}
-        className={` w-full p-2 px-4 rounded-md border-2 outline-none focus:border-neutral-900 transition-all ${
+        className={` w-full p-2 px-4 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all ${
           props.showFilters ? "hidden t:flex" : "flex"
         }`}
       />

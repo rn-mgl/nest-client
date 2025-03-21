@@ -176,7 +176,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
           onChange={(e) => handleField(e, "content", index)}
           value={content.content as string}
           rows={5}
-          className="w-full p-2 px-4 pr-8 rounded-md border-2 outline-none focus:border-neutral-900 transition-all resize-none"
+          className="w-full p-2 px-4 pr-8 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all resize-none"
         />
       ) : content.type === "image" ? (
         <div className="w-full flex flex-col items-start justify-center gap-2">
@@ -263,7 +263,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
           {fileURL && (
             <div className="p-2 w-full rounded-md border-2 bg-white flex flex-col items-start justify-start relative">
               <div className="w-full flex flex-row items-center justify-start gap-2">
-                <div className="p-2.5 rounded-sm bg-accent-blue/50">
+                <div className="p-2.5 rounded-xs bg-accent-blue/50">
                   <AiFillFilePdf className="text-white text-2xl" />
                 </div>
                 <p className="truncate text-sm m-s:w-[10ch] m-m:w-[17ch] m-l:w-[20ch] t:w-full">
@@ -314,7 +314,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
             placeholder={`Title ${index + 1}`}
             onChange={(e) => handleField(e, "title", index)}
             value={content.title}
-            className="w-full p-2 px-4 rounded-md border-2 outline-none focus:border-neutral-900 transition-all"
+            className="w-full p-2 px-4 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all"
           />
 
           <textarea
@@ -323,7 +323,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
             onChange={(e) => handleField(e, "description", index)}
             value={content.description}
             rows={5}
-            className="w-full p-2 px-4 pr-8 rounded-md border-2 outline-none focus:border-neutral-900 transition-all resize-none"
+            className="w-full p-2 px-4 pr-8 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all resize-none"
           />
 
           {dynamicContent}
@@ -349,9 +349,9 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
   return (
     <div
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
-            p-4 t:p-8 z-50 bg-gradient-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
+            p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
-      <div className="w-full my-auto h-full max-w-screen-l-s bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start overflow-hidden">
+      <div className="w-full my-auto h-full max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start overflow-hidden">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-blue rounded-t-lg font-bold text-accent-yellow">
           Create Training
           <button
@@ -416,7 +416,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
                 training.certificate?.rawFile ? (
                   <div className="p-2 w-full rounded-md border-2 bg-white flex flex-col items-center justify-center bg-center bg-cover relative">
                     <div className="w-full flex flex-row items-center justify-start gap-2">
-                      <div className="aspect-square p-2.5 rounded-sm bg-accent-blue/50">
+                      <div className="aspect-square p-2.5 rounded-xs bg-accent-blue/50">
                         <AiFillFilePdf className="text-white text-2xl" />
                       </div>
                       <p className="truncate text-sm">

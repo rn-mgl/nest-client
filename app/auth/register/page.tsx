@@ -64,7 +64,7 @@ const Register = () => {
     <div className="w-full flex flex-col items-center justify-start h-screen bg-neutral-100 t:bg-neutral-200 p-4 l-s:p-8">
       <div
         className="w-full flex flex-col items-start justify-start h-full gap-8 l-s:items-start l-s:flex-row 
-                max-w-screen-l-l rounded-lg t:shadow-lg t:p-4 t:bg-neutral-50"
+                max-w-(--breakpoint-l-l) rounded-lg t:shadow-lg t:p-4 t:bg-neutral-50"
       >
         <div
           className="w-full h-full flex flex-col items-start justify-start gap-8 t:mx-auto l-s:max-w-full
@@ -72,7 +72,7 @@ const Register = () => {
         >
           <Logo url="/" type="dark" />
 
-          <div className="w-full h-full flex flex-col items-start  gap-8 max-w-screen-m-l justify-center t:mx-auto l-s:my-auto pb-10">
+          <div className="w-full h-full flex flex-col items-start  gap-8 max-w-(--breakpoint-m-l) justify-center t:mx-auto l-s:my-auto pb-10">
             <p className="font-bold text-2xl">Create your account</p>
 
             <form

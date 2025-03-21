@@ -221,9 +221,9 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
   return (
     <div
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex items-center justify-center 
-              p-4 t:p-8 z-50 bg-gradient-to-b from-accent-yellow/30 to-accent-purple/30 animate-fade"
+              p-4 t:p-8 z-50 bg-linear-to-b from-accent-yellow/30 to-accent-purple/30 animate-fade"
     >
-      <div className="w-full h-auto max-w-screen-t bg-neutral-100 shadow-md rounded-lg ">
+      <div className="w-full h-auto max-w-(--breakpoint-t) bg-neutral-100 shadow-md rounded-lg ">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-yellow rounded-t-lg font-bold text-accent-blue">
           Update Document
           <button
@@ -285,7 +285,7 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
             document.document.rawFile ? (
               <div className="p-2 w-full rounded-md border-2 bg-white flex flex-col items-center justify-center bg-center bg-cover relative">
                 <div className="w-full flex flex-row items-center justify-start gap-2">
-                  <div className="aspect-square p-2.5 rounded-sm bg-accent-blue/50">
+                  <div className="aspect-square p-2.5 rounded-xs bg-accent-blue/50">
                     <AiFillFilePdf className="text-white text-2xl" />
                   </div>
                   <p className="truncate text-sm">
@@ -308,7 +308,7 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
                     target="_blank"
                     className="flex flex-row items-center justify-center gap-2 group transition-all hover:underline underline-offset-2"
                   >
-                    <div className="aspect-square p-2.5 rounded-sm bg-accent-blue/50">
+                    <div className="aspect-square p-2.5 rounded-xs bg-accent-blue/50">
                       <AiFillFilePdf className="text-white text-2xl" />
                     </div>
                     <span className="truncate text-sm">View Document?</span>
