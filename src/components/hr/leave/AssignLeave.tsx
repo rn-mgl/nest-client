@@ -60,7 +60,7 @@ const AssignLeave: React.FC<ModalInterface> = (props) => {
   }, [user?.token, url, props.id]);
 
   const mappedEmployees = employeeLeaves.map((employee, id) => {
-    const isAssigned = employee.leave_balance_id !== null;
+    const isAssigned = assignedEmployees.includes(employee.user_id);
 
     return (
       <div
