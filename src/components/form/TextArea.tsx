@@ -23,7 +23,7 @@ const TextArea: React.FC<TextAreaInterface> = (props) => {
         />
 
         {props.icon ? (
-          <div className="bg-white absolute right-1 p-1.5 top-1.5 rounded-md flex flex-col items-center justify-center">
+          <div className="bg-neutral-100 absolute right-1 p-1.5 top-1.5 rounded-md flex flex-col items-center justify-center">
             {props.icon}
           </div>
         ) : null}
