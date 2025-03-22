@@ -105,6 +105,38 @@ const AssignLeave: React.FC<ModalInterface> = (props) => {
     }
   }, [user?.token, url, props.id]);
 
+  const submitAssignLeave = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const { token } = await getCSRFToken();
+
+      if (token && user?.token) {
+        const { data: responseData } = await axios.post(
+          `${url}/hr/leave_balance`,
+          {
+            employee_leaves: employeeLeaves.map((leave) => ({
+              ...leave,
+              balance: leave.balance || 0,
+            })),
+            employee_ids: assignedEmployees,
+            leave_type_id: props.id,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+            },
+            withCredentials: true,
+          }
+        );
+
+        console.log(responseData);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const mappedEmployees = employeeLeaves.map((employee, index) => {
     const isAssigned = assignedEmployees.includes(employee.user_id);
 
@@ -124,6 +156,7 @@ const AssignLeave: React.FC<ModalInterface> = (props) => {
         </div>
         <div className="text-center justify-center flex flex-row items-center gap-4">
           <button
+            type="button"
             onClick={() => handleSubtractLeaveBalance(index)}
             className="p-1 rounded-sm bg-red-600 text-neutral-100"
           >
@@ -137,6 +170,7 @@ const AssignLeave: React.FC<ModalInterface> = (props) => {
             className="bg-neutral-200 rounded-sm w-10 text-center p-0.5 border-0 outline-0"
           />
           <button
+            type="button"
             onClick={() => handleAddLeaveBalance(index)}
             className="p-1 rounded-sm bg-accent-green text-neutral-100"
           >
@@ -173,7 +207,11 @@ const AssignLeave: React.FC<ModalInterface> = (props) => {
             <IoClose />
           </button>
         </div>
-        <div className="w-full flex flex-col items-center justify-start p-4 gap-4">
+
+        <form
+          onSubmit={(e) => submitAssignLeave(e)}
+          className="w-full flex flex-col items-center justify-start p-4 gap-4"
+        >
           <div className="w-full h-full flex flex-col items-start justify-center border-[1px] rounded-md overflow-x-auto">
             <div className="grid min-w-[768px] grid-cols-5 w-full gap-4 p-4 items-center justify-start bg-neutral-200 font-bold">
               <p>First Name</p>
@@ -191,7 +229,7 @@ const AssignLeave: React.FC<ModalInterface> = (props) => {
           <button className="w-full p-2 rounded-md bg-accent-green text-neutral-100 mt-2 font-bold">
             Assign
           </button>
-        </div>
+        </form>
       </div>
     </div>
   );
