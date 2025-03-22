@@ -24,7 +24,7 @@ const Input: React.FC<InputInterface> = (props) => {
         />
 
         {props.icon ? (
-          <div className="bg-neutral-100 absolute right-1 p-1.5 rounded-md flex flex-col items-center justify-center">
+          <div className="bg-inherit absolute right-1 p-1.5 rounded-md flex flex-col items-center justify-center">
             {props.icon}
           </div>
         ) : null}

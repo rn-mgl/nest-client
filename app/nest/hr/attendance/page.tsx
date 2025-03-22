@@ -20,7 +20,7 @@ const HRAttendance = () => {
       absents: 0,
     });
   const [currentDate, setCurrentDate] = React.useState(new Date().getDate());
-  const [currentYear, setCurrentYear] = React.useState(
+  const [currentYear, setCurrentYear] = React.useState<number | string>(
     new Date().getFullYear()
   );
   const [currentMonth, setCurrentMonth] = React.useState({
@@ -68,7 +68,7 @@ const HRAttendance = () => {
 
   const handleCurrentYear = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    setCurrentYear(Number(value));
+    setCurrentYear(value === "" ? "" : Number(value));
   };
 
   const handleCurrentDate = (date: number) => {
@@ -93,7 +93,7 @@ const HRAttendance = () => {
           params: {
             currentDate,
             currentMonth: currentMonth.value + 1,
-            currentYear,
+            currentYear: Number(currentYear),
           },
         });
 
@@ -106,8 +106,8 @@ const HRAttendance = () => {
     }
   }, [url, user?.token, currentDate, currentMonth, currentYear]);
 
-  const startDay = getStartDayOfMonth(currentYear, currentMonth.value);
-  const daysInMonth = getDaysInMonth(currentYear, currentMonth.value);
+  const startDay = getStartDayOfMonth(Number(currentYear), currentMonth.value);
+  const daysInMonth = getDaysInMonth(Number(currentYear), currentMonth.value);
   const calendar = [];
 
   // before the start day of the month, set previous days as null
@@ -179,7 +179,7 @@ const HRAttendance = () => {
           id={activeSeeMore}
           date={currentDate}
           month={currentMonth.value}
-          year={currentYear}
+          year={Number(currentYear)}
           setActiveModal={handleActiveSeeMore}
         />
       ) : null}

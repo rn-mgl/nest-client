@@ -28,7 +28,7 @@ const Select: React.FC<SelectInterface> = (props) => {
         {props.label}
 
         {props.icon ? (
-          <div className="bg-neutral-100 absolute right-1 p-1.5 rounded-md flex flex-col items-center justify-center hover:bg-white">
+          <div className="bg-inherit absolute right-1 p-1.5 rounded-md flex flex-col items-center justify-center hover:bg-white">
             {props.icon}
           </div>
         ) : null}

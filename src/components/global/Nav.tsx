@@ -67,7 +67,7 @@ const Nav: React.FC<SideNavInterface & { children: React.ReactNode }> = (
         onClick={() => handleSideNavVisible("link")}
         key={link.label}
         href={`${props.home}${link.url}`}
-        className={`p-4 rounded-md w-full flex flex-row items-center justify-start transition-all
+        className={`p-4 rounded-md w-full flex flex-row items-center transition-all
                      gap-2 h-14 ${
                        activeLink
                          ? "bg-accent-purple/20 font-semibold hover:bg-accent-purple/40"
