@@ -98,6 +98,11 @@ const AssignLeave: React.FC<ModalInterface> = (props) => {
 
         if (responseData.users) {
           setEmployeeLeaves(responseData.users);
+          setAssignedEmployees(
+            responseData.users
+              .filter((employee) => employee.leave_balance_id !== null)
+              .map((employee) => employee.user_id)
+          );
         }
       }
     } catch (error) {
