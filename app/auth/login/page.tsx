@@ -35,6 +35,13 @@ const Login = () => {
     });
   };
 
+  function getCookie2(name: string) {
+    return document.cookie
+      .split("; ")
+      .find((row) => row.startsWith(name + "="))
+      ?.split("=")[1];
+  }
+
   const submitLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -51,7 +58,7 @@ const Login = () => {
           { ...loginData },
           {
             headers: {
-              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") ?? token,
+              "X-XSRF-TOKEN": getCookie2("XSRF-TOKEN") ?? token,
             },
             withCredentials: true,
           }
