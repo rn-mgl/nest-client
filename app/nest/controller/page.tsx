@@ -6,6 +6,8 @@ const AdminDashboard = () => {
   const { data } = useSession({ required: true });
   const user = data?.user;
 
+  console.log(user);
+
   return <div>AdminDashboard</div>;
 };
 
