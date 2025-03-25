@@ -41,6 +41,9 @@ const Login = () => {
     try {
       const { token } = await getCSRFToken();
 
+      console.log(document.cookie);
+      console.log(getCookie("XSRF-TOKEN"));
+
       if (token) {
         const { data: login } = await axios.post(
           `${url}/auth/login`,
