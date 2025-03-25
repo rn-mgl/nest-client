@@ -41,10 +41,6 @@ const Login = () => {
     try {
       const { token } = await getCSRFToken();
 
-      console.log(token);
-      console.log(document.cookie);
-      console.log(getCookies());
-
       if (token) {
         const { data: login } = await axios.post(
           `${url}/auth/login`,
