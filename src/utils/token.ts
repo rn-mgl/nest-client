@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getCookie } from "cookies-next";
 
 export const getCSRFToken = async () => {
   const url = process.env.URL;
@@ -6,5 +7,11 @@ export const getCSRFToken = async () => {
     withCredentials: true,
   });
 
-  return data;
+  console.log(data);
+
+  const token = getCookie("XSRF-TOKEN");
+
+  console.log(token, "1");
+
+  return { token };
 };
