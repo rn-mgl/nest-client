@@ -46,7 +46,10 @@ const Login = () => {
           `${url}/auth/login`,
           { ...loginData },
           {
-            headers: { "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") },
+            headers: {
+              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+              "X-CSRF-TOKEN": getCookie("XSRF-TOKEN"),
+            },
             withCredentials: true,
             withXSRFToken: true,
           }
