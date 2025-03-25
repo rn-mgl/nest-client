@@ -47,8 +47,7 @@ const Login = () => {
           { ...loginData },
           {
             headers: {
-              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-              "X-CSRF-TOKEN": getCookie("XSRF-TOKEN"),
+              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") ?? "test cookie",
             },
             withCredentials: true,
             withXSRFToken: true,
