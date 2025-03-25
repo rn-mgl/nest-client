@@ -7,6 +7,7 @@ import axios from "axios";
 import { getCookie } from "cookies-next";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 const Message = () => {
   const params = useSearchParams();
@@ -76,7 +77,9 @@ const Sending = () => {
               className="drop-shadow-md saturate-150 animate-fade"
             />
           </div>
-          <Message />
+          <Suspense>
+            <Message />
+          </Suspense>
         </div>
       </div>
     </div>
