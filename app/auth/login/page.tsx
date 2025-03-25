@@ -6,7 +6,7 @@ import useShowPassword from "@/src/hooks/useShowPassword";
 import { LoginInterface } from "@/src/interface/AuthInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-import { getCookies } from "cookies-next";
+import { getCookie, getCookies } from "cookies-next";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -35,13 +35,6 @@ const Login = () => {
     });
   };
 
-  function getCookie2(name: string) {
-    return document.cookie
-      .split("; ")
-      .find((row) => row.startsWith(name + "="))
-      ?.split("=")[1];
-  }
-
   const submitLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -58,7 +51,7 @@ const Login = () => {
           { ...loginData },
           {
             headers: {
-              "X-XSRF-TOKEN": getCookie2("XSRF-TOKEN") ?? token,
+              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
             },
             withCredentials: true,
           }
