@@ -6,7 +6,7 @@ import useShowPassword from "@/src/hooks/useShowPassword";
 import { LoginInterface } from "@/src/interface/AuthInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-import { getCookie } from "cookies-next";
+import { getCookie, getCookies } from "cookies-next";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -43,7 +43,7 @@ const Login = () => {
 
       console.log(token);
       console.log(document.cookie);
-      console.log(getCookie("XSRF-TOKEN"));
+      console.log(getCookies());
 
       if (token) {
         const { data: login } = await axios.post(
