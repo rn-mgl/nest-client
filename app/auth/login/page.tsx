@@ -41,6 +41,7 @@ const Login = () => {
     try {
       const { token } = await getCSRFToken();
 
+      console.log(token);
       console.log(document.cookie);
       console.log(getCookie("XSRF-TOKEN"));
 
