@@ -1,6 +1,7 @@
 "use client";
 
 import Filter from "@/src/components/global/Filter";
+import EmployeeCard from "@/src/components/hr/employee/EmployeeCard";
 import useCategory from "@/src/hooks/useCategory";
 import useFilters from "@/src/hooks/useFilters";
 import useSearch from "@/src/hooks/useSearch";
@@ -16,7 +17,6 @@ import axios from "axios";
 
 import { useSession } from "next-auth/react";
 import React from "react";
-import { IoEllipsisVertical, IoMail, IoShieldCheckmark } from "react-icons/io5";
 
 const HREmployee = () => {
   const [employees, setEmployees] = React.useState<Array<UserInterface>>();
@@ -77,55 +77,16 @@ const HREmployee = () => {
     }
   }, [url, user?.token, search, sort, category]);
 
-  const mappedEmployees = employees?.map((employee) => {
+  const mappedEmployees = employees?.map((employee, index) => {
+    const activeMenu = activeUserMenu === employee.user_id;
     return (
-      <div
-        key={employee.user_id}
-        className="w-full p-4 rounded-md bg-neutral-100 flex flex-row items-start justify-start gap-4 relative"
-      >
-        <div className="w-12 h-12 min-w-12 min-h-12 bg-linear-to-b from-accent-yellow to-accent-blue rounded-full"></div>
-        <div className="flex flex-col items-start justify-center gap-1 w-full overflow-hidden">
-          <p
-            title={`${employee.first_name} ${employee.last_name} `}
-            className="font-bold truncate w-full"
-          >
-            {employee.first_name} {employee.last_name}
-          </p>
-          <p className="text-xs flex flex-row items-center justify-center gap-1">
-            {employee.email_verified_at ? (
-              <IoShieldCheckmark
-                className="text-accent-blue"
-                title={`Verified at: ${employee.email_verified_at}`}
-              />
-            ) : null}
-            {employee.email}
-          </p>
-        </div>
-        <button
-          onClick={() => handleActiveEmployeeMenu(employee.user_id)}
-          className="p-2 text-xs hover:bg-neutral-200 rounded-full transition-all"
-        >
-          <IoEllipsisVertical
-            className={`${
-              activeUserMenu === employee.user_id
-                ? "text-accent-blue"
-                : "text-neutral-900"
-            }`}
-          />
-        </button>
-
-        {activeUserMenu === employee.user_id ? (
-          <div className="w-32 p-2 rounded-md top-12 right-6 shadow-md bg-neutral-200 absolute animate-fade z-20">
-            <button
-              onClick={() => sendMail(employee.email)}
-              className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
-            >
-              <IoMail className="text-accent-blue" />
-              Mail
-            </button>
-          </div>
-        ) : null}
-      </div>
+      <EmployeeCard
+        key={index}
+        employee={employee}
+        activeMenu={activeMenu}
+        sendMail={sendMail}
+        handleActiveEmployeeMenu={handleActiveEmployeeMenu}
+      />
     );
   });
 

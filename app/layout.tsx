@@ -1,9 +1,8 @@
 "use client";
 
-import { AppProvider } from "@/src/utils/context";
+import { SessionProvider } from "next-auth/react";
 import { Figtree } from "next/font/google";
 import "./globals.css";
-import { SessionProvider } from "next-auth/react";
 
 const figtree = Figtree({
   weight: ["300", "400", "500", "600", "700", "800", "900"],
@@ -20,13 +19,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <SessionProvider>
-        <AppProvider>
-          <body
-            className={`${figtree.className} w-full h-full font-figtree antialiased text-neutral-900 primary-scrollbar`}
-          >
-            {children}
-          </body>
-        </AppProvider>
+        <body
+          className={`${figtree.className} w-full h-full font-figtree antialiased text-neutral-900 primary-scrollbar`}
+        >
+          {children}
+        </body>
       </SessionProvider>
     </html>
   );

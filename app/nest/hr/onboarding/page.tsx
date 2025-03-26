@@ -5,6 +5,7 @@ import AssignOnboarding from "@/src/components/hr/onboarding/AssignOnboarding";
 import CreateOnboarding from "@/src/components/hr/onboarding/CreateOnboarding";
 import DeleteOnboarding from "@/src/components/hr/onboarding/DeleteOnboarding";
 import EditOnboarding from "@/src/components/hr/onboarding/EditOnboarding";
+import OnboardingCard from "@/src/components/hr/onboarding/OnboardingCard";
 import ShowOnboarding from "@/src/components/hr/onboarding/ShowOnboarding";
 import useCategory from "@/src/hooks/useCategory";
 import useFilters from "@/src/hooks/useFilters";
@@ -22,14 +23,7 @@ import axios from "axios";
 
 import { useSession } from "next-auth/react";
 import React from "react";
-import {
-  IoAdd,
-  IoArrowForward,
-  IoEllipsisVertical,
-  IoPencil,
-  IoPersonAdd,
-  IoTrash,
-} from "react-icons/io5";
+import { IoAdd } from "react-icons/io5";
 
 const HROnboarding = () => {
   const [onboardings, setOnboardings] = React.useState<
@@ -123,80 +117,17 @@ const HROnboarding = () => {
     const createdBy = user?.current === onboarding.created_by;
 
     return (
-      <div
+      <OnboardingCard
         key={index}
-        className="w-full min-h-[17rem] p-4 rounded-md bg-neutral-100 flex 
-                  flex-col items-center justify-start gap-4 relative max-w-full transition-all"
-      >
-        <div className="flex flex-row items-start justify-between w-full">
-          <div className="flex flex-col items-start justify-start">
-            <p className="font-bold truncate">{onboarding.title}</p>
-            <p className="text-xs">
-              created by {createdBy ? "you" : `${onboarding.first_name}`}
-            </p>
-          </div>
-
-          <button
-            onClick={() =>
-              onboarding.onboarding_id &&
-              handleActiveOnboardingMenu(onboarding.onboarding_id)
-            }
-            className="p-2 rounded-full bg-neutral-100 transition-all"
-          >
-            <IoEllipsisVertical
-              className={`${
-                activeMenu ? "text-accent-blue" : "text-neutral-900"
-              }`}
-            />
-          </button>
-        </div>
-
-        <div className="w-full h-40 max-h-40 min-h-40 flex flex-col items-center justify-start overflow-y-auto bg-neutral-200 p-2 rounded-xs">
-          <p className="text-sm w-full text-wrap break-words">
-            {onboarding.description}
-          </p>
-        </div>
-
-        <button
-          onClick={() =>
-            onboarding.onboarding_id &&
-            handleActiveOnboardingSeeMore(onboarding.onboarding_id)
-          }
-          className="text-xs hover:underline transition-all underline-offset-2 flex flex-row items-center justify-start gap-1"
-        >
-          See More <IoArrowForward />
-        </button>
-
-        {activeMenu ? (
-          <div className="w-32 p-2 rounded-md top-12 right-6 shadow-md bg-neutral-200 absolute animate-fade z-20">
-            <button
-              onClick={handleCanEditOnboarding}
-              className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
-            >
-              <IoPencil className="text-accent-blue" />
-              Edit
-            </button>
-
-            <button
-              onClick={handleCanAssignOnboarding}
-              className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
-            >
-              <IoPersonAdd className="text-accent-blue" />
-              Assign
-            </button>
-
-            {createdBy && (
-              <button
-                onClick={handleCanDeleteOnboarding}
-                className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
-              >
-                <IoTrash className="text-red-600" />
-                Delete
-              </button>
-            )}
-          </div>
-        ) : null}
-      </div>
+        onboarding={onboarding}
+        activeMenu={activeMenu}
+        createdBy={createdBy}
+        handleActiveOnboardingMenu={handleActiveOnboardingMenu}
+        handleActiveOnboardingSeeMore={handleActiveOnboardingSeeMore}
+        handleCanAssignOnboarding={handleCanAssignOnboarding}
+        handleCanDeleteOnboarding={handleCanDeleteOnboarding}
+        handleCanEditOnboarding={handleCanEditOnboarding}
+      />
     );
   });
 

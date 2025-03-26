@@ -8,6 +8,7 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd, IoClose, IoRemove } from "react-icons/io5";
 import CheckBox from "../../form/CheckBox";
+import Assign from "../global/Assign";
 
 const AssignLeave: React.FC<ModalInterface> = (props) => {
   const [employeeLeaves, setEmployeeLeaves] = React.useState<
@@ -146,50 +147,48 @@ const AssignLeave: React.FC<ModalInterface> = (props) => {
     const isAssigned = assignedEmployees.includes(employee.user_id);
 
     return (
-      <div
+      <Assign
         key={index}
-        className="w-full min-w-[768px] p-4 gap-4 grid grid-cols-5 border-b-[1px] *:flex *:flex-row *:items-center"
-      >
-        <div className="justify-start">
-          <p className="truncate">{employee.first_name}</p>
-        </div>
-        <div className="justify-start">
-          <p className="truncate">{employee.last_name}</p>
-        </div>
-        <div className="justify-start">
-          <p className="truncate">{employee.email}</p>
-        </div>
-        <div className="text-center justify-center flex flex-row items-center gap-4">
-          <button
-            type="button"
-            onClick={() => handleSubtractLeaveBalance(index)}
-            className="p-1 rounded-sm bg-red-600 text-neutral-100"
+        user={employee}
+        columns={[
+          <div
+            key={`leaveBalance${index}`}
+            className="text-center justify-center flex flex-row items-center gap-4"
           >
-            <IoRemove />
-          </button>
-          <input
-            type="number"
-            value={employee.balance ?? 0}
-            min={0}
-            onChange={(e) => handleEmployeeLeaveBalance(e, index)}
-            className="bg-neutral-200 rounded-sm w-10 text-center p-0.5 border-0 outline-0"
-          />
-          <button
-            type="button"
-            onClick={() => handleAddLeaveBalance(index)}
-            className="p-1 rounded-sm bg-accent-green text-neutral-100"
+            <button
+              type="button"
+              onClick={() => handleSubtractLeaveBalance(index)}
+              className="p-1 rounded-sm bg-red-600 text-neutral-100"
+            >
+              <IoRemove />
+            </button>
+            <input
+              type="number"
+              value={employee.balance ?? 0}
+              min={0}
+              onChange={(e) => handleEmployeeLeaveBalance(e, index)}
+              className="bg-neutral-200 rounded-sm w-10 text-center p-0.5 border-0 outline-0"
+            />
+            <button
+              type="button"
+              onClick={() => handleAddLeaveBalance(index)}
+              className="p-1 rounded-sm bg-accent-green text-neutral-100"
+            >
+              <IoAdd />
+            </button>
+          </div>,
+          <div
+            key={`assign${index}`}
+            className="flex flex-col justify-center items-center"
           >
-            <IoAdd />
-          </button>
-        </div>
-        <div className="justify-center">
-          <CheckBox
-            onChange={handleAssignedEmployees}
-            isChecked={isAssigned}
-            value={employee.user_id}
-          />
-        </div>
-      </div>
+            <CheckBox
+              onChange={handleAssignedEmployees}
+              isChecked={isAssigned}
+              value={employee.user_id}
+            />
+          </div>,
+        ]}
+      />
     );
   });
 

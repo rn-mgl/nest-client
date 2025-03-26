@@ -2,7 +2,6 @@
 
 import sending from "@/public/global/sending.svg";
 import Logo from "@/src/components/global/Logo";
-import useGlobalContext from "@/src/utils/context";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
@@ -13,7 +12,7 @@ import { Suspense } from "react";
 const Message = () => {
   const params = useSearchParams();
   const type = params && params.get("type");
-  const { url } = useGlobalContext();
+  const url = process.env.URL;
   const route = useRouter();
 
   const message = {

@@ -5,6 +5,7 @@ import AssignLeave from "@/src/components/hr/leave/AssignLeave";
 import CreateLeave from "@/src/components/hr/leave/CreateLeave";
 import DeleteLeave from "@/src/components/hr/leave/DeleteLeave";
 import EditLeave from "@/src/components/hr/leave/EditLeave";
+import LeaveCard from "@/src/components/hr/leave/LeaveCard";
 import useCategory from "@/src/hooks/useCategory";
 import useFilters from "@/src/hooks/useFilters";
 import useSearch from "@/src/hooks/useSearch";
@@ -21,13 +22,7 @@ import axios from "axios";
 
 import { useSession } from "next-auth/react";
 import React from "react";
-import {
-  IoAdd,
-  IoEllipsisVertical,
-  IoPencil,
-  IoPersonAdd,
-  IoTrash,
-} from "react-icons/io5";
+import { IoAdd } from "react-icons/io5";
 
 const HRLeave = () => {
   const [canCreateLeave, setCanCreateLeave] = React.useState(false);
@@ -108,72 +103,19 @@ const HRLeave = () => {
   };
 
   const mappedLeaves = leaves.map((leave, index) => {
+    const activeMenu = activeLeaveMenu === leave.leave_id;
     const createdBy = leave.created_by === user?.current;
     return (
-      <div
+      <LeaveCard
         key={index}
-        className="w-full h-full p-4 rounded-md bg-neutral-100 flex flex-col items-start justify-start gap-4 relative  max-h-56 max-w-full"
-      >
-        <div className="flex flex-row items-start justify-between w-full">
-          <div className="flex flex-col items-start justify-start">
-            <p className="font-bold truncate">{leave.type}</p>
-            <p className="text-xs">
-              created by {createdBy ? "you" : `${leave.first_name}`}
-            </p>
-          </div>
-
-          <button
-            onClick={() =>
-              leave.leave_id && handleActiveLeaveMenu(leave.leave_id)
-            }
-            className="p-2 rounded-full bg-neutral-100 transition-all"
-          >
-            <IoEllipsisVertical
-              className={`${
-                activeLeaveMenu === leave.leave_id
-                  ? "text-accent-blue"
-                  : "text-neutral-900"
-              }`}
-            />
-          </button>
-        </div>
-
-        <div className="w-full h-full flex flex-col items-center justify-start overflow-y-auto p-2 bg-neutral-200 rounded-xs">
-          <p className="text-sm w-full text-wrap break-words">
-            {leave.description}
-          </p>
-        </div>
-
-        {activeLeaveMenu === leave.leave_id ? (
-          <div className="w-32 p-2 rounded-md top-12 right-6 shadow-md bg-neutral-200 absolute animate-fade z-20">
-            <button
-              onClick={handleCanEditLeave}
-              className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
-            >
-              <IoPencil className="text-accent-blue" />
-              Edit
-            </button>
-
-            <button
-              onClick={handleCanAssignLeave}
-              className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
-            >
-              <IoPersonAdd className="text-accent-blue" />
-              Assign
-            </button>
-
-            {createdBy ? (
-              <button
-                onClick={handleCanDeleteLeave}
-                className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
-              >
-                <IoTrash className="text-red-600" />
-                Delete
-              </button>
-            ) : null}
-          </div>
-        ) : null}
-      </div>
+        activeMenu={activeMenu}
+        createdBy={createdBy}
+        leave={leave}
+        handleActiveLeaveMenu={handleActiveLeaveMenu}
+        handleCanAssignLeave={handleCanAssignLeave}
+        handleCanDeleteLeave={handleCanDeleteLeave}
+        handleCanEditLeave={handleCanEditLeave}
+      />
     );
   });
 

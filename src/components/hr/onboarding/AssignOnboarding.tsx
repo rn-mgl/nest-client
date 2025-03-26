@@ -8,6 +8,7 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose } from "react-icons/io5";
 import CheckBox from "../../form/CheckBox";
+import Assign from "../global/Assign";
 
 const AssignOnboarding: React.FC<ModalInterface> = (props) => {
   const [employeeOnboardings, setEmployeeOnboardings] = React.useState<
@@ -67,27 +68,22 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
       const isAssigned = assignedEmployees.includes(employee.user_id);
 
       return (
-        <div
+        <Assign
           key={index}
-          className="w-full min-w-[768px] grid grid-cols-4 gap-4 p-4 border-b-[1px] items-center justify-start"
-        >
-          <div>
-            <p className="truncate">{employee.first_name}</p>
-          </div>
-          <div>
-            <p className="truncate">{employee.last_name}</p>
-          </div>
-          <div>
-            <p className="truncate">{employee.email}</p>
-          </div>
-          <div className="flex flex-row items-center justify-center">
-            <CheckBox
-              isChecked={isAssigned}
-              onChange={handleAssignedEmployees}
-              value={employee.user_id}
-            />
-          </div>
-        </div>
+          user={employee}
+          columns={[
+            <div
+              key={`assign${index}`}
+              className="flex flex-row items-center justify-center"
+            >
+              <CheckBox
+                isChecked={isAssigned}
+                onChange={handleAssignedEmployees}
+                value={employee.user_id}
+              />
+            </div>,
+          ]}
+        />
       );
     }
   );
