@@ -82,8 +82,6 @@ const AssignTraining: React.FC<ModalInterface> = (props) => {
     try {
       const { token } = await getCSRFToken();
 
-      console.log(token);
-
       if (token && user?.token) {
         const { data: responseData } = await axios.post(
           `${url}/hr/employee_training`,
