@@ -1,6 +1,7 @@
 "use client";
 
 import Filter from "@/src/components/global/Filter";
+import AssignPerformanceReview from "@/src/components/hr/performance/AssignPerformanceReview";
 import CreatePerformanceReview from "@/src/components/hr/performance/CreatePerformanceReview";
 import DeletePerformanceReview from "@/src/components/hr/performance/DeletePerformanceReview";
 import EditPerformanceReview from "@/src/components/hr/performance/EditPerformanceReview";
@@ -26,6 +27,7 @@ import {
   IoArrowForward,
   IoEllipsisVertical,
   IoPencil,
+  IoPersonAdd,
   IoTrash,
 } from "react-icons/io5";
 
@@ -42,6 +44,8 @@ const PerformanceReview = () => {
   const [canEditPerformanceReview, setCanEditPerformanceReview] =
     React.useState(false);
   const [canDeletePerformanceReview, setCanDeletePerformanceReview] =
+    React.useState(false);
+  const [canAssignPerformanceReview, setCanAssignPerformanceReview] =
     React.useState(false);
 
   const { showFilters, handleShowFilters } = useFilters();
@@ -89,6 +93,10 @@ const PerformanceReview = () => {
 
   const handleCanDeletePerformanceReview = () => {
     setCanDeletePerformanceReview((prev) => !prev);
+  };
+
+  const handleCanAssignPerformanceReview = () => {
+    setCanAssignPerformanceReview((prev) => !prev);
   };
 
   const getPerformanceReviews = React.useCallback(async () => {
@@ -177,6 +185,14 @@ const PerformanceReview = () => {
               Edit
             </button>
 
+            <button
+              onClick={handleCanAssignPerformanceReview}
+              className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
+            >
+              <IoPersonAdd className="text-accent-blue" />
+              Assign
+            </button>
+
             {createdBy ? (
               <button
                 onClick={handleCanDeletePerformanceReview}
@@ -221,12 +237,20 @@ const PerformanceReview = () => {
         />
       ) : null}
 
+      {canAssignPerformanceReview ? (
+        <AssignPerformanceReview
+          id={activePerformanceReviewMenu}
+          toggleModal={handleCanAssignPerformanceReview}
+        />
+      ) : null}
+
       {activePerformanceReviewSeeMore ? (
         <ShowPerformanceReview
           id={activePerformanceReviewSeeMore}
           setActiveModal={handleActivePerformanceReviewSeeMore}
         />
       ) : null}
+
       <div
         className="w-full h-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2
           t:items-start t:p-4 gap-4 t:gap-8"

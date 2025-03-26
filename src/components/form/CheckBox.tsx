@@ -5,7 +5,7 @@ import { IoCheckmark } from "react-icons/io5";
 const CheckBox: React.FC<CheckBoxInterface> = (props) => {
   return (
     <button
-      onClick={() => props.onChange(props.value)}
+      onClick={props.onClick}
       type="button"
       className={`border-2 rounded-sm p-1 
                     ${

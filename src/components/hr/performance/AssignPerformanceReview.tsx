@@ -1,18 +1,16 @@
 import { ModalInterface } from "@/src/interface/ModalInterface";
-import { EmployeeOnboardingInterface } from "@/src/interface/OnboardingInterface";
+import { EmployeePerformanceReviewInterface } from "@/src/interface/PerformanceReviewInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose } from "react-icons/io5";
 import Assign from "../global/Assign";
 
-const AssignOnboarding: React.FC<ModalInterface> = (props) => {
-  const [employeeOnboardings, setEmployeeOnboardings] = React.useState<
-    (UserInterface & EmployeeOnboardingInterface)[]
-  >([]);
+const AssignPerformanceReview: React.FC<ModalInterface> = (props) => {
+  const [employeePerformanceReviews, setEmployeePerformanceReviews] =
+    React.useState<(EmployeePerformanceReviewInterface & UserInterface)[]>([]);
   const [assignedEmployees, setAssignedEmployees] = React.useState<number[]>(
     []
   );
@@ -26,6 +24,7 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
       if (prev.includes(id)) {
         const left = prev.slice(0, prev.indexOf(id));
         const right = prev.slice(prev.indexOf(id) + 1, prev.length);
+
         return [...left, ...right];
       } else {
         return [...prev, id];
@@ -33,27 +32,30 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
     });
   };
 
-  const getEmployeeOnboardings = React.useCallback(async () => {
+  const getEmployeePerformanceReviews = React.useCallback(async () => {
     try {
       const { token } = await getCSRFToken();
 
-      if (token && user?.token) {
+      if (token) {
         const { data: responseData } = await axios.get<{
-          employees: (UserInterface & EmployeeOnboardingInterface)[];
-        }>(`${url}/hr/employee_onboarding`, {
+          employees: (EmployeePerformanceReviewInterface & UserInterface)[];
+        }>(`${url}/hr/employee_performance_review`, {
           headers: {
-            Authorization: `Bearer ${user.token}`,
-            "X-CSRF-TOKEN": token,
+            Authorization: `Bearer ${user?.token}`,
+            "X-XSRF-TOKEN": token,
           },
           withCredentials: true,
-          params: { onboarding_id: props.id },
+          params: { performance_review_id: props.id },
         });
+
         if (responseData.employees) {
-          setEmployeeOnboardings(responseData.employees);
+          setEmployeePerformanceReviews(responseData.employees);
           setAssignedEmployees(
             responseData.employees
-              .filter((e) => e.employee_onboarding_id !== null)
-              .map((e) => e.user_id as number)
+              .filter(
+                (employee) => employee.employee_performance_review_id !== null
+              )
+              .map((employee) => employee.user_id)
           );
         }
       }
@@ -62,24 +64,9 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
     }
   }, [url, user?.token, props.id]);
 
-  const mappedEmployeeOnboardings = employeeOnboardings.map(
-    (employee, index) => {
-      const isChecked = assignedEmployees.includes(employee.user_id);
+  console.log(assignedEmployees);
 
-      return (
-        <Assign
-          key={index}
-          user={employee}
-          handleAssignedEmployees={() =>
-            handleAssignedEmployees(employee.user_id)
-          }
-          isChecked={isChecked}
-        />
-      );
-    }
-  );
-
-  const submitAssignOnboarding = async (
+  const submitAssignPerformanceReview = async (
     e: React.FormEvent<HTMLFormElement>
   ) => {
     e.preventDefault();
@@ -88,8 +75,8 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: responseData } = await axios.post(
-          `${url}/hr/employee_onboarding`,
-          { employee_ids: assignedEmployees, onboarding_id: props.id },
+          `${url}/hr/employee_performance_review`,
+          { employee_ids: assignedEmployees, performance_review_id: props.id },
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
@@ -112,18 +99,34 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
     }
   };
 
+  const mappedEmployeePerformanceReviews = employeePerformanceReviews.map(
+    (employee, index) => {
+      const isChecked = assignedEmployees.includes(employee.user_id);
+      return (
+        <Assign
+          key={index}
+          user={employee}
+          handleAssignedEmployees={() =>
+            handleAssignedEmployees(employee.user_id)
+          }
+          isChecked={isChecked}
+        />
+      );
+    }
+  );
+
   React.useEffect(() => {
-    getEmployeeOnboardings();
-  }, [getEmployeeOnboardings]);
+    getEmployeePerformanceReviews();
+  }, [getEmployeePerformanceReviews]);
 
   return (
     <div
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
-          p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
+            p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
       <div className="w-full max-h-full my-auto max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-green rounded-t-lg font-bold text-neutral-100">
-          Assign Onboarding
+          Assign Performance Review
           <button
             onClick={props.toggleModal}
             className="p-2 rounded-full hover:bg-accent-blue/20 transition-all text-xl"
@@ -132,7 +135,7 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
           </button>
         </div>
         <form
-          onSubmit={(e) => submitAssignOnboarding(e)}
+          onSubmit={(e) => submitAssignPerformanceReview(e)}
           className="w-full h-full p-4 flex flex-col items-start justify-center gap-4 overflow-hidden"
         >
           <div className="w-full h-full flex flex-col items-start justify-start border-[1px] rounded-md overflow-x-auto">
@@ -144,7 +147,7 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
             </div>
 
             <div className="w-full min-w-[768px] max-h-full flex flex-col items-start justify-start overflow-y-auto overflow-x-hidden">
-              {mappedEmployeeOnboardings}
+              {mappedEmployeePerformanceReviews}
             </div>
           </div>
 
@@ -157,4 +160,4 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
   );
 };
 
-export default AssignOnboarding;
+export default AssignPerformanceReview;

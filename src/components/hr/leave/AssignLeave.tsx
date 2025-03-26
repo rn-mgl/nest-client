@@ -7,7 +7,6 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd, IoClose, IoRemove } from "react-icons/io5";
-import CheckBox from "../../form/CheckBox";
 import Assign from "../global/Assign";
 
 const AssignLeave: React.FC<ModalInterface> = (props) => {
@@ -144,12 +143,16 @@ const AssignLeave: React.FC<ModalInterface> = (props) => {
   };
 
   const mappedEmployees = employeeLeaves.map((employee, index) => {
-    const isAssigned = assignedEmployees.includes(employee.user_id);
+    const isChecked = assignedEmployees.includes(employee.user_id);
 
     return (
       <Assign
         key={index}
         user={employee}
+        handleAssignedEmployees={() =>
+          handleAssignedEmployees(employee.user_id)
+        }
+        isChecked={isChecked}
         columns={[
           <div
             key={`leaveBalance${index}`}
@@ -176,16 +179,6 @@ const AssignLeave: React.FC<ModalInterface> = (props) => {
             >
               <IoAdd />
             </button>
-          </div>,
-          <div
-            key={`assign${index}`}
-            className="flex flex-col justify-center items-center"
-          >
-            <CheckBox
-              onChange={handleAssignedEmployees}
-              isChecked={isAssigned}
-              value={employee.user_id}
-            />
           </div>,
         ]}
       />

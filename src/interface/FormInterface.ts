@@ -43,7 +43,6 @@ export interface ModalNavInterface {
 }
 
 export interface CheckBoxInterface {
-  value: number;
   isChecked: boolean;
-  onChange: (value: number) => void;
+  onClick: () => void;
 }

@@ -17,3 +17,7 @@ export interface PerformanceReviewSurveyInterface {
 export interface PerformanceReviewContentsSetInterface {
   contents: Array<PerformanceReviewSurveyInterface>;
 }
+
+export interface EmployeePerformanceReviewInterface {
+  employee_performance_review_id?: number;
+}
