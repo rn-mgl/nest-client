@@ -64,8 +64,6 @@ const AssignPerformanceReview: React.FC<ModalInterface> = (props) => {
     }
   }, [url, user?.token, props.id]);
 
-  console.log(assignedEmployees);
-
   const submitAssignPerformanceReview = async (
     e: React.FormEvent<HTMLFormElement>
   ) => {
