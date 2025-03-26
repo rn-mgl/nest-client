@@ -9,25 +9,21 @@ import { UserInterface } from "@/src/interface/UserInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
-import { useSession } from "next-auth/react";
-import React from "react";
+import Filter from "@/src/components/global/Filter";
+import AssignTraining from "@/src/components/hr/training/AssignTraining";
+import TrainingCard from "@/src/components/hr/training/TrainingCard";
+import useCategory from "@/src/hooks/useCategory";
+import useFilters from "@/src/hooks/useFilters";
+import useSearch from "@/src/hooks/useSearch";
+import useSort from "@/src/hooks/useSort";
 import {
   HR_TRAINING_CATEGORY,
   HR_TRAINING_SEARCH,
   HR_TRAINING_SORT,
 } from "@/utils/filters";
-import {
-  IoAdd,
-  IoArrowForward,
-  IoEllipsisVertical,
-  IoPencil,
-  IoTrash,
-} from "react-icons/io5";
-import useFilters from "@/src/hooks/useFilters";
-import useSearch from "@/src/hooks/useSearch";
-import useSort from "@/src/hooks/useSort";
-import useCategory from "@/src/hooks/useCategory";
-import Filter from "@/src/components/global/Filter";
+import { useSession } from "next-auth/react";
+import React from "react";
+import { IoAdd } from "react-icons/io5";
 
 const HRTraining = () => {
   const [trainings, setTrainings] = React.useState<
@@ -38,6 +34,7 @@ const HRTraining = () => {
   const [canEditTraining, setCanEditTraining] = React.useState(false);
   const [canDeleteTraining, setCanDeleteTraining] = React.useState(false);
   const [canCreateTraining, setCanCreateTraining] = React.useState(false);
+  const [canAssignTraining, setCanAssignTraining] = React.useState(false);
 
   const { showFilters, handleShowFilters } = useFilters();
   const {
@@ -86,6 +83,10 @@ const HRTraining = () => {
     setCanDeleteTraining((prev) => !prev);
   };
 
+  const handleCanAssignTraining = () => {
+    setCanAssignTraining((prev) => !prev);
+  };
+
   const getTrainings = React.useCallback(async () => {
     try {
       const { token } = await getCSRFToken();
@@ -113,69 +114,17 @@ const HRTraining = () => {
     const createdBy = training.user_id === user?.current;
     const activeMenu = training.training_id === activeTrainingMenu;
     return (
-      <div
+      <TrainingCard
         key={index}
-        className="w-full min-h-[17rem] p-4 rounded-md bg-neutral-100 flex 
-                      flex-col items-center justify-start gap-4 relative max-w-full transition-all"
-      >
-        <div className="flex flex-row items-start justify-between w-full">
-          <div className="flex flex-col items-start justify-start">
-            <p className="font-bold truncate">{training.title}</p>
-          </div>
-
-          <button
-            onClick={() =>
-              training.training_id &&
-              handleActiveTrainingMenu(training.training_id)
-            }
-            className="p-2 rounded-full bg-neutral-100 transition-all"
-          >
-            <IoEllipsisVertical
-              className={`${
-                activeMenu ? "text-accent-blue" : "text-neutral-900"
-              }`}
-            />
-          </button>
-        </div>
-
-        <div className="w-full h-40 max-h-40 min-h-40 flex flex-col items-center justify-start overflow-y-auto bg-neutral-200 p-2 rounded-xs">
-          <p className="text-sm w-full text-wrap break-words">
-            {training.description}
-          </p>
-        </div>
-
-        <button
-          onClick={() =>
-            training.training_id &&
-            handleActiveTrainingSeeMore(training.training_id)
-          }
-          className="text-xs hover:underline transition-all underline-offset-2 flex flex-row items-center justify-start gap-1"
-        >
-          See More <IoArrowForward />
-        </button>
-
-        {activeMenu ? (
-          <div className="w-32 p-2 rounded-md top-12 right-6 shadow-md bg-neutral-200 absolute animate-fade z-20">
-            <button
-              onClick={handleCanEditTraining}
-              className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
-            >
-              <IoPencil className="text-accent-blue" />
-              Edit
-            </button>
-
-            {createdBy ? (
-              <button
-                onClick={handleCanDeleteTraining}
-                className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
-              >
-                <IoTrash className="text-red-600" />
-                Delete
-              </button>
-            ) : null}
-          </div>
-        ) : null}
-      </div>
+        activeMenu={activeMenu}
+        createdBy={createdBy}
+        training={training}
+        handleActiveTrainingMenu={handleActiveTrainingMenu}
+        handleActiveTrainingSeeMore={handleActiveTrainingSeeMore}
+        handleCanDeleteTraining={handleCanDeleteTraining}
+        handleCanEditTraining={handleCanEditTraining}
+        handleCanAssignTraining={handleCanAssignTraining}
+      />
     );
   });
 
@@ -204,6 +153,13 @@ const HRTraining = () => {
           id={activeTrainingMenu}
           toggleModal={handleCanEditTraining}
           refetchIndex={getTrainings}
+        />
+      ) : null}
+
+      {canAssignTraining ? (
+        <AssignTraining
+          id={activeTrainingMenu}
+          toggleModal={handleCanAssignTraining}
         />
       ) : null}
 

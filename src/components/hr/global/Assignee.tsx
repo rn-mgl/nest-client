@@ -2,7 +2,7 @@ import { UserInterface } from "@/src/interface/UserInterface";
 import React from "react";
 import CheckBox from "../../form/CheckBox";
 
-const Assign: React.FC<{
+const Assignee: React.FC<{
   user: UserInterface;
   columns?: React.JSX.Element[];
   isChecked: boolean;
@@ -44,4 +44,4 @@ const Assign: React.FC<{
   );
 };
 
-export default Assign;
+export default Assignee;

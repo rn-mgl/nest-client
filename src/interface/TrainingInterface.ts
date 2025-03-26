@@ -17,3 +17,7 @@ export interface TrainingContentSetInterface {
 export interface TrainingContentsInterface {
   contents: Array<TrainingContentSetInterface>;
 }
+
+export interface EmployeeTrainingInterface {
+  employee_training_id?: number;
+}

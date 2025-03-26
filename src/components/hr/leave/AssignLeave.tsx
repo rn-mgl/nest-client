@@ -7,7 +7,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd, IoClose, IoRemove } from "react-icons/io5";
-import Assign from "../global/Assign";
+import Assignee from "../global/Assignee";
 
 const AssignLeave: React.FC<ModalInterface> = (props) => {
   const [employeeLeaves, setEmployeeLeaves] = React.useState<
@@ -146,7 +146,7 @@ const AssignLeave: React.FC<ModalInterface> = (props) => {
     const isChecked = assignedEmployees.includes(employee.user_id);
 
     return (
-      <Assign
+      <Assignee
         key={index}
         user={employee}
         handleAssignedEmployees={() =>
