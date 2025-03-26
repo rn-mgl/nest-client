@@ -10,7 +10,7 @@ import {
 } from "@/src/interface/OnboardingInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-import { getCookie } from "cookies-next";
+
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd, IoClose, IoReader, IoText, IoTrash } from "react-icons/io5";
@@ -132,7 +132,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
           {
             headers: {
               Authorization: `Bearer ${user?.token}`,
-              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+              "X-CSRF-TOKEN": token,
             },
             withCredentials: true,
           }

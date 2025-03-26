@@ -3,7 +3,7 @@ import { EmployeeOnboardingInterface } from "@/src/interface/OnboardingInterface
 import { UserInterface } from "@/src/interface/UserInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-import { getCookie } from "cookies-next";
+
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose } from "react-icons/io5";
@@ -43,7 +43,7 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
         }>(`${url}/hr/employee_onboarding`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
-            "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+            "X-CSRF-TOKEN": token,
           },
           withCredentials: true,
           params: { onboarding_id: props.id },
@@ -106,7 +106,7 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
-              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+              "X-CSRF-TOKEN": token,
             },
             withCredentials: true,
           }

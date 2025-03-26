@@ -6,7 +6,7 @@ import {
 } from "@/src/interface/TrainingInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-import { getCookie } from "cookies-next";
+
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -42,7 +42,7 @@ const ShowTraining: React.FC<ShowModalInterface> = (props) => {
         } = await axios.get(`${url}/hr/training/${props.id}`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
-            "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+            "X-CSRF-TOKEN": token,
           },
           withCredentials: true,
         });

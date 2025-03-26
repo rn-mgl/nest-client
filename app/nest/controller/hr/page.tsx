@@ -13,7 +13,7 @@ import {
 } from "@/src/utils/filters";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-import { getCookie } from "cookies-next";
+
 import { useSession } from "next-auth/react";
 import React from "react";
 import {
@@ -78,7 +78,7 @@ const AdminHR = () => {
           data: { hrs },
         } = await axios.get(`${url}/admin/hr`, {
           headers: {
-            "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+            "X-CSRF-TOKEN": token,
             Authorization: `Bearer ${user?.token}`,
           },
           params: {
@@ -106,7 +106,7 @@ const AdminHR = () => {
           { type: "verify" },
           {
             headers: {
-              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+              "X-CSRF-TOKEN": token,
               Authorization: `Bearer ${user?.token}`,
             },
             withCredentials: true,
@@ -132,7 +132,7 @@ const AdminHR = () => {
           { type: "deactivate" },
           {
             headers: {
-              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+              "X-CSRF-TOKEN": token,
               Authorization: `Bearer ${user?.token}`,
             },
             withCredentials: true,

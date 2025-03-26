@@ -7,7 +7,7 @@ import Input from "@/components/form/Input";
 import useShowPassword from "@/src/hooks/useShowPassword";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-import { getCookie } from "cookies-next";
+
 import { useSession } from "next-auth/react";
 
 const CreateHR: React.FC<ModalInterface> = (props) => {
@@ -47,7 +47,7 @@ const CreateHR: React.FC<ModalInterface> = (props) => {
           { ...credentials, role: "hr" },
           {
             headers: {
-              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+              "X-CSRF-TOKEN": token,
               Authorization: `Bearer ${user?.token}`,
             },
             withCredentials: true,

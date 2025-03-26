@@ -1,7 +1,7 @@
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-import { getCookie } from "cookies-next";
+
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose } from "react-icons/io5";
@@ -24,7 +24,7 @@ const DeleteFolder: React.FC<ModalInterface> = (props) => {
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
-              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+              "X-CSRF-TOKEN": token,
             },
             withCredentials: true,
           }

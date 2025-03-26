@@ -6,7 +6,7 @@ import processing from "@/public/auth/processing.svg";
 import Logo from "@/src/components/global/Logo";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-import { getCookie } from "cookies-next";
+
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -28,7 +28,7 @@ const Verify = () => {
           `${url}/auth/verify`,
           { token: candidateToken },
           {
-            headers: { "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") },
+            headers: { "X-CSRF-TOKEN": token },
             withCredentials: true,
           }
         );

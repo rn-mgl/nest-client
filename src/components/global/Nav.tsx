@@ -4,7 +4,7 @@ import Logo from "@/components/global/Logo";
 import { SideNavInterface } from "@/interface/NavInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-import { getCookie } from "cookies-next";
+
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -30,7 +30,7 @@ const Nav: React.FC<SideNavInterface & { children: React.ReactNode }> = (
           {},
           {
             headers: {
-              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+              "X-CSRF-TOKEN": token,
               Authorization: `Bearer ${user?.token}`,
             },
             withCredentials: true,

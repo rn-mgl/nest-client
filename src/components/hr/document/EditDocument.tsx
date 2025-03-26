@@ -2,7 +2,7 @@ import { DocumentInterface } from "@/src/interface/DocumentInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-import { getCookie } from "cookies-next";
+
 import { useSession } from "next-auth/react";
 import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
@@ -42,7 +42,7 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
-              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+              "X-CSRF-TOKEN": token,
             },
             withCredentials: true,
           }
@@ -67,7 +67,7 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
         }>(`${url}/hr/document_folder/paths`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
-            "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+            "X-CSRF-TOKEN": token,
           },
           params: { path: document.path },
           withCredentials: true,
@@ -138,7 +138,7 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
-              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+              "X-CSRF-TOKEN": token,
               "Content-Type": "multipart/form-data",
             },
             withCredentials: true,

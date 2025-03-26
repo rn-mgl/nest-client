@@ -25,7 +25,7 @@ import {
 } from "@/src/utils/filters";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-import { getCookie } from "cookies-next";
+
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -140,7 +140,7 @@ const HRDocument = () => {
         } = await axios.get(`${url}/hr/document`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
-            "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+            "X-CSRF-TOKEN": token,
           },
           withCredentials: true,
           params: { path: folderId, ...search, ...sort, ...category },
@@ -165,7 +165,7 @@ const HRDocument = () => {
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
-              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+              "X-CSRF-TOKEN": token,
             },
             withCredentials: true,
           }

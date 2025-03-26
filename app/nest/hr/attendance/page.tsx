@@ -6,7 +6,7 @@ import ShowAttendance from "@/src/components/hr/attendance/ShowAttendance";
 import { AttendanceStatisticsInterface } from "@/src/interface/AttendanceInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-import { getCookie } from "cookies-next";
+
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoArrowForward, IoCalendar } from "react-icons/io5";
@@ -87,7 +87,7 @@ const HRAttendance = () => {
         const { data: statistics } = await axios.get(`${url}/hr/attendance`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
-            "X-XSRF-TOKEN": getCookie("XSRF-TOKEn"),
+            "X-CSRF-TOKEN": token,
           },
           withCredentials: true,
           params: {

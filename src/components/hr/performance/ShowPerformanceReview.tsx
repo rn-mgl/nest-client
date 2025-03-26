@@ -8,7 +8,7 @@ import {
 } from "@/src/interface/PerformanceReviewInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-import { getCookie } from "cookies-next";
+
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoCaretForwardSharp, IoClose } from "react-icons/io5";
@@ -39,7 +39,7 @@ const ShowPerformanceReview: React.FC<ShowModalInterface> = (props) => {
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
-              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+              "X-CSRF-TOKEN": token,
             },
             withCredentials: true,
           }

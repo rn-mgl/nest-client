@@ -6,7 +6,7 @@ import useShowPassword from "@/src/hooks/useShowPassword";
 import { RegisterInterface } from "@/src/interface/AuthInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-import { getCookie } from "cookies-next";
+
 import { useRouter } from "next/navigation";
 import React from "react";
 import { IoEye, IoEyeOff, IoMail, IoPersonCircle } from "react-icons/io5";
@@ -46,7 +46,7 @@ const Register = () => {
           `${url}/auth/register`,
           { ...registerData, role: "employee" },
           {
-            headers: { "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") },
+            headers: { "X-CSRF-TOKEN": token },
             withCredentials: true,
           }
         );

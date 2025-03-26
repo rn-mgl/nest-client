@@ -18,7 +18,7 @@ import {
 } from "@/src/utils/filters";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-import { getCookie } from "cookies-next";
+
 import { useSession } from "next-auth/react";
 import React from "react";
 import {
@@ -89,7 +89,7 @@ const HRLeave = () => {
       if (token && user?.token) {
         const { data: allLeaves } = await axios.get(`${url}/hr/leave_type`, {
           headers: {
-            "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+            "X-CSRF-TOKEN": token,
             Authorization: `Bearer ${user?.token}`,
           },
           withCredentials: true,

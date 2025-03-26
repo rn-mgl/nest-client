@@ -3,7 +3,7 @@
 import Logo from "@/src/components/global/Logo";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-import { getCookie } from "cookies-next";
+
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import React from "react";
@@ -28,7 +28,7 @@ const Verify = () => {
           `${url}/admin_auth/verify`,
           { token: candidateToken },
           {
-            headers: { "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") },
+            headers: { "X-CSRF-TOKEN": token },
             withCredentials: true,
           }
         );

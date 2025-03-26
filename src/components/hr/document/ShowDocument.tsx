@@ -5,7 +5,7 @@ import {
 import { ShowModalInterface } from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-import { getCookie } from "cookies-next";
+
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import React from "react";
@@ -38,7 +38,7 @@ const ShowDocument: React.FC<ShowModalInterface> = (props) => {
           {
             headers: {
               Authorization: `Bearer ${user?.token}`,
-              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+              "X-CSRF-TOKEN": token,
             },
             withCredentials: true,
           }

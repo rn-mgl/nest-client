@@ -8,7 +8,7 @@ import { TrainingInterface } from "@/src/interface/TrainingInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-import { getCookie } from "cookies-next";
+
 import { useSession } from "next-auth/react";
 import React from "react";
 import {
@@ -94,7 +94,7 @@ const HRTraining = () => {
         const { data } = await axios.get(`${url}/hr/training`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
-            "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+            "X-CSRF-TOKEN": token,
           },
           params: { ...search, ...sort },
           withCredentials: true,

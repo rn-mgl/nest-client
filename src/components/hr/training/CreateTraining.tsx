@@ -10,7 +10,7 @@ import {
 } from "@/src/interface/TrainingInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-import { getCookie } from "cookies-next";
+
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import React from "react";
@@ -144,7 +144,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
-              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+              "X-CSRF-TOKEN": token,
               "Content-Type": "multipart/form-data",
             },
             withCredentials: true,

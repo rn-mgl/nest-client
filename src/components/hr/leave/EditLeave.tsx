@@ -5,7 +5,7 @@ import { LeaveInterface } from "@/src/interface/LeaveInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import { useSession } from "next-auth/react";
 import axios from "axios";
-import { getCookie } from "cookies-next";
+
 import Input from "@/components/form/Input";
 import TextArea from "@/components/form/TextArea";
 
@@ -39,7 +39,7 @@ const EditLeave: React.FC<ModalInterface> = (props) => {
           `${url}/hr/leave_type/${props.id}`,
           {
             headers: {
-              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+              "X-CSRF-TOKEN": token,
               Authorization: `Bearer ${user?.token}`,
             },
             withCredentials: true,
@@ -64,7 +64,7 @@ const EditLeave: React.FC<ModalInterface> = (props) => {
           { ...leave },
           {
             headers: {
-              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+              "X-CSRF-TOKEN": token,
               Authorization: `Bearer ${user?.token}`,
             },
             withCredentials: true,

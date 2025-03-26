@@ -13,7 +13,7 @@ import {
 } from "@/src/utils/filters";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-import { getCookie } from "cookies-next";
+
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoEllipsisVertical, IoMail, IoShieldCheckmark } from "react-icons/io5";
@@ -64,7 +64,7 @@ const HREmployee = () => {
         const { data } = await axios.get(`${url}/hr/employee`, {
           headers: {
             Authorization: `Bearer ${user?.token}`,
-            "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+            "X-CSRF-TOKEN": token,
           },
           withCredentials: true,
           params: { ...search, ...sort, ...category },

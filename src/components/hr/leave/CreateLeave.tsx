@@ -7,7 +7,6 @@ import TextArea from "../../form/TextArea";
 import { getCSRFToken } from "@/src/utils/token";
 import { useSession } from "next-auth/react";
 import axios from "axios";
-import { getCookie } from "cookies-next";
 
 const CreateLeave: React.FC<ModalInterface> = (props) => {
   const [leave, setLeave] = React.useState<LeaveInterface>({
@@ -43,7 +42,7 @@ const CreateLeave: React.FC<ModalInterface> = (props) => {
           { ...leave },
           {
             headers: {
-              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+              "X-CSRF-TOKEN": token,
               Authorization: `Bearer ${user.token}`,
             },
             withCredentials: true,

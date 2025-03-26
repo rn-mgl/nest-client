@@ -6,7 +6,7 @@ import useShowPassword from "@/src/hooks/useShowPassword";
 import { LoginInterface } from "@/src/interface/AuthInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-import { getCookie } from "cookies-next";
+
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -46,7 +46,7 @@ const AdminLogin = () => {
           `${url}/admin_auth/login`,
           { ...loginData },
           {
-            headers: { "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") },
+            headers: { "X-CSRF-TOKEN": token },
             withCredentials: true,
           }
         );

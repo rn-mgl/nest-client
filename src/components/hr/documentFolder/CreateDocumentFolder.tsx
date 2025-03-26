@@ -6,7 +6,7 @@ import Input from "../../form/Input";
 import { getCSRFToken } from "@/src/utils/token";
 import { useSession } from "next-auth/react";
 import axios from "axios";
-import { getCookie } from "cookies-next";
+
 import { useParams } from "next/navigation";
 
 const CreateDocumentFolder: React.FC<ModalInterface> = (props) => {
@@ -46,7 +46,7 @@ const CreateDocumentFolder: React.FC<ModalInterface> = (props) => {
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
-              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+              "X-CSRF-TOKEN": token,
             },
             withCredentials: true,
           }

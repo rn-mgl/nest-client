@@ -4,7 +4,7 @@ import sending from "@/public/global/sending.svg";
 import Logo from "@/src/components/global/Logo";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-import { getCookie } from "cookies-next";
+
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
@@ -34,7 +34,7 @@ const Message = () => {
           `${url}/auth/verification-notification`,
           {},
           {
-            headers: { "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") },
+            headers: { "X-CSRF-TOKEN": token },
             withCredentials: true,
           }
         );

@@ -4,7 +4,6 @@ import { IoClose } from "react-icons/io5";
 import { useSession } from "next-auth/react";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-import { getCookie } from "cookies-next";
 
 const DeleteLeave: React.FC<ModalInterface> = (props) => {
   const url = process.env.URL;
@@ -23,7 +22,7 @@ const DeleteLeave: React.FC<ModalInterface> = (props) => {
           {
             headers: {
               Authorization: `Bearer ${user?.token}`,
-              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+              "X-CSRF-TOKEN": token,
             },
             withCredentials: true,
           }
