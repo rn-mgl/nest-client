@@ -23,7 +23,7 @@ const DeleteTraining: React.FC<ModalInterface> = (props) => {
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
-              "X-XSRF_TOKEN": getCookie("XSRF-TOKEN"),
+              "X-XSRF_TOKEN": token,
             },
             withCredentials: true,
           }
