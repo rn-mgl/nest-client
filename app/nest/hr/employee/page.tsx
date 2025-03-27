@@ -84,8 +84,8 @@ const HREmployee = () => {
         key={index}
         employee={employee}
         activeMenu={activeMenu}
-        sendMail={sendMail}
-        handleActiveEmployeeMenu={handleActiveEmployeeMenu}
+        sendMail={() => sendMail(employee.email)}
+        handleActiveMenu={() => handleActiveEmployeeMenu(employee.user_id)}
       />
     );
   });

@@ -1,3 +1,4 @@
+import { CardInterface } from "@/src/interface/CardInterface";
 import { LeaveInterface } from "@/src/interface/LeaveInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import React from "react";
@@ -8,15 +9,11 @@ import {
   IoTrash,
 } from "react-icons/io5";
 
-const LeaveCard: React.FC<{
-  leave: LeaveInterface & UserInterface;
-  createdBy: boolean;
-  activeMenu: boolean;
-  handleActiveLeaveMenu: (id: number) => void;
-  handleCanEditLeave: () => void;
-  handleCanAssignLeave: () => void;
-  handleCanDeleteLeave: () => void;
-}> = (props) => {
+const LeaveCard: React.FC<
+  CardInterface & {
+    leave: LeaveInterface & UserInterface;
+  }
+> = (props) => {
   return (
     <div className="w-full h-full p-4 rounded-md bg-neutral-100 flex flex-col items-start justify-start gap-4 relative  max-h-56 max-w-full">
       <div className="flex flex-row items-start justify-between w-full">
@@ -28,10 +25,7 @@ const LeaveCard: React.FC<{
         </div>
 
         <button
-          onClick={() =>
-            props.leave.leave_id &&
-            props.handleActiveLeaveMenu(props.leave.leave_id)
-          }
+          onClick={props.handleActiveMenu}
           className="p-2 rounded-full bg-neutral-100 transition-all"
         >
           <IoEllipsisVertical
@@ -51,7 +45,7 @@ const LeaveCard: React.FC<{
       {props.activeMenu ? (
         <div className="w-32 p-2 rounded-md top-12 right-6 shadow-md bg-neutral-200 absolute animate-fade z-20">
           <button
-            onClick={props.handleCanEditLeave}
+            onClick={props.handleCanEdit}
             className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
           >
             <IoPencil className="text-accent-blue" />
@@ -59,7 +53,7 @@ const LeaveCard: React.FC<{
           </button>
 
           <button
-            onClick={props.handleCanAssignLeave}
+            onClick={props.handleCanAssign}
             className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
           >
             <IoPersonAdd className="text-accent-blue" />
@@ -68,7 +62,7 @@ const LeaveCard: React.FC<{
 
           {props.createdBy ? (
             <button
-              onClick={props.handleCanDeleteLeave}
+              onClick={props.handleCanDelete}
               className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
             >
               <IoTrash className="text-red-600" />

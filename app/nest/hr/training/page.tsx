@@ -111,19 +111,20 @@ const HRTraining = () => {
   }, [user?.token, url, search, sort]);
 
   const mappedTrainings = trainings.map((training, index) => {
+    const trainingId = training.training_id as number;
     const createdBy = training.user_id === user?.current;
-    const activeMenu = training.training_id === activeTrainingMenu;
+    const activeMenu = activeTrainingMenu === trainingId;
     return (
       <TrainingCard
         key={index}
         activeMenu={activeMenu}
         createdBy={createdBy}
         training={training}
-        handleActiveTrainingMenu={handleActiveTrainingMenu}
-        handleActiveTrainingSeeMore={handleActiveTrainingSeeMore}
-        handleCanDeleteTraining={handleCanDeleteTraining}
-        handleCanEditTraining={handleCanEditTraining}
-        handleCanAssignTraining={handleCanAssignTraining}
+        handleActiveMenu={() => handleActiveTrainingMenu(trainingId)}
+        handleActiveSeeMore={() => handleActiveTrainingSeeMore(trainingId)}
+        handleCanDelete={handleCanDeleteTraining}
+        handleCanEdit={handleCanEditTraining}
+        handleCanAssign={handleCanAssignTraining}
       />
     );
   });

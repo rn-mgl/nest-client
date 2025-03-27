@@ -1,5 +1,5 @@
 import { CardInterface } from "@/src/interface/CardInterface";
-import { OnboardingInterface } from "@/src/interface/OnboardingInterface";
+import { PerformanceReviewInterface } from "@/src/interface/PerformanceReviewInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import React from "react";
 import {
@@ -10,23 +10,19 @@ import {
   IoTrash,
 } from "react-icons/io5";
 
-const OnboardingCard: React.FC<
+const PerformanceReviewCard: React.FC<
   CardInterface & {
-    onboarding: OnboardingInterface & UserInterface;
+    performance: PerformanceReviewInterface & UserInterface;
   }
 > = (props) => {
   return (
     <div
       className="w-full min-h-[17rem] p-4 rounded-md bg-neutral-100 flex 
-                    flex-col items-center justify-start gap-4 relative max-w-full transition-all"
+                         flex-col items-center justify-start gap-4 relative max-w-full transition-all"
     >
       <div className="flex flex-row items-start justify-between w-full">
         <div className="flex flex-col items-start justify-start">
-          <p className="font-bold truncate">{props.onboarding.title}</p>
-          <p className="text-xs">
-            created by{" "}
-            {props.createdBy ? "you" : `${props.onboarding.first_name}`}
-          </p>
+          <p className="font-bold truncate">{props.performance.title}</p>
         </div>
 
         <button
@@ -43,7 +39,7 @@ const OnboardingCard: React.FC<
 
       <div className="w-full h-40 max-h-40 min-h-40 flex flex-col items-center justify-start overflow-y-auto bg-neutral-200 p-2 rounded-xs">
         <p className="text-sm w-full text-wrap break-words">
-          {props.onboarding.description}
+          {props.performance.description}
         </p>
       </div>
 
@@ -72,7 +68,7 @@ const OnboardingCard: React.FC<
             Assign
           </button>
 
-          {props.createdBy && (
+          {props.createdBy ? (
             <button
               onClick={props.handleCanDelete}
               className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
@@ -80,11 +76,11 @@ const OnboardingCard: React.FC<
               <IoTrash className="text-red-600" />
               Delete
             </button>
-          )}
+          ) : null}
         </div>
       ) : null}
     </div>
   );
 };
 
-export default OnboardingCard;
+export default PerformanceReviewCard;

@@ -103,7 +103,8 @@ const HRLeave = () => {
   };
 
   const mappedLeaves = leaves.map((leave, index) => {
-    const activeMenu = activeLeaveMenu === leave.leave_id;
+    const leaveId = leave.leave_id as number; // leave ids in this page have leaveids (from db)
+    const activeMenu = activeLeaveMenu === leaveId;
     const createdBy = leave.created_by === user?.current;
     return (
       <LeaveCard
@@ -111,10 +112,10 @@ const HRLeave = () => {
         activeMenu={activeMenu}
         createdBy={createdBy}
         leave={leave}
-        handleActiveLeaveMenu={handleActiveLeaveMenu}
-        handleCanAssignLeave={handleCanAssignLeave}
-        handleCanDeleteLeave={handleCanDeleteLeave}
-        handleCanEditLeave={handleCanEditLeave}
+        handleActiveMenu={() => handleActiveLeaveMenu(leaveId)}
+        handleCanAssign={handleCanAssignLeave}
+        handleCanDelete={handleCanDeleteLeave}
+        handleCanEdit={handleCanEditLeave}
       />
     );
   });

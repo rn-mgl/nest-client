@@ -113,7 +113,8 @@ const HROnboarding = () => {
   }, [url, user?.token, search, sort]);
 
   const mappedOnboardings = onboardings?.map((onboarding, index) => {
-    const activeMenu = activeOnboardingMenu === onboarding.onboarding_id;
+    const onboardingId = onboarding.onboarding_id as number;
+    const activeMenu = activeOnboardingMenu === onboardingId;
     const createdBy = user?.current === onboarding.created_by;
 
     return (
@@ -122,11 +123,11 @@ const HROnboarding = () => {
         onboarding={onboarding}
         activeMenu={activeMenu}
         createdBy={createdBy}
-        handleActiveOnboardingMenu={handleActiveOnboardingMenu}
-        handleActiveOnboardingSeeMore={handleActiveOnboardingSeeMore}
-        handleCanAssignOnboarding={handleCanAssignOnboarding}
-        handleCanDeleteOnboarding={handleCanDeleteOnboarding}
-        handleCanEditOnboarding={handleCanEditOnboarding}
+        handleActiveMenu={() => handleActiveOnboardingMenu(onboardingId)}
+        handleActiveSeeMore={() => handleActiveOnboardingSeeMore(onboardingId)}
+        handleCanAssign={handleCanAssignOnboarding}
+        handleCanDelete={handleCanDeleteOnboarding}
+        handleCanEdit={handleCanEditOnboarding}
       />
     );
   });

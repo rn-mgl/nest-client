@@ -1,3 +1,4 @@
+import { CardInterface } from "@/src/interface/CardInterface";
 import { TrainingInterface } from "@/src/interface/TrainingInterface";
 import React from "react";
 import {
@@ -8,16 +9,11 @@ import {
   IoTrash,
 } from "react-icons/io5";
 
-const TrainingCard: React.FC<{
-  training: TrainingInterface;
-  activeMenu: boolean;
-  createdBy: boolean;
-  handleActiveTrainingMenu: (id: number) => void;
-  handleActiveTrainingSeeMore: (id: number) => void;
-  handleCanEditTraining: () => void;
-  handleCanDeleteTraining: () => void;
-  handleCanAssignTraining: () => void;
-}> = (props) => {
+const TrainingCard: React.FC<
+  CardInterface & {
+    training: TrainingInterface;
+  }
+> = (props) => {
   return (
     <div
       className="w-full min-h-[17rem] p-4 rounded-md bg-neutral-100 flex 
@@ -29,10 +25,7 @@ const TrainingCard: React.FC<{
         </div>
 
         <button
-          onClick={() =>
-            props.training.training_id &&
-            props.handleActiveTrainingMenu(props.training.training_id)
-          }
+          onClick={props.handleActiveMenu}
           className="p-2 rounded-full bg-neutral-100 transition-all"
         >
           <IoEllipsisVertical
@@ -50,10 +43,7 @@ const TrainingCard: React.FC<{
       </div>
 
       <button
-        onClick={() =>
-          props.training.training_id &&
-          props.handleActiveTrainingSeeMore(props.training.training_id)
-        }
+        onClick={props.handleActiveSeeMore}
         className="text-xs hover:underline transition-all underline-offset-2 flex flex-row items-center justify-start gap-1"
       >
         See More <IoArrowForward />
@@ -62,7 +52,7 @@ const TrainingCard: React.FC<{
       {props.activeMenu ? (
         <div className="w-32 p-2 rounded-md top-12 right-6 shadow-md bg-neutral-200 absolute animate-fade z-20">
           <button
-            onClick={props.handleCanEditTraining}
+            onClick={props.handleCanEdit}
             className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
           >
             <IoPencil className="text-accent-blue" />
@@ -70,7 +60,7 @@ const TrainingCard: React.FC<{
           </button>
 
           <button
-            onClick={props.handleCanAssignTraining}
+            onClick={props.handleCanAssign}
             className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
           >
             <IoPersonAdd className="text-accent-blue" />
@@ -79,7 +69,7 @@ const TrainingCard: React.FC<{
 
           {props.createdBy ? (
             <button
-              onClick={props.handleCanDeleteTraining}
+              onClick={props.handleCanDelete}
               className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
             >
               <IoTrash className="text-red-600" />

@@ -5,6 +5,7 @@ import AssignPerformanceReview from "@/src/components/hr/performance/AssignPerfo
 import CreatePerformanceReview from "@/src/components/hr/performance/CreatePerformanceReview";
 import DeletePerformanceReview from "@/src/components/hr/performance/DeletePerformanceReview";
 import EditPerformanceReview from "@/src/components/hr/performance/EditPerformanceReview";
+import PerformanceReviewCard from "@/src/components/hr/performance/PerformanceReviewCard";
 import ShowPerformanceReview from "@/src/components/hr/performance/ShowPerformanceReview";
 import useCategory from "@/src/hooks/useCategory";
 import useFilters from "@/src/hooks/useFilters";
@@ -22,14 +23,7 @@ import axios from "axios";
 
 import { useSession } from "next-auth/react";
 import React from "react";
-import {
-  IoAdd,
-  IoArrowForward,
-  IoEllipsisVertical,
-  IoPencil,
-  IoPersonAdd,
-  IoTrash,
-} from "react-icons/io5";
+import { IoAdd } from "react-icons/io5";
 
 const PerformanceReview = () => {
   const [performances, setPerformanceReviews] = React.useState<
@@ -126,85 +120,25 @@ const PerformanceReview = () => {
   }, [url, user?.token, search, sort]);
 
   const mappedPerformanceReviews = performances.map((performance, index) => {
-    const activeMenu =
-      activePerformanceReviewMenu === performance.performance_review_id;
+    const performanceReviewId = performance.performance_review_id as number;
+    const activeMenu = activePerformanceReviewMenu === performanceReviewId;
     const createdBy = performance.created_by === user?.current;
     return (
-      <div
+      <PerformanceReviewCard
         key={index}
-        className="w-full min-h-[17rem] p-4 rounded-md bg-neutral-100 flex 
-                       flex-col items-center justify-start gap-4 relative max-w-full transition-all"
-      >
-        <div className="flex flex-row items-start justify-between w-full">
-          <div className="flex flex-col items-start justify-start">
-            <p className="font-bold truncate">{performance.title}</p>
-          </div>
-
-          <button
-            onClick={() =>
-              performance.performance_review_id &&
-              handleActivePerformanceReviewMenu(
-                performance.performance_review_id
-              )
-            }
-            className="p-2 rounded-full bg-neutral-100 transition-all"
-          >
-            <IoEllipsisVertical
-              className={`${
-                activeMenu ? "text-accent-blue" : "text-neutral-900"
-              }`}
-            />
-          </button>
-        </div>
-
-        <div className="w-full h-40 max-h-40 min-h-40 flex flex-col items-center justify-start overflow-y-auto bg-neutral-200 p-2 rounded-xs">
-          <p className="text-sm w-full text-wrap break-words">
-            {performance.description}
-          </p>
-        </div>
-
-        <button
-          onClick={() =>
-            performance.performance_review_id &&
-            handleActivePerformanceReviewSeeMore(
-              performance.performance_review_id
-            )
-          }
-          className="text-xs hover:underline transition-all underline-offset-2 flex flex-row items-center justify-start gap-1"
-        >
-          See More <IoArrowForward />
-        </button>
-
-        {activeMenu ? (
-          <div className="w-32 p-2 rounded-md top-12 right-6 shadow-md bg-neutral-200 absolute animate-fade z-20">
-            <button
-              onClick={handleCanEditPerformanceReview}
-              className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
-            >
-              <IoPencil className="text-accent-blue" />
-              Edit
-            </button>
-
-            <button
-              onClick={handleCanAssignPerformanceReview}
-              className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
-            >
-              <IoPersonAdd className="text-accent-blue" />
-              Assign
-            </button>
-
-            {createdBy ? (
-              <button
-                onClick={handleCanDeletePerformanceReview}
-                className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
-              >
-                <IoTrash className="text-red-600" />
-                Delete
-              </button>
-            ) : null}
-          </div>
-        ) : null}
-      </div>
+        activeMenu={activeMenu}
+        createdBy={createdBy}
+        performance={performance}
+        handleActiveMenu={() =>
+          handleActivePerformanceReviewMenu(performanceReviewId)
+        }
+        handleActiveSeeMore={() =>
+          handleActivePerformanceReviewSeeMore(performanceReviewId)
+        }
+        handleCanAssign={handleCanAssignPerformanceReview}
+        handleCanDelete={handleCanDeletePerformanceReview}
+        handleCanEdit={handleCanEditPerformanceReview}
+      />
     );
   });
 
