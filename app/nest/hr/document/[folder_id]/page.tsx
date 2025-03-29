@@ -3,7 +3,9 @@
 import Filter from "@/src/components/global/Filter";
 import CreateDocument from "@/src/components/hr/document/CreateDocument";
 import DeleteDocument from "@/src/components/hr/document/DeleteDocument";
+import DocumentCard from "@/src/components/hr/document/DocumentCard";
 import EditDocument from "@/src/components/hr/document/EditDocument";
+import FolderCard from "@/src/components/hr/documentFolder/FolderCard";
 import ShowDocument from "@/src/components/hr/document/ShowDocument";
 import CreateDocumentFolder from "@/src/components/hr/documentFolder/CreateDocumentFolder";
 import DeleteFolder from "@/src/components/hr/documentFolder/DeleteFolder";
@@ -30,14 +32,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import React from "react";
-import {
-  IoAdd,
-  IoArrowBack,
-  IoArrowForward,
-  IoEllipsisVertical,
-  IoPencil,
-  IoTrash,
-} from "react-icons/io5";
+import { IoAdd, IoArrowBack } from "react-icons/io5";
 
 const HRDocument = () => {
   const [canCreateDocument, setCanCreateDocument] = React.useState(false);
@@ -188,123 +183,32 @@ const HRDocument = () => {
       type === activeDocumentMenu.type && document.id === activeDocumentMenu.id;
 
     return isDocument ? (
-      <div
+      <DocumentCard
         key={index}
-        className="w-full h-full p-4 rounded-md bg-neutral-100 flex flex-col items-start justify-start gap-4 relative  max-h-56 max-w-full"
-      >
-        <div className="flex flex-row items-start justify-between w-full">
-          <div className="flex flex-col items-start justify-start">
-            <p className="font-bold truncate">{document.name}</p>
-            <p className="text-xs">
-              created by {createdBy ? "you" : `${document.first_name}`}
-            </p>
-          </div>
-
-          <button
-            onClick={() =>
-              document.id && handleActiveDocumentMenu(type, document.id)
-            }
-            className="p-2 rounded-full bg-neutral-100 transition-all"
-          >
-            <IoEllipsisVertical
-              className={`${
-                activeMenu ? "text-accent-blue" : "text-neutral-900"
-              }`}
-            />
-          </button>
-        </div>
-
-        <div className="w-full h-full flex flex-col items-center justify-start overflow-y-auto p-2 bg-neutral-200 rounded-xs">
-          <p className="text-sm w-full text-wrap break-words">
-            {"description" in document ? document.description : null}
-          </p>
-        </div>
-
-        {activeMenu ? (
-          <div className="w-32 p-2 rounded-md top-12 right-6 shadow-md bg-neutral-200 absolute animate-fade z-20">
-            <button
-              onClick={handleCanEditDocument}
-              className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
-            >
-              <IoPencil className="text-accent-blue" />
-              Edit
-            </button>
-
-            {createdBy ? (
-              <button
-                onClick={handleCanDeleteDocument}
-                className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
-              >
-                <IoTrash className="text-red-600" />
-                Delete
-              </button>
-            ) : null}
-          </div>
-        ) : null}
-
-        <div className="w-full flex flex-col items-center justify-center ">
-          <button
-            onClick={() => handleActiveDocumentSeeMore(document.id as number)}
-            className="text-xs flex flex-row items-center justify-center gap-1 hover:underline underline-offset-2"
-          >
-            See More <IoArrowForward />
-          </button>
-        </div>
-      </div>
+        document={document as DocumentInterface & UserInterface}
+        activeMenu={activeMenu}
+        createdBy={createdBy}
+        handleActiveMenu={() =>
+          document.id && handleActiveDocumentMenu(type, document.id)
+        }
+        handleCanDelete={handleCanDeleteDocument}
+        handleCanEdit={handleCanEditDocument}
+        handleActiveSeeMore={() =>
+          document.id && handleActiveDocumentSeeMore(document.id)
+        }
+      />
     ) : (
-      <div
+      <FolderCard
         key={index}
-        className="w-full h-full p-4 rounded-md bg-linear-to-br from-accent-yellow/30 to-accent-blue/30 flex flex-col items-start justify-start gap-4 relative  max-h-56 max-w-full"
-      >
-        <div className="flex flex-row items-start justify-between w-full">
-          <div className="flex flex-col items-start justify-start">
-            <Link
-              href={`/nest/hr/document/${document.id}`}
-              className="font-bold truncate hover:underline"
-            >
-              {document.name}
-            </Link>
-            <p className="text-xs">
-              created by {createdBy ? "you" : `${document.first_name}`}
-            </p>
-          </div>
-
-          <button
-            onClick={() =>
-              document.id && handleActiveDocumentMenu(type, document.id)
-            }
-            className="p-2 rounded-full hover:bg-white transition-all"
-          >
-            <IoEllipsisVertical
-              className={`${
-                activeMenu ? "text-accent-blue" : "text-neutral-900"
-              }`}
-            />
-          </button>
-
-          {activeMenu ? (
-            <div className="w-32 p-2 rounded-md top-12 right-6 shadow-md bg-neutral-200 absolute animate-fade z-20">
-              <button
-                onClick={handleCanEditFolder}
-                className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
-              >
-                <IoPencil className="text-accent-blue" />
-                Edit
-              </button>
-
-              {createdBy ? (
-                <button
-                  onClick={handleCanDeleteFolder}
-                  className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
-                >
-                  <IoTrash className="text-red-600" />
-                  Delete
-                </button>
-              ) : null}
-            </div>
-          ) : null}
-        </div>
-      </div>
+        folder={document as DocumentFolderInterface & UserInterface}
+        activeMenu={activeMenu}
+        createdBy={createdBy}
+        handleActiveMenu={() =>
+          document.id && handleActiveDocumentMenu(type, document.id)
+        }
+        handleCanDelete={handleCanDeleteFolder}
+        handleCanEdit={handleCanEditFolder}
+      />
     );
   });
 
