@@ -5,7 +5,7 @@ import AssignOnboarding from "@/src/components/hr/onboarding/AssignOnboarding";
 import CreateOnboarding from "@/src/components/hr/onboarding/CreateOnboarding";
 import DeleteOnboarding from "@/src/components/hr/onboarding/DeleteOnboarding";
 import EditOnboarding from "@/src/components/hr/onboarding/EditOnboarding";
-import OnboardingCard from "@/src/components/hr/onboarding/OnboardingCard";
+import OnboardingCard from "@/src/components/global/onboarding/OnboardingCard";
 import ShowOnboarding from "@/src/components/hr/onboarding/ShowOnboarding";
 import useCategory from "@/src/hooks/useCategory";
 import useFilters from "@/src/hooks/useFilters";
@@ -111,8 +111,6 @@ const HROnboarding = () => {
       console.log(error);
     }
   }, [url, user?.token, search, sort]);
-
-  console.log(onboardings);
 
   const mappedOnboardings = onboardings?.map((onboarding, index) => {
     const onboardingId = onboarding.onboarding_id as number;
