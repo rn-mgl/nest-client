@@ -10,14 +10,14 @@ declare module "next-auth" {
   interface Session {
     user: {
       token: string;
-      role: string;
+      role: "hr" | "employee" | "admin";
       current: number;
     };
   }
 
   interface User {
     token: string;
-    role: string;
+    role: "hr" | "employee" | "admin";
     current: number;
   }
 }
@@ -27,7 +27,7 @@ declare module "next-auth/jwt" {
   interface JWT {
     user: {
       token: string;
-      role: string;
+      role: "hr" | "employee" | "admin";
       current: number;
     };
   }

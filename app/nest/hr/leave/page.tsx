@@ -108,6 +108,7 @@ const HRLeave = () => {
     const createdBy = leave.created_by === user?.current;
     return (
       <LeaveCard
+        role={user?.role as string}
         key={index}
         activeMenu={activeMenu}
         createdBy={createdBy}

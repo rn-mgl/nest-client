@@ -116,6 +116,7 @@ const HRTraining = () => {
     const activeMenu = activeTrainingMenu === trainingId;
     return (
       <TrainingCard
+        role={user?.role as string}
         key={index}
         activeMenu={activeMenu}
         createdBy={createdBy}

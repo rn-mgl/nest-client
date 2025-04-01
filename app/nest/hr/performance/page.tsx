@@ -125,6 +125,7 @@ const PerformanceReview = () => {
     const createdBy = performance.created_by === user?.current;
     return (
       <PerformanceReviewCard
+        role={user?.role as string}
         key={index}
         activeMenu={activeMenu}
         createdBy={createdBy}

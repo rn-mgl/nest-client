@@ -184,6 +184,7 @@ const HRDocument = () => {
 
     return isDocument ? (
       <DocumentCard
+        role={user?.role as string}
         key={index}
         document={document as DocumentInterface & UserInterface}
         activeMenu={activeMenu}
@@ -199,6 +200,7 @@ const HRDocument = () => {
       />
     ) : (
       <FolderCard
+        role={user?.role as string}
         key={index}
         folder={document as DocumentFolderInterface & UserInterface}
         activeMenu={activeMenu}

@@ -1,3 +1,5 @@
+import { UserInterface } from "./UserInterface";
+
 export interface OnboardingInterface {
   onboarding_id?: number;
   title: string;
@@ -32,4 +34,7 @@ export interface OnboardingContentsSetInterface {
 
 export interface EmployeeOnboardingInterface {
   employee_onboarding_id: number | null;
+  completed_documents: number;
+  policy_acknowledged: number;
+  onboarding: OnboardingInterface & UserInterface;
 }

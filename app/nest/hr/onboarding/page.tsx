@@ -112,6 +112,8 @@ const HROnboarding = () => {
     }
   }, [url, user?.token, search, sort]);
 
+  console.log(onboardings);
+
   const mappedOnboardings = onboardings?.map((onboarding, index) => {
     const onboardingId = onboarding.onboarding_id as number;
     const activeMenu = activeOnboardingMenu === onboardingId;
@@ -119,6 +121,7 @@ const HROnboarding = () => {
 
     return (
       <OnboardingCard
+        role={user?.role as string}
         key={index}
         onboarding={onboarding}
         activeMenu={activeMenu}
