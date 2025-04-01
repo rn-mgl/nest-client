@@ -7,8 +7,8 @@ import useModalNav from "@/src/hooks/useModalNav";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
   OnboardingInterface,
-  OnboardingPolicyAcknowledgemenSetInterface,
-  OnboardingRequiredDocumentSetInterface,
+  OnboardingPolicyAcknowledgemenInterface,
+  OnboardingRequiredDocumentsInterface,
 } from "@/src/interface/OnboardingInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
@@ -36,14 +36,14 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
     removeField: removeDocumentField,
     handleField: handleDocumentField,
     populateFields: populateDocumentFields,
-  } = useDynamicFields<OnboardingRequiredDocumentSetInterface>([]);
+  } = useDynamicFields<OnboardingRequiredDocumentsInterface>([]);
   const {
     fields: policy_acknowledgements,
     addField: addPolicyField,
     removeField: removePolicyField,
     handleField: handlePolicyField,
     populateFields: populatePolicyFields,
-  } = useDynamicFields<OnboardingPolicyAcknowledgemenSetInterface>([]);
+  } = useDynamicFields<OnboardingPolicyAcknowledgemenInterface>([]);
   const { activeFormPage, handleActiveFormPage } = useModalNav("information");
 
   const url = process.env.URL;
@@ -59,8 +59,8 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
           data: { onboarding },
         } = await axios.get<{
           onboarding: OnboardingInterface & {
-            required_documents: OnboardingRequiredDocumentSetInterface[];
-            policy_acknowledgements: OnboardingPolicyAcknowledgemenSetInterface[];
+            required_documents: OnboardingRequiredDocumentsInterface[];
+            policy_acknowledgements: OnboardingPolicyAcknowledgemenInterface[];
           };
         }>(`${url}/hr/onboarding/${props.id}`, {
           headers: {

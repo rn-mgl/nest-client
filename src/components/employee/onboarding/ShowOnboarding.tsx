@@ -1,8 +1,70 @@
 import { ShowModalInterface } from "@/src/interface/ModalInterface";
+import {
+  EmployeeOnboardingInterface,
+  OnboardingInterface,
+  OnboardingPolicyAcknowledgemenInterface,
+  OnboardingRequiredDocumentsInterface,
+} from "@/src/interface/OnboardingInterface";
+import { getCSRFToken } from "@/src/utils/token";
+import axios from "axios";
+import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose } from "react-icons/io5";
 
 const ShowOnboarding: React.FC<ShowModalInterface> = (props) => {
+  const [onboarding, setOnboarding] = React.useState<
+    EmployeeOnboardingInterface & {
+      onboarding: OnboardingInterface & {
+        policy_acknowledgements: OnboardingPolicyAcknowledgemenInterface[];
+        required_documents: OnboardingRequiredDocumentsInterface[];
+      };
+    }
+  >();
+
+  const { data: session } = useSession({ required: true });
+  const user = session?.user;
+  const url = process.env.URL;
+
+  const getOnboarding = React.useCallback(async () => {
+    try {
+      const { token } = await getCSRFToken();
+
+      if (token && user?.token) {
+        const { data: responseData } = await axios.get(
+          `${url}/employee/employee_onboarding/${props.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              "X-CSRF-TOKEN": token,
+            },
+            withCredentials: true,
+          }
+        );
+
+        if (responseData.onboarding) {
+          setOnboarding(responseData.onboarding);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, [props.id, url, user?.token]);
+
+  const mappedRequiredDocuments = onboarding?.onboarding.required_documents.map(
+    (document, index) => {
+      return <p key={index}>{document.document}</p>;
+    }
+  );
+
+  const mappedPolicyAcknowledgements =
+    onboarding?.onboarding.policy_acknowledgements.map((policy, index) => {
+      return <p key={index}>{policy.policy}</p>;
+    });
+
+  React.useEffect(() => {
+    getOnboarding();
+  }, [getOnboarding]);
+
   return (
     <div
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
@@ -18,7 +80,8 @@ const ShowOnboarding: React.FC<ShowModalInterface> = (props) => {
             <IoClose />
           </button>
         </div>
-        ShowOnboarding
+        {mappedRequiredDocuments}
+        {mappedPolicyAcknowledgements}
       </div>
     </div>
   );

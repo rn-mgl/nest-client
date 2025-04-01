@@ -32,7 +32,7 @@ const Onboarding = () => {
 
       if (token && user?.token) {
         const { data: responseData } = await axios.get(
-          `${url}/employee/onboarding`,
+          `${url}/employee/employee_onboarding`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
@@ -59,7 +59,9 @@ const Onboarding = () => {
         key={index}
         onboarding={onboarding}
         handleActiveSeeMore={() =>
-          handleActiveOnboardingSeeMore(onboarding.onboarding_id as number)
+          handleActiveOnboardingSeeMore(
+            onboarding.employee_onboarding_id as number
+          )
         }
       />
     );

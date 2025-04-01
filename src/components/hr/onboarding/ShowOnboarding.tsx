@@ -3,8 +3,9 @@
 import useModalNav from "@/src/hooks/useModalNav";
 import { ShowModalInterface } from "@/src/interface/ModalInterface";
 import {
-  OnboardingContentsSetInterface,
   OnboardingInterface,
+  OnboardingPolicyAcknowledgemenInterface,
+  OnboardingRequiredDocumentsInterface,
 } from "@/src/interface/OnboardingInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
@@ -16,7 +17,10 @@ import ModalNav from "../../global/ModalNav";
 
 const ShowOnboarding: React.FC<ShowModalInterface> = (props) => {
   const [onboarding, setOnboarding] = React.useState<
-    OnboardingInterface & OnboardingContentsSetInterface
+    OnboardingInterface & {
+      required_documents: OnboardingRequiredDocumentsInterface[];
+      policy_acknowledgements: OnboardingPolicyAcknowledgemenInterface[];
+    }
   >({
     title: "",
     description: "",
