@@ -20,7 +20,14 @@
     "paths": {
       "@/*": ["./*"],
       "@/public/*": ["./public/*"],
+      "@/src/*": ["./src/*"],
       "@/components/*": ["./src/components/*"],
+      "@/controller/*": ["./src/components/controller/*"],
+      "@/employee/*": ["./src/components/employee/*"],
+      "@/form/*": ["./src/components/form/*"],
+      "@/global/*": ["./src/components/global/*"],
+      "@/hr/*": ["./src/components/hr/*"],
+      "@/landing/*": ["./src/components/landing/*"],
       "@/hooks/*": ["./src/hooks/*"],
       "@/interface/*": ["./src/interface/*"],
       "@/utils/*": ["./src/utils/*"]
