@@ -1,6 +1,6 @@
 "use client";
 
-import Filter from "@/src/components/global/Filter";
+import Filter from "@/src/components/global/filter/Filter";
 import AssignPerformanceReview from "@/src/components/hr/performance/AssignPerformanceReview";
 import CreatePerformanceReview from "@/src/components/hr/performance/CreatePerformanceReview";
 import DeletePerformanceReview from "@/src/components/hr/performance/DeletePerformanceReview";

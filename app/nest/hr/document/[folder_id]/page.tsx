@@ -1,6 +1,6 @@
 "use client";
 
-import Filter from "@/src/components/global/Filter";
+import Filter from "@/src/components/global/filter/Filter";
 import CreateDocument from "@/src/components/hr/document/CreateDocument";
 import DeleteDocument from "@/src/components/hr/document/DeleteDocument";
 import DocumentCard from "@/src/components/hr/document/DocumentCard";

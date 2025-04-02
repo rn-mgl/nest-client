@@ -12,6 +12,8 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import { IoCaretForwardSharp, IoClose } from "react-icons/io5";
 import ModalNav from "../../global/ModalNav";
+import TextField from "../../global/field/TextField";
+import TextBlock from "../../global/field/TextBlock";
 
 const ShowOnboarding: React.FC<ShowModalInterface> = (props) => {
   const [onboarding, setOnboarding] = React.useState<
@@ -113,19 +115,15 @@ const ShowOnboarding: React.FC<ShowModalInterface> = (props) => {
 
           {activeFormPage === "Information" ? (
             <div className="w-full flex flex-col items-center justify-start gap-4 h-full">
-              <div className="flex flex-col items-start justify-center w-full gap-1">
-                <p className="text-xs">Title</p>
-                <div className="w-full p-2 px-4 rounded-md border-2 relative overflow-x-auto bg-white">
-                  <p>{onboarding?.onboarding.title}</p>
-                </div>
-              </div>
+              <TextField
+                label="Title"
+                value={onboarding?.onboarding.title as string}
+              />
 
-              <div className="flex flex-col items-start justify-center w-full h-full gap-1">
-                <p className="text-xs">Description</p>
-                <div className="w-full h-full p-2 px-4 rounded-md border-2 relative overflow-x-auto overflow-y-auto bg-white min-h-40">
-                  <p>{onboarding?.onboarding.description}</p>
-                </div>
-              </div>
+              <TextBlock
+                label="Description"
+                value={onboarding?.onboarding.description as string}
+              />
             </div>
           ) : activeFormPage === "Documents" ? (
             <div className="w-full h-full flex flex-col items-center justify-start gap-2 overflow-y-auto">

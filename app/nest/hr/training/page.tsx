@@ -9,7 +9,7 @@ import { UserInterface } from "@/src/interface/UserInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
-import Filter from "@/src/components/global/Filter";
+import Filter from "@/src/components/global/filter/Filter";
 import AssignTraining from "@/src/components/hr/training/AssignTraining";
 import TrainingCard from "@/src/components/hr/training/TrainingCard";
 import useCategory from "@/src/hooks/useCategory";

@@ -1,6 +1,6 @@
 "use client";
 
-import Filter from "@/src/components/global/Filter";
+import Filter from "@/src/components/global/filter/Filter";
 import AssignOnboarding from "@/src/components/hr/onboarding/AssignOnboarding";
 import CreateOnboarding from "@/src/components/hr/onboarding/CreateOnboarding";
 import DeleteOnboarding from "@/src/components/hr/onboarding/DeleteOnboarding";

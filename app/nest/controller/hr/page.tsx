@@ -1,6 +1,6 @@
 "use client";
 import CreateHR from "@/src/components/controller/hr/CreateHR";
-import Filter from "@/src/components/global/Filter";
+import Filter from "@/src/components/global/filter/Filter";
 import useCategory from "@/src/hooks/useCategory";
 import useFilters from "@/src/hooks/useFilters";
 import useSearch from "@/src/hooks/useSearch";

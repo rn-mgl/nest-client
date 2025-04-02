@@ -1,6 +1,6 @@
 "use client";
 
-import Filter from "@/src/components/global/Filter";
+import Filter from "@/src/components/global/filter/Filter";
 import AssignLeave from "@/src/components/hr/leave/AssignLeave";
 import CreateLeave from "@/src/components/hr/leave/CreateLeave";
 import DeleteLeave from "@/src/components/hr/leave/DeleteLeave";

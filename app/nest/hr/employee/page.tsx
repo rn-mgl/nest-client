@@ -1,6 +1,6 @@
 "use client";
 
-import Filter from "@/src/components/global/Filter";
+import Filter from "@/src/components/global/filter/Filter";
 import EmployeeCard from "@/src/components/hr/employee/EmployeeCard";
 import useCategory from "@/src/hooks/useCategory";
 import useFilters from "@/src/hooks/useFilters";
