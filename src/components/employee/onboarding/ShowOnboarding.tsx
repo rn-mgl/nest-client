@@ -1,3 +1,4 @@
+import useModalNav from "@/src/hooks/useModalNav";
 import { ShowModalInterface } from "@/src/interface/ModalInterface";
 import {
   EmployeeOnboardingInterface,
@@ -9,7 +10,8 @@ import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
-import { IoClose } from "react-icons/io5";
+import { IoCaretForwardSharp, IoClose } from "react-icons/io5";
+import ModalNav from "../../global/ModalNav";
 
 const ShowOnboarding: React.FC<ShowModalInterface> = (props) => {
   const [onboarding, setOnboarding] = React.useState<
@@ -20,6 +22,8 @@ const ShowOnboarding: React.FC<ShowModalInterface> = (props) => {
       };
     }
   >();
+
+  const { activeFormPage, handleActiveFormPage } = useModalNav("Information");
 
   const { data: session } = useSession({ required: true });
   const user = session?.user;
@@ -52,13 +56,33 @@ const ShowOnboarding: React.FC<ShowModalInterface> = (props) => {
 
   const mappedRequiredDocuments = onboarding?.onboarding.required_documents.map(
     (document, index) => {
-      return <p key={index}>{document.document}</p>;
+      return (
+        <div
+          key={index}
+          className="w-full flex flex-row items-center justify-start bg-white p-2 rounded-md gap-2 border-2"
+        >
+          <IoCaretForwardSharp />
+          <p className="w-full overflow-y-auto max-h-24 h-full">
+            {document.document}
+          </p>
+        </div>
+      );
     }
   );
 
   const mappedPolicyAcknowledgements =
     onboarding?.onboarding.policy_acknowledgements.map((policy, index) => {
-      return <p key={index}>{policy.policy}</p>;
+      return (
+        <div
+          key={index}
+          className="w-full flex flex-row items-center justify-start bg-white p-2 rounded-md gap-2 border-2"
+        >
+          <IoCaretForwardSharp />
+          <p className="w-full overflow-y-auto max-h-24 h-full">
+            {policy.policy}
+          </p>
+        </div>
+      );
     });
 
   React.useEffect(() => {
@@ -80,8 +104,39 @@ const ShowOnboarding: React.FC<ShowModalInterface> = (props) => {
             <IoClose />
           </button>
         </div>
-        {mappedRequiredDocuments}
-        {mappedPolicyAcknowledgements}
+        <div className="w-full h-full flex flex-col items-center justify-start gap-4 p-4 overflow-y-hidden">
+          <ModalNav
+            activeFormPage={activeFormPage}
+            handleActiveFormPage={handleActiveFormPage}
+            pages={["Information", "Documents", "Policies"]}
+          />
+
+          {activeFormPage === "Information" ? (
+            <div className="w-full flex flex-col items-center justify-start gap-4 h-full">
+              <div className="flex flex-col items-start justify-center w-full gap-1">
+                <p className="text-xs">Title</p>
+                <div className="w-full p-2 px-4 rounded-md border-2 relative overflow-x-auto bg-white">
+                  <p>{onboarding?.onboarding.title}</p>
+                </div>
+              </div>
+
+              <div className="flex flex-col items-start justify-center w-full h-full gap-1">
+                <p className="text-xs">Description</p>
+                <div className="w-full h-full p-2 px-4 rounded-md border-2 relative overflow-x-auto overflow-y-auto bg-white min-h-40">
+                  <p>{onboarding?.onboarding.description}</p>
+                </div>
+              </div>
+            </div>
+          ) : activeFormPage === "Documents" ? (
+            <div className="w-full h-full flex flex-col items-center justify-start gap-2 overflow-y-auto">
+              {mappedRequiredDocuments}
+            </div>
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-start gap-2 overflow-y-auto">
+              {mappedPolicyAcknowledgements}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
