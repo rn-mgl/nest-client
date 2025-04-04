@@ -14,6 +14,8 @@ import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
 import { IoClose } from "react-icons/io5";
 import ModalNav from "../../global/ModalNav";
+import TextField from "../../global/field/TextField";
+import TextBlock from "../../global/field/TextBlock";
 
 const ShowTraining: React.FC<ShowModalInterface> = (props) => {
   const [training, setTraining] = React.useState<
@@ -142,7 +144,7 @@ const ShowTraining: React.FC<ShowModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
       p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
-      <div className="w-full my-auto h-auto max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start overflow-hidden">
+      <div className="w-full my-auto h-full max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start overflow-hidden">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-purple rounded-t-lg font-bold text-neutral-100">
           {props.label ?? "Training Details"}
           <button
@@ -159,27 +161,16 @@ const ShowTraining: React.FC<ShowModalInterface> = (props) => {
             handleActiveFormPage={handleActiveFormPage}
           />
 
-          <div className="w-full hf flex flex-col items-center justify-start overflow-y-auto">
+          <div className="w-full h-full flex flex-col items-center justify-start overflow-y-auto">
             {activeFormPage === "information" ? (
               <div className="w-full h-full flex flex-col items-center justify-start gap-4">
-                <div className="flex flex-col items-start justify-center w-full gap-1">
-                  <p className="text-xs">Title</p>
-                  <div className="w-full p-2 px-4 rounded-md border-2 relative overflow-x-auto bg-white">
-                    <p>{training.title}</p>
-                  </div>
-                </div>
-                <div className="flex flex-col items-start justify-center w-full gap-1">
-                  <p className="text-xs">Deadline Days</p>
-                  <div className="w-full p-2 px-4 rounded-md border-2 relative overflow-x-auto bg-white">
-                    <p>{training.deadline_days}</p>
-                  </div>
-                </div>
-                <div className="flex flex-col items-start justify-center w-full gap-1">
-                  <p className="text-xs">Description</p>
-                  <div className="w-full p-2 px-4 rounded-md border-2 relative overflow-y-auto h-48 l-s:h-52 bg-white">
-                    <p>{training.description}</p>
-                  </div>
-                </div>
+                <TextField label="Title" value={training.title} />
+                <TextField
+                  label="Deadline Days"
+                  value={training.deadline_days}
+                />
+                <TextBlock label="Description" value={training.description} />
+
                 <div className="flex flex-col items-start justify-center w-full gap-1">
                   <p className="text-xs">Certificate</p>
                   <div className="w-full h-full p-2 rounded-md border-2 bg-white flex flex-row">

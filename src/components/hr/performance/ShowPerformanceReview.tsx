@@ -13,6 +13,8 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import { IoCaretForwardSharp, IoClose } from "react-icons/io5";
 import ModalNav from "../../global/ModalNav";
+import TextField from "../../global/field/TextField";
+import TextBlock from "../../global/field/TextBlock";
 
 const ShowPerformanceReview: React.FC<ShowModalInterface> = (props) => {
   const [performanceReview, setPerformanceReview] = React.useState<
@@ -95,18 +97,11 @@ const ShowPerformanceReview: React.FC<ShowModalInterface> = (props) => {
 
           {activeFormPage === "information" ? (
             <div className="w-full h-full flex flex-col items-center justify-start gap-4">
-              <div className="flex flex-col items-start justify-center w-full gap-1">
-                <p className="text-xs">Title</p>
-                <div className="w-full p-2 px-4 rounded-md border-2 relative overflow-x-auto bg-white">
-                  <p>{performanceReview.title}</p>
-                </div>
-              </div>
-              <div className="flex flex-col items-start justify-center w-full h-full gap-1">
-                <p className="text-xs">Description</p>
-                <div className="w-full h-full p-2 px-4 rounded-md border-2 relative overflow-x-auto overflow-y-auto bg-white">
-                  <p>{performanceReview.description}</p>
-                </div>
-              </div>
+              <TextField label="Title" value={performanceReview.title} />
+              <TextBlock
+                label="Description"
+                value={performanceReview.description}
+              />
             </div>
           ) : (
             <div className="w-full h-full flex flex-col items-start justify-start gap-1 overflow-hidden">

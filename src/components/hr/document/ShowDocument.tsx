@@ -11,6 +11,8 @@ import Link from "next/link";
 import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
 import { IoClose } from "react-icons/io5";
+import TextField from "../../global/field/TextField";
+import TextBlock from "../../global/field/TextBlock";
 
 const ShowDocument: React.FC<ShowModalInterface> = (props) => {
   const [document, setDocument] = React.useState<
@@ -61,7 +63,7 @@ const ShowDocument: React.FC<ShowModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
         p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
-      <div className="w-full my-auto h-auto max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
+      <div className="w-full h-full my-auto max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-purple rounded-t-lg font-bold text-neutral-100">
           {props.label ?? "Document Details"}
           <button
@@ -71,31 +73,17 @@ const ShowDocument: React.FC<ShowModalInterface> = (props) => {
             <IoClose />
           </button>
         </div>
-        <div className="w-full p-4 rounded-b-md flex flex-col items-center justify-start gap-4">
-          <div className="flex flex-col items-start justify-center w-full gap-1">
-            <p className="text-xs">Name</p>
-            <div className="w-full p-2 px-4 rounded-md border-2 relative overflow-x-auto bg-white">
-              <p>{document.name}</p>
-            </div>
-          </div>
-
-          <div className="flex flex-col items-start justify-center w-full h-full gap-1">
-            <p className="text-xs">Description</p>
-            <div className="w-full h-full p-2 px-4 rounded-md border-2 relative overflow-x-auto overflow-y-auto bg-white min-h-40">
-              <p>{document.description}</p>
-            </div>
-          </div>
-
-          <div className="flex flex-col items-start justify-center w-full gap-1">
-            <p className="text-xs">Path</p>
-            <div className="w-full p-2 px-4 rounded-md border-2 relative overflow-x-auto bg-white">
-              <p>
-                {document.folder && document.folder.name
-                  ? document.folder.name
-                  : "Home"}
-              </p>
-            </div>
-          </div>
+        <div className="w-full h-full p-4 rounded-b-md flex flex-col items-center justify-start gap-4">
+          <TextField label="Name" value={document.name} />
+          <TextBlock label="Description" value={document.description} />
+          <TextField
+            label="Path"
+            value={
+              document.folder && document.folder?.name
+                ? document.folder?.name
+                : "Home"
+            }
+          />
 
           <div className="w-full p-2 rounded-md border-2 bg-white flex flex-row items-center justify-start">
             <Link
