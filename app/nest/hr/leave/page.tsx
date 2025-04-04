@@ -1,9 +1,9 @@
 "use client";
 
 import Filter from "@/src/components/global/filter/Filter";
+import DeleteEntity from "@/src/components/hr/global/DeleteEntity";
 import AssignLeave from "@/src/components/hr/leave/AssignLeave";
 import CreateLeave from "@/src/components/hr/leave/CreateLeave";
-import DeleteLeave from "@/src/components/hr/leave/DeleteLeave";
 import EditLeave from "@/src/components/hr/leave/EditLeave";
 import LeaveCard from "@/src/components/hr/leave/LeaveCard";
 import useCategory from "@/src/hooks/useCategory";
@@ -143,7 +143,9 @@ const HRLeave = () => {
       ) : null}
 
       {canDeleteLeave ? (
-        <DeleteLeave
+        <DeleteEntity
+          route="leave_type"
+          label="Leave"
           id={activeLeaveMenu}
           refetchIndex={getLeaves}
           toggleModal={handleCanDeleteLeave}

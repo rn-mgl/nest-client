@@ -1,29 +1,29 @@
-"use client";
-
-import { ModalInterface } from "@/src/interface/ModalInterface";
+import {
+  DeleteModalInterface,
+  ModalInterface,
+} from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose } from "react-icons/io5";
 
-const DeleteOnboarding: React.FC<ModalInterface> = (props) => {
+const DeleteEntity: React.FC<ModalInterface & DeleteModalInterface> = (
+  props
+) => {
+  const { data: session } = useSession({ required: true });
+  const user = session?.user;
   const url = process.env.URL;
-  const { data } = useSession({ required: true });
-  const user = data?.user;
 
-  const submitDeleteOnboarding = async (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
+  const submitDeleteEntity = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
-        const { data: deletedOnboarding } = await axios.delete(
-          `${url}/hr/onboarding/${props.id}`,
+        const { data: responseData } = await axios.delete(
+          `${url}/hr/${props.route}/${props.id}`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
@@ -33,7 +33,7 @@ const DeleteOnboarding: React.FC<ModalInterface> = (props) => {
           }
         );
 
-        if (deletedOnboarding.success) {
+        if (responseData.success) {
           if (props.refetchIndex) {
             props.refetchIndex();
           }
@@ -53,7 +53,7 @@ const DeleteOnboarding: React.FC<ModalInterface> = (props) => {
     >
       <div className="w-full h-auto max-w-(--breakpoint-t) bg-neutral-100 shadow-md rounded-lg ">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-red-600 rounded-t-lg font-bold text-neutral-100">
-          Delete Onboarding
+          Delete {props.label}
           <button
             onClick={props.toggleModal}
             className="p-2 rounded-full hover:bg-accent-blue/20 transition-all text-xl"
@@ -62,11 +62,11 @@ const DeleteOnboarding: React.FC<ModalInterface> = (props) => {
           </button>
         </div>
         <form
-          onSubmit={(e) => submitDeleteOnboarding(e)}
+          onSubmit={(e) => submitDeleteEntity(e)}
           className="w-full h-full p-4 flex flex-col items-center justify-start gap-4 text-center"
         >
           <p className="font-bold">
-            Are you sure you want to delete this Onboarding?
+            Are you sure you want to delete this {props.label}?
           </p>
 
           <button className="w-full font-bold text-center rounded-md p-2 bg-red-600 text-neutral-100 mt-2">
@@ -78,4 +78,4 @@ const DeleteOnboarding: React.FC<ModalInterface> = (props) => {
   );
 };
 
-export default DeleteOnboarding;
+export default DeleteEntity;

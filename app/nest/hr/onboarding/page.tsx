@@ -1,11 +1,10 @@
 "use client";
 
 import Filter from "@/src/components/global/filter/Filter";
+import OnboardingCard from "@/src/components/global/onboarding/OnboardingCard";
 import AssignOnboarding from "@/src/components/hr/onboarding/AssignOnboarding";
 import CreateOnboarding from "@/src/components/hr/onboarding/CreateOnboarding";
-import DeleteOnboarding from "@/src/components/hr/onboarding/DeleteOnboarding";
 import EditOnboarding from "@/src/components/hr/onboarding/EditOnboarding";
-import OnboardingCard from "@/src/components/global/onboarding/OnboardingCard";
 import ShowOnboarding from "@/src/components/hr/onboarding/ShowOnboarding";
 import useCategory from "@/src/hooks/useCategory";
 import useFilters from "@/src/hooks/useFilters";
@@ -21,6 +20,7 @@ import {
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
+import DeleteEntity from "@/src/components/hr/global/DeleteEntity";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd } from "react-icons/io5";
@@ -155,10 +155,12 @@ const HROnboarding = () => {
       ) : null}
 
       {canDeleteOnboarding ? (
-        <DeleteOnboarding
+        <DeleteEntity
+          route="onboarding"
+          label="Onboarding"
           id={activeOnboardingMenu}
-          refetchIndex={getOnboardings}
           toggleModal={handleCanDeleteOnboarding}
+          refetchIndex={getOnboardings}
         />
       ) : null}
 

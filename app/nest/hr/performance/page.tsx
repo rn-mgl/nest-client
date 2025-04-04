@@ -1,9 +1,9 @@
 "use client";
 
 import Filter from "@/src/components/global/filter/Filter";
+import DeleteEntity from "@/src/components/hr/global/DeleteEntity";
 import AssignPerformanceReview from "@/src/components/hr/performance/AssignPerformanceReview";
 import CreatePerformanceReview from "@/src/components/hr/performance/CreatePerformanceReview";
-import DeletePerformanceReview from "@/src/components/hr/performance/DeletePerformanceReview";
 import EditPerformanceReview from "@/src/components/hr/performance/EditPerformanceReview";
 import PerformanceReviewCard from "@/src/components/hr/performance/PerformanceReviewCard";
 import ShowPerformanceReview from "@/src/components/hr/performance/ShowPerformanceReview";
@@ -165,10 +165,12 @@ const PerformanceReview = () => {
       ) : null}
 
       {canDeletePerformanceReview ? (
-        <DeletePerformanceReview
+        <DeleteEntity
+          route="performance_review"
+          label="Performance Review"
           id={activePerformanceReviewMenu}
-          refetchIndex={getPerformanceReviews}
           toggleModal={handleCanDeletePerformanceReview}
+          refetchIndex={getPerformanceReviews}
         />
       ) : null}
 

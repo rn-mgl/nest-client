@@ -1,7 +1,6 @@
 "use client";
 
 import CreateTraining from "@/src/components/hr/training/CreateTraining";
-import DeleteTraining from "@/src/components/hr/training/DeleteTraining";
 import EditTraining from "@/src/components/hr/training/EditTraining";
 import ShowTraining from "@/src/components/hr/training/ShowTraining";
 import { TrainingInterface } from "@/src/interface/TrainingInterface";
@@ -10,6 +9,7 @@ import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
 import Filter from "@/src/components/global/filter/Filter";
+import DeleteEntity from "@/src/components/hr/global/DeleteEntity";
 import AssignTraining from "@/src/components/hr/training/AssignTraining";
 import TrainingCard from "@/src/components/hr/training/TrainingCard";
 import useCategory from "@/src/hooks/useCategory";
@@ -166,10 +166,12 @@ const HRTraining = () => {
       ) : null}
 
       {canDeleteTraining ? (
-        <DeleteTraining
+        <DeleteEntity
+          route="training"
+          label="Training"
           id={activeTrainingMenu}
-          refetchIndex={getTrainings}
           toggleModal={handleCanDeleteTraining}
+          refetchIndex={getTrainings}
         />
       ) : null}
 

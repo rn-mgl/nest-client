@@ -2,14 +2,12 @@
 
 import Filter from "@/src/components/global/filter/Filter";
 import CreateDocument from "@/src/components/hr/document/CreateDocument";
-import DeleteDocument from "@/src/components/hr/document/DeleteDocument";
 import DocumentCard from "@/src/components/hr/document/DocumentCard";
 import EditDocument from "@/src/components/hr/document/EditDocument";
-import FolderCard from "@/src/components/hr/documentFolder/FolderCard";
 import ShowDocument from "@/src/components/hr/document/ShowDocument";
 import CreateDocumentFolder from "@/src/components/hr/documentFolder/CreateDocumentFolder";
-import DeleteFolder from "@/src/components/hr/documentFolder/DeleteFolder";
 import EditFolder from "@/src/components/hr/documentFolder/EditFolder";
+import FolderCard from "@/src/components/hr/documentFolder/FolderCard";
 import useCategory from "@/src/hooks/useCategory";
 import useFilters from "@/src/hooks/useFilters";
 import useSearch from "@/src/hooks/useSearch";
@@ -28,6 +26,7 @@ import {
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
+import DeleteEntity from "@/src/components/hr/global/DeleteEntity";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -255,7 +254,9 @@ const HRDocument = () => {
       ) : null}
 
       {canDeleteDocument ? (
-        <DeleteDocument
+        <DeleteEntity
+          route="document"
+          label="Document"
           id={activeDocumentMenu.id}
           toggleModal={handleCanDeleteDocument}
           refetchIndex={getDocuments}
@@ -263,7 +264,9 @@ const HRDocument = () => {
       ) : null}
 
       {canDeleteFolder ? (
-        <DeleteFolder
+        <DeleteEntity
+          route="document_folder"
+          label="Folder"
           id={activeDocumentMenu.id}
           toggleModal={handleCanDeleteFolder}
           refetchIndex={getDocuments}

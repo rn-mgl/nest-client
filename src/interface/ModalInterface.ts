@@ -4,6 +4,11 @@ export interface ModalInterface {
   id?: number;
 }
 
+export interface DeleteModalInterface {
+  label?: string;
+  route: string;
+}
+
 export interface ShowModalInterface {
   label?: string;
   id: number;
