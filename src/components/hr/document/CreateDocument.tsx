@@ -163,6 +163,7 @@ const CreateDocument: React.FC<ModalInterface> = (props) => {
             accept=".pdf"
             id="document"
             label="Document"
+            type="file"
             onChange={handleDocument}
             removeSelectedFile={removeSelectedDocument}
             ref={documentRef}

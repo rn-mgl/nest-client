@@ -1,18 +1,53 @@
 import { FileInterface } from "@/src/interface/FormInterface";
+import Image from "next/image";
 import React from "react";
-import { IoAdd, IoAttach, IoClose } from "react-icons/io5";
+import { IoAdd, IoAttach, IoClose, IoFilm } from "react-icons/io5";
 
-const File: React.FC<FileInterface> = (props) => {
+const File: React.FC<FileInterface & { ref: React.Ref<HTMLInputElement> }> = (
+  props
+) => {
+  const SELECTED_FILE_RENDER = {
+    file: (
+      <div className="w-full p-2 flex flex-col items-center justify-center rounded-md border-2 bg-white relative">
+        <div className="w-full flex flex-row items-center justify-start gap-2">
+          <div className="p-2.5 rounded-sm bg-accent-blue/50 text-neutral-100">
+            <IoAttach className="text-2xl" />
+          </div>
+          <p className="truncate text-sm">
+            {props.file && typeof props.file === "object"
+              ? props.file.name
+              : "File"}
+          </p>
+        </div>
+      </div>
+    ),
+    image: props.url ? (
+      <Image
+        src={props.url}
+        alt="file"
+        width={100}
+        height={100}
+        className="rounded-md w-full"
+      />
+    ) : (
+      <div className="p-2.5 rounded-sm bg-accent-blue/50 text-neutral-100">
+        <IoAttach className="text-2xl" />
+      </div>
+    ),
+    video: props.url ? (
+      <video src={props.url} controls className="rounded-md w-full" />
+    ) : (
+      <div className="p-2.5 rounded-sm bg-accent-blue/50 text-neutral-100">
+        <IoFilm className="text-2xl" />
+      </div>
+    ),
+  };
+
   return (
     <div className="w-full flex flex-col items-center justify-center">
       {props.file ? (
         <div className="w-full p-2 flex flex-col items-center justify-center rounded-md border-2 bg-white relative">
-          <div className="w-full flex flex-row items-center justify-start gap-2">
-            <div className="p-2.5 rounded-sm bg-accent-blue/50 text-neutral-100">
-              <IoAttach className="text-2xl" />
-            </div>
-            <p className="truncate text-sm">{props.file.name}</p>
-          </div>
+          {SELECTED_FILE_RENDER[props.type as keyof object]}
 
           <button
             onClick={props.removeSelectedFile}

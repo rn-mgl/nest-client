@@ -6,7 +6,11 @@ export interface InputInterface {
   placeholder: string;
   required: boolean;
   type: "text" | "email" | "password" | "number";
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field?: string,
+    index?: number
+  ) => void;
   label?: boolean;
   icon?: React.ReactNode;
   min?: number;
@@ -17,7 +21,11 @@ export interface TextAreaInterface {
   value: string;
   placeholder: string;
   required: boolean;
-  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onChange: (
+    e: React.ChangeEvent<HTMLTextAreaElement>,
+    field?: string,
+    index?: number
+  ) => void;
   rows?: number;
   label?: boolean;
   icon?: React.ReactNode;
@@ -51,8 +59,13 @@ export interface FileInterface {
   id: string;
   label: string;
   accept: string;
-  ref: React.MutableRefObject<HTMLInputElement | null>;
   file: File | null;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  url?: string | null;
+  type: "file" | "video" | "image" | "audio";
+  onChange: (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field?: string,
+    index?: number
+  ) => void;
   removeSelectedFile: () => void;
 }

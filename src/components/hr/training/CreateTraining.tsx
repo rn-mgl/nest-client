@@ -12,7 +12,6 @@ import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
 import { useSession } from "next-auth/react";
-import Image from "next/image";
 import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
 import {
@@ -170,136 +169,65 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
 
     const dynamicContent =
       content.type === "text" ? (
-        <textarea
-          name="contents"
+        <TextArea
+          id="contents"
           placeholder={`Content ${index + 1}`}
-          onChange={(e) => handleField(e, "content", index)}
           value={content.content as string}
           rows={5}
-          className="w-full p-2 px-4 pr-8 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all resize-none"
+          onChange={(e) => handleField(e, "content", index)}
+          required={true}
         />
       ) : content.type === "image" ? (
-        <div className="w-full flex flex-col items-start justify-center gap-2">
-          {fileURL && (
-            <div className="relative flex flex-col items-center justify-center">
-              <Image
-                src={fileURL}
-                alt="file"
-                width={100}
-                height={100}
-                className="rounded-md w-full"
-              />
-
-              <button
-                type="button"
-                onClick={() => {
-                  removeTargetFieldValue("content", index);
-                  removeSelectedFile(index);
-                }}
-                className="p-1 rounded-full bg-red-500 shadow-md absolute -top-1 -right-1"
-              >
-                <IoClose className="text-xs" />
-              </button>
-            </div>
-          )}
-
-          <div className="w-full flex flex-row items-center justify-between">
-            <label className="cursor-pointer">
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                id={`content_${index}`}
-                onChange={(e) => handleField(e, "content", index)}
-                ref={(el) => {
-                  inputRefs.current[index] = el;
-                }}
-              />
-
-              <span>
-                <IoImage className="text-accent-blue" />
-              </span>
-            </label>
-          </div>
-        </div>
+        <File
+          id={`imageContent_${index}`}
+          label={`Image Content ${index}`}
+          accept="image/*"
+          type="image"
+          file={contentFile.rawFile}
+          url={fileURL}
+          ref={(el) => {
+            inputRefs.current[index] = el;
+          }}
+          removeSelectedFile={() => {
+            removeTargetFieldValue("content", index);
+            removeSelectedFile(index);
+          }}
+          onChange={(e) => handleField(e, "content", index)}
+        />
       ) : content.type === "video" ? (
-        <div className="w-full flex flex-col items-start justify-center gap-2">
-          {fileURL && (
-            <div className="relative flex flex-col items-center justify-center">
-              <video src={fileURL} controls className="rounded-md w-full" />
-
-              <button
-                type="button"
-                onClick={() => {
-                  removeTargetFieldValue("content", index);
-                  removeSelectedFile(index);
-                }}
-                className="p-1 rounded-full bg-red-500 shadow-md absolute -top-1 -right-1"
-              >
-                <IoClose className="text-xs" />
-              </button>
-            </div>
-          )}
-
-          <label className="cursor-pointer">
-            <input
-              type="file"
-              accept="video/*"
-              className="hidden"
-              id={`content_${index}`}
-              onChange={(e) => handleField(e, "content", index)}
-              ref={(el) => {
-                inputRefs.current[index] = el;
-              }}
-            />
-
-            <span>
-              <IoVideocam className="text-accent-blue" />
-            </span>
-          </label>
-        </div>
+        <File
+          id={`videoContent_${index}`}
+          label={`Video Content ${index}`}
+          accept="video/*"
+          type="video"
+          file={contentFile.rawFile}
+          url={fileURL}
+          ref={(el) => {
+            inputRefs.current[index] = el;
+          }}
+          removeSelectedFile={() => {
+            removeTargetFieldValue("content", index);
+            removeSelectedFile(index);
+          }}
+          onChange={(e) => handleField(e, "content", index)}
+        />
       ) : content.type === "file" ? (
-        <div className="w-full flex flex-col items-start justify-start gap-2">
-          {fileURL && (
-            <div className="p-2 w-full rounded-md border-2 bg-white flex flex-col items-start justify-start relative">
-              <div className="w-full flex flex-row items-center justify-start gap-2">
-                <div className="p-2.5 rounded-xs bg-accent-blue/50">
-                  <AiFillFilePdf className="text-white text-2xl" />
-                </div>
-                <p className="truncate text-sm m-s:w-[10ch] m-m:w-[17ch] m-l:w-[20ch] t:w-full">
-                  {contentFile.rawFile.name}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  removeTargetFieldValue("content", index);
-                  removeSelectedFile(index);
-                }}
-                className="p-1 rounded-full bg-red-500 shadow-md absolute -top-1 -right-1"
-              >
-                <IoClose className="text-xs" />
-              </button>
-            </div>
-          )}
-
-          <label className="cursor-pointer">
-            <input
-              type="file"
-              accept=".pdf"
-              className="hidden peer-checked"
-              id={`content_${index}`}
-              onChange={(e) => handleField(e, "content", index)}
-              ref={(el) => {
-                inputRefs.current[index] = el;
-              }}
-            />
-
-            <span>
-              <AiFillFilePdf className="text-accent-blue" />
-            </span>
-          </label>
-        </div>
+        <File
+          id={`fileContent_${index}`}
+          label={`File Content ${index}`}
+          accept=".pdf"
+          type="file"
+          file={contentFile.rawFile}
+          url={fileURL}
+          ref={(el) => {
+            inputRefs.current[index] = el;
+          }}
+          removeSelectedFile={() => {
+            removeTargetFieldValue("content", index);
+            removeSelectedFile(index);
+          }}
+          onChange={(e) => handleField(e, "content", index)}
+        />
       ) : null;
 
     return (
@@ -308,22 +236,22 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
         className="w-full flex flex-row gap-2 items-start justify-center"
       >
         <div className="w-full flex flex-col gap-2 items-start justify-center">
-          <input
+          <Input
             type="text"
-            name="contents"
+            id="contents"
             placeholder={`Title ${index + 1}`}
-            onChange={(e) => handleField(e, "title", index)}
             value={content.title}
-            className="w-full p-2 px-4 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all"
+            required={true}
+            onChange={(e) => handleField(e, "title", index)}
           />
 
-          <textarea
-            name="contents"
+          <TextArea
+            id="contents"
             placeholder={`Description ${index + 1}`}
+            required={true}
             onChange={(e) => handleField(e, "description", index)}
             value={content.description}
             rows={5}
-            className="w-full p-2 px-4 pr-8 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all resize-none"
           />
 
           {dynamicContent}
@@ -409,6 +337,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
 
               <File
                 accept=".pdf"
+                type="file"
                 file={
                   training.certificate &&
                   typeof training.certificate === "object"
