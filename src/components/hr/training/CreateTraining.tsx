@@ -16,7 +16,6 @@ import Image from "next/image";
 import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
 import {
-  IoAdd,
   IoCalendar,
   IoClose,
   IoImage,
@@ -25,6 +24,7 @@ import {
   IoTrash,
   IoVideocam,
 } from "react-icons/io5";
+import File from "../../form/File";
 
 const CreateTraining: React.FC<ModalInterface> = (props) => {
   const [training, setTraining] = React.useState<TrainingInterface>({
@@ -407,48 +407,20 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
                 rows={5}
               />
 
-              <div className="w-full flex flex-col items-start justify-center gap-1">
-                <label className="text-xs">Certificate</label>
-
-                {/* check if training.certificate instance is the rawFile filURL object */}
-                {training.certificate &&
-                typeof training.certificate === "object" &&
-                training.certificate?.rawFile ? (
-                  <div className="p-2 w-full rounded-md border-2 bg-white flex flex-col items-center justify-center bg-center bg-cover relative">
-                    <div className="w-full flex flex-row items-center justify-start gap-2">
-                      <div className="aspect-square p-2.5 rounded-xs bg-accent-blue/50">
-                        <AiFillFilePdf className="text-white text-2xl" />
-                      </div>
-                      <p className="truncate text-sm">
-                        {training.certificate?.rawFile.name}
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={removeSelectedCertificate}
-                      className="absolute -top-1 -right-1 bg-red-500 p-1 rounded-full"
-                    >
-                      <IoClose className="text-sm" />
-                    </button>
-                  </div>
-                ) : (
-                  <label
-                    className="p-2 w-full h-16 rounded-md border-2 bg-white flex flex-row items-center 
-              justify-center  text-accent-purple gap-1 cursor-pointer"
-                  >
-                    <input
-                      type="file"
-                      accept=".pdf"
-                      name="certificate"
-                      className="hidden"
-                      ref={certificateRef}
-                      onChange={(e) => handleTraining(e)}
-                    />
-                    <span className="text-sm">Attach Certificate</span>
-                    <IoAdd />
-                  </label>
-                )}
-              </div>
+              <File
+                accept=".pdf"
+                file={
+                  training.certificate &&
+                  typeof training.certificate === "object"
+                    ? training.certificate.rawFile
+                    : null
+                }
+                id="certificate"
+                label="Certificate"
+                onChange={handleTraining}
+                ref={certificateRef}
+                removeSelectedFile={removeSelectedCertificate}
+              />
             </div>
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-start overflow-y-auto gap-4 p-2">

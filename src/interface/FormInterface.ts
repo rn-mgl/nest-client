@@ -46,3 +46,13 @@ export interface CheckBoxInterface {
   isChecked: boolean;
   onClick: () => void;
 }
+
+export interface FileInterface {
+  id: string;
+  label: string;
+  accept: string;
+  ref: React.MutableRefObject<HTMLInputElement | null>;
+  file: File | null;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  removeSelectedFile: () => void;
+}

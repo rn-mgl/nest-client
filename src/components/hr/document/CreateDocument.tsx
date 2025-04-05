@@ -4,12 +4,12 @@ import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
 import { useSession } from "next-auth/react";
+import { useParams } from "next/navigation";
 import React from "react";
-import { AiFillFilePdf } from "react-icons/ai";
-import { IoAdd, IoClose, IoText } from "react-icons/io5";
+import { IoClose, IoText } from "react-icons/io5";
+import File from "../../form/File";
 import Input from "../../form/Input";
 import TextArea from "../../form/TextArea";
-import { useParams } from "next/navigation";
 
 const CreateDocument: React.FC<ModalInterface> = (props) => {
   const [document, setDocument] = React.useState<DocumentInterface>({
@@ -125,7 +125,7 @@ const CreateDocument: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex items-center justify-center 
               p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade"
     >
-      <div className="w-full h-auto max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg ">
+      <div className="w-full h-full max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-blue rounded-t-lg font-bold text-accent-yellow">
           Create Document
           <button
@@ -159,46 +159,19 @@ const CreateDocument: React.FC<ModalInterface> = (props) => {
             value={document.description}
           />
 
-          <div className="w-full flex flex-col items-start justify-between gap-4">
-            {document.document &&
-            typeof document.document === "object" &&
-            document.document.rawFile ? (
-              <div className="p-2 w-full rounded-md border-2 bg-white flex flex-col items-center justify-center bg-center bg-cover relative">
-                <div className="w-full flex flex-row items-center justify-start gap-2">
-                  <div className="aspect-square p-2.5 rounded-xs bg-accent-blue/50">
-                    <AiFillFilePdf className="text-white text-2xl" />
-                  </div>
-                  <p className="truncate text-sm">
-                    {document.document?.rawFile.name}
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={removeSelectedDocument}
-                  className="absolute -top-1 -right-1 bg-red-500 p-1 rounded-full"
-                >
-                  <IoClose className="text-sm" />
-                </button>
-              </div>
-            ) : (
-              <label
-                className="p-2 w-full h-16 rounded-md border-2  flex flex-row items-center 
-              justify-center  text-accent-purple gap-1 cursor-pointer bg-white"
-              >
-                <input
-                  type="file"
-                  accept=".pdf"
-                  name="document"
-                  className="hidden "
-                  ref={documentRef}
-                  onChange={(e) => handleDocument(e)}
-                />
-
-                <span className="text-sm">Attach Document</span>
-                <IoAdd />
-              </label>
-            )}
-          </div>
+          <File
+            accept=".pdf"
+            id="document"
+            label="Document"
+            onChange={handleDocument}
+            removeSelectedFile={removeSelectedDocument}
+            ref={documentRef}
+            file={
+              document.document && typeof document.document === "object"
+                ? document.document.rawFile
+                : null
+            }
+          />
 
           <button className="w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2">
             Create
