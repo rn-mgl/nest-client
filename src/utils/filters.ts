@@ -289,6 +289,7 @@ export const EMPLOYEE_ONBOARDING_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "status",
     labelValue: [
+      { label: "All", value: "all" },
       { label: "Pending", value: "Pending" },
       { label: "In Progress", value: "In Progress" },
       { label: "Done", value: "Done" },

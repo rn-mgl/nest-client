@@ -52,7 +52,7 @@ const Onboarding = () => {
     canSeeCategoryDropDown,
     handleCanSeeCategoryDropDown,
     handleSelectCategory,
-  } = useCategory("status", "Pending", "Status");
+  } = useCategory("status", "All", "All");
 
   const handleActiveOnboardingSeeMore = (id: number) => {
     setActiveOnboardingSeeMore((prev) => (prev === id ? 0 : id));
@@ -71,6 +71,7 @@ const Onboarding = () => {
               "X-CSRF-TOKEN": token,
             },
             withCredentials: true,
+            params: { ...search, ...sort, ...category },
           }
         );
 
@@ -81,7 +82,7 @@ const Onboarding = () => {
     } catch (error) {
       console.log(error);
     }
-  }, [url, user?.token]);
+  }, [url, user?.token, search, sort, category]);
 
   const mappedOnboardings = employeeOnboardings.map((onboarding, index) => {
     return (

@@ -61,7 +61,7 @@ const Filter: React.FC<
     <div className="w-full flex flex-row items-start gap-4 p-1 relative">
       {props.canSeeSearchDropDown ? (
         <div
-          className="w-full t:w-6/12 l-l:w-4/12 absolute top-0 left-0 flex flex-col items-center justify-start translate-y-14 z-20
+          className="w-full t:w-6/12 l-l:w-4/12 absolute top-2 left-0 flex flex-col items-center justify-start translate-y-14 z-20
           rounded-md animate-fade bg-neutral-100 shadow-md p-2 gap-2 min-w-72 mr-auto"
         >
           {mappedSearch}
@@ -70,7 +70,7 @@ const Filter: React.FC<
 
       {props.canSeeSortDropDown ? (
         <div
-          className="w-full min-w-72 absolute top-0 right-0 flex flex-col items-center justify-start translate-y-14 z-20
+          className="w-full min-w-72 absolute top-2 right-0 flex flex-col items-center justify-start translate-y-14 z-20
                 rounded-md gap-2 animate-fade bg-neutral-100 p-2 shadow-md t:w-44 t:max-w-44 t:min-w-44 t:right-49"
         >
           {mappedSorting}
@@ -79,7 +79,7 @@ const Filter: React.FC<
 
       {props.canSeeCategoryDropDown ? (
         <div
-          className="w-full min-w-72 absolute top-0 right-0 flex flex-col items-center justify-start translate-y-14 z-20
+          className="w-full min-w-72 absolute top-2 right-0 flex flex-col items-center justify-start translate-y-14 z-20
                 rounded-md gap-2 p-2 bg-neutral-100 animate-fade shadow-md t:w-44 t:max-w-44 t:min-w-44 t:right-1"
         >
           {mappedCategories}
