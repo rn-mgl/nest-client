@@ -4,7 +4,7 @@ export default function useSort(
   initialSortKey: string,
   initialSortLabel: string
 ) {
-  const [canShowSort, setCanShowSort] = React.useState(false);
+  const [canSeeSortDropDown, setCanShowSort] = React.useState(false);
   const [sort, setSort] = React.useState<{
     sortKey: string;
     sortLabel: string;
@@ -15,7 +15,7 @@ export default function useSort(
     isAsc: false,
   });
 
-  const handleCanShowSort = React.useCallback(() => {
+  const handleCanSeeSortDropDown = React.useCallback(() => {
     return setCanShowSort((prev) => !prev);
   }, []);
 
@@ -39,9 +39,9 @@ export default function useSort(
   }, []);
 
   return {
-    canShowSort,
+    canSeeSortDropDown,
     sort,
-    handleCanShowSort,
+    handleCanSeeSortDropDown,
     handleSelectSort,
     handleToggleAsc,
   };

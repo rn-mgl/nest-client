@@ -9,7 +9,7 @@ import CreateDocumentFolder from "@/src/components/hr/documentFolder/CreateDocum
 import EditFolder from "@/src/components/hr/documentFolder/EditFolder";
 import FolderCard from "@/src/components/hr/documentFolder/FolderCard";
 import useCategory from "@/src/hooks/useCategory";
-import useFilters from "@/src/hooks/useFilters";
+
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import {
@@ -57,24 +57,24 @@ const HRDocument = () => {
   const [activeDocumentSeeMore, setActiveDocumentSeeMore] = React.useState(0);
 
   const {
-    canShowSearch,
+    canSeeSearchDropDown,
     debounceSearch,
     search,
-    handleCanShowSearch,
+    handleCanSeeSearchDropDown,
     handleSearch,
     handleSelectSearch,
   } = useSearch("name", "Name");
-  const { showFilters, handleShowFilters } = useFilters();
+
   const {
     category,
-    canShowCategories,
-    handleCanShowCategories,
+    canSeeCategoryDropDown,
+    handleCanSeeCategoryDropDown,
     handleSelectCategory,
   } = useCategory("all", "all", "All");
   const {
     sort,
-    canShowSort,
-    handleCanShowSort,
+    canSeeSortDropDown,
+    handleCanSeeSortDropDown,
     handleSelectSort,
     handleToggleAsc,
   } = useSort("name", "Name");
@@ -285,9 +285,9 @@ const HRDocument = () => {
           t:items-start t:p-4 gap-4 t:gap-8"
       >
         <Filter
-          showSearch={true}
-          showSort={true}
-          showCategory={true}
+          useSearchFilter={true}
+          useSortFilter={true}
+          useCategoryFilter={true}
           searchKey={debounceSearch.searchKey}
           searchLabel={debounceSearch.searchLabel}
           searchValue={debounceSearch.searchValue}
@@ -297,25 +297,23 @@ const HRDocument = () => {
               ? HR_DOCUMENTS_SEARCH
               : HR_FOLDERS_SEARCH
           }
-          canShowSearch={canShowSearch}
+          canSeeSearchDropDown={canSeeSearchDropDown}
           selectSearch={handleSelectSearch}
-          toggleShowSearch={handleCanShowSearch}
+          toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
           onChange={handleSearch}
-          showFilters={showFilters}
-          toggleShowFilters={handleShowFilters}
           categoryLabel={category.categoryLabel}
-          canShowCategories={canShowCategories}
+          canSeeCategoryDropDown={canSeeCategoryDropDown}
           categoryKeyValuePairs={HR_DOCUMENTS_CATEGORY}
-          toggleShowCategories={handleCanShowCategories}
+          toggleCanSeeCategoryDropDown={handleCanSeeCategoryDropDown}
           selectCategory={handleSelectCategory}
           sortKey={sort.sortKey}
           sortLabel={sort.sortLabel}
           isAsc={sort.isAsc}
-          canShowSort={canShowSort}
+          canSeeSortDropDown={canSeeSortDropDown}
           sortKeyLabelPairs={HR_DOCUMENTS_SORT}
           toggleAsc={handleToggleAsc}
           selectSort={handleSelectSort}
-          toggleShowSort={handleCanShowSort}
+          toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
         />
 
         <div className="w-full flex flex-col items-center justify-start gap-2 t:flex-row">

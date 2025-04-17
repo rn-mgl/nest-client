@@ -3,7 +3,7 @@
 import Filter from "@/src/components/global/filter/Filter";
 import EmployeeCard from "@/src/components/hr/employee/EmployeeCard";
 import useCategory from "@/src/hooks/useCategory";
-import useFilters from "@/src/hooks/useFilters";
+
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { UserInterface } from "@/src/interface/UserInterface";
@@ -21,26 +21,26 @@ import React from "react";
 const HREmployee = () => {
   const [employees, setEmployees] = React.useState<Array<UserInterface>>();
   const [activeUserMenu, setActiveUserMenu] = React.useState(0);
-  const { showFilters, handleShowFilters } = useFilters();
+
   const {
     search,
-    canShowSearch,
+    canSeeSearchDropDown,
     debounceSearch,
     handleSearch,
-    handleCanShowSearch,
+    handleCanSeeSearchDropDown,
     handleSelectSearch,
   } = useSearch("first_name", "First Name");
   const {
-    canShowSort,
+    canSeeSortDropDown,
     sort,
-    handleCanShowSort,
+    handleCanSeeSortDropDown,
     handleSelectSort,
     handleToggleAsc,
   } = useSort("first_name", "First Name");
   const {
-    canShowCategories,
+    canSeeCategoryDropDown,
     category,
-    handleCanShowCategories,
+    handleCanSeeCategoryDropDown,
     handleSelectCategory,
   } = useCategory("verified", "all", "All");
 
@@ -101,32 +101,30 @@ const HREmployee = () => {
               t:items-start t:p-4 gap-4 t:gap-8"
       >
         <Filter
-          showSearch={true}
-          showSort={true}
-          showCategory={true}
+          useSearchFilter={true}
+          useSortFilter={true}
+          useCategoryFilter={true}
           searchKey={debounceSearch.searchKey}
           searchLabel={debounceSearch.searchLabel}
           searchValue={debounceSearch.searchValue}
           searchKeyLabelPairs={HR_EMPLOYEE_SEARCH}
-          canShowSearch={canShowSearch}
+          canSeeSearchDropDown={canSeeSearchDropDown}
           selectSearch={handleSelectSearch}
-          toggleShowSearch={handleCanShowSearch}
+          toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
           onChange={handleSearch}
-          showFilters={showFilters}
-          toggleShowFilters={handleShowFilters}
           categoryLabel={category.categoryLabel}
-          canShowCategories={canShowCategories}
+          canSeeCategoryDropDown={canSeeCategoryDropDown}
           categoryKeyValuePairs={HR_EMPLOYEE_CATEGORY}
-          toggleShowCategories={handleCanShowCategories}
+          toggleCanSeeCategoryDropDown={handleCanSeeCategoryDropDown}
           selectCategory={handleSelectCategory}
           sortKey={sort.sortKey}
           sortLabel={sort.sortLabel}
           isAsc={sort.isAsc}
-          canShowSort={canShowSort}
+          canSeeSortDropDown={canSeeSortDropDown}
           sortKeyLabelPairs={HR_EMPLOYEE_SORT}
           toggleAsc={handleToggleAsc}
           selectSort={handleSelectSort}
-          toggleShowSort={handleCanShowSort}
+          toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
         />
         <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">
           {mappedEmployees}

@@ -12,15 +12,10 @@ import Filter from "@/src/components/global/filter/Filter";
 import DeleteEntity from "@/src/components/hr/global/DeleteEntity";
 import AssignTraining from "@/src/components/hr/training/AssignTraining";
 import TrainingCard from "@/src/components/hr/training/TrainingCard";
-import useCategory from "@/src/hooks/useCategory";
-import useFilters from "@/src/hooks/useFilters";
+
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
-import {
-  HR_TRAINING_CATEGORY,
-  HR_TRAINING_SEARCH,
-  HR_TRAINING_SORT,
-} from "@/utils/filters";
+import { HR_TRAINING_SEARCH, HR_TRAINING_SORT } from "@/utils/filters";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd } from "react-icons/io5";
@@ -36,28 +31,21 @@ const HRTraining = () => {
   const [canCreateTraining, setCanCreateTraining] = React.useState(false);
   const [canAssignTraining, setCanAssignTraining] = React.useState(false);
 
-  const { showFilters, handleShowFilters } = useFilters();
   const {
     search,
-    canShowSearch,
+    canSeeSearchDropDown,
     debounceSearch,
     handleSearch,
-    handleCanShowSearch,
+    handleCanSeeSearchDropDown,
     handleSelectSearch,
   } = useSearch("title", "Title");
   const {
-    canShowSort,
+    canSeeSortDropDown,
     sort,
-    handleCanShowSort,
+    handleCanSeeSortDropDown,
     handleSelectSort,
     handleToggleAsc,
   } = useSort("created_at", "Created At");
-  const {
-    canShowCategories,
-    category,
-    handleCanShowCategories,
-    handleSelectCategory,
-  } = useCategory("", "", "");
 
   const url = process.env.URL;
   const { data } = useSession({ required: true });
@@ -180,33 +168,25 @@ const HRTraining = () => {
           t:items-start t:p-4 gap-4 t:gap-8"
       >
         <Filter
-          showSearch={true}
-          showSort={true}
-          showCategory={false}
+          useSearchFilter={true}
+          useSortFilter={true}
+          useCategoryFilter={false}
           searchKey={debounceSearch.searchKey}
           searchLabel={debounceSearch.searchLabel}
           searchValue={debounceSearch.searchValue}
           searchKeyLabelPairs={HR_TRAINING_SEARCH}
-          canShowSearch={canShowSearch}
+          canSeeSearchDropDown={canSeeSearchDropDown}
           selectSearch={handleSelectSearch}
-          toggleShowSearch={handleCanShowSearch}
+          toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
           onChange={handleSearch}
-          showFilters={showFilters}
-          toggleShowFilters={handleShowFilters}
           sortKey={sort.sortKey}
           sortLabel={sort.sortLabel}
           isAsc={sort.isAsc}
-          canShowSort={canShowSort}
+          canSeeSortDropDown={canSeeSortDropDown}
           sortKeyLabelPairs={HR_TRAINING_SORT}
           toggleAsc={handleToggleAsc}
           selectSort={handleSelectSort}
-          toggleShowSort={handleCanShowSort}
-          //
-          categoryLabel={category.categoryLabel}
-          canShowCategories={canShowCategories}
-          categoryKeyValuePairs={HR_TRAINING_CATEGORY}
-          toggleShowCategories={handleCanShowCategories}
-          selectCategory={handleSelectCategory}
+          toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
         />
 
         <button

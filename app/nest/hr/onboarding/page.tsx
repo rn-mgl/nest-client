@@ -6,17 +6,12 @@ import AssignOnboarding from "@/src/components/hr/onboarding/AssignOnboarding";
 import CreateOnboarding from "@/src/components/hr/onboarding/CreateOnboarding";
 import EditOnboarding from "@/src/components/hr/onboarding/EditOnboarding";
 import ShowOnboarding from "@/src/components/hr/onboarding/ShowOnboarding";
-import useCategory from "@/src/hooks/useCategory";
-import useFilters from "@/src/hooks/useFilters";
+
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { OnboardingInterface } from "@/src/interface/OnboardingInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
-import {
-  HR_ONBOARDING_CATEGORY,
-  HR_ONBOARDING_SEARCH,
-  HR_ONBOARDING_SORT,
-} from "@/src/utils/filters";
+import { HR_ONBOARDING_SEARCH, HR_ONBOARDING_SORT } from "@/src/utils/filters";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
@@ -37,28 +32,21 @@ const HROnboarding = () => {
   const [activeOnboardingSeeMore, setActiveOnboardingSeeMore] =
     React.useState(0);
 
-  const { showFilters, handleShowFilters } = useFilters();
   const {
     search,
-    canShowSearch,
+    canSeeSearchDropDown,
     debounceSearch,
     handleSearch,
-    handleCanShowSearch,
+    handleCanSeeSearchDropDown,
     handleSelectSearch,
   } = useSearch("title", "Title");
   const {
     sort,
-    canShowSort,
-    handleCanShowSort,
+    canSeeSortDropDown,
+    handleCanSeeSortDropDown,
     handleSelectSort,
     handleToggleAsc,
   } = useSort("title", "Title");
-  const {
-    category,
-    canShowCategories,
-    handleCanShowCategories,
-    handleSelectCategory,
-  } = useCategory("", "", "");
 
   const url = process.env.URL;
   const { data } = useSession({ required: true });
@@ -183,33 +171,25 @@ const HROnboarding = () => {
           t:items-start t:p-4 gap-4 t:gap-8"
       >
         <Filter
-          showSearch={true}
-          showSort={true}
-          showCategory={false}
+          useSearchFilter={true}
+          useSortFilter={true}
+          useCategoryFilter={false}
           searchKey={debounceSearch.searchKey}
           searchLabel={debounceSearch.searchLabel}
           searchValue={debounceSearch.searchValue}
           searchKeyLabelPairs={HR_ONBOARDING_SEARCH}
-          canShowSearch={canShowSearch}
+          canSeeSearchDropDown={canSeeSearchDropDown}
           selectSearch={handleSelectSearch}
-          toggleShowSearch={handleCanShowSearch}
+          toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
           onChange={handleSearch}
-          showFilters={showFilters}
-          toggleShowFilters={handleShowFilters}
           sortKey={sort.sortKey}
           sortLabel={sort.sortLabel}
           isAsc={sort.isAsc}
-          canShowSort={canShowSort}
+          canSeeSortDropDown={canSeeSortDropDown}
           sortKeyLabelPairs={HR_ONBOARDING_SORT}
           toggleAsc={handleToggleAsc}
           selectSort={handleSelectSort}
-          toggleShowSort={handleCanShowSort}
-          //
-          categoryLabel={category.categoryLabel}
-          canShowCategories={canShowCategories}
-          categoryKeyValuePairs={HR_ONBOARDING_CATEGORY}
-          toggleShowCategories={handleCanShowCategories}
-          selectCategory={handleSelectCategory}
+          toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
         />
         <button
           onClick={handleCanCreateOnboarding}

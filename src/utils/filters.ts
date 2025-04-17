@@ -1,5 +1,20 @@
+interface CategoryPairsInterface {
+  key: string;
+  labelValue: Array<{ label: string; value: string | boolean | null }>;
+}
+
+interface SortPairsInterface {
+  key: string;
+  label: string;
+}
+
+interface SearchPairsInterface {
+  key: string;
+  label: string;
+}
+
 // for admin to filter HR
-export const ADMIN_HR_CATEGORY = [
+export const ADMIN_HR_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "verified",
     labelValue: [
@@ -10,7 +25,7 @@ export const ADMIN_HR_CATEGORY = [
   },
 ];
 
-export const ADMIN_HR_SORT = [
+export const ADMIN_HR_SORT: SortPairsInterface[] = [
   {
     key: "first_name",
     label: "First Name",
@@ -25,7 +40,7 @@ export const ADMIN_HR_SORT = [
   },
 ];
 
-export const ADMIN_HR_SEARCH = [
+export const ADMIN_HR_SEARCH: SearchPairsInterface[] = [
   {
     key: "first_name",
     label: "First Name",
@@ -41,7 +56,7 @@ export const ADMIN_HR_SEARCH = [
 ];
 
 // for hr to filter employee
-export const HR_EMPLOYEE_CATEGORY = [
+export const HR_EMPLOYEE_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "verified",
     labelValue: [
@@ -52,7 +67,7 @@ export const HR_EMPLOYEE_CATEGORY = [
   },
 ];
 
-export const HR_EMPLOYEE_SORT = [
+export const HR_EMPLOYEE_SORT: SortPairsInterface[] = [
   {
     key: "first_name",
     label: "First Name",
@@ -67,7 +82,7 @@ export const HR_EMPLOYEE_SORT = [
   },
 ];
 
-export const HR_EMPLOYEE_SEARCH = [
+export const HR_EMPLOYEE_SEARCH: SearchPairsInterface[] = [
   {
     key: "first_name",
     label: "First Name",
@@ -83,14 +98,14 @@ export const HR_EMPLOYEE_SEARCH = [
 ];
 
 // for hr to filter leave
-export const HR_LEAVE_CATEGORY = [
+export const HR_LEAVE_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "",
     labelValue: [{ label: "", value: "all" }],
   },
 ];
 
-export const HR_LEAVE_SORT = [
+export const HR_LEAVE_SORT: SortPairsInterface[] = [
   {
     key: "type",
     label: "Leave Type",
@@ -101,7 +116,7 @@ export const HR_LEAVE_SORT = [
   },
 ];
 
-export const HR_LEAVE_SEARCH = [
+export const HR_LEAVE_SEARCH: SearchPairsInterface[] = [
   {
     key: "type",
     label: "Leave Type",
@@ -113,14 +128,14 @@ export const HR_LEAVE_SEARCH = [
 ];
 
 // for hr to filter onboarding
-export const HR_ONBOARDING_CATEGORY = [
+export const HR_ONBOARDING_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "",
     labelValue: [{ label: "", value: "all" }],
   },
 ];
 
-export const HR_ONBOARDING_SORT = [
+export const HR_ONBOARDING_SORT: SortPairsInterface[] = [
   {
     key: "title",
     label: "Title",
@@ -131,7 +146,7 @@ export const HR_ONBOARDING_SORT = [
   },
 ];
 
-export const HR_ONBOARDING_SEARCH = [
+export const HR_ONBOARDING_SEARCH: SearchPairsInterface[] = [
   {
     key: "title",
     label: "Title",
@@ -144,14 +159,14 @@ export const HR_ONBOARDING_SEARCH = [
 
 // for hr to filter performance reviews
 
-export const HR_PERFORMANCE_CATEGORY = [
+export const HR_PERFORMANCE_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "",
     labelValue: [{ label: "", value: "all" }],
   },
 ];
 
-export const HR_PERFORMANCE_SORT = [
+export const HR_PERFORMANCE_SORT: SortPairsInterface[] = [
   {
     key: "title",
     label: "Title",
@@ -162,7 +177,7 @@ export const HR_PERFORMANCE_SORT = [
   },
 ];
 
-export const HR_PERFORMANCE_SEARCH = [
+export const HR_PERFORMANCE_SEARCH: SearchPairsInterface[] = [
   {
     key: "title",
     label: "Title",
@@ -175,14 +190,14 @@ export const HR_PERFORMANCE_SEARCH = [
 
 // for hr to filter training
 
-export const HR_TRAINING_CATEGORY = [
+export const HR_TRAINING_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "",
     labelValue: [{ label: "", value: "all" }],
   },
 ];
 
-export const HR_TRAINING_SORT = [
+export const HR_TRAINING_SORT: SortPairsInterface[] = [
   {
     key: "title",
     label: "Title",
@@ -193,7 +208,7 @@ export const HR_TRAINING_SORT = [
   },
 ];
 
-export const HR_TRAINING_SEARCH = [
+export const HR_TRAINING_SEARCH: SearchPairsInterface[] = [
   {
     key: "title",
     label: "Title",
@@ -206,7 +221,7 @@ export const HR_TRAINING_SEARCH = [
 
 // for hr to filter docoments
 
-export const HR_DOCUMENTS_CATEGORY = [
+export const HR_DOCUMENTS_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "-",
     labelValue: [
@@ -217,7 +232,7 @@ export const HR_DOCUMENTS_CATEGORY = [
   },
 ];
 
-export const HR_DOCUMENTS_SORT = [
+export const HR_DOCUMENTS_SORT: SortPairsInterface[] = [
   {
     key: "name",
     label: "Name",
@@ -228,7 +243,7 @@ export const HR_DOCUMENTS_SORT = [
   },
 ];
 
-export const HR_DOCUMENTS_SEARCH = [
+export const HR_DOCUMENTS_SEARCH: SearchPairsInterface[] = [
   {
     key: "name",
     label: "Name",
@@ -239,9 +254,44 @@ export const HR_DOCUMENTS_SEARCH = [
   },
 ];
 
-export const HR_FOLDERS_SEARCH = [
+export const HR_FOLDERS_SEARCH: SearchPairsInterface[] = [
   {
     key: "name",
     label: "Name",
+  },
+];
+
+// for employee to filter onboarding
+
+export const EMPLOYEE_ONBOARDING_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "title",
+    label: "Title",
+  },
+  {
+    key: "description",
+    label: "Description",
+  },
+];
+
+export const EMPLOYEE_ONBOARDING_SORT: SortPairsInterface[] = [
+  {
+    key: "title",
+    label: "Title",
+  },
+  {
+    key: "created_at",
+    label: "Assigned At",
+  },
+];
+
+export const EMPLOYEE_ONBOARDING_CATEGORY: CategoryPairsInterface[] = [
+  {
+    key: "status",
+    labelValue: [
+      { label: "Pending", value: "Pending" },
+      { label: "In Progress", value: "In Progress" },
+      { label: "Done", value: "Done" },
+    ],
   },
 ];

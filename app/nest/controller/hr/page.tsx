@@ -2,7 +2,7 @@
 import CreateHR from "@/src/components/controller/hr/CreateHR";
 import Filter from "@/src/components/global/filter/Filter";
 import useCategory from "@/src/hooks/useCategory";
-import useFilters from "@/src/hooks/useFilters";
+
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { UserInterface } from "@/src/interface/UserInterface";
@@ -30,26 +30,25 @@ const AdminHR = () => {
   const [canCreateHR, setCanCreateHR] = React.useState(false);
   const [activeHRMenu, setActiveHRMenu] = React.useState(0);
 
-  const { showFilters, handleShowFilters } = useFilters();
   const {
     search,
-    canShowSearch,
+    canSeeSearchDropDown,
     debounceSearch,
     handleSearch,
-    handleCanShowSearch,
+    handleCanSeeSearchDropDown,
     handleSelectSearch,
   } = useSearch("first_name", "First Name");
   const {
-    canShowSort,
+    canSeeSortDropDown,
     sort,
-    handleCanShowSort,
+    handleCanSeeSortDropDown,
     handleSelectSort,
     handleToggleAsc,
   } = useSort("first_name", "First Name");
   const {
-    canShowCategories,
+    canSeeCategoryDropDown,
     category,
-    handleCanShowCategories,
+    handleCanSeeCategoryDropDown,
     handleSelectCategory,
   } = useCategory("verified", "all", "Verified");
 
@@ -231,32 +230,30 @@ const AdminHR = () => {
                   t:items-start t:p-4 gap-4 t:gap-8"
       >
         <Filter
-          showSearch={true}
-          showSort={true}
-          showCategory={true}
+          useSearchFilter={true}
+          useSortFilter={true}
+          useCategoryFilter={true}
           searchKey={debounceSearch.searchKey}
           searchLabel={debounceSearch.searchLabel}
           searchValue={debounceSearch.searchValue}
           searchKeyLabelPairs={ADMIN_HR_SEARCH}
-          canShowSearch={canShowSearch}
+          canSeeSearchDropDown={canSeeSearchDropDown}
           selectSearch={handleSelectSearch}
-          toggleShowSearch={handleCanShowSearch}
+          toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
           onChange={handleSearch}
-          showFilters={showFilters}
-          toggleShowFilters={handleShowFilters}
           categoryLabel={category.categoryLabel}
-          canShowCategories={canShowCategories}
+          canSeeCategoryDropDown={canSeeCategoryDropDown}
           categoryKeyValuePairs={ADMIN_HR_CATEGORY}
-          toggleShowCategories={handleCanShowCategories}
+          toggleCanSeeCategoryDropDown={handleCanSeeCategoryDropDown}
           selectCategory={handleSelectCategory}
           sortKey={sort.sortKey}
           sortLabel={sort.sortLabel}
           isAsc={sort.isAsc}
-          canShowSort={canShowSort}
+          canSeeSortDropDown={canSeeSortDropDown}
           sortKeyLabelPairs={ADMIN_HR_SORT}
           toggleAsc={handleToggleAsc}
           selectSort={handleSelectSort}
-          toggleShowSort={handleCanShowSort}
+          toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
         />
 
         <button

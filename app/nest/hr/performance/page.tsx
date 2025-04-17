@@ -7,14 +7,12 @@ import CreatePerformanceReview from "@/src/components/hr/performance/CreatePerfo
 import EditPerformanceReview from "@/src/components/hr/performance/EditPerformanceReview";
 import PerformanceReviewCard from "@/src/components/hr/performance/PerformanceReviewCard";
 import ShowPerformanceReview from "@/src/components/hr/performance/ShowPerformanceReview";
-import useCategory from "@/src/hooks/useCategory";
-import useFilters from "@/src/hooks/useFilters";
+
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { PerformanceReviewInterface } from "@/src/interface/PerformanceReviewInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import {
-  HR_PERFORMANCE_CATEGORY,
   HR_PERFORMANCE_SEARCH,
   HR_PERFORMANCE_SORT,
 } from "@/src/utils/filters";
@@ -42,28 +40,21 @@ const PerformanceReview = () => {
   const [canAssignPerformanceReview, setCanAssignPerformanceReview] =
     React.useState(false);
 
-  const { showFilters, handleShowFilters } = useFilters();
   const {
     search,
-    canShowSearch,
+    canSeeSearchDropDown,
     debounceSearch,
     handleSearch,
-    handleCanShowSearch,
+    handleCanSeeSearchDropDown,
     handleSelectSearch,
   } = useSearch("title", "Title");
   const {
     sort,
-    canShowSort,
-    handleCanShowSort,
+    canSeeSortDropDown,
+    handleCanSeeSortDropDown,
     handleSelectSort,
     handleToggleAsc,
   } = useSort("title", "Title");
-  const {
-    category,
-    canShowCategories,
-    handleCanShowCategories,
-    handleSelectCategory,
-  } = useCategory("", "", "");
 
   const url = process.env.URL;
   const { data } = useSession({ required: true });
@@ -193,33 +184,25 @@ const PerformanceReview = () => {
           t:items-start t:p-4 gap-4 t:gap-8"
       >
         <Filter
-          showSearch={true}
-          showSort={true}
-          showCategory={false}
+          useSearchFilter={true}
+          useSortFilter={true}
+          useCategoryFilter={false}
           searchKey={debounceSearch.searchKey}
           searchLabel={debounceSearch.searchLabel}
           searchValue={debounceSearch.searchValue}
           searchKeyLabelPairs={HR_PERFORMANCE_SEARCH}
-          canShowSearch={canShowSearch}
+          canSeeSearchDropDown={canSeeSearchDropDown}
           selectSearch={handleSelectSearch}
-          toggleShowSearch={handleCanShowSearch}
+          toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
           onChange={handleSearch}
-          showFilters={showFilters}
-          toggleShowFilters={handleShowFilters}
           sortKey={sort.sortKey}
           sortLabel={sort.sortLabel}
           isAsc={sort.isAsc}
-          canShowSort={canShowSort}
+          canSeeSortDropDown={canSeeSortDropDown}
           sortKeyLabelPairs={HR_PERFORMANCE_SORT}
           toggleAsc={handleToggleAsc}
           selectSort={handleSelectSort}
-          toggleShowSort={handleCanShowSort}
-          //
-          categoryLabel={category.categoryLabel}
-          canShowCategories={canShowCategories}
-          categoryKeyValuePairs={HR_PERFORMANCE_CATEGORY}
-          toggleShowCategories={handleCanShowCategories}
-          selectCategory={handleSelectCategory}
+          toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
         />
 
         <button

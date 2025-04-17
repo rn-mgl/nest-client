@@ -6,17 +6,12 @@ import AssignLeave from "@/src/components/hr/leave/AssignLeave";
 import CreateLeave from "@/src/components/hr/leave/CreateLeave";
 import EditLeave from "@/src/components/hr/leave/EditLeave";
 import LeaveCard from "@/src/components/hr/leave/LeaveCard";
-import useCategory from "@/src/hooks/useCategory";
-import useFilters from "@/src/hooks/useFilters";
+
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { LeaveInterface } from "@/src/interface/LeaveInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
-import {
-  HR_LEAVE_CATEGORY,
-  HR_LEAVE_SEARCH,
-  HR_LEAVE_SORT,
-} from "@/src/utils/filters";
+import { HR_LEAVE_SEARCH, HR_LEAVE_SORT } from "@/src/utils/filters";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
@@ -34,29 +29,22 @@ const HRLeave = () => {
     Array<LeaveInterface & UserInterface>
   >([]);
 
-  const { showFilters, handleShowFilters } = useFilters();
   const {
     search,
-    canShowSearch,
+    canSeeSearchDropDown,
     debounceSearch,
     handleSearch,
-    handleCanShowSearch,
+    handleCanSeeSearchDropDown,
     handleSelectSearch,
   } = useSearch("type", "Leave Type");
   const {
-    canShowSort,
+    canSeeSortDropDown,
     sort,
-    handleCanShowSort,
+    handleCanSeeSortDropDown,
     handleSelectSort,
     handleToggleAsc,
   } = useSort("type", "Leave Type");
-  // not being used
-  const {
-    canShowCategories,
-    category,
-    handleCanShowCategories,
-    handleSelectCategory,
-  } = useCategory("", "", "");
+
   const { data } = useSession({ required: true });
   const url = process.env.URL;
   const user = data?.user;
@@ -160,33 +148,25 @@ const HRLeave = () => {
           t:items-start t:p-4 gap-4 t:gap-8"
       >
         <Filter
-          showSearch={true}
-          showSort={true}
-          showCategory={false}
+          useSearchFilter={true}
+          useSortFilter={true}
+          useCategoryFilter={false}
           searchKey={debounceSearch.searchKey}
           searchLabel={debounceSearch.searchLabel}
           searchValue={debounceSearch.searchValue}
           searchKeyLabelPairs={HR_LEAVE_SEARCH}
-          canShowSearch={canShowSearch}
+          canSeeSearchDropDown={canSeeSearchDropDown}
           selectSearch={handleSelectSearch}
-          toggleShowSearch={handleCanShowSearch}
+          toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
           onChange={handleSearch}
-          showFilters={showFilters}
-          toggleShowFilters={handleShowFilters}
           sortKey={sort.sortKey}
           sortLabel={sort.sortLabel}
           isAsc={sort.isAsc}
-          canShowSort={canShowSort}
+          canSeeSortDropDown={canSeeSortDropDown}
           sortKeyLabelPairs={HR_LEAVE_SORT}
           toggleAsc={handleToggleAsc}
           selectSort={handleSelectSort}
-          toggleShowSort={handleCanShowSort}
-          //
-          categoryLabel={category.categoryLabel}
-          canShowCategories={canShowCategories}
-          categoryKeyValuePairs={HR_LEAVE_CATEGORY}
-          toggleShowCategories={handleCanShowCategories}
-          selectCategory={handleSelectCategory}
+          toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
         />
 
         <button

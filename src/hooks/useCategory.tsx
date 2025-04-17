@@ -5,7 +5,7 @@ export default function useCategory(
   initialCategoryValue: string | boolean | null,
   initialCategoryLabel: string
 ) {
-  const [canShowCategories, setCanShowCategories] = React.useState(false);
+  const [canSeeCategoryDropDown, setCanShowCategories] = React.useState(false);
   const [category, setCategory] = React.useState<{
     categoryKey: string;
     categoryLabel: string;
@@ -16,7 +16,7 @@ export default function useCategory(
     categoryValue: initialCategoryValue,
   });
 
-  const handleCanShowCategories = React.useCallback(() => {
+  const handleCanSeeCategoryDropDown = React.useCallback(() => {
     setCanShowCategories((prev) => !prev);
   }, []);
 
@@ -32,9 +32,9 @@ export default function useCategory(
   );
 
   return {
-    canShowCategories,
+    canSeeCategoryDropDown,
     category,
-    handleCanShowCategories,
+    handleCanSeeCategoryDropDown,
     handleSelectCategory,
   };
 }

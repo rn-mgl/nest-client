@@ -4,7 +4,7 @@ export default function useSearch(
   initialSearchKey: string,
   initialSearchLabel: string
 ) {
-  const [canShowSearch, setCanShowSearch] = React.useState(false);
+  const [canSeeSearchDropDown, setCanShowSearch] = React.useState(false);
   const [debounceSearch, setDebounceSearch] = React.useState({
     searchKey: initialSearchKey,
     searchLabel: initialSearchLabel,
@@ -16,7 +16,7 @@ export default function useSearch(
     searchValue: "",
   });
 
-  const handleCanShowSearch = React.useCallback(() => {
+  const handleCanSeeSearchDropDown = React.useCallback(() => {
     setCanShowSearch((prev) => !prev);
   }, []);
 
@@ -54,10 +54,10 @@ export default function useSearch(
 
   return {
     search,
-    canShowSearch,
+    canSeeSearchDropDown,
     debounceSearch,
     handleSearch,
-    handleCanShowSearch,
+    handleCanSeeSearchDropDown,
     handleSelectSearch,
   };
 }
