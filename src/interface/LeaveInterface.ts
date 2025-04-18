@@ -7,7 +7,12 @@ export interface LeaveInterface {
 
 export interface LeaveBalanceInterface {
   leave_balance_id?: number | null;
-  toggleRequestLeave: (leave_type_id: number) => void;
   leave_type_id: number | null;
   balance: number | string | null;
+}
+
+export interface LeaveRequestInterface {
+  start_date: string;
+  end_date: string;
+  reason: string;
 }

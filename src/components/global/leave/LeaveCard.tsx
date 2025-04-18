@@ -16,7 +16,7 @@ const LeaveCard: React.FC<
   CardInterface &
     LeaveInterface &
     UserInterface &
-    Partial<LeaveBalanceInterface>
+    Partial<LeaveBalanceInterface> & { toggleSelectedLeaveRequest: () => void }
 > = (props) => {
   const isHR = props.role === "hr";
   const forLeaveRequest = typeof props.leave_balance_id === "number";
@@ -92,7 +92,7 @@ const LeaveCard: React.FC<
           </div>
 
           <button
-            onClick={props.toggleRequestLeave}
+            onClick={props.toggleSelectedLeaveRequest}
             className="p-2 bg-accent-blue w-full rounded-md font-bold text-accent-yellow"
           >
             Request Leave

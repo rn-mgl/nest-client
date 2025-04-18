@@ -1,8 +1,66 @@
+import { LeaveRequestInterface } from "@/src/interface/LeaveInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import React from "react";
-import { IoClose } from "react-icons/io5";
+import { IoClose, IoText } from "react-icons/io5";
+import Input from "../../form/Input";
+import TextArea from "../../form/TextArea";
+import { getCSRFToken } from "@/src/utils/token";
+import { useSession } from "next-auth/react";
+import axios from "axios";
 
 const LeaveRequest: React.FC<ModalInterface> = (props) => {
+  const [leaveRequest, setLeaveRequest] = React.useState<LeaveRequestInterface>(
+    {
+      start_date: "",
+      end_date: "",
+      reason: "",
+    }
+  );
+
+  const url = process.env.URL;
+  const { data: session } = useSession({ required: true });
+  const user = session?.user;
+
+  const handleLeaveRequest = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+
+    setLeaveRequest((prev) => {
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
+  };
+
+  const submitLeaveRequest = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const { token } = await getCSRFToken();
+
+      if (token && user?.token) {
+        const { data: responseData } = await axios.post(
+          `${url}/employee/leave_request`,
+          { ...leaveRequest, leave_type: props.id },
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              "X-CSRF-TOKEN": token,
+            },
+            withCredentials: true,
+          }
+        );
+
+        if (responseData.success) {
+          props.toggleModal();
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
@@ -18,7 +76,43 @@ const LeaveRequest: React.FC<ModalInterface> = (props) => {
             <IoClose />
           </button>
         </div>
-        <form className="w-full flex flex-col items-center justify-start p-4 gap-4"></form>
+        <form
+          onSubmit={(e) => submitLeaveRequest(e)}
+          className="w-full flex flex-col items-center justify-start p-4 gap-4"
+        >
+          <Input
+            type="datetime-local"
+            id="start_date"
+            placeholder="Start Date"
+            required={true}
+            label={true}
+            onChange={handleLeaveRequest}
+            value={leaveRequest.start_date}
+          />
+
+          <Input
+            type="datetime-local"
+            id="end_date"
+            placeholder="End Date"
+            required={true}
+            label={true}
+            onChange={handleLeaveRequest}
+            value={leaveRequest.end_date}
+          />
+
+          <TextArea
+            id="reason"
+            onChange={handleLeaveRequest}
+            placeholder="Reason"
+            required={true}
+            value={leaveRequest.reason}
+            rows={10}
+            icon={<IoText />}
+          />
+          <button className="w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2">
+            Send
+          </button>
+        </form>
       </div>
     </div>
   );

@@ -16,7 +16,7 @@ const Leave = () => {
   const [leaveBalances, setLeaveBalances] = React.useState<
     (LeaveBalanceInterface & LeaveInterface & UserInterface)[]
   >([]);
-  const [canRequestLeave, setCanRequestLeave] = React.useState(0);
+  const [selectedLeaveRequest, setSelectedLeaveRequest] = React.useState(0);
 
   const { data: session } = useSession({ required: true });
   const user = session?.user;
@@ -47,11 +47,12 @@ const Leave = () => {
     }
   }, [user?.token, url]);
 
-  const handleCanRequestLeave = (leave_type_id: number) => {
-    setCanRequestLeave((prev) => (prev === leave_type_id ? 0 : leave_type_id));
+  const handleSelectedLeaveRequest = (leave_type_id: number) => {
+    setSelectedLeaveRequest((prev) =>
+      prev === leave_type_id ? 0 : leave_type_id
+    );
   };
 
-  console.log(leaveBalances);
   const mappedLeaves = leaveBalances.map((leave, index) => {
     return (
       <LeaveCard
@@ -71,7 +72,7 @@ const Leave = () => {
         email_verified_at={leave.email_verified_at}
         user_id={leave.user_id}
         //
-        toggleRequestLeave={() => handleCanRequestLeave(leave.leave_type_id)}
+        toggleSelectedLeaveRequest={() => handleSelectedLeaveRequest(0)}
       />
     );
   });
@@ -82,9 +83,10 @@ const Leave = () => {
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
-      {canRequestLeave ? (
+      {selectedLeaveRequest ? (
         <LeaveRequest
-          toggleModal={() => handleCanRequestLeave(0)}
+          id={selectedLeaveRequest}
+          toggleModal={() => handleSelectedLeaveRequest(0)}
           refetchIndex={getLeaveBalances}
         />
       ) : null}
