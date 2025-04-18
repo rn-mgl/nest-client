@@ -134,7 +134,7 @@ const HRTraining = () => {
       {activeTrainingSeeMore ? (
         <ShowTraining
           id={activeTrainingSeeMore}
-          setActiveModal={handleActiveTrainingSeeMore}
+          toggleModal={() => handleActiveTrainingSeeMore(0)}
         />
       ) : null}
 
