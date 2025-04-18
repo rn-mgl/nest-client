@@ -109,7 +109,7 @@ const Onboarding = () => {
       {activeOnboardingSeeMore ? (
         <ShowOnboarding
           id={activeOnboardingSeeMore}
-          setActiveModal={handleActiveOnboardingSeeMore}
+          toggleModal={() => handleActiveOnboardingSeeMore(0)}
         />
       ) : null}
       <div
@@ -146,7 +146,7 @@ const Onboarding = () => {
           toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
           canSeeSearchDropDown={canSeeSearchDropDown}
         />
-        <div className="grid grid-cols-1 w-full gap-4 t:gridoc2 l-l:grid-cols-3">
+        <div className="grid grid-cols-1 w-full gap-4 t:grid-cols-2 l-l:grid-cols-3">
           {mappedOnboardings}
         </div>
       </div>

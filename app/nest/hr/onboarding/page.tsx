@@ -155,7 +155,7 @@ const HROnboarding = () => {
       {activeOnboardingSeeMore ? (
         <ShowOnboarding
           id={activeOnboardingSeeMore}
-          setActiveModal={handleActiveOnboardingSeeMore}
+          toggleModal={() => handleActiveOnboardingSeeMore(0)}
         />
       ) : null}
 

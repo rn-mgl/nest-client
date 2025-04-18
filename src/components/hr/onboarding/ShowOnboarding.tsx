@@ -1,7 +1,7 @@
 "use client";
 
 import useModalNav from "@/src/hooks/useModalNav";
-import { ShowModalInterface } from "@/src/interface/ModalInterface";
+import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
   OnboardingInterface,
   OnboardingPolicyAcknowledgemenInterface,
@@ -10,14 +10,14 @@ import {
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
+import ModalNav from "@/global/ModalNav";
+import TextBlock from "@/global/field/TextBlock";
+import TextField from "@/global/field/TextField";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoCaretForwardSharp, IoClose } from "react-icons/io5";
-import ModalNav from "@/global/ModalNav";
-import TextField from "@/global/field/TextField";
-import TextBlock from "@/global/field/TextBlock";
 
-const ShowOnboarding: React.FC<ShowModalInterface> = (props) => {
+const ShowOnboarding: React.FC<ModalInterface> = (props) => {
   const [onboarding, setOnboarding] = React.useState<
     OnboardingInterface & {
       required_documents: OnboardingRequiredDocumentsInterface[];
@@ -100,7 +100,7 @@ const ShowOnboarding: React.FC<ShowModalInterface> = (props) => {
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-purple rounded-t-lg font-bold text-neutral-100">
           {props.label ?? "Onboarding Details"}
           <button
-            onClick={() => props.setActiveModal(0)}
+            onClick={props.toggleModal}
             className="p-2 rounded-full hover:bg-accent-yellow/20 transition-all text-xl"
           >
             <IoClose />

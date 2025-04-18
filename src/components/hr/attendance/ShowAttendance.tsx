@@ -1,7 +1,7 @@
 "use client";
 
 import { AttendanceInterface } from "@/src/interface/AttendanceInterface";
-import { ShowModalInterface } from "@/src/interface/ModalInterface";
+import { ModalInterface } from "@/src/interface/ModalInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
@@ -16,9 +16,7 @@ interface AttendanceDate {
   year: number;
 }
 
-const ShowAttendance: React.FC<ShowModalInterface & AttendanceDate> = (
-  props
-) => {
+const ShowAttendance: React.FC<ModalInterface & AttendanceDate> = (props) => {
   const [attendanceDetails, setAttendanceDetails] = React.useState<
     Array<AttendanceInterface & UserInterface>
   >([]);
@@ -112,7 +110,7 @@ const ShowAttendance: React.FC<ShowModalInterface & AttendanceDate> = (
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-purple rounded-t-lg font-bold text-neutral-100">
           {props.label ?? "Attendance Details"}
           <button
-            onClick={() => props.setActiveModal(0)}
+            onClick={props.toggleModal}
             className="p-2 rounded-full hover:bg-accent-yellow/20 transition-all text-xl"
           >
             <IoClose />

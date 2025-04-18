@@ -121,7 +121,7 @@ const AssignLeave: React.FC<ModalInterface> = (props) => {
           {
             employee_leaves: employeeLeaves.map((leave) => ({
               ...leave,
-              balance: leave.balance || 0,
+              balance: leave.balance ?? 0,
             })),
             employee_ids: assignedEmployees,
             leave_type_id: props.id,

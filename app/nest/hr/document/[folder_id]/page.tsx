@@ -276,7 +276,7 @@ const HRDocument = () => {
       {activeDocumentSeeMore ? (
         <ShowDocument
           id={activeDocumentSeeMore}
-          setActiveModal={handleActiveDocumentSeeMore}
+          toggleModal={() => handleActiveDocumentSeeMore(0)}
         />
       ) : null}
 

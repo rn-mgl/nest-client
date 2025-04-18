@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: "Onboarding | Employee",
+  title: "Onboardings | Employee",
 };
 
 export default function RootLayout({

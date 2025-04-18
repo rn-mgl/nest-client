@@ -2,7 +2,7 @@ import {
   DocumentFolderInterface,
   DocumentInterface,
 } from "@/src/interface/DocumentInterface";
-import { ShowModalInterface } from "@/src/interface/ModalInterface";
+import { ModalInterface } from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
@@ -11,10 +11,10 @@ import Link from "next/link";
 import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
 import { IoClose } from "react-icons/io5";
-import TextField from "../../global/field/TextField";
 import TextBlock from "../../global/field/TextBlock";
+import TextField from "../../global/field/TextField";
 
-const ShowDocument: React.FC<ShowModalInterface> = (props) => {
+const ShowDocument: React.FC<ModalInterface> = (props) => {
   const [document, setDocument] = React.useState<
     DocumentInterface & { folder: DocumentFolderInterface | null }
   >({
@@ -67,7 +67,7 @@ const ShowDocument: React.FC<ShowModalInterface> = (props) => {
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-purple rounded-t-lg font-bold text-neutral-100">
           {props.label ?? "Document Details"}
           <button
-            onClick={() => props.setActiveModal(0)}
+            onClick={props.toggleModal}
             className="p-2 rounded-full hover:bg-accent-yellow/20 transition-all text-xl"
           >
             <IoClose />

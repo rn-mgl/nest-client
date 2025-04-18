@@ -1,5 +1,8 @@
 import { CardInterface } from "@/src/interface/CardInterface";
-import { LeaveInterface } from "@/src/interface/LeaveInterface";
+import {
+  LeaveBalanceInterface,
+  LeaveInterface,
+} from "@/src/interface/LeaveInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import React from "react";
 import {
@@ -10,39 +13,48 @@ import {
 } from "react-icons/io5";
 
 const LeaveCard: React.FC<
-  CardInterface & {
-    leave: LeaveInterface & UserInterface;
-  }
+  CardInterface &
+    LeaveInterface &
+    UserInterface &
+    Partial<LeaveBalanceInterface>
 > = (props) => {
+  const isHR = props.role === "hr";
+  const forLeaveRequest = typeof props.leave_balance_id === "number";
+
   return (
-    <div className="w-full h-full p-4 rounded-md bg-neutral-100 flex flex-col items-start justify-start gap-4 relative  max-h-56 max-w-full">
+    <div
+      className={`w-full h-full p-4 rounded-md bg-neutral-100 flex flex-col items-start justify-start gap-4 relative max-w-full
+    ${forLeaveRequest ? "max-h-72" : "max-h-56"}`}
+    >
       <div className="flex flex-row items-start justify-between w-full">
         <div className="flex flex-col items-start justify-start">
-          <p className="font-bold truncate">{props.leave.type}</p>
+          <p className="font-bold truncate">{props.type}</p>
           <p className="text-xs">
-            created by {props.createdBy ? "you" : `${props.leave.first_name}`}
+            created by {props.createdBy ? "you" : `${props.first_name}`}
           </p>
         </div>
 
-        <button
-          onClick={props.handleActiveMenu}
-          className="p-2 rounded-full bg-neutral-100 transition-all"
-        >
-          <IoEllipsisVertical
-            className={`${
-              props.activeMenu ? "text-accent-blue" : "text-neutral-900"
-            }`}
-          />
-        </button>
+        {isHR ? (
+          <button
+            onClick={props.handleActiveMenu}
+            className="p-2 rounded-full bg-neutral-100 transition-all"
+          >
+            <IoEllipsisVertical
+              className={`${
+                props.activeMenu ? "text-accent-blue" : "text-neutral-900"
+              }`}
+            />
+          </button>
+        ) : null}
       </div>
 
       <div className="w-full h-full flex flex-col items-center justify-start overflow-y-auto p-2 bg-neutral-200 rounded-xs">
         <p className="text-sm w-full text-wrap break-words">
-          {props.leave.description}
+          {props.description}
         </p>
       </div>
 
-      {props.activeMenu ? (
+      {props.activeMenu && isHR ? (
         <div className="w-32 p-2 rounded-md top-12 right-6 shadow-md bg-neutral-200 absolute animate-fade z-20">
           <button
             onClick={props.handleCanEdit}
@@ -69,6 +81,22 @@ const LeaveCard: React.FC<
               Delete
             </button>
           ) : null}
+        </div>
+      ) : null}
+
+      {forLeaveRequest ? (
+        <div className="w-full flex flex-col items-center justify-center gap-4">
+          <div className="w-full flex flex-row items-center justify-between text-sm">
+            <p>Balance:</p>
+            <p className="font-bold">{props.balance ?? 0}</p>
+          </div>
+
+          <button
+            onClick={props.toggleRequestLeave}
+            className="p-2 bg-accent-blue w-full rounded-md font-bold text-accent-yellow"
+          >
+            Request Leave
+          </button>
         </div>
       ) : null}
     </div>

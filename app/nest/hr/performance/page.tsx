@@ -175,7 +175,7 @@ const PerformanceReview = () => {
       {activePerformanceReviewSeeMore ? (
         <ShowPerformanceReview
           id={activePerformanceReviewSeeMore}
-          setActiveModal={handleActivePerformanceReviewSeeMore}
+          toggleModal={() => handleActivePerformanceReviewSeeMore(0)}
         />
       ) : null}
 

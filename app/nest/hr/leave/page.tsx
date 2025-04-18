@@ -5,7 +5,7 @@ import DeleteEntity from "@/src/components/hr/global/DeleteEntity";
 import AssignLeave from "@/src/components/hr/leave/AssignLeave";
 import CreateLeave from "@/src/components/hr/leave/CreateLeave";
 import EditLeave from "@/src/components/hr/leave/EditLeave";
-import LeaveCard from "@/src/components/hr/leave/LeaveCard";
+import LeaveCard from "@/src/components/global/leave/LeaveCard";
 
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
@@ -91,7 +91,7 @@ const HRLeave = () => {
   };
 
   const mappedLeaves = leaves.map((leave, index) => {
-    const leaveId = leave.leave_id as number; // leave ids in this page have leaveids (from db)
+    const leaveId = leave.leave_type_id as number; // leave ids in this page have leaveids (from db)
     const activeMenu = activeLeaveMenu === leaveId;
     const createdBy = leave.created_by === user?.current;
     return (
@@ -100,7 +100,17 @@ const HRLeave = () => {
         key={index}
         activeMenu={activeMenu}
         createdBy={createdBy}
-        leave={leave}
+        //
+        type={leave.type}
+        description={leave.description}
+        created_at={leave.created_at}
+        //
+        first_name={leave.first_name}
+        last_name={leave.last_name}
+        email={leave.email}
+        email_verified_at={leave.email_verified_at}
+        user_id={leave.user_id}
+        //
         handleActiveMenu={() => handleActiveLeaveMenu(leaveId)}
         handleCanAssign={handleCanAssignLeave}
         handleCanDelete={handleCanDeleteLeave}

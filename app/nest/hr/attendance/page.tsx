@@ -180,7 +180,7 @@ const HRAttendance = () => {
           date={currentDate}
           month={currentMonth.value}
           year={Number(currentYear)}
-          setActiveModal={handleActiveSeeMore}
+          toggleModal={() => handleActiveSeeMore(0)}
         />
       ) : null}
       <div
