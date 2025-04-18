@@ -72,7 +72,9 @@ const Leave = () => {
         email_verified_at={leave.email_verified_at}
         user_id={leave.user_id}
         //
-        toggleSelectedLeaveRequest={() => handleSelectedLeaveRequest(0)}
+        toggleSelectedLeaveRequest={() =>
+          handleSelectedLeaveRequest(leave.leave_type_id)
+        }
       />
     );
   });
