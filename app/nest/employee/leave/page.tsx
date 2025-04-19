@@ -1,12 +1,21 @@
 "use client";
 
+import Filter from "@/src/components/global/filter/Filter";
 import LeaveCard from "@/src/components/global/leave/LeaveCard";
 import LeaveRequest from "@/src/components/global/leave/LeaveRequest";
+import useCategory from "@/src/hooks/useCategory";
+import useFilters from "@/src/hooks/useFilters";
+import useSearch from "@/src/hooks/useSearch";
+import useSort from "@/src/hooks/useSort";
 import {
   LeaveBalanceInterface,
   LeaveInterface,
 } from "@/src/interface/LeaveInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
+import {
+  EMPLOYEE_LEAVE_SEARCH,
+  EMPLOYEE_LEAVE_SORT,
+} from "@/src/utils/filters";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { useSession } from "next-auth/react";
@@ -22,6 +31,23 @@ const Leave = () => {
   const user = session?.user;
   const url = process.env.URL;
 
+  const {
+    search,
+    debounceSearch,
+    canSeeSearchDropDown,
+    handleCanSeeSearchDropDown,
+    handleSearch,
+    handleSelectSearch,
+  } = useSearch("type", "Leave Type");
+
+  const {
+    sort,
+    canSeeSortDropDown,
+    handleCanSeeSortDropDown,
+    handleSelectSort,
+    handleToggleAsc,
+  } = useSort("type", "Leave Type");
+
   const getLeaveBalances = React.useCallback(async () => {
     try {
       const { token } = await getCSRFToken();
@@ -35,6 +61,7 @@ const Leave = () => {
               "X-CSRF-TOKEN": token,
             },
             withCredentials: true,
+            params: { ...search, ...sort },
           }
         );
 
@@ -45,7 +72,7 @@ const Leave = () => {
     } catch (error) {
       console.log(error);
     }
-  }, [user?.token, url]);
+  }, [user?.token, url, search, sort]);
 
   const handleSelectedLeaveRequest = (leave_type_id: number) => {
     setSelectedLeaveRequest((prev) =>
@@ -96,6 +123,29 @@ const Leave = () => {
         className="w-full h-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2
                     t:items-start t:p-4 gap-4 t:gap-8"
       >
+        <Filter
+          useCategoryFilter={false}
+          useSearchFilter={true}
+          useSortFilter={true}
+          //
+          canSeeSearchDropDown={canSeeSearchDropDown}
+          searchKey={debounceSearch.searchKey}
+          searchLabel={debounceSearch.searchLabel}
+          searchValue={debounceSearch.searchValue}
+          searchKeyLabelPairs={EMPLOYEE_LEAVE_SEARCH}
+          toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
+          selectSearch={handleSelectSearch}
+          onChange={handleSearch}
+          //
+          isAsc={sort.isAsc}
+          sortKey={sort.sortKey}
+          sortLabel={sort.sortLabel}
+          canSeeSortDropDown={canSeeSortDropDown}
+          sortKeyLabelPairs={EMPLOYEE_LEAVE_SORT}
+          selectSort={handleSelectSort}
+          toggleAsc={handleToggleAsc}
+          toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
+        />
         <div className="grid grid-cols-1 gap-4 t:grid-cols-2 l-s:grid-cols-3">
           {mappedLeaves}
         </div>

@@ -296,3 +296,23 @@ export const EMPLOYEE_ONBOARDING_CATEGORY: CategoryPairsInterface[] = [
     ],
   },
 ];
+
+// for employee to filter leave
+
+export const EMPLOYEE_LEAVE_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "type",
+    label: "Type",
+  },
+];
+
+export const EMPLOYEE_LEAVE_SORT: SortPairsInterface[] = [
+  {
+    key: "type",
+    label: "Type",
+  },
+  {
+    key: "balance",
+    label: "Balance",
+  },
+];

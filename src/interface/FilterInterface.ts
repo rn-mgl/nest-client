@@ -10,7 +10,6 @@ export interface SearchInterface {
 
 export interface CategoryInterface {
   categoryLabel: string;
-
   canSeeCategoryDropDown: boolean;
   toggleCanSeeCategoryDropDown: () => void;
   selectCategory: (
@@ -24,7 +23,6 @@ export interface SortInterface {
   sortKey: string;
   sortLabel: string;
   isAsc: boolean;
-
   canSeeSortDropDown: boolean;
   toggleCanSeeSortDropDown: () => void;
   toggleAsc: () => void;
