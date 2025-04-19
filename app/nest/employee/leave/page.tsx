@@ -3,8 +3,6 @@
 import Filter from "@/src/components/global/filter/Filter";
 import LeaveCard from "@/src/components/global/leave/LeaveCard";
 import LeaveRequest from "@/src/components/global/leave/LeaveRequest";
-import useCategory from "@/src/hooks/useCategory";
-import useFilters from "@/src/hooks/useFilters";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import {
