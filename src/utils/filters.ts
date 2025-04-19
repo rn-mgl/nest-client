@@ -316,3 +316,19 @@ export const EMPLOYEE_LEAVE_SORT: SortPairsInterface[] = [
     label: "Balance",
   },
 ];
+
+// for employee to filter leave
+
+export const EMPLOYEE_PERFORMANCE_REVIEW_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "title",
+    label: "Title",
+  },
+];
+
+export const EMPLOYEE_PERFORMANCE_REVIEW_SORT: SortPairsInterface[] = [
+  {
+    key: "title",
+    label: "Title",
+  },
+];

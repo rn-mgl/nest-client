@@ -5,7 +5,7 @@ import DeleteEntity from "@/src/components/hr/global/DeleteEntity";
 import AssignPerformanceReview from "@/src/components/hr/performance/AssignPerformanceReview";
 import CreatePerformanceReview from "@/src/components/hr/performance/CreatePerformanceReview";
 import EditPerformanceReview from "@/src/components/hr/performance/EditPerformanceReview";
-import PerformanceReviewCard from "@/src/components/hr/performance/PerformanceReviewCard";
+import PerformanceReviewCard from "@/src/components/global/performance/PerformanceReviewCard";
 import ShowPerformanceReview from "@/src/components/hr/performance/ShowPerformanceReview";
 
 import useSearch from "@/src/hooks/useSearch";

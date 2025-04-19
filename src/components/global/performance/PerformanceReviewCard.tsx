@@ -15,6 +15,7 @@ const PerformanceReviewCard: React.FC<
     performance: PerformanceReviewInterface & UserInterface;
   }
 > = (props) => {
+  const isHR = props.role === "hr";
   return (
     <div
       className="w-full min-h-[17rem] p-4 rounded-md bg-neutral-100 flex 
@@ -25,16 +26,18 @@ const PerformanceReviewCard: React.FC<
           <p className="font-bold truncate">{props.performance.title}</p>
         </div>
 
-        <button
-          onClick={props.handleActiveMenu}
-          className="p-2 rounded-full bg-neutral-100 transition-all"
-        >
-          <IoEllipsisVertical
-            className={`${
-              props.activeMenu ? "text-accent-blue" : "text-neutral-900"
-            }`}
-          />
-        </button>
+        {isHR ? (
+          <button
+            onClick={props.handleActiveMenu}
+            className="p-2 rounded-full bg-neutral-100 transition-all"
+          >
+            <IoEllipsisVertical
+              className={`${
+                props.activeMenu ? "text-accent-blue" : "text-neutral-900"
+              }`}
+            />
+          </button>
+        ) : null}
       </div>
 
       <div className="w-full h-40 max-h-40 min-h-40 flex flex-col items-center justify-start overflow-y-auto bg-neutral-200 p-2 rounded-xs">
@@ -50,7 +53,7 @@ const PerformanceReviewCard: React.FC<
         See More <IoArrowForward />
       </button>
 
-      {props.activeMenu ? (
+      {isHR && props.activeMenu ? (
         <div className="w-32 p-2 rounded-md top-12 right-6 shadow-md bg-neutral-200 absolute animate-fade z-20">
           <button
             onClick={props.handleCanEdit}

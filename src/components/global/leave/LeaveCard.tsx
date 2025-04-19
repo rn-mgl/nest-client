@@ -29,9 +29,11 @@ const LeaveCard: React.FC<
       <div className="flex flex-row items-start justify-between w-full">
         <div className="flex flex-col items-start justify-start">
           <p className="font-bold truncate">{props.type}</p>
-          <p className="text-xs">
-            created by {props.createdBy ? "you" : `${props.first_name}`}
-          </p>
+          {isHR ? (
+            <p className="text-xs">
+              created by {props.createdBy ? "you" : `${props.first_name}`}
+            </p>
+          ) : null}
         </div>
 
         {isHR ? (
