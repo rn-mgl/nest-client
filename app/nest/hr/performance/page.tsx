@@ -120,7 +120,16 @@ const PerformanceReview = () => {
         key={index}
         activeMenu={activeMenu}
         createdBy={createdBy}
-        performance={performance}
+        //
+        title={performance.title}
+        description={performance.description}
+        //
+        user_id={performance.user_id}
+        email={performance.email}
+        email_verified_at={performance.email_verified_at}
+        first_name={performance.first_name}
+        last_name={performance.last_name}
+        //
         handleActiveMenu={() =>
           handleActivePerformanceReviewMenu(performanceReviewId)
         }

@@ -88,7 +88,6 @@ const Leave = () => {
         type={leave.type}
         description={leave.description}
         balance={leave.balance}
-        created_at={leave.created_at}
         leave_balance_id={leave.leave_balance_id}
         //
         first_name={leave.first_name}
@@ -98,7 +97,7 @@ const Leave = () => {
         user_id={leave.user_id}
         //
         toggleSelectedLeaveRequest={() =>
-          handleSelectedLeaveRequest(leave.leave_type_id)
+          handleSelectedLeaveRequest(leave.leave_type_id ?? 0)
         }
       />
     );

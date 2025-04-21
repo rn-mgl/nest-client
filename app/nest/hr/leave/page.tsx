@@ -103,7 +103,6 @@ const HRLeave = () => {
         //
         type={leave.type}
         description={leave.description}
-        created_at={leave.created_at}
         //
         first_name={leave.first_name}
         last_name={leave.last_name}

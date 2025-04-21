@@ -7,7 +7,6 @@ export interface LeaveInterface {
 
 export interface LeaveBalanceInterface {
   leave_balance_id?: number | null;
-  leave_type_id: number | null;
   balance: number | string | null;
 }
 

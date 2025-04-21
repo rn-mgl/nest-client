@@ -11,9 +11,7 @@ import {
 } from "react-icons/io5";
 
 const PerformanceReviewCard: React.FC<
-  CardInterface & {
-    performance: PerformanceReviewInterface & UserInterface;
-  }
+  CardInterface & PerformanceReviewInterface & UserInterface
 > = (props) => {
   const isHR = props.role === "hr";
   return (
@@ -23,7 +21,7 @@ const PerformanceReviewCard: React.FC<
     >
       <div className="flex flex-row items-start justify-between w-full">
         <div className="flex flex-col items-start justify-start">
-          <p className="font-bold truncate">{props.performance.title}</p>
+          <p className="font-bold truncate">{props.title}</p>
         </div>
 
         {isHR ? (
@@ -42,7 +40,7 @@ const PerformanceReviewCard: React.FC<
 
       <div className="w-full h-40 max-h-40 min-h-40 flex flex-col items-center justify-start overflow-y-auto bg-neutral-200 p-2 rounded-xs">
         <p className="text-sm w-full text-wrap break-words">
-          {props.performance.description}
+          {props.description}
         </p>
       </div>
 
