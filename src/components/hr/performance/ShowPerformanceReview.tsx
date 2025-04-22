@@ -3,8 +3,8 @@
 import useModalNav from "@/src/hooks/useModalNav";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
-  PerformanceReviewContentsSetInterface,
   PerformanceReviewInterface,
+  PerformanceReviewSurveyInterface,
 } from "@/src/interface/PerformanceReviewInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
@@ -18,7 +18,9 @@ import TextField from "../../global/field/TextField";
 
 const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
   const [performanceReview, setPerformanceReview] = React.useState<
-    PerformanceReviewInterface & PerformanceReviewContentsSetInterface
+    PerformanceReviewInterface & {
+      contents: PerformanceReviewSurveyInterface[];
+    }
   >({
     title: "",
     description: "",
