@@ -13,3 +13,8 @@ export interface PerformanceReviewSurveyInterface {
 export interface EmployeePerformanceReviewInterface {
   employee_performance_review_id?: number;
 }
+
+export interface PerformanceReviewResponseInterface {
+  performance_review_response_id?: number;
+  response: string | null;
+}
