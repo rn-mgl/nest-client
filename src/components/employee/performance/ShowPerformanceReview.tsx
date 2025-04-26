@@ -3,7 +3,7 @@
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
   PerformanceReviewInterface,
-  PerformanceReviewResponseInterface,
+  EmployeePerformanceReviewResponseInterface,
   PerformanceReviewSurveyInterface,
 } from "@/src/interface/PerformanceReviewInterface";
 import { getCSRFToken } from "@/src/utils/token";
@@ -21,7 +21,7 @@ const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
   const [performanceReview, setPerformanceReview] = React.useState<
     PerformanceReviewInterface & {
       contents: (PerformanceReviewSurveyInterface &
-        PerformanceReviewResponseInterface)[];
+        EmployeePerformanceReviewResponseInterface)[];
     }
   >({
     title: "",
@@ -78,6 +78,36 @@ const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
     }
   }, [url, user?.token, props.id]);
 
+  const submitPerformanceReviewResponse = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
+    e.preventDefault();
+
+    try {
+      const { token } = await getCSRFToken();
+
+      if (token && user?.token) {
+        const { data: responseData } = await axios.post(
+          `${url}/employee/employee_performance_review_response`,
+          { response: performanceReview.contents },
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              "X-CSRF-TOKEN": token,
+            },
+            withCredentials: true,
+          }
+        );
+
+        if (responseData.success) {
+          await getPerformanceReview();
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const mappedSurveys = performanceReview.contents.map((content, index) => {
     return (
       <div
@@ -115,7 +145,10 @@ const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
             <IoClose />
           </button>
         </div>
-        <form className="w-full h-full p-4 flex flex-col items-center justify-start gap-4 overflow-hidden">
+        <form
+          onSubmit={(e) => submitPerformanceReviewResponse(e)}
+          className="w-full h-full p-4 flex flex-col items-center justify-start gap-4 overflow-hidden"
+        >
           <ModalNav
             activeFormPage={activeFormPage}
             handleActiveFormPage={handleActiveFormPage}
