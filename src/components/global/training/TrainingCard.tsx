@@ -1,5 +1,9 @@
 import { CardInterface } from "@/src/interface/CardInterface";
-import { TrainingInterface } from "@/src/interface/TrainingInterface";
+import {
+  EmployeeTrainingInterface,
+  TrainingInterface,
+} from "@/src/interface/TrainingInterface";
+import { UserInterface } from "@/src/interface/UserInterface";
 import React from "react";
 import {
   IoArrowForward,
@@ -10,35 +14,51 @@ import {
 } from "react-icons/io5";
 
 const TrainingCard: React.FC<
-  CardInterface & {
-    training: TrainingInterface;
-  }
+  CardInterface &
+    TrainingInterface &
+    UserInterface &
+    Partial<EmployeeTrainingInterface>
 > = (props) => {
+  const isHR = props.role === "hr";
+  const isEmployee = props.role === "employee";
   return (
     <div
       className="w-full min-h-[17rem] p-4 rounded-md bg-neutral-100 flex 
                         flex-col items-center justify-start gap-4 relative max-w-full transition-all"
     >
       <div className="flex flex-row items-start justify-between w-full">
-        <div className="flex flex-col items-start justify-start">
-          <p className="font-bold truncate">{props.training.title}</p>
+        <div className="flex flex-col items-start justify-start w-full gap-1">
+          <p className="font-bold truncate">{props.title}</p>
+
+          {isEmployee ? (
+            <div className="w-full gap-4 flex flex-row items-center justify-between ">
+              <p className="text-sm" title="Status">
+                {props.status}
+              </p>
+              <p className="text-sm" title="Deadline">
+                {props.deadline ?? "No Deadline"}
+              </p>
+            </div>
+          ) : null}
         </div>
 
-        <button
-          onClick={props.handleActiveMenu}
-          className="p-2 rounded-full bg-neutral-100 transition-all"
-        >
-          <IoEllipsisVertical
-            className={`${
-              props.activeMenu ? "text-accent-blue" : "text-neutral-900"
-            }`}
-          />
-        </button>
+        {isHR ? (
+          <button
+            onClick={props.handleActiveMenu}
+            className="p-2 rounded-full bg-neutral-100 transition-all"
+          >
+            <IoEllipsisVertical
+              className={`${
+                props.activeMenu ? "text-accent-blue" : "text-neutral-900"
+              }`}
+            />
+          </button>
+        ) : null}
       </div>
 
       <div className="w-full h-40 max-h-40 min-h-40 flex flex-col items-center justify-start overflow-y-auto bg-neutral-200 p-2 rounded-xs">
         <p className="text-sm w-full text-wrap break-words">
-          {props.training.description}
+          {props.description}
         </p>
       </div>
 
@@ -49,7 +69,7 @@ const TrainingCard: React.FC<
         See More <IoArrowForward />
       </button>
 
-      {props.activeMenu ? (
+      {isHR && props.activeMenu ? (
         <div className="w-32 p-2 rounded-md top-12 right-6 shadow-md bg-neutral-200 absolute animate-fade z-20">
           <button
             onClick={props.handleCanEdit}

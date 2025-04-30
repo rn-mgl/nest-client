@@ -20,4 +20,6 @@ export interface TrainingContentsInterface {
 
 export interface EmployeeTrainingInterface {
   employee_training_id?: number;
+  status: string;
+  deadline: string;
 }

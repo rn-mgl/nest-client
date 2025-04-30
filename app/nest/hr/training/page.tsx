@@ -11,7 +11,7 @@ import axios from "axios";
 import Filter from "@/src/components/global/filter/Filter";
 import DeleteEntity from "@/src/components/hr/global/DeleteEntity";
 import AssignTraining from "@/src/components/hr/training/AssignTraining";
-import TrainingCard from "@/src/components/hr/training/TrainingCard";
+import TrainingCard from "@/src/components/global/training/TrainingCard";
 
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
@@ -98,17 +98,30 @@ const HRTraining = () => {
     }
   }, [user?.token, url, search, sort]);
 
+  console.log(trainings);
+
   const mappedTrainings = trainings.map((training, index) => {
     const trainingId = training.training_id as number;
     const createdBy = training.user_id === user?.current;
     const activeMenu = activeTrainingMenu === trainingId;
     return (
       <TrainingCard
-        role={user?.role as string}
+        role={user?.role ?? ""}
         key={index}
         activeMenu={activeMenu}
         createdBy={createdBy}
-        training={training}
+        //
+        title={training.title}
+        description={training.description}
+        deadline_days={training.deadline_days}
+        certificate={training.certificate}
+        //
+        user_id={training.user_id}
+        email={training.email}
+        email_verified_at={training.email_verified_at}
+        first_name={training.first_name}
+        last_name={training.last_name}
+        //
         handleActiveMenu={() => handleActiveTrainingMenu(trainingId)}
         handleActiveSeeMore={() => handleActiveTrainingSeeMore(trainingId)}
         handleCanDelete={handleCanDeleteTraining}
