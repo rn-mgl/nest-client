@@ -1,4 +1,5 @@
 "use client";
+import ShowTraining from "@/src/components/employee/training/ShowTraining";
 import TrainingCard from "@/src/components/global/training/TrainingCard";
 import {
   EmployeeTrainingInterface,
@@ -14,10 +15,15 @@ const Training = () => {
   const [trainings, setTrainings] = React.useState<
     (TrainingInterface & EmployeeTrainingInterface & UserInterface)[]
   >([]);
+  const [activeTrainingSeeMore, setActiveTrainingSeeMore] = React.useState(0);
 
   const { data: session } = useSession({ required: true });
   const user = session?.user;
   const url = process.env.URL;
+
+  const handleActiveTrainingSeeMore = (id: number) => {
+    setActiveTrainingSeeMore((prev) => (prev === id ? 0 : id));
+  };
 
   const getTrainings = React.useCallback(async () => {
     try {
@@ -63,6 +69,10 @@ const Training = () => {
         email_verified_at={training.email_verified_at}
         first_name={training.first_name}
         last_name={training.last_name}
+        //
+        handleActiveSeeMore={() =>
+          handleActiveTrainingSeeMore(training.employee_training_id ?? 0)
+        }
       />
     );
   });
@@ -73,6 +83,12 @@ const Training = () => {
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
+      {activeTrainingSeeMore ? (
+        <ShowTraining
+          id={activeTrainingSeeMore}
+          toggleModal={() => handleActiveTrainingSeeMore(0)}
+        />
+      ) : null}
       <div
         className="w-full h-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2 
                     t:items-start gap-4 t:p-4 t:gap-8"

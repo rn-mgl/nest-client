@@ -5,7 +5,7 @@ import useDynamicFields from "@/src/hooks/useDynamicFields";
 import useModalNav from "@/src/hooks/useModalNav";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
-  TrainingContentSetInterface,
+  TrainingContentInterface,
   TrainingInterface,
 } from "@/src/interface/TrainingInterface";
 import { getCSRFToken } from "@/src/utils/token";
@@ -34,7 +34,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
   });
   const { activeFormPage, handleActiveFormPage } = useModalNav("information");
   const { fields, addField, removeField, handleField, removeTargetFieldValue } =
-    useDynamicFields<TrainingContentSetInterface>([
+    useDynamicFields<TrainingContentInterface>([
       {
         content: "",
         title: "",

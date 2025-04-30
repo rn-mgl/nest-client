@@ -5,8 +5,7 @@ import useDynamicFields from "@/src/hooks/useDynamicFields";
 import useModalNav from "@/src/hooks/useModalNav";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
-  TrainingContentSetInterface,
-  TrainingContentsInterface,
+  TrainingContentInterface,
   TrainingInterface,
 } from "@/src/interface/TrainingInterface";
 import { getCSRFToken } from "@/src/utils/token";
@@ -49,7 +48,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
     removeField,
     removeTargetFieldValue,
     populateFields,
-  } = useDynamicFields<TrainingContentSetInterface>([]);
+  } = useDynamicFields<TrainingContentInterface>([]);
 
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -61,7 +60,9 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: details } = await axios.get<{
-          training: TrainingInterface & TrainingContentsInterface;
+          training: TrainingInterface & {
+            contents: TrainingContentInterface[];
+          };
         }>(`${url}/hr/training/${props.id}`, {
           headers: {
             Authorization: `Bearer ${user.token}`,

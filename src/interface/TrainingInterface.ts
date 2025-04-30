@@ -6,16 +6,12 @@ export interface TrainingInterface {
   certificate: { rawFile: File; fileURL: string } | string | null;
 }
 
-export interface TrainingContentSetInterface {
+export interface TrainingContentInterface {
   training_content_id?: number;
   title: string;
   description: string;
   content: { rawFile: File; fileURL: string } | string;
   type: string;
-}
-
-export interface TrainingContentsInterface {
-  contents: Array<TrainingContentSetInterface>;
 }
 
 export interface EmployeeTrainingInterface {

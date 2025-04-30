@@ -1,7 +1,7 @@
 import useModalNav from "@/src/hooks/useModalNav";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
-  TrainingContentsInterface,
+  TrainingContentInterface,
   TrainingInterface,
 } from "@/src/interface/TrainingInterface";
 import { getCSRFToken } from "@/src/utils/token";
@@ -19,7 +19,7 @@ import TextField from "../../global/field/TextField";
 
 const ShowTraining: React.FC<ModalInterface> = (props) => {
   const [training, setTraining] = React.useState<
-    TrainingInterface & TrainingContentsInterface
+    TrainingInterface & { contents: TrainingContentInterface[] }
   >({
     title: "",
     description: "",
@@ -70,19 +70,8 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
         <p className="w-full py-2 border-b-2 border-accent-purple">
           {index + 1}.
         </p>
-        <div className="flex flex-col items-start justify-center w-full gap-1">
-          <p className="text-xs">Title</p>
-          <div className="w-full p-2 px-4 rounded-md border-2 relative overflow-x-auto bg-white">
-            <p>{content.title}</p>
-          </div>
-        </div>
-
-        <div className="flex flex-col items-start justify-center w-full gap-1">
-          <p className="text-xs">Description</p>
-          <div className="w-full p-2 px-4 rounded-md border-2 relative overflow-y-auto h-48 l-s:h-52 bg-white">
-            <p>{content.description}</p>
-          </div>
-        </div>
+        <TextField label="Title" value={content.title} />
+        <TextBlock label="Description" value={content.description} />
 
         <div className="flex flex-col items-start justify-center w-full gap-1">
           <p className="text-xs">Content</p>
