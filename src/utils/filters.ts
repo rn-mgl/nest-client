@@ -332,3 +332,35 @@ export const EMPLOYEE_PERFORMANCE_REVIEW_SORT: SortPairsInterface[] = [
     label: "Title",
   },
 ];
+
+// for employee to filter training
+
+export const EMPLOYEE_TRAINING_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "title",
+    label: "Title",
+  },
+];
+
+export const EMPLOYEE_TRAINING_SORT: SortPairsInterface[] = [
+  {
+    key: "title",
+    label: "Title",
+  },
+  {
+    key: "deadline",
+    label: "Deadline",
+  },
+];
+
+export const EMPLOYEE_TRAINING_CATEGORY: CategoryPairsInterface[] = [
+  {
+    key: "status",
+    labelValue: [
+      { label: "All", value: "all" },
+      { label: "Pending", value: "Pending" },
+      { label: "In Progress", value: "In Progress" },
+      { label: "Done", value: "Done" },
+    ],
+  },
+];
