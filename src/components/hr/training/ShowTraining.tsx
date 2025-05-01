@@ -103,6 +103,14 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
                 className="rounded-md"
               ></video>
             </div>
+          ) : content.type === "audio" ? (
+            <div className="w-full p-2 rounded-md bg-white border-2">
+              <audio
+                src={currentContent}
+                controls
+                className="rounded-md"
+              ></audio>
+            </div>
           ) : content.type === "file" ? (
             <div className="w-full p-2 rounded-md border-2 bg-white flex flex-row items-center justify-start">
               <Link
@@ -114,7 +122,7 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
                   <AiFillFilePdf className="text-white" />
                 </div>
                 <span className="group-hover:underline underline-offset-2 transition-all text-sm">
-                  View {content.title} Certificate
+                  View {content.title} Document
                 </span>
               </Link>
             </div>

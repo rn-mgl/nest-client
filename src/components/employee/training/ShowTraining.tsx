@@ -11,6 +11,13 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose } from "react-icons/io5";
+import TextField from "../../global/field/TextField";
+import TextBlock from "../../global/field/TextBlock";
+import ModalNav from "../../global/ModalNav";
+import useModalNav from "@/src/hooks/useModalNav";
+import Link from "next/link";
+import Image from "next/image";
+import { AiFillFilePdf } from "react-icons/ai";
 
 const ShowTraining: React.FC<ModalInterface> = (props) => {
   const [training, setTraining] = React.useState<
@@ -27,6 +34,7 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
   });
 
   const { data: session } = useSession({ required: true });
+  const { activeFormPage, handleActiveFormPage } = useModalNav("Information");
   const user = session?.user;
   const url = process.env.URL;
 
@@ -55,7 +63,64 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
     }
   }, [url, user?.token, props.id]);
 
-  console.log(training);
+  const mappedContents = training.contents.map((content, index) => {
+    const currentContent =
+      content.content && typeof content.content === "string"
+        ? content.content
+        : "";
+
+    return (
+      <div
+        key={index}
+        className="w-full flex flex-col items-center justify-center gap-2"
+      >
+        <TextField label="Title" value={content.title} />
+        <TextBlock label="Description" value={content.description} />
+        {content.type === "text" ? (
+          <TextBlock label="Content" value={currentContent} />
+        ) : content.type === "image" ? (
+          <div className="w-full p-2 rounded-md bg-white border-2">
+            <Link
+              href={currentContent}
+              target="_blank"
+              className="hover:brightness-90 transition-all"
+            >
+              <Image
+                src={currentContent}
+                alt="content"
+                width={1920}
+                height={1920}
+                className="w-full rounded-md"
+              />
+            </Link>
+          </div>
+        ) : content.type === "video" ? (
+          <div className="w-full p-2 rounded-md bg-white border-2">
+            <video src={currentContent} controls className="rounded-md"></video>
+          </div>
+        ) : content.type === "audio" ? (
+          <div className="w-full p-2 rounded-md bg-white border-2">
+            <audio src={currentContent} controls={true} />
+          </div>
+        ) : content.type === "file" ? (
+          <div className="w-full p-2 rounded-md border-2 bg-white flex flex-row items-center justify-start">
+            <Link
+              href={currentContent}
+              target="_blank"
+              className="flex flex-row items-center justify-center gap-2 group transition-all hover:underline underline-offset-2"
+            >
+              <div className="text-2xl aspect-square rounded-xs bg-accent-purple/50 p-2 group-hover:bg-accent-purple/80 transition-all">
+                <AiFillFilePdf className="text-white" />
+              </div>
+              <span className="group-hover:underline underline-offset-2 transition-all text-sm">
+                View {content.title} Document
+              </span>
+            </Link>
+          </div>
+        ) : null}
+      </div>
+    );
+  });
 
   React.useEffect(() => {
     getTraining();
@@ -76,7 +141,28 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
             <IoClose />
           </button>
         </div>
-        <div className="w-full h-full p-4 flex flex-col items-center justify-start gap-4 overflow-hidden"></div>
+        <div className="w-full h-full p-4 flex flex-col items-center justify-start gap-4 overflow-hidden">
+          <ModalNav
+            activeFormPage={activeFormPage}
+            handleActiveFormPage={handleActiveFormPage}
+            pages={["Information", "Contents"]}
+          />
+          {activeFormPage === "Information" ? (
+            <div className="w-full flex flex-col items-center justify-start gap-4 h-full">
+              <TextField label="Title" value={training.title} />
+              <TextField
+                label="Deadline"
+                value={training.deadline ?? "No Deadline"}
+              />
+              <TextField label="Status" value={training.status} />
+              <TextBlock label="Description" value={training.description} />
+            </div>
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-start gap-4 overflow-y-auto">
+              {mappedContents}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
