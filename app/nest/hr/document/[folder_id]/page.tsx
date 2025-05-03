@@ -185,9 +185,23 @@ const HRDocument = () => {
       <DocumentCard
         role={user?.role as string}
         key={index}
-        document={document as DocumentInterface & UserInterface}
         activeMenu={activeMenu}
         createdBy={createdBy}
+        //
+        id={document.id}
+        name={document.name}
+        created_by={document.created_by}
+        path={document.path}
+        description={"description" in document ? document.description : ""}
+        document={"document" in document ? document.document : ""}
+        type={type}
+        //
+        first_name={document.first_name}
+        last_name={document.last_name}
+        email={document.email}
+        email_verified_at={document.email_verified_at}
+        user_id={document.user_id}
+        //
         handleActiveMenu={() =>
           document.id && handleActiveDocumentMenu(type, document.id)
         }
@@ -201,9 +215,20 @@ const HRDocument = () => {
       <FolderCard
         role={user?.role as string}
         key={index}
-        folder={document as DocumentFolderInterface & UserInterface}
         activeMenu={activeMenu}
         createdBy={createdBy}
+        //
+        id={document.id}
+        name={document.name}
+        created_by={document.created_by}
+        path={document.path}
+        //
+        first_name={document.first_name}
+        last_name={document.last_name}
+        email={document.email}
+        email_verified_at={document.email_verified_at}
+        user_id={document.user_id}
+        //
         handleActiveMenu={() =>
           document.id && handleActiveDocumentMenu(type, document.id)
         }

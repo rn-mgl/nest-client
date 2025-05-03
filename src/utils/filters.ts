@@ -364,3 +364,45 @@ export const EMPLOYEE_TRAINING_CATEGORY: CategoryPairsInterface[] = [
     ],
   },
 ];
+
+// for employee to filter documents
+
+export const EMPLOYEE_DOCUMENTS_CATEGORY: CategoryPairsInterface[] = [
+  {
+    key: "-",
+    labelValue: [
+      { label: "All", value: "all" },
+      { label: "Documents", value: "documents" },
+      { label: "Folders", value: "folders" },
+    ],
+  },
+];
+
+export const EMPLOYEE_DOCUMENTS_SORT: SortPairsInterface[] = [
+  {
+    key: "name",
+    label: "Name",
+  },
+  {
+    key: "created_at",
+    label: "Created At",
+  },
+];
+
+export const EMPLOYEE_DOCUMENTS_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "name",
+    label: "Name",
+  },
+  {
+    key: "description",
+    label: "Description",
+  },
+];
+
+export const EMPLOYEE_FOLDERS_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "name",
+    label: "Name",
+  },
+];

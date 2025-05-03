@@ -10,34 +10,37 @@ import {
 } from "react-icons/io5";
 
 const DocumentCard: React.FC<
-  CardInterface & { document: DocumentInterface & UserInterface }
+  CardInterface & DocumentInterface & UserInterface
 > = (props) => {
+  const isHR = props.role === "hr";
+
   return (
     <div className="w-full h-full p-4 rounded-md bg-neutral-100 flex flex-col items-start justify-start gap-4 relative  max-h-56 max-w-full">
       <div className="flex flex-row items-start justify-between w-full">
         <div className="flex flex-col items-start justify-start">
-          <p className="font-bold truncate">{props.document.name}</p>
+          <p className="font-bold truncate">{props.name}</p>
           <p className="text-xs">
-            created by{" "}
-            {props.createdBy ? "you" : `${props.document.first_name}`}
+            created by {props.createdBy ? "you" : `${props.first_name}`}
           </p>
         </div>
 
-        <button
-          onClick={props.handleActiveMenu}
-          className="p-2 rounded-full bg-neutral-100 transition-all"
-        >
-          <IoEllipsisVertical
-            className={`${
-              props.activeMenu ? "text-accent-blue" : "text-neutral-900"
-            }`}
-          />
-        </button>
+        {isHR ? (
+          <button
+            onClick={props.handleActiveMenu}
+            className="p-2 rounded-full bg-neutral-100 transition-all"
+          >
+            <IoEllipsisVertical
+              className={`${
+                props.activeMenu ? "text-accent-blue" : "text-neutral-900"
+              }`}
+            />
+          </button>
+        ) : null}
       </div>
 
       <div className="w-full h-full flex flex-col items-center justify-start overflow-y-auto p-2 bg-neutral-200 rounded-xs">
         <p className="text-sm w-full text-wrap break-words">
-          {props.document.description}
+          {props.description}
         </p>
       </div>
 
