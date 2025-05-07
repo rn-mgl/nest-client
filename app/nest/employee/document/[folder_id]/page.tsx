@@ -1,5 +1,6 @@
 "use client";
 
+import ShowDocument from "@/src/components/employee/document/ShowDocument";
 import Filter from "@/src/components/global/filter/Filter";
 import DocumentCard from "@/src/components/hr/document/DocumentCard";
 import FolderCard from "@/src/components/hr/documentFolder/FolderCard";
@@ -32,6 +33,7 @@ const Document = () => {
     name: "",
     path: 0,
   });
+  const [activeDocumentSeeMore, setActiveDocumentSeeMore] = React.useState(0);
 
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
@@ -62,6 +64,10 @@ const Document = () => {
     handleSelectSort,
     handleToggleAsc,
   } = useSort("name", "Name");
+
+  const handleActiveDocumentSeeMore = (id: number) => {
+    setActiveDocumentSeeMore((prev) => (prev === id ? 0 : id));
+  };
 
   const getDocuments = React.useCallback(async () => {
     try {
@@ -134,6 +140,10 @@ const Document = () => {
         email={document.email}
         email_verified_at={document.email_verified_at}
         user_id={document.user_id}
+        //
+        handleActiveSeeMore={() =>
+          handleActiveDocumentSeeMore(document.id ?? 0)
+        }
       />
     ) : (
       <FolderCard
@@ -162,6 +172,12 @@ const Document = () => {
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
+      {activeDocumentSeeMore ? (
+        <ShowDocument
+          id={activeDocumentSeeMore}
+          toggleModal={() => handleActiveDocumentSeeMore(0)}
+        />
+      ) : null}
       <div
         className="w-full h-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2
                     t:items-start t:p-4 gap-4 t:gap-8"
