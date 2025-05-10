@@ -169,6 +169,9 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
       formData.append(`contents[${index}]`, JSON.stringify(trainingContent));
       formData.append(`contentFile[${index}]`, trainingFile);
     });
+    reviews.forEach((review, index) => {
+      formData.append(`reviews[${index}]`, JSON.stringify(review));
+    });
 
     try {
       const { token } = await getCSRFToken();
