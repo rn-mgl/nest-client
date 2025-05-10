@@ -3,6 +3,7 @@ import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
   TrainingContentInterface,
   TrainingInterface,
+  TrainingReviewInterface,
 } from "@/src/interface/TrainingInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
@@ -19,13 +20,16 @@ import TextField from "../../global/field/TextField";
 
 const ShowTraining: React.FC<ModalInterface> = (props) => {
   const [training, setTraining] = React.useState<
-    TrainingInterface & { contents: TrainingContentInterface[] }
+    TrainingInterface & { contents: TrainingContentInterface[] } & {
+      reviews: TrainingReviewInterface[];
+    }
   >({
     title: "",
     description: "",
     certificate: "",
     deadline_days: 30,
     contents: [],
+    reviews: [],
   });
 
   const { activeFormPage, handleActiveFormPage } = useModalNav("information");
@@ -132,6 +136,23 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
     );
   });
 
+  const mappedReviews = training.reviews.map((review, index) => {
+    const answer =
+      review[`choice_${review.answer}` as keyof TrainingReviewInterface];
+    return (
+      <div
+        key={index}
+        className="w-full flex flex-col items-center justify-center gap-2"
+      >
+        <p className="w-full py-2 border-b-2 border-accent-purple">
+          {index + 1}.
+        </p>
+        <TextBlock label="Question" value={review.question} />
+        <TextField label="Answer" value={answer ?? ""} />
+      </div>
+    );
+  });
+
   React.useEffect(() => {
     getTraining();
   }, [getTraining]);
@@ -154,7 +175,7 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
         <div className="w-full h-full p-4 flex flex-col items-center justify-start gap-4 overflow-hidden">
           <ModalNav
             activeFormPage={activeFormPage}
-            pages={["information", "contents"]}
+            pages={["information", "contents", "reviews"]}
             handleActiveFormPage={handleActiveFormPage}
           />
 
@@ -189,11 +210,15 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
                   </div>
                 </div>
               </div>
-            ) : (
+            ) : activeFormPage === "contents" ? (
               <div className="w-full flex flex-col items-center justify-start p-2 gap-4">
                 {mappedContents}
               </div>
-            )}
+            ) : activeFormPage === "reviews" ? (
+              <div className="w-full flex flex-col items-center justify-start p-2 gap-4">
+                {mappedReviews}
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
