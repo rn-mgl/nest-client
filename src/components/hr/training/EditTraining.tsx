@@ -17,7 +17,6 @@ import Link from "next/link";
 import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
 import {
-  IoAdd,
   IoCalendar,
   IoClose,
   IoImage,
@@ -26,6 +25,7 @@ import {
   IoTrash,
   IoVideocam,
 } from "react-icons/io5";
+import File from "@/components/form/File";
 
 const EditTraining: React.FC<ModalInterface> = (props) => {
   const [training, setTraining] = React.useState<TrainingInterface>({
@@ -422,7 +422,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
     >
       <div className="w-full my-auto h-full max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-yellow rounded-t-lg font-bold text-accent-blue">
-          Edit Performance Review
+          Edit Training
           <button
             onClick={props.toggleModal}
             className="p-2 rounded-full hover:bg-accent-yellow/20 transition-all text-xl"
@@ -478,29 +478,9 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
               <div className="w-full flex flex-col items-start justify-center gap-1">
                 <label className="text-xs">Certificate</label>
 
-                {/* check if training.certificate instance is the rawFile filURL object */}
+                {/* check if training.certificate instance is the uploaded */}
                 {training.certificate &&
-                typeof training.certificate === "object" &&
-                training.certificate?.rawFile ? (
-                  <div className="p-2 w-full rounded-md border-2 bg-white flex flex-col items-center justify-center bg-center bg-cover relative">
-                    <div className="w-full flex flex-row items-center justify-start gap-2">
-                      <div className="aspect-square p-2.5 rounded-xs bg-accent-blue/50">
-                        <AiFillFilePdf className="text-white text-2xl" />
-                      </div>
-                      <p className="truncate text-sm">
-                        {training.certificate?.rawFile.name}
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={removeSelectedCertificate}
-                      className="absolute -top-1 -right-1 bg-red-500 p-1 rounded-full"
-                    >
-                      <IoClose className="text-sm" />
-                    </button>
-                  </div>
-                ) : training.certificate &&
-                  typeof training.certificate === "string" ? (
+                typeof training.certificate === "string" ? (
                   <div className="w-full h-full p-2 rounded-md border-2 bg-white flex flex-row relative">
                     <Link
                       href={training.certificate}
@@ -524,29 +504,22 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
                     </button>
                   </div>
                 ) : (
-                  <div
-                    className="p-2 w-full h-16 rounded-md border-2 bg-white flex flex-row items-center 
-                              justify-center  text-accent-purple gap-1"
-                  >
-                    <span className="text-sm">Attach Certificate</span>
-                    <IoAdd />
-                  </div>
+                  <File
+                    accept=".pdf"
+                    type="file"
+                    file={
+                      training.certificate &&
+                      typeof training.certificate === "object"
+                        ? training.certificate.rawFile
+                        : null
+                    }
+                    id="certificate"
+                    label="Certificate"
+                    onChange={handleTraining}
+                    ref={certificateRef}
+                    removeSelectedFile={removeSelectedCertificate}
+                  />
                 )}
-
-                <div className="w-full flex flex-row items-center justify-between">
-                  <label className="cursor-pointer">
-                    <input
-                      type="file"
-                      accept=".pdf"
-                      name="certificate"
-                      className="hidden"
-                      ref={certificateRef}
-                      onChange={(e) => handleTraining(e)}
-                    />
-
-                    <AiFillFilePdf className="text-accent-blue" />
-                  </label>
-                </div>
               </div>
             </div>
           ) : (

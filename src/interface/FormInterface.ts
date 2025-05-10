@@ -69,3 +69,13 @@ export interface FileInterface {
   ) => void;
   removeSelectedFile: () => void;
 }
+
+export interface RadioInterface {
+  name: string;
+  onChange: (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field?: string,
+    index?: number
+  ) => void;
+  value: string | number;
+}
