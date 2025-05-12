@@ -35,7 +35,16 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
     deadline_days: 30,
     certificate: null,
   });
-  const [reviews, setReviews] = React.useState<TrainingReviewInterface[]>([]);
+  const [reviews, setReviews] = React.useState<TrainingReviewInterface[]>([
+    {
+      answer: 0,
+      choice_1: "",
+      choice_2: "",
+      choice_3: "",
+      choice_4: "",
+      question: "",
+    },
+  ]);
   const { activeFormPage, handleActiveFormPage } = useModalNav("information");
   const { fields, addField, removeField, handleField, removeTargetFieldValue } =
     useDynamicFields<TrainingContentInterface>([
@@ -110,7 +119,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
   const addReview = () => {
     setReviews((prev) => {
       const newField = {
-        answer: "",
+        answer: 0,
         choice_1: "",
         choice_2: "",
         choice_3: "",

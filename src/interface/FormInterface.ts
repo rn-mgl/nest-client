@@ -78,4 +78,5 @@ export interface RadioInterface {
     index?: number
   ) => void;
   value: string | number;
+  isChecked?: boolean;
 }

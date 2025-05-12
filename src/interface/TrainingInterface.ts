@@ -24,7 +24,7 @@ export interface TrainingReviewInterface {
   training_review_id?: number;
   training_id?: number;
   question: string;
-  answer: string;
+  answer: number;
   choice_1: string;
   choice_2: string;
   choice_3: string;

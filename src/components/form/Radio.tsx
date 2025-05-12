@@ -10,6 +10,7 @@ const Radio: React.FC<RadioInterface> = (props) => {
         name={props.name}
         onChange={(e) => props.onChange(e)}
         value={props.value}
+        checked={props.isChecked}
       />
       <div className="p-1 rounded-md border-2 bg-white peer-checked:*:bg-accent-green">
         <div className="p-4 rounded-sm "></div>
