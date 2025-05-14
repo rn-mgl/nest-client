@@ -45,7 +45,7 @@ const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
     });
   };
 
-  const handleSurveyToDelete = (id: number | undefined) => {
+  const handleSurveysToDelete = (id: number | undefined) => {
     if (!id) return;
     setSurveyToDelete((prev) => [...prev, id]);
   };
@@ -98,7 +98,7 @@ const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
           type="button"
           onClick={() => {
             removeField(index);
-            handleSurveyToDelete(content.performance_review_content_id);
+            handleSurveysToDelete(content.performance_review_content_id);
           }}
           className="p-3 border-2 border-neutral-100 rounded-md bg-neutral-100"
         >

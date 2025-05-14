@@ -1,4 +1,5 @@
 import Input from "@/components/form/Input";
+import Radio from "@/components/form/Radio";
 import TextArea from "@/components/form/TextArea";
 import ModalNav from "@/components/global/ModalNav";
 import useDynamicFields from "@/src/hooks/useDynamicFields";
@@ -7,6 +8,7 @@ import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
   TrainingContentInterface,
   TrainingInterface,
+  TrainingReviewInterface,
 } from "@/src/interface/TrainingInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
@@ -17,6 +19,7 @@ import Link from "next/link";
 import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
 import {
+  IoAdd,
   IoCalendar,
   IoClose,
   IoImage,
@@ -34,9 +37,9 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
     certificate: "",
     deadline_days: 30,
   });
-  const [contentsToDelete, setContentsToDelete] = React.useState<Array<number>>(
-    []
-  );
+  const [reviews, setReviews] = React.useState<TrainingReviewInterface[]>([]);
+  const [reviewsToDelete, setReviewsToDelete] = React.useState<number[]>([]);
+  const [contentsToDelete, setContentsToDelete] = React.useState<number[]>([]);
   const certificateRef = React.useRef<HTMLInputElement | null>(null);
   const inputRefs = React.useRef<Array<HTMLInputElement | null>>([]);
 
@@ -59,9 +62,10 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
-        const { data: details } = await axios.get<{
+        const { data: responseData } = await axios.get<{
           training: TrainingInterface & {
             contents: TrainingContentInterface[];
+            reviews: TrainingReviewInterface[];
           };
         }>(`${url}/hr/training/${props.id}`, {
           headers: {
@@ -71,9 +75,10 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
           withCredentials: true,
         });
 
-        if (details.training) {
-          setTraining(details.training);
-          populateFields(details.training.contents);
+        if (responseData.training) {
+          setTraining(responseData.training);
+          setReviews(responseData.training.reviews);
+          populateFields(responseData.training.contents);
         }
       }
     } catch (error) {
@@ -110,6 +115,47 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
         };
       });
     }
+  };
+
+  const handleReview = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    field: string,
+    index: number
+  ) => {
+    const { value } = e.target;
+
+    setReviews((prev) => {
+      prev[index] = {
+        ...prev[index],
+        [field]: field === "answer" ? parseInt(value) : value,
+      };
+
+      return [...prev];
+    });
+  };
+
+  const addReview = () => {
+    setReviews((prev) => {
+      const newField = {
+        answer: 0,
+        choice_1: "",
+        choice_2: "",
+        choice_3: "",
+        choice_4: "",
+        question: "",
+      };
+      return [...prev, newField];
+    });
+  };
+
+  const removeReview = (index: number) => {
+    setReviews((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleReviewsToDelete = (id: number | undefined) => {
+    if (!id) return;
+
+    setReviewsToDelete((prev) => [...prev, id]);
   };
 
   const removeSelectedCertificate = () => {
@@ -151,7 +197,8 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
     }
   };
 
-  const handleContentsToDelete = (id: number) => {
+  const handleContentsToDelete = (id: number | undefined) => {
+    if (!id) return;
     setContentsToDelete((prev) => [...prev, id]);
   };
 
@@ -185,6 +232,12 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
       });
       contentsToDelete.forEach((toDelete, index) => {
         formData.append(`contentsToDelete[${index}]`, toDelete.toString());
+      });
+      reviews.forEach((review, index) => {
+        formData.append(`reviews[${index}]`, JSON.stringify(review));
+      });
+      reviewsToDelete.forEach((review, index) => {
+        formData.append(`reviewsToDelete[${index}]`, review.toString());
       });
       formData.append("_method", "PATCH");
 
@@ -228,13 +281,12 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
 
     const dynamicContent =
       content.type === "text" ? (
-        <textarea
-          name="contents"
-          placeholder={`Content ${index + 1}`}
+        <TextArea
+          id="contents"
           onChange={(e) => handleField(e, "content", index)}
+          placeholder={`Content ${index + 1}`}
+          required={true}
           value={content.content as string}
-          rows={5}
-          className="w-full p-2 px-4 pr-8 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all resize-none"
         />
       ) : content.type === "image" ? (
         <div className="w-full flex flex-col items-start justify-center gap-2">
@@ -368,22 +420,21 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
         className="w-full flex flex-row gap-2 items-start justify-center"
       >
         <div className="w-full flex flex-col gap-2 items-start justify-center">
-          <input
-            type="text"
-            name="contents"
-            placeholder={`Title ${index + 1}`}
+          <Input
+            id={`content_title_${index}`}
             onChange={(e) => handleField(e, "title", index)}
+            placeholder={`Title ${index + 1}`}
+            type="text"
+            required={true}
             value={content.title}
-            className="w-full p-2 px-4 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all"
           />
 
-          <textarea
-            name="contents"
-            placeholder={`Description ${index + 1}`}
+          <TextArea
+            id={`content_content_${index}`}
             onChange={(e) => handleField(e, "description", index)}
+            placeholder={`Description ${index + 1}`}
             value={content.description}
-            rows={5}
-            className="w-full p-2 px-4 pr-8 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all resize-none"
+            required={true}
           />
 
           {dynamicContent}
@@ -393,11 +444,72 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
           type="button"
           onClick={() => {
             removeField(index);
-            if (content.training_content_id) {
-              handleContentsToDelete(content.training_content_id);
-            }
+            handleContentsToDelete(content.training_content_id);
           }}
           className="p-3 border-2 border-neutral-100 rounded-md bg-neutral-100"
+        >
+          <IoTrash />
+        </button>
+      </div>
+    );
+  });
+
+  const mappedReviews = reviews.map((review, index) => {
+    const mappedChoices = [1, 2, 3, 4].map((choice, index2) => {
+      const currChoice =
+        review[`choice_${choice}` as keyof TrainingReviewInterface] ?? "";
+
+      return (
+        <div
+          key={index2}
+          className="w-full flex flex-row items-center justify-between gap-2"
+        >
+          <Radio
+            name={`question_${index}_answer`}
+            onChange={(e) => handleReview(e, "answer", index)}
+            value={choice}
+            isChecked={review.answer === choice}
+          />
+
+          <Input
+            id={`choice_${choice}`}
+            onChange={(e) => handleReview(e, `choice_${choice}`, index)}
+            placeholder={`Choice ${index2 + 1}`}
+            required={true}
+            type="text"
+            value={currChoice}
+          />
+        </div>
+      );
+    });
+
+    return (
+      <div
+        key={index}
+        className="w-full flex flex-row items-start gap-2 justify-center"
+      >
+        <div className="w-full flex flex-col items-center justify-center gap-2">
+          <div className="w-full border-b-2 border-accent-blue text-accent-blue">
+            {index + 1}.
+          </div>
+          <TextArea
+            id={`question_${index}`}
+            onChange={(e) => handleReview(e, "question", index)}
+            placeholder={`Question ${index + 1}`}
+            required={true}
+            value={review.question}
+          />
+          <div className="w-full flex flex-col items-center justify-center gap-2">
+            {mappedChoices}
+          </div>
+        </div>
+        <button
+          onClick={() => {
+            removeReview(index);
+            handleReviewsToDelete(review.training_review_id);
+          }}
+          type="button"
+          className="p-2 rounded-md bg-neutral-100"
         >
           <IoTrash />
         </button>
@@ -437,7 +549,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
           <ModalNav
             activeFormPage={activeFormPage}
             handleActiveFormPage={handleActiveFormPage}
-            pages={["information", "contents"]}
+            pages={["information", "contents", "reviews"]}
           />
 
           {activeFormPage === "information" ? (
@@ -522,7 +634,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
                 )}
               </div>
             </div>
-          ) : (
+          ) : activeFormPage === "contents" ? (
             <div className="w-full h-full flex flex-col items-center justify-start overflow-y-auto gap-4 p-2">
               <div className="w-full h-full flex flex-col items-center justify-start t:items-start">
                 <div className="w-full flex flex-row items-center justify-between t:w-60">
@@ -591,12 +703,29 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
                   </button>
                 </div>
 
-                <div className="w-full h-full flex flex-col items-center justify-start gap-4 overflow-y-auto">
+                <div className="w-full h-full flex flex-col items-center justify-start gap-4">
                   {mappedContents}
                 </div>
               </div>
             </div>
-          )}
+          ) : activeFormPage === "reviews" ? (
+            <div className="w-full h-full flex flex-col items-center justify-start gap-4 overflow-y-auto">
+              <div className="w-full">
+                <button
+                  onClick={addReview}
+                  type="button"
+                  title="Add Questionnaire"
+                  className="p-2 rounded-md bg-neutral-100"
+                >
+                  <IoAdd />
+                </button>
+              </div>
+
+              <div className="w-full h-full flex flex-col items-center justify-start gap-4 ">
+                {mappedReviews}
+              </div>
+            </div>
+          ) : null}
 
           <button className="t:col-span-2 w-full font-bold text-center rounded-md p-2 bg-accent-yellow text-accent-blue mt-2">
             Update

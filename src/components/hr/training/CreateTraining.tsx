@@ -143,7 +143,10 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
     const { value } = e.target;
 
     setReviews((prev) => {
-      prev[index] = { ...prev[index], [field]: value };
+      prev[index] = {
+        ...prev[index],
+        [field]: field === "answer" ? parseInt(value) : value,
+      };
 
       return [...prev];
     });
@@ -322,7 +325,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
   });
 
   const mappedReviews = reviews.map((review, index) => {
-    const mappedChoices = ["1", "2", "3", "4"].map((choice, index2) => {
+    const mappedChoices = [1, 2, 3, 4].map((choice, index2) => {
       const currChoice =
         review[`choice_${choice}` as keyof TrainingReviewInterface] ?? "";
 
@@ -335,6 +338,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
             name={`question_${index}_answer`}
             onChange={(e) => handleReview(e, "answer", index)}
             value={choice}
+            isChecked={review.answer === choice}
           />
 
           <Input
