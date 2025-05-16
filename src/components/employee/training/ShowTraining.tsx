@@ -5,6 +5,7 @@ import {
   EmployeeTrainingInterface,
   TrainingContentInterface,
   TrainingInterface,
+  TrainingReviewInterface,
 } from "@/src/interface/TrainingInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
@@ -18,15 +19,20 @@ import useModalNav from "@/src/hooks/useModalNav";
 import Link from "next/link";
 import Image from "next/image";
 import { AiFillFilePdf } from "react-icons/ai";
+import Radio from "../../form/Radio";
 
 const ShowTraining: React.FC<ModalInterface> = (props) => {
   const [training, setTraining] = React.useState<
     TrainingInterface &
-      EmployeeTrainingInterface & { contents: TrainingContentInterface[] }
+      EmployeeTrainingInterface & {
+        contents: TrainingContentInterface[];
+        reviews: TrainingReviewInterface[];
+      }
   >({
     title: "",
     certificate: "",
     contents: [],
+    reviews: [],
     deadline: "",
     deadline_days: 0,
     description: "",
@@ -34,9 +40,25 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
   });
 
   const { data: session } = useSession({ required: true });
-  const { activeFormPage, handleActiveFormPage } = useModalNav("Information");
+  const { activeFormPage, handleActiveFormPage } = useModalNav("information");
   const user = session?.user;
   const url = process.env.URL;
+
+  const handleAnswer = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    const { value } = e.target;
+
+    setTraining((prev) => {
+      prev["reviews"][index] = {
+        ...prev["reviews"][index],
+        answer: parseInt(value),
+      };
+
+      return { ...prev };
+    });
+  };
 
   const getTraining = React.useCallback(async () => {
     try {
@@ -122,6 +144,46 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
     );
   });
 
+  const mappedReviews = training.reviews.map((review, index) => {
+    const mappedChoices = [1, 2, 3, 4].map((choice, index2) => {
+      const currChoice =
+        review[`choice_${choice}` as keyof TrainingReviewInterface];
+
+      return (
+        <div
+          key={index2}
+          className="w-full flex flex-row items-center justify-between gap-2 "
+        >
+          <Radio
+            name={`question_${index2}_answer`}
+            value={choice}
+            isChecked={review.answer === choice}
+            onChange={(e) => handleAnswer(e, index)}
+          />
+          <div className="w-full p-2 bg-white rounded-md border-2">
+            {currChoice}
+          </div>
+        </div>
+      );
+    });
+
+    return (
+      <div
+        key={index}
+        className="w-full flex flex-col items-center justify-center gap-2"
+      >
+        <p className="w-full border-b-accent-blue border-b-2 py-2">
+          {index + 1}.
+        </p>
+        <TextBlock label="Question" value={review.question} />
+
+        <div className="w-full flex flex-col items-center justify-center gap-2">
+          {mappedChoices}
+        </div>
+      </div>
+    );
+  });
+
   React.useEffect(() => {
     getTraining();
   }, [getTraining]);
@@ -145,9 +207,9 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
           <ModalNav
             activeFormPage={activeFormPage}
             handleActiveFormPage={handleActiveFormPage}
-            pages={["Information", "Contents"]}
+            pages={["information", "contents", "reviews"]}
           />
-          {activeFormPage === "Information" ? (
+          {activeFormPage === "information" ? (
             <div className="w-full flex flex-col items-center justify-start gap-4 h-full">
               <TextField label="Title" value={training.title} />
               <TextField
@@ -157,11 +219,19 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
               <TextField label="Status" value={training.status} />
               <TextBlock label="Description" value={training.description} />
             </div>
-          ) : (
+          ) : activeFormPage === "contents" ? (
             <div className="w-full h-full flex flex-col items-center justify-start gap-4 overflow-y-auto">
               {mappedContents}
             </div>
-          )}
+          ) : activeFormPage === "reviews" ? (
+            <form className="w-full h-full flex flex-col items-center justify-between gap-4 overflow-y-auto">
+              {mappedReviews}
+
+              <button className="w-full p-2 rounded-md bg-accent-blue text-neutral-100 font-bold">
+                Submit
+              </button>
+            </form>
+          ) : null}
         </div>
       </div>
     </div>

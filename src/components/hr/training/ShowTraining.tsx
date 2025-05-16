@@ -43,18 +43,19 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
-        const {
-          data: { training },
-        } = await axios.get(`${url}/hr/training/${props.id}`, {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-            "X-CSRF-TOKEN": token,
-          },
-          withCredentials: true,
-        });
+        const { data: responseData } = await axios.get(
+          `${url}/hr/training/${props.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              "X-CSRF-TOKEN": token,
+            },
+            withCredentials: true,
+          }
+        );
 
-        if (training) {
-          setTraining(training);
+        if (responseData.training) {
+          setTraining(responseData.training);
         }
       }
     } catch (error) {
