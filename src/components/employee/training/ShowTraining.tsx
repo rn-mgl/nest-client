@@ -56,7 +56,7 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
     setTraining((prev) => {
       prev["reviews"][index] = {
         ...prev["reviews"][index],
-        answer: parseInt(value),
+        employee_answer: parseInt(value),
       };
 
       return { ...prev };
@@ -179,8 +179,6 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
     const alreadyAnswered =
       review.employee_training_review_response_id !== null;
 
-    const isCorrect = review.answer === review.employee_answer;
-
     const mappedChoices = [1, 2, 3, 4].map((choice, index2) => {
       const currChoice =
         review[`choice_${choice}` as keyof TrainingReviewInterface];
@@ -194,7 +192,9 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
             <div className="p-1 rounded-md bg-white border-2">
               <div
                 className={`p-4 rounded-sm ${
-                  review.answer === choice ? "bg-accent-green" : "bg-white"
+                  review.employee_answer === choice
+                    ? "bg-accent-green"
+                    : "bg-white"
                 }`}
               ></div>
             </div>
@@ -202,7 +202,7 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
             <Radio
               name={`question_${index}_answer`}
               value={choice}
-              isChecked={review.answer === choice}
+              isChecked={review.employee_answer === choice}
               onChange={(e) => handleAnswer(e, index)}
             />
           )}
@@ -222,7 +222,7 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
         <div className="w-full border-b-accent-blue border-b-2 py-2 flex flex-row items-center justify-start gap-2">
           <p>
             {alreadyAnswered ? (
-              isCorrect ? (
+              review.is_correct ? (
                 <IoCheckmarkCircle className="text-accent-green" />
               ) : (
                 <IoCloseCircle className="text-red-600" />
@@ -284,12 +284,20 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
           ) : activeFormPage === "reviews" ? (
             <form
               onSubmit={(e) => submitReview(e)}
-              className="w-full h-full flex flex-col items-center justify-between gap-4 overflow-y-auto"
+              className="w-full h-full flex flex-col items-start justify-start gap-2 overflow-y-auto"
             >
+              {training.score !== null ? (
+                <div className="p-2 rounded-md bg-accent-purple font-bold text-white text-sm">
+                  Score:{" "}
+                  <span className="text-accent-yellow">{training.score}</span> /{" "}
+                  {training.reviews.length}
+                </div>
+              ) : null}
+
               {mappedReviews}
 
               {training.score === null ? (
-                <button className="w-full p-2 rounded-md bg-accent-blue text-neutral-100 font-bold">
+                <button className="w-full p-2 rounded-md bg-accent-purple text-neutral-100 font-bold mt-auto">
                   Submit
                 </button>
               ) : null}

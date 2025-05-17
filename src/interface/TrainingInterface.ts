@@ -25,7 +25,7 @@ export interface TrainingReviewInterface {
   training_review_id?: number;
   training_id?: number;
   question: string;
-  answer: number;
+  answer?: number;
   choice_1: string;
   choice_2: string;
   choice_3: string;
@@ -35,4 +35,5 @@ export interface TrainingReviewInterface {
 export interface EmployeeTrainingReviewResponseInterface {
   employee_training_review_response_id?: number;
   employee_answer: number;
+  is_correct: boolean;
 }
