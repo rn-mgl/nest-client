@@ -85,6 +85,34 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
     }
   }, [url, user?.token, props.id]);
 
+  const submitReview = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+      const { token } = await getCSRFToken();
+
+      if (token && user?.token) {
+        const { data: responseData } = await axios.post(
+          `${url}/employee/employee_training_review_response`,
+          { reviews: training.reviews, training_id: training.training_id },
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              "X-CSRF-TOKEN": token,
+            },
+            withCredentials: true,
+          }
+        );
+
+        if (responseData.success) {
+          console.log(responseData);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const mappedContents = training.contents.map((content, index) => {
     const currentContent =
       content.content && typeof content.content === "string"
@@ -224,7 +252,10 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
               {mappedContents}
             </div>
           ) : activeFormPage === "reviews" ? (
-            <form className="w-full h-full flex flex-col items-center justify-between gap-4 overflow-y-auto">
+            <form
+              onSubmit={(e) => submitReview(e)}
+              className="w-full h-full flex flex-col items-center justify-between gap-4 overflow-y-auto"
+            >
               {mappedReviews}
 
               <button className="w-full p-2 rounded-md bg-accent-blue text-neutral-100 font-bold">
