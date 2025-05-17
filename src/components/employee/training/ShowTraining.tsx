@@ -1,8 +1,10 @@
 "use client";
 
+import useModalNav from "@/src/hooks/useModalNav";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
   EmployeeTrainingInterface,
+  EmployeeTrainingReviewResponseInterface,
   TrainingContentInterface,
   TrainingInterface,
   TrainingReviewInterface,
@@ -10,23 +12,23 @@ import {
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import React from "react";
-import { IoClose } from "react-icons/io5";
-import TextField from "../../global/field/TextField";
-import TextBlock from "../../global/field/TextBlock";
-import ModalNav from "../../global/ModalNav";
-import useModalNav from "@/src/hooks/useModalNav";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
+import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
+import { IoCheckmarkCircle, IoClose, IoCloseCircle } from "react-icons/io5";
 import Radio from "../../form/Radio";
+import TextBlock from "../../global/field/TextBlock";
+import TextField from "../../global/field/TextField";
+import ModalNav from "../../global/ModalNav";
 
 const ShowTraining: React.FC<ModalInterface> = (props) => {
   const [training, setTraining] = React.useState<
     TrainingInterface &
       EmployeeTrainingInterface & {
         contents: TrainingContentInterface[];
-        reviews: TrainingReviewInterface[];
+        reviews: (TrainingReviewInterface &
+          EmployeeTrainingReviewResponseInterface)[];
       }
   >({
     title: "",
@@ -37,6 +39,7 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
     deadline_days: 0,
     description: "",
     status: "",
+    score: null,
   });
 
   const { data: session } = useSession({ required: true });
@@ -105,7 +108,7 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
         );
 
         if (responseData.success) {
-          console.log(responseData);
+          await getTraining();
         }
       }
     } catch (error) {
@@ -173,6 +176,11 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
   });
 
   const mappedReviews = training.reviews.map((review, index) => {
+    const alreadyAnswered =
+      review.employee_training_review_response_id !== null;
+
+    const isCorrect = review.answer === review.employee_answer;
+
     const mappedChoices = [1, 2, 3, 4].map((choice, index2) => {
       const currChoice =
         review[`choice_${choice}` as keyof TrainingReviewInterface];
@@ -182,12 +190,23 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
           key={index2}
           className="w-full flex flex-row items-center justify-between gap-2 "
         >
-          <Radio
-            name={`question_${index2}_answer`}
-            value={choice}
-            isChecked={review.answer === choice}
-            onChange={(e) => handleAnswer(e, index)}
-          />
+          {alreadyAnswered ? (
+            <div className="p-1 rounded-md bg-white border-2">
+              <div
+                className={`p-4 rounded-sm ${
+                  review.answer === choice ? "bg-accent-green" : "bg-white"
+                }`}
+              ></div>
+            </div>
+          ) : (
+            <Radio
+              name={`question_${index}_answer`}
+              value={choice}
+              isChecked={review.answer === choice}
+              onChange={(e) => handleAnswer(e, index)}
+            />
+          )}
+
           <div className="w-full p-2 bg-white rounded-md border-2">
             {currChoice}
           </div>
@@ -200,9 +219,20 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
         key={index}
         className="w-full flex flex-col items-center justify-center gap-2"
       >
-        <p className="w-full border-b-accent-blue border-b-2 py-2">
-          {index + 1}.
-        </p>
+        <div className="w-full border-b-accent-blue border-b-2 py-2 flex flex-row items-center justify-start gap-2">
+          <p>
+            {alreadyAnswered ? (
+              isCorrect ? (
+                <IoCheckmarkCircle className="text-accent-green" />
+              ) : (
+                <IoCloseCircle className="text-red-600" />
+              )
+            ) : (
+              ""
+            )}
+          </p>
+          <p>{index + 1}.</p>
+        </div>
         <TextBlock label="Question" value={review.question} />
 
         <div className="w-full flex flex-col items-center justify-center gap-2">
@@ -258,9 +288,11 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
             >
               {mappedReviews}
 
-              <button className="w-full p-2 rounded-md bg-accent-blue text-neutral-100 font-bold">
-                Submit
-              </button>
+              {training.score === null ? (
+                <button className="w-full p-2 rounded-md bg-accent-blue text-neutral-100 font-bold">
+                  Submit
+                </button>
+              ) : null}
             </form>
           ) : null}
         </div>
