@@ -60,7 +60,7 @@ const AdminLogin = () => {
           });
 
           if (data?.ok) {
-            router.push(`/nest/controller`);
+            router.push(`/nest/admin`);
           }
         } else {
           router.push("/auth/sending?type=verification");

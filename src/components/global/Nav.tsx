@@ -15,6 +15,7 @@ const Nav: React.FC<SideNavInterface & { children: React.ReactNode }> = (
   props
 ) => {
   const [sideNavVisible, setSideNavVisible] = React.useState(false);
+  const [activeProfile, setActiveProfile] = React.useState(false);
   const path = usePathname();
   const url = process.env.URL;
   const { data } = useSession({ required: true });
@@ -90,6 +91,10 @@ const Nav: React.FC<SideNavInterface & { children: React.ReactNode }> = (
     );
   });
 
+  React.useEffect(() => {
+    setActiveProfile(path === `/nest/${user?.role}/profile`);
+  }, [path, user?.role]);
+
   return (
     <div className="w-full h-full flex flex-row items-start justify-center">
       {/* side nav */}
@@ -164,7 +169,15 @@ const Nav: React.FC<SideNavInterface & { children: React.ReactNode }> = (
             <IoMenu className="text-lg" />
           </button>
 
-          <div className="w-8 h-8 min-w-8 min-h-8 bg-accent-purple rounded-full ml-auto"></div>
+          <Link
+            href={`/nest/${user?.role}/profile`}
+            className={`ml-auto rounded-full transition-all ${
+              activeProfile &&
+              "outline-3 -outline-offset-2 outline-accent-yellow"
+            }`}
+          >
+            <div className="w-8 h-8 min-w-8 min-h-8 bg-accent-purple rounded-full"></div>
+          </Link>
         </div>
 
         {/* main content */}

@@ -24,7 +24,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <div className="w-full h-screen flex flex-col items-center justify-start">
-      <Nav home="/nest/controller" navLinks={NAV_LINKS}>
+      <Nav home="/nest/admin" navLinks={NAV_LINKS}>
         {children}
       </Nav>
     </div>

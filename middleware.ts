@@ -12,7 +12,7 @@ export default withAuth(
     const role = req.nextauth.token.user.role;
     const pathname = req.nextUrl.pathname;
 
-    if (pathname.includes("/nest/controller") && role !== "admin") {
+    if (pathname.includes("/nest/admin") && role !== "admin") {
       return response;
     } else if (pathname.includes("/nest/employee") && role !== "employee") {
       return response;

@@ -101,7 +101,7 @@ const AdminHR = () => {
 
       if (token) {
         const { data: verified } = await axios.patch(
-          `${url}/admin/hr/update/${id}`,
+          `${url}/admin/hr/${id}`,
           { type: "verify" },
           {
             headers: {
@@ -127,7 +127,7 @@ const AdminHR = () => {
 
       if (token) {
         const { data: deactivated } = await axios.patch(
-          `${url}/admin/hr/update/${id}`,
+          `${url}/admin/hr/${id}`,
           { type: "deactivate" },
           {
             headers: {
