@@ -9,6 +9,7 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose, IoImage, IoMail, IoPerson, IoTrash } from "react-icons/io5";
 import Input from "../../form/Input";
+import Image from "next/image";
 
 const EditAdminProfile: React.FC<ModalInterface> = (props) => {
   const [profile, setProfile] = React.useState<
@@ -100,14 +101,28 @@ const EditAdminProfile: React.FC<ModalInterface> = (props) => {
     try {
       const { token } = await getCSRFToken();
 
+      const formData = new FormData();
+      formData.append("first_name", profile.first_name);
+      formData.append("last_name", profile.last_name);
+      formData.append(
+        "image",
+        typeof profile.image === "object" && profile.image?.rawFile
+          ? profile.image.rawFile
+          : typeof profile.image === "string"
+          ? profile.image
+          : ""
+      );
+      formData.append("_method", "PATCH");
+
       if (token && user?.token) {
-        const { data: responseData } = await axios.patch(
+        const { data: responseData } = await axios.post(
           `${url}/admin/profile/${currentUser}`,
-          { ...profile },
+          formData,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
               "X-CSRF-TOKEN": token,
+              "Content-Type": "multipart/form-data",
             },
             withCredentials: true,
           }
@@ -150,17 +165,25 @@ const EditAdminProfile: React.FC<ModalInterface> = (props) => {
           className="w-full p-4 flex flex-col items-center justify-start gap-4"
         >
           <div className="w-full flex flex-col items-center justify-start gap-4">
-            <div
-              style={{
-                backgroundImage:
-                  typeof profile.image === "object" && profile.image?.fileURL
-                    ? `url(${profile.image?.fileURL})`
-                    : typeof profile.image === "string"
-                    ? `url(${profile.image})`
-                    : "",
-              }}
-              className="w-40 aspect-square bg-accent-blue border-8 border-accent-yellow rounded-full bg-center bg-cover"
-            />
+            <div className="w-40 aspect-square bg-accent-blue border-8 border-accent-yellow rounded-full bg-center bg-cover overflow-hidden flex flex-col items-center justify-center relative">
+              {typeof profile.image === "object" && profile.image?.fileURL ? (
+                <Image
+                  src={profile.image.fileURL}
+                  width={300}
+                  height={300}
+                  alt="profile"
+                  className="absolute w-full"
+                />
+              ) : typeof profile.image === "string" ? (
+                <Image
+                  src={profile.image}
+                  width={300}
+                  height={300}
+                  alt="profile"
+                  className="absolute w-full"
+                />
+              ) : null}
+            </div>
 
             <div className="w-full flex flex-row items-center justify-between">
               <label className="text-accent-blue" htmlFor="image">

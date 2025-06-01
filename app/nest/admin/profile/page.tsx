@@ -6,6 +6,7 @@ import { UserInterface } from "@/src/interface/UserInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 import React from "react";
 import { IoMail, IoPencilSharp } from "react-icons/io5";
 
@@ -18,7 +19,7 @@ const AdminProfile = () => {
     last_name: "",
     email: "",
     email_verified_at: "",
-    image: "",
+    image: null,
     password: "",
     title: "",
     department: "",
@@ -79,6 +80,18 @@ const AdminProfile = () => {
         {/* profile */}
         <div className="w-full -translate-y-16 flex flex-col items-center justify-center gap-4 t:-translate-y-20">
           <div className="rounded-full w-24 h-24 bg-accent-purple border-4 border-white relative flex flex-col items-center justify-center">
+            {typeof profile.image === "string" ? (
+              <div className="w-full h-full rounded-full flex flex-col items-center justify-center overflow-hidden relative">
+                <Image
+                  src={profile.image}
+                  width={200}
+                  height={200}
+                  className="absolute aspect-square"
+                  alt="profile"
+                />
+              </div>
+            ) : null}
+
             <button
               className="absolute bottom-0 right-0 p-1 rounded-full bg-accent-yellow"
               onClick={handleCanEditProfile}
