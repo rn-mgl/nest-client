@@ -1,6 +1,6 @@
 "use client";
 
-import EditAdminProfile from "@/src/components/controller/profile/EditProfile";
+import EditAdminProfile from "@/src/components/admin/profile/EditProfile";
 import { ProfileInterface } from "@/src/interface/ProfileInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import { getCSRFToken } from "@/src/utils/token";

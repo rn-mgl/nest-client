@@ -7,7 +7,7 @@ import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
-import { IoClose, IoMail, IoPerson } from "react-icons/io5";
+import { IoClose, IoImage, IoMail, IoPerson, IoTrash } from "react-icons/io5";
 import Input from "../../form/Input";
 
 const EditAdminProfile: React.FC<ModalInterface> = (props) => {
@@ -30,14 +30,42 @@ const EditAdminProfile: React.FC<ModalInterface> = (props) => {
   const { data: session } = useSession({ required: true });
   const user = session?.user;
   const currentUser = user?.current;
+  const imageRef = React.useRef<HTMLInputElement>(null);
 
   const handleProfile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+    const { name, value, files } = e.target;
+
+    setProfile((prev) => {
+      if (files && files.length > 0) {
+        const file = files[0];
+
+        const url = URL.createObjectURL(file);
+
+        const imageSet = { rawFile: file, fileURL: url };
+
+        return {
+          ...prev,
+          [name]: imageSet,
+        };
+      } else {
+        return {
+          ...prev,
+          [name]: value,
+        };
+      }
+    });
+  };
+
+  const handleRemoveImage = () => {
+    if (imageRef.current) {
+      imageRef.current.files = null;
+      imageRef.current.value = "";
+    }
 
     setProfile((prev) => {
       return {
         ...prev,
-        [name]: value,
+        image: null,
       };
     });
   };
@@ -121,6 +149,48 @@ const EditAdminProfile: React.FC<ModalInterface> = (props) => {
           onSubmit={submitUpdateProfile}
           className="w-full p-4 flex flex-col items-center justify-start gap-4"
         >
+          <div className="w-full flex flex-col items-center justify-start gap-4">
+            <div
+              style={{
+                backgroundImage:
+                  typeof profile.image === "object" && profile.image?.fileURL
+                    ? `url(${profile.image?.fileURL})`
+                    : typeof profile.image === "string"
+                    ? `url(${profile.image})`
+                    : "",
+              }}
+              className="w-40 aspect-square bg-accent-blue border-8 border-accent-yellow rounded-full bg-center bg-cover"
+            />
+
+            <div className="w-full flex flex-row items-center justify-between">
+              <label className="text-accent-blue" htmlFor="image">
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  name="image"
+                  id="image"
+                  onChange={(e) => handleProfile(e)}
+                  ref={imageRef}
+                />
+                <p>
+                  <IoImage />
+                </p>
+              </label>
+
+              {typeof profile.image === "object" ||
+              typeof profile.image === "string" ? (
+                <button
+                  onClick={handleRemoveImage}
+                  type="button"
+                  className="text-red-600"
+                >
+                  <IoTrash />
+                </button>
+              ) : null}
+            </div>
+          </div>
+
           <Input
             id="first_name"
             onChange={handleProfile}

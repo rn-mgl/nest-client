@@ -4,6 +4,6 @@ export interface UserInterface {
   last_name: string;
   email: string;
   email_verified_at: string | null;
-  image?: string | null;
+  image?: { rawFile: File; fileURL: string } | string | null;
   password?: string;
 }
