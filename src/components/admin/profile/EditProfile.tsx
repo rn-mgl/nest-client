@@ -236,17 +236,6 @@ const EditAdminProfile: React.FC<ModalInterface> = (props) => {
             label={true}
           />
 
-          <Input
-            id="email"
-            onChange={handleProfile}
-            placeholder="Email"
-            required={true}
-            type="email"
-            value={profile.email}
-            icon={<IoMail />}
-            label={true}
-          />
-
           <button className="mt-2 p-2 rounded-md bg-accent-yellow text-accent-blue font-bold w-full">
             Update
           </button>
