@@ -8,7 +8,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import React from "react";
-import { IoMail, IoPencilSharp } from "react-icons/io5";
+import { IoMail, IoPencil } from "react-icons/io5";
 
 const AdminProfile = () => {
   const [profile, setProfile] = React.useState<
@@ -76,36 +76,37 @@ const AdminProfile = () => {
       ) : null}
       <div className="w-full h-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2 t:p-4 gap-4 t:gap-8">
         {/* banner */}
-        <div className="w-full rounded-md aspect-[3/1] t:aspect-[4/1] l-l:aspect-[6/1] bg-gradient-to-br from-accent-green to-accent-blue"></div>
+        <div className="w-full rounded-t-md aspect-[3/1] t:aspect-[4/1] l-s:aspect-[5/1] l-l:aspect-[6/1] bg-accent-blue flex items-start justify-end">
+          <button onClick={handleCanEditProfile} className="p-2 text-white">
+            <IoPencil />
+          </button>
+        </div>
         {/* profile */}
-        <div className="w-full -translate-y-16 flex flex-col items-center justify-center gap-4 t:-translate-y-20">
-          <div className="rounded-full w-24 h-24 bg-accent-purple border-4 border-white relative flex flex-col items-center justify-center">
-            {typeof profile.image === "string" ? (
+        <div className="w-full -translate-y-16 flex flex-col items-center justify-center gap-4 t:-translate-y-26 l-l:-translate-y-34 p-2 rounded-b-md">
+          {/* image */}
+          <div
+            className="rounded-full w-24 h-24 bg-accent-purple border-8 border-white relative flex flex-col items-center justify-center t:w-34 t:h-34
+                      l-l:w-44 l-l:h-44"
+          >
+            {typeof profile.image === "string" && profile.image !== "" ? (
               <div className="w-full h-full rounded-full flex flex-col items-center justify-center overflow-hidden relative">
                 <Image
                   src={profile.image}
                   width={200}
                   height={200}
-                  className="absolute aspect-square"
+                  className="absolute w-full"
                   alt="profile"
                 />
               </div>
             ) : null}
-
-            <button
-              className="absolute bottom-0 right-0 p-1 rounded-full bg-accent-yellow"
-              onClick={handleCanEditProfile}
-              title="Edit"
-            >
-              <IoPencilSharp />
-            </button>
           </div>
 
-          <div className="d-flex flex-col items-center justify-start gap-2 text-center w-full">
-            <p className="font-bold text-xl truncate w-full">
+          {/* name and email */}
+          <div className="d-flex flex-col items-start justify-center gap-2 text-center">
+            <p className="font-bold text-lg truncate w-full">
               {profile.first_name} {profile.last_name}
             </p>
-            <div className="w-full flex items-center justify-center gap-1 text-sm text-neutral-500 font-light">
+            <div className="flex items-center justify-center gap-1 text-xs text-neutral-500 font-light">
               <span>
                 <IoMail />
               </span>

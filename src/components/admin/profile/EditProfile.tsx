@@ -174,7 +174,7 @@ const EditAdminProfile: React.FC<ModalInterface> = (props) => {
                   alt="profile"
                   className="absolute w-full"
                 />
-              ) : typeof profile.image === "string" ? (
+              ) : typeof profile.image === "string" && profile.image !== "" ? (
                 <Image
                   src={profile.image}
                   width={300}
