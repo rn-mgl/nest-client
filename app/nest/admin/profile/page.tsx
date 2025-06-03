@@ -8,7 +8,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import React from "react";
-import { IoMail, IoPencil } from "react-icons/io5";
+import { IoLockClosed, IoLockOpen, IoMail, IoPencil } from "react-icons/io5";
 
 const AdminProfile = () => {
   const [profile, setProfile] = React.useState<
@@ -26,6 +26,7 @@ const AdminProfile = () => {
     phone_number: "",
   });
   const [canEditProfile, setCanEditProfile] = React.useState(false);
+  const [canChangePassword, setCanChangePassword] = React.useState(false);
 
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
@@ -61,6 +62,10 @@ const AdminProfile = () => {
     setCanEditProfile((prev) => !prev);
   };
 
+  const handleCanChangePassword = () => {
+    setCanChangePassword((prev) => !prev);
+  };
+
   React.useEffect(() => {
     getProfile();
   }, [getProfile]);
@@ -74,49 +79,64 @@ const AdminProfile = () => {
           refetchIndex={getProfile}
         />
       ) : null}
-      <div className="w-full h-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2 t:p-4">
-        {/* banner */}
-        <div className="w-full rounded-t-md aspect-[3/1] t:aspect-[4/1] l-s:aspect-[5/1] l-l:aspect-[6/1] bg-accent-blue flex items-center justify-center relative">
-          {/* image */}
-          <div
-            className="rounded-full w-24 h-24 bg-accent-purple border-8 border-white flex flex-col items-center justify-center t:w-34 t:h-34
-                      l-l:w-44 l-l:h-44 absolute bottom-0 translate-y-12 t:translate-y-16 l-l:translate-y-20"
-          >
-            {typeof profile.image === "string" && profile.image !== "" ? (
-              <div className="w-full h-full rounded-full flex flex-col items-center justify-center overflow-hidden relative">
-                <Image
-                  src={profile.image}
-                  width={200}
-                  height={200}
-                  className="absolute w-full"
-                  alt="profile"
-                />
-              </div>
-            ) : null}
-          </div>
-        </div>
+      <div className="w-full h-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2 t:p-4 t:items-start">
+        {/* profile container */}
+        <div className="w-full grid grid-cols-1 t:grid-cols-2 gap-4 l-l:grid-cols-3">
+          <div className="w-full rounded-md bg-accent-blue flex flex-col items-center justify-center gap-2 p-4">
+            {/* image */}
+            <div
+              className="rounded-full w-24 h-24 bg-accent-purple border-8 border-white flex flex-col items-center justify-center
+                       bottom-0"
+            >
+              {typeof profile.image === "string" && profile.image !== "" ? (
+                <div className="w-full h-full rounded-full flex flex-col items-center justify-center overflow-hidden relative">
+                  <Image
+                    src={profile.image}
+                    width={200}
+                    height={200}
+                    className="absolute w-full"
+                    alt="profile"
+                  />
+                </div>
+              ) : null}
+            </div>
 
-        {/* profile */}
-        <div className="w-full flex flex-col items-center justify-start aspect-[3/1] t:aspect-[4/1] l-s:aspect-[5/1] l-l:aspect-[6/1] py-2 t:py-4">
-          <button
-            onClick={handleCanEditProfile}
-            title="Edit Profile"
-            className="p-2 text-black ml-auto bg-white rounded-md"
-          >
-            <IoPencil />
-          </button>
-          {/* name and email */}
-          <div className="d-flex flex-col items-start justify-center gap-2 text-center my-auto">
-            <p className="font-extrabold text-lg truncate w-full t:text-2xl">
-              {profile.first_name} {profile.last_name}
-            </p>
-            <div className="flex items-center justify-center gap-1 text-xs text-neutral-500 font-light t:text-sm">
-              <span>
-                <IoMail />
-              </span>
-              <span>{profile.email}</span>
+            {/* profile */}
+            <div className="w-full flex flex-col items-center justify-start rounded-b-md text-white">
+              {/* name and email */}
+              <div className="d-flex flex-col items-start justify-center gap-2 text-center">
+                <p className="font-extrabold text-lg truncate w-full">
+                  {profile.first_name} {profile.last_name}
+                </p>
+                <div className="flex items-center justify-center gap-1 text-xs opacity-70 font-light t:text-sm">
+                  <span>
+                    <IoMail />
+                  </span>
+                  <span>{profile.email}</span>
+                </div>
+              </div>
+              <div className="w-full flex flex-row items-center justify-between">
+                <button
+                  onClick={handleCanEditProfile}
+                  title="Edit Profile"
+                  className="p-2 rounded-md bg-accent-blue"
+                >
+                  <IoPencil />
+                </button>
+
+                <button
+                  onClick={handleCanChangePassword}
+                  title="Edit Profile"
+                  className="p-2 rounded-md bg-accent-blue"
+                >
+                  {canChangePassword ? <IoLockOpen /> : <IoLockClosed />}
+                </button>
+              </div>
             </div>
           </div>
+
+          <div className="w-full bg-accent-yellow rounded-md"></div>
+          <div className="w-full bg-neutral-200 rounded-md"></div>
         </div>
       </div>
     </div>
