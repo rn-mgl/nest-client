@@ -74,19 +74,13 @@ const AdminProfile = () => {
           refetchIndex={getProfile}
         />
       ) : null}
-      <div className="w-full h-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2 t:p-4 gap-4 t:gap-8">
+      <div className="w-full h-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2 t:p-4">
         {/* banner */}
-        <div className="w-full rounded-t-md aspect-[3/1] t:aspect-[4/1] l-s:aspect-[5/1] l-l:aspect-[6/1] bg-accent-blue flex items-start justify-end">
-          <button onClick={handleCanEditProfile} className="p-2 text-white">
-            <IoPencil />
-          </button>
-        </div>
-        {/* profile */}
-        <div className="w-full -translate-y-16 flex flex-col items-center justify-center gap-4 t:-translate-y-26 l-l:-translate-y-34 p-2 rounded-b-md">
+        <div className="w-full rounded-t-md aspect-[3/1] t:aspect-[4/1] l-s:aspect-[5/1] l-l:aspect-[6/1] bg-accent-blue flex items-center justify-center relative">
           {/* image */}
           <div
-            className="rounded-full w-24 h-24 bg-accent-purple border-8 border-white relative flex flex-col items-center justify-center t:w-34 t:h-34
-                      l-l:w-44 l-l:h-44"
+            className="rounded-full w-24 h-24 bg-accent-purple border-8 border-white flex flex-col items-center justify-center t:w-34 t:h-34
+                      l-l:w-44 l-l:h-44 absolute bottom-0 translate-y-12 t:translate-y-16 l-l:translate-y-20"
           >
             {typeof profile.image === "string" && profile.image !== "" ? (
               <div className="w-full h-full rounded-full flex flex-col items-center justify-center overflow-hidden relative">
@@ -100,13 +94,23 @@ const AdminProfile = () => {
               </div>
             ) : null}
           </div>
+        </div>
 
+        {/* profile */}
+        <div className="w-full flex flex-col items-center justify-start aspect-[3/1] t:aspect-[4/1] l-s:aspect-[5/1] l-l:aspect-[6/1] py-2 t:py-4">
+          <button
+            onClick={handleCanEditProfile}
+            title="Edit Profile"
+            className="p-2 text-black ml-auto bg-white rounded-md"
+          >
+            <IoPencil />
+          </button>
           {/* name and email */}
-          <div className="d-flex flex-col items-start justify-center gap-2 text-center">
-            <p className="font-bold text-lg truncate w-full">
+          <div className="d-flex flex-col items-start justify-center gap-2 text-center my-auto">
+            <p className="font-extrabold text-lg truncate w-full t:text-2xl">
               {profile.first_name} {profile.last_name}
             </p>
-            <div className="flex items-center justify-center gap-1 text-xs text-neutral-500 font-light">
+            <div className="flex items-center justify-center gap-1 text-xs text-neutral-500 font-light t:text-sm">
               <span>
                 <IoMail />
               </span>
