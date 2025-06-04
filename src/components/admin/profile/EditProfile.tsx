@@ -11,21 +11,12 @@ import React from "react";
 import { IoClose, IoImage, IoPerson, IoTrash } from "react-icons/io5";
 import Input from "../../form/Input";
 
-const EditAdminProfile: React.FC<ModalInterface> = (props) => {
+const EditAdminProfile: React.FC<
+  ModalInterface & { profile: UserInterface & ProfileInterface }
+> = (props) => {
   const [profile, setProfile] = React.useState<
     UserInterface & ProfileInterface
-  >({
-    user_id: 0,
-    first_name: "",
-    last_name: "",
-    email: "",
-    email_verified_at: "",
-    image: "",
-    password: "",
-    title: "",
-    department: "",
-    phone_number: "",
-  });
+  >(props.profile);
 
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
@@ -71,31 +62,6 @@ const EditAdminProfile: React.FC<ModalInterface> = (props) => {
     });
   };
 
-  const getProfile = React.useCallback(async () => {
-    try {
-      const { token } = await getCSRFToken();
-
-      if (token && user?.token) {
-        const { data: responseData } = await axios.get(
-          `${url}/admin/profile/${currentUser}`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-              "X-CSRF-TOKEN": token,
-            },
-            withCredentials: true,
-          }
-        );
-
-        if (responseData.profile) {
-          setProfile(responseData.profile);
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [currentUser, user?.token, url]);
-
   const submitUpdateProfile = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -140,10 +106,6 @@ const EditAdminProfile: React.FC<ModalInterface> = (props) => {
       console.log(error);
     }
   };
-
-  React.useEffect(() => {
-    getProfile();
-  }, [getProfile]);
 
   return (
     <div

@@ -1,5 +1,6 @@
 "use client";
 
+import ChangePassword from "@/src/components/admin/profile/ChangePassword";
 import EditAdminProfile from "@/src/components/admin/profile/EditProfile";
 import { ProfileInterface } from "@/src/interface/ProfileInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
@@ -74,10 +75,14 @@ const AdminProfile = () => {
     <div className="w-full flex flex-col items-center justify-start h-full">
       {canEditProfile ? (
         <EditAdminProfile
+          profile={profile}
           toggleModal={handleCanEditProfile}
-          id={currentUser}
           refetchIndex={getProfile}
         />
+      ) : null}
+
+      {canChangePassword ? (
+        <ChangePassword toggleModal={handleCanChangePassword} />
       ) : null}
       <div className="w-full h-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2 t:p-4 t:items-start">
         {/* profile container */}
@@ -135,7 +140,7 @@ const AdminProfile = () => {
             </div>
           </div>
 
-          <div className="w-full bg-accent-yellow rounded-md"></div>
+          <div className="w-full bg-neutral-200 rounded-md"></div>
           <div className="w-full bg-neutral-200 rounded-md"></div>
         </div>
       </div>
