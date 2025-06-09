@@ -20,6 +20,10 @@ const Message = () => {
       title: "We are sending the verification link",
       body: "Please advise the recipient to check their email inbox and click on the link to complete the verification.",
     },
+    forgot: {
+      title: "We are sending your reset link",
+      body: "Please check your email inbox.",
+    },
     default: {
       title: "We are sending your request",
       body: "Please check your email inbox.",

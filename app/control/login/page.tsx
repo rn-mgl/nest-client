@@ -8,6 +8,7 @@ import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
 import { signIn } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { IoEye, IoEyeOff, IoMail } from "react-icons/io5";
@@ -93,7 +94,7 @@ const AdminLogin = () => {
 
             <form
               onSubmit={(e) => submitLogin(e)}
-              className="flex flex-col items-start justify-start w-full gap-4 "
+              className="flex flex-col items-center justify-center w-full gap-4 "
             >
               <Input
                 label={true}
@@ -128,6 +129,13 @@ const AdminLogin = () => {
                   )
                 }
               />
+
+              <Link
+                href="/control/forgot"
+                className="text-sm hover:underline underline-offset-2 text-accent-purple transition-all"
+              >
+                Forgot Password
+              </Link>
 
               <button className="w-full font-bold text-center rounded-md p-2 bg-neutral-900 text-neutral-50 mt-2">
                 Log In
