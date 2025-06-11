@@ -1,30 +1,22 @@
 "use client";
-
-import ChangePassword from "@/src/components/admin/profile/ChangePassword";
-import EditAdminProfile from "@/src/components/admin/profile/EditAdminProfile";
-import { ProfileInterface } from "@/src/interface/ProfileInterface";
+import ChangePassword from "@/src/components/hr/profile/ChangePassword";
+import EditHRProfile from "@/src/components/hr/profile/EditHRProfile";
 import { UserInterface } from "@/src/interface/UserInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import React from "react";
-import { IoLockClosed, IoLockOpen, IoMail, IoPencil } from "react-icons/io5";
+import { IoLockClosed, IoMail, IoPencil } from "react-icons/io5";
 
-const AdminProfile = () => {
-  const [profile, setProfile] = React.useState<
-    UserInterface & ProfileInterface
-  >({
-    user_id: 0,
-    first_name: "",
-    last_name: "",
+const Profile = () => {
+  const [profile, setProfile] = React.useState<UserInterface>({
     email: "",
     email_verified_at: "",
-    image: null,
-    password: "",
-    title: "",
-    department: "",
-    phone_number: "",
+    first_name: "",
+    last_name: "",
+    user_id: 0,
+    image: "",
   });
   const [canEditProfile, setCanEditProfile] = React.useState(false);
   const [canChangePassword, setCanChangePassword] = React.useState(false);
@@ -32,7 +24,7 @@ const AdminProfile = () => {
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
   const user = session?.user;
-  const currentUser = user?.current; // to avoid rerendering on tab switching
+  const currentUser = user?.current ?? 0;
 
   const getProfile = React.useCallback(async () => {
     try {
@@ -40,7 +32,7 @@ const AdminProfile = () => {
 
       if (token && user?.token) {
         const { data: responseData } = await axios.get(
-          `${url}/admin/profile/${currentUser}`,
+          `${url}/hr/profile/${currentUser}`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
@@ -73,39 +65,26 @@ const AdminProfile = () => {
 
   return (
     <div className="w-full flex flex-col items-center justify-start h-full">
-      {canEditProfile ? (
-        <EditAdminProfile
-          profile={profile}
-          toggleModal={handleCanEditProfile}
-          refetchIndex={getProfile}
-        />
-      ) : null}
-
-      {canChangePassword ? (
-        <ChangePassword toggleModal={handleCanChangePassword} />
-      ) : null}
-      <div className="w-full h-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2 t:p-4 t:items-start">
-        {/* profile container */}
-        <div className="w-full grid grid-cols-1 t:grid-cols-2 gap-4 l-l:grid-cols-3">
-          <div className="w-full rounded-md bg-accent-blue flex flex-col items-center justify-center gap-2 p-4">
+      {canEditProfile ? <EditHRProfile /> : null}
+      {canChangePassword ? <ChangePassword /> : null}
+      <div className="w-full min-h-full h-auto flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2 t:p-4 t:items-start">
+        <div className="w-full grid grid-cols-1 t:grid-cols-2 l-l:grid-cols-3 gap-4 items-start justify-start">
+          <div className="w-full rounded-md bg-accent-blue p-4 flex flex-col items-center justify-start gap-2">
             {/* image */}
-            <div className="rounded-full w-24 h-24 bg-accent-purple border-8 border-white flex flex-col items-center justify-center">
+            <div className="w-24 h-24 rounded-full bg-accent-purple border-8 border-white flex flex-col items-center justify-center relative">
               {typeof profile.image === "string" && profile.image !== "" ? (
-                <div className="w-full h-full rounded-full flex flex-col items-center justify-center overflow-hidden relative">
-                  <Image
-                    src={profile.image}
-                    width={200}
-                    height={200}
-                    className="absolute w-full"
-                    alt="profile"
-                  />
-                </div>
+                <Image
+                  src={profile.image}
+                  alt="profile"
+                  width={200}
+                  height={200}
+                  className="absolute w-full"
+                />
               ) : null}
             </div>
 
             {/* profile */}
             <div className="w-full flex flex-col items-center justify-start text-white">
-              {/* name and email */}
               <div className="flex flex-col items-start justify-center gap-2 text-center">
                 <p className="font-extrabold text-lg truncate w-full">
                   {profile.first_name} {profile.last_name}
@@ -121,29 +100,29 @@ const AdminProfile = () => {
               <div className="w-full flex flex-row items-center justify-between">
                 <button
                   onClick={handleCanEditProfile}
-                  title="Edit Profile"
                   className="p-2 rounded-md bg-accent-blue"
+                  title="Edit Profile"
                 >
                   <IoPencil />
                 </button>
 
                 <button
                   onClick={handleCanChangePassword}
-                  title="Change Password"
                   className="p-2 rounded-md bg-accent-blue"
+                  title="Change Password"
                 >
-                  {canChangePassword ? <IoLockOpen /> : <IoLockClosed />}
+                  <IoLockClosed />
                 </button>
               </div>
             </div>
           </div>
 
-          <div className="w-full bg-neutral-200 rounded-md"></div>
-          <div className="w-full bg-neutral-200 rounded-md"></div>
+          <div className="w-full p-2 rounded-md bg-accent-green h-full"></div>
+          <div className="w-full p-2 rounded-md bg-accent-yellow h-full"></div>
         </div>
       </div>
     </div>
   );
 };
 
-export default AdminProfile;
+export default Profile;
