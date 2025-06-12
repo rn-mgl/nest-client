@@ -168,7 +168,7 @@ const EditAdminProfile: React.FC<
                 <button
                   onClick={handleRemoveImage}
                   type="button"
-                  className="text-red-600"
+                  className="text-red-600 cursor-pointer"
                 >
                   <IoTrash />
                 </button>

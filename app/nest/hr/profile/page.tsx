@@ -1,6 +1,7 @@
 "use client";
 import ChangePassword from "@/src/components/hr/profile/ChangePassword";
 import EditHRProfile from "@/src/components/hr/profile/EditHRProfile";
+import { ProfileInterface } from "@/src/interface/ProfileInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
@@ -10,13 +11,19 @@ import React from "react";
 import { IoLockClosed, IoMail, IoPencil } from "react-icons/io5";
 
 const Profile = () => {
-  const [profile, setProfile] = React.useState<UserInterface>({
+  const [profile, setProfile] = React.useState<
+    UserInterface & ProfileInterface
+  >({
     email: "",
     email_verified_at: "",
     first_name: "",
     last_name: "",
     user_id: 0,
     image: "",
+    department: "",
+    phone_number: "",
+    title: "",
+    password: "",
   });
   const [canEditProfile, setCanEditProfile] = React.useState(false);
   const [canChangePassword, setCanChangePassword] = React.useState(false);
@@ -65,13 +72,19 @@ const Profile = () => {
 
   return (
     <div className="w-full flex flex-col items-center justify-start h-full">
-      {canEditProfile ? <EditHRProfile /> : null}
+      {canEditProfile ? (
+        <EditHRProfile
+          toggleModal={handleCanEditProfile}
+          refetchIndex={getProfile}
+          profile={profile}
+        />
+      ) : null}
       {canChangePassword ? <ChangePassword /> : null}
       <div className="w-full min-h-full h-auto flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2 t:p-4 t:items-start">
         <div className="w-full grid grid-cols-1 t:grid-cols-2 l-l:grid-cols-3 gap-4 items-start justify-start">
           <div className="w-full rounded-md bg-accent-blue p-4 flex flex-col items-center justify-start gap-2">
             {/* image */}
-            <div className="w-24 h-24 rounded-full bg-accent-purple border-8 border-white flex flex-col items-center justify-center relative">
+            <div className="w-24 h-24 rounded-full bg-accent-purple border-8 border-white flex flex-col items-center justify-center relative overflow-hidden">
               {typeof profile.image === "string" && profile.image !== "" ? (
                 <Image
                   src={profile.image}
