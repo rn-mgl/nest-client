@@ -8,6 +8,7 @@ import Input from "../../form/Input";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import useShowPassword from "@/src/hooks/useShowPassword";
 
 const ChangePassword: React.FC<ModalInterface> = (props) => {
   const [password, setPassword] = React.useState({
@@ -15,11 +16,8 @@ const ChangePassword: React.FC<ModalInterface> = (props) => {
     new_password: "",
     new_password_confirmation: "",
   });
-  const [showPassword, setShowPassword] = React.useState({
-    current_password: false,
-    new_password: false,
-    new_password_confirmation: false,
-  });
+
+  const { showPassword, handleShowPassword } = useShowPassword();
 
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
@@ -33,15 +31,6 @@ const ChangePassword: React.FC<ModalInterface> = (props) => {
       return {
         ...prev,
         [name]: value,
-      };
-    });
-  };
-
-  const handleCanShowPassword = (name: string) => {
-    setShowPassword((prev) => {
-      return {
-        ...prev,
-        [name]: !prev[name as keyof object],
       };
     });
   };
@@ -104,12 +93,12 @@ const ChangePassword: React.FC<ModalInterface> = (props) => {
               showPassword.current_password ? (
                 <IoEyeOff
                   className="cursor-pointer"
-                  onClick={() => handleCanShowPassword("current_password")}
+                  onClick={() => handleShowPassword("current_password")}
                 />
               ) : (
                 <IoEye
                   className="cursor-pointer"
-                  onClick={() => handleCanShowPassword("current_password")}
+                  onClick={() => handleShowPassword("current_password")}
                 />
               )
             }
@@ -127,12 +116,12 @@ const ChangePassword: React.FC<ModalInterface> = (props) => {
               showPassword.new_password ? (
                 <IoEyeOff
                   className="cursor-pointer"
-                  onClick={() => handleCanShowPassword("new_password")}
+                  onClick={() => handleShowPassword("new_password")}
                 />
               ) : (
                 <IoEye
                   className="cursor-pointer"
-                  onClick={() => handleCanShowPassword("new_password")}
+                  onClick={() => handleShowPassword("new_password")}
                 />
               )
             }
@@ -150,14 +139,14 @@ const ChangePassword: React.FC<ModalInterface> = (props) => {
               showPassword.new_password_confirmation ? (
                 <IoEyeOff
                   onClick={() =>
-                    handleCanShowPassword("new_password_confirmation")
+                    handleShowPassword("new_password_confirmation")
                   }
                   className="cursor-pointer"
                 />
               ) : (
                 <IoEye
                   onClick={() =>
-                    handleCanShowPassword("new_password_confirmation")
+                    handleShowPassword("new_password_confirmation")
                   }
                   className="cursor-pointer"
                 />

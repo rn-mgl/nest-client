@@ -6,6 +6,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { getCSRFToken } from "@/src/utils/token";
 import { useRouter } from "next/navigation";
+import useShowPassword from "@/src/hooks/useShowPassword";
 
 const ChangePassword: React.FC<ModalInterface> = (props) => {
   const [password, setPassword] = React.useState({
@@ -13,11 +14,8 @@ const ChangePassword: React.FC<ModalInterface> = (props) => {
     new_password: "",
     new_password_confirmation: "",
   });
-  const [showPassword, setShowPassword] = React.useState({
-    current_password: false,
-    new_password: false,
-    new_password_confirmation: false,
-  });
+
+  const { showPassword, handleShowPassword } = useShowPassword();
 
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
@@ -31,15 +29,6 @@ const ChangePassword: React.FC<ModalInterface> = (props) => {
       return {
         ...prev,
         [name]: value,
-      };
-    });
-  };
-
-  const handleShowPassword = (name: string) => {
-    setShowPassword((prev) => {
-      return {
-        ...prev,
-        [name]: !prev[name as keyof object],
       };
     });
   };

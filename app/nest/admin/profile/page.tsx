@@ -106,7 +106,7 @@ const AdminProfile = () => {
             {/* profile */}
             <div className="w-full flex flex-col items-center justify-start text-white">
               {/* name and email */}
-              <div className="flex flex-col items-start justify-center gap-2 text-center">
+              <div className="flex flex-col items-center justify-center gap-2 text-center">
                 <p className="font-extrabold text-lg truncate w-full">
                   {profile.first_name} {profile.last_name}
                 </p>

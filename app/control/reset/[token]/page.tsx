@@ -6,6 +6,7 @@ import { IoEye, IoEyeOff } from "react-icons/io5";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
+import useShowPassword from "@/src/hooks/useShowPassword";
 
 const Reset = () => {
   const [password, setPassword] = React.useState({
@@ -13,10 +14,7 @@ const Reset = () => {
     new_password_confirmation: "",
   });
 
-  const [showPassword, setShowPassword] = React.useState({
-    new_password: false,
-    new_password_confirmation: false,
-  });
+  const { showPassword, handleShowPassword } = useShowPassword();
 
   const url = process.env.URL;
   const params = useParams();
@@ -30,15 +28,6 @@ const Reset = () => {
       return {
         ...prev,
         [name]: value,
-      };
-    });
-  };
-
-  const handleShowPassword = (name: string) => {
-    setShowPassword((prev) => {
-      return {
-        ...prev,
-        [name]: !prev[name as keyof object],
       };
     });
   };

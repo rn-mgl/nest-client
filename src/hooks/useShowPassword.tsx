@@ -4,13 +4,16 @@ export default function useShowPassword() {
   const [showPassword, setShowPassword] = React.useState({
     password: false,
     password_confirmation: false,
+    current_password: false,
+    new_password: false,
+    new_password_confirmation: false,
   });
 
-  const handleShowPassword = (field: "password" | "password_confirmation") => {
+  const handleShowPassword = (name: string) => {
     setShowPassword((prev) => {
       return {
         ...prev,
-        [field]: !prev[field],
+        [name]: !prev[name as keyof object],
       };
     });
   };
