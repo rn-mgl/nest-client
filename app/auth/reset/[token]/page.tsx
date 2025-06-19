@@ -3,6 +3,9 @@
 import Input from "@/src/components/form/Input";
 import Logo from "@/src/components/global/Logo";
 import useShowPassword from "@/src/hooks/useShowPassword";
+import { getCSRFToken } from "@/src/utils/token";
+import axios from "axios";
+import { useParams, useRouter } from "next/navigation";
 import React from "react";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 
@@ -13,6 +16,11 @@ const Reset = () => {
   });
 
   const { showPassword, handleShowPassword } = useShowPassword();
+
+  const url = process.env.URL;
+  const params = useParams();
+  const resetToken = params?.token ?? "";
+  const router = useRouter();
 
   const handlePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -25,6 +33,28 @@ const Reset = () => {
     });
   };
 
+  const submitResetPassword = async (e: React.FormEvent<HTMLFormElement>) => {
+    try {
+      e.preventDefault();
+
+      const { token } = await getCSRFToken();
+
+      if (token) {
+        const { data: responseData } = await axios.patch(
+          `${url}/auth/reset-password`,
+          { ...password, reset_token: resetToken },
+          { headers: { "X-CSRF-TOKEN": token }, withCredentials: true }
+        );
+
+        if (responseData.success) {
+          router.push("/auth/login");
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="w-full flex flex-col items-center justify-start h-screen bg-neutral-100 t:bg-neutral-200 p-4 l-s:p-8">
       <div
@@ -34,7 +64,7 @@ const Reset = () => {
         <Logo url="/" type="dark" />
 
         <form
-          // onSubmit={(e) => submitResetPassword(e)}
+          onSubmit={(e) => submitResetPassword(e)}
           className="w-full h-full flex flex-col items-center justify-center gap-4 max-w-(--breakpoint-m-l) mx-auto"
         >
           <Input
