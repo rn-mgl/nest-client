@@ -1,14 +1,13 @@
 "use client";
 
+import useShowPassword from "@/src/hooks/useShowPassword";
 import { ModalInterface } from "@/src/interface/ModalInterface";
+import { getCSRFToken } from "@/src/utils/token";
+import axios from "axios";
 import { signOut, useSession } from "next-auth/react";
 import React from "react";
 import { IoClose, IoEye, IoEyeOff } from "react-icons/io5";
 import Input from "../../form/Input";
-import { getCSRFToken } from "@/src/utils/token";
-import axios from "axios";
-import { useRouter } from "next/navigation";
-import useShowPassword from "@/src/hooks/useShowPassword";
 
 const ChangePassword: React.FC<ModalInterface> = (props) => {
   const [password, setPassword] = React.useState({
@@ -22,7 +21,6 @@ const ChangePassword: React.FC<ModalInterface> = (props) => {
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
   const user = session?.user;
-  const router = useRouter();
 
   const handlePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -54,9 +52,7 @@ const ChangePassword: React.FC<ModalInterface> = (props) => {
         );
 
         if (responseData.success) {
-          await signOut({ redirect: false });
-
-          router.push("/auth/login");
+          await signOut({ callbackUrl: "/auth/login", redirect: true });
         }
       }
     } catch (error) {
