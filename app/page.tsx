@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <div className="w-full h-screen flex flex-col items-center justify-start relative">
+    <div className="w-full h-full flex flex-col items-center justify-start relative">
       <Nav />
       <Hero />
     </div>

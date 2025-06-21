@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <SessionProvider>
         <body
-          className={`${figtree.className} w-full h-full font-figtree antialiased text-neutral-900 primary-scrollbar`}
+          className={`${figtree.className} w-full min-h-screen h-screen overflow-y-auto font-figtree antialiased text-neutral-900 primary-scrollbar`}
         >
           {children}
         </body>
