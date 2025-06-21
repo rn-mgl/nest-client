@@ -4,7 +4,7 @@ import useShowPassword from "@/src/hooks/useShowPassword";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { IoClose, IoEye, IoEyeOff } from "react-icons/io5";
@@ -55,6 +55,8 @@ const ChangePassword: React.FC<ModalInterface> = (props) => {
         );
 
         if (responseData.success) {
+          await signOut({ redirect: false });
+
           router.push("/auth/login");
         }
       }

@@ -1,7 +1,7 @@
 "use client";
 
 import { ModalInterface } from "@/src/interface/ModalInterface";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import React from "react";
 import { IoClose, IoEye, IoEyeOff } from "react-icons/io5";
 import Input from "../../form/Input";
@@ -54,6 +54,8 @@ const ChangePassword: React.FC<ModalInterface> = (props) => {
         );
 
         if (responseData.success) {
+          await signOut({ redirect: false });
+
           router.push("/auth/login");
         }
       }

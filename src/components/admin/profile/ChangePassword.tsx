@@ -3,7 +3,7 @@ import React from "react";
 import { IoClose, IoEye, IoEyeOff } from "react-icons/io5";
 import Input from "../../form/Input";
 import axios from "axios";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { getCSRFToken } from "@/src/utils/token";
 import { useRouter } from "next/navigation";
 import useShowPassword from "@/src/hooks/useShowPassword";
@@ -52,6 +52,8 @@ const ChangePassword: React.FC<ModalInterface> = (props) => {
         );
 
         if (responseData.success) {
+          await signOut({ redirect: false });
+
           router.push("/control/login");
         }
       }
