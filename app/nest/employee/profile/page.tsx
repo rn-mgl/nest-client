@@ -73,7 +73,10 @@ const Profile = () => {
 
   return (
     <div className="w-full flex flex-col items-center justify-start h-full">
-      {canChangePassword ? <ChangePassword /> : null}
+      {canChangePassword ? (
+        <ChangePassword toggleModal={handleCanChangePassword} />
+      ) : null}
+
       {canEditProfile ? (
         <EditEmployeeProfile
           profile={profile}
