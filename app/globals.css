@@ -19,6 +19,7 @@
 
   --animate-fade: fade ease-in-out 150ms;
   --animate-float: float ease-in-out 2s infinite alternate;
+  --animate-slide: slide ease-in-out 2s infinite alternate;
 
   --padding-1_75: 0.4rem;
 
@@ -37,6 +38,15 @@
     }
     100% {
       transform: translateY(1rem);
+    }
+  }
+
+  @keyframes slide {
+    0% {
+      transform: translateX(-25%);
+    }
+    100% {
+      transform: translateX(25%);
     }
   }
 }

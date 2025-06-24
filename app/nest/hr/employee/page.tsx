@@ -1,11 +1,15 @@
 "use client";
 
 import Filter from "@/src/components/global/filter/Filter";
+import Loading from "@/src/components/global/Loading";
+import Toast from "@/src/components/global/Toast";
 import EmployeeCard from "@/src/components/hr/employee/EmployeeCard";
 import useCategory from "@/src/hooks/useCategory";
+import useIsLoading from "@/src/hooks/useIsLoading";
 
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
+import useToast from "@/src/hooks/useToast";
 import { UserInterface } from "@/src/interface/UserInterface";
 import {
   HR_EMPLOYEE_CATEGORY,
@@ -13,7 +17,7 @@ import {
   HR_EMPLOYEE_SORT,
 } from "@/src/utils/filters";
 import { getCSRFToken } from "@/src/utils/token";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 import { useSession } from "next-auth/react";
 import React from "react";
@@ -21,6 +25,10 @@ import React from "react";
 const HREmployee = () => {
   const [employees, setEmployees] = React.useState<Array<UserInterface>>();
   const [activeUserMenu, setActiveUserMenu] = React.useState(0);
+
+  const { isLoading, handleIsLoading } = useIsLoading(true);
+
+  const { toast, handleToast } = useToast();
 
   const {
     search,
@@ -58,10 +66,11 @@ const HREmployee = () => {
 
   const getAllEmployees = React.useCallback(async () => {
     try {
+      handleIsLoading(true);
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
-        const { data } = await axios.get(`${url}/hr/employee`, {
+        const { data: responseData } = await axios.get(`${url}/hr/employee`, {
           headers: {
             Authorization: `Bearer ${user?.token}`,
             "X-CSRF-TOKEN": token,
@@ -70,12 +79,30 @@ const HREmployee = () => {
           params: { ...search, ...sort, ...category },
         });
 
-        setEmployees(data.employees);
+        if (responseData.employees) {
+          setEmployees(responseData.employees);
+        }
+
+        handleIsLoading(false);
       }
     } catch (error) {
+      let message = "An error occurred when getting the employeed";
+
+      if (error instanceof AxiosError) {
+        message = error?.response?.data.message ?? error.message;
+      }
+
+      handleIsLoading(false);
+
+      handleToast({
+        message: message,
+        active: true,
+        type: "error",
+      });
+
       console.log(error);
     }
-  }, [url, user?.token, search, sort, category]);
+  }, [url, user?.token, search, sort, category, handleIsLoading, handleToast]);
 
   const mappedEmployees = employees?.map((employee, index) => {
     const activeMenu = activeUserMenu === employee.user_id;
@@ -94,8 +121,12 @@ const HREmployee = () => {
     getAllEmployees();
   }, [getAllEmployees]);
 
+  console.log(toast);
+
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
+      {isLoading ? <Loading /> : null}
+      {toast.active ? <Toast /> : null}
       <div
         className="w-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2
               t:items-start t:p-4 gap-4 t:gap-8"
