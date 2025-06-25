@@ -10,6 +10,11 @@
   --color-accent-blue: #0039c7;
   --color-accent-green: #6abaa3;
 
+  --color-light-yellow: #ddffcc;
+  --color-light-purple: #a6a3ff;
+  --color-light-blue: #b3c9ff;
+  --color-light-green: #b3ffe9;
+
   --breakpoint-m-s: 320px;
   --breakpoint-m-m: 375px;
   --breakpoint-m-l: 425px;
@@ -18,6 +23,7 @@
   --breakpoint-l-l: 1440px;
 
   --animate-fade: fade ease-in-out 150ms;
+  --animate-skeleton-fade: skeleton-fade ease-in-out 500ms infinite alternate;
   --animate-float: float ease-in-out 2s infinite alternate;
   --animate-slide: slide ease-in-out 2s infinite alternate;
 
@@ -29,6 +35,15 @@
     }
     100% {
       opacity: 1;
+    }
+  }
+
+  @keyframes skeleton-fade {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.5;
     }
   }
 
