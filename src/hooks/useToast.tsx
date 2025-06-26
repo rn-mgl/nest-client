@@ -1,28 +1,20 @@
 import React from "react";
+import { ToastInterface } from "../interface/ToastInterface";
 
 const useToast = () => {
-  const [toast, setToast] = React.useState<{
-    message: string;
-    type: "info" | "error" | "warning";
-    active: boolean;
-  }>({
-    message: "",
-    type: "info",
-    active: false,
-  });
+  const [toasts, setToasts] = React.useState<ToastInterface[]>([]);
 
-  const handleToast = React.useCallback(
-    (toastDetails: {
-      message: string;
-      type: "info" | "error" | "warning";
-      active: boolean;
-    }) => {
-      setToast(toastDetails);
-    },
-    []
-  );
+  const clearToast = (index: number) => {
+    setToasts((prev) => prev.filter((_, i) => i !== index));
+  };
 
-  return { toast, handleToast };
+  const addToast = React.useCallback((toastDetails: ToastInterface) => {
+    setToasts((prev) => {
+      return [...prev, toastDetails];
+    });
+  }, []);
+
+  return { toasts, addToast, clearToast };
 };
 
 export default useToast;

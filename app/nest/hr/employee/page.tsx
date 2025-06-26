@@ -28,7 +28,7 @@ const HREmployee = () => {
 
   const { isLoading, handleIsLoading } = useIsLoading(true);
 
-  const { toast, handleToast } = useToast();
+  const { toasts, addToast, clearToast } = useToast();
 
   const {
     search,
@@ -70,7 +70,7 @@ const HREmployee = () => {
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
-        const { data: responseData } = await axios.get(`${url}/hr/employee`, {
+        const { data: responseData } = await axios.get(`${url}/h/employee`, {
           headers: {
             Authorization: `Bearer ${user?.token}`,
             "X-CSRF-TOKEN": token,
@@ -86,7 +86,7 @@ const HREmployee = () => {
         handleIsLoading(false);
       }
     } catch (error) {
-      let message = "An error occurred when getting the employeed";
+      let message = "An error occurred when getting the employees.";
 
       if (error instanceof AxiosError) {
         message = error?.response?.data.message ?? error.message;
@@ -94,7 +94,7 @@ const HREmployee = () => {
 
       handleIsLoading(false);
 
-      handleToast({
+      addToast({
         message: message,
         active: true,
         type: "error",
@@ -102,7 +102,7 @@ const HREmployee = () => {
 
       console.log(error);
     }
-  }, [url, user?.token, search, sort, category, handleIsLoading, handleToast]);
+  }, [url, user?.token, search, sort, category, handleIsLoading, addToast]);
 
   const mappedEmployees = employees?.map((employee, index) => {
     const activeMenu = activeUserMenu === employee.user_id;
@@ -121,12 +121,13 @@ const HREmployee = () => {
     getAllEmployees();
   }, [getAllEmployees]);
 
-  console.log(toast);
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
-      {isLoading ? <Loading /> : null}
-      {toast.active ? <Toast /> : null}
+      {toasts.length ? <Toast toasts={toasts} clearToast={clearToast} /> : null}
       <div
         className="w-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2
               t:items-start t:p-4 gap-4 t:gap-8"
