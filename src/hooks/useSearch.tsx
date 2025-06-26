@@ -46,7 +46,17 @@ export default function useSearch(
 
   React.useEffect(() => {
     const debounce = setTimeout(() => {
-      setSearch(debounceSearch);
+      setSearch((prev) => {
+        if (
+          prev.searchKey !== debounceSearch.searchKey ||
+          prev.searchLabel !== debounceSearch.searchLabel ||
+          prev.searchValue !== debounceSearch.searchValue
+        ) {
+          return debounceSearch;
+        }
+
+        return prev;
+      });
     }, 500);
 
     return () => clearTimeout(debounce);

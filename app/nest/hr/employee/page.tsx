@@ -70,7 +70,7 @@ const HREmployee = () => {
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
-        const { data: responseData } = await axios.get(`${url}/h/employee`, {
+        const { data: responseData } = await axios.get(`${url}/hr/employee`, {
           headers: {
             Authorization: `Bearer ${user?.token}`,
             "X-CSRF-TOKEN": token,
