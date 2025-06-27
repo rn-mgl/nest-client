@@ -15,6 +15,8 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd, IoClose, IoReader, IoText, IoTrash } from "react-icons/io5";
 import ModalNav from "../../global/ModalNav";
+import useToast from "@/src/hooks/useToast";
+import Toasts from "../../global/Toasts";
 
 const CreateOnboarding: React.FC<ModalInterface> = (props) => {
   const [onboarding, setOnboarding] = React.useState<OnboardingInterface>({
@@ -41,6 +43,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
   ]);
 
   const { activeFormPage, handleActiveFormPage } = useModalNav("information");
+  const { toasts, addToast, clearToast } = useToast();
 
   const url = process.env.URL;
   const { data } = useSession({ required: true });
@@ -71,7 +74,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
           placeholder={`Required Document ${index + 1}`}
           onChange={(e) => handleDocumentField(e, "document", index)}
           value={req.document}
-          className="w-full p-2 px-4 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all"
+          className="w-full p-2 px-4 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all bg-white"
         />
 
         <button
@@ -98,7 +101,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
             placeholder={`Policy Acknowledgement ${index + 1}`}
             onChange={(e) => handlePolicyField(e, "policy", index)}
             value={req.policy}
-            className="w-full p-2 px-4 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all"
+            className="w-full p-2 px-4 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all bg-white"
           />
 
           <button
@@ -142,7 +145,13 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
           if (props.refetchIndex) {
             props.refetchIndex();
           }
-          props.toggleModal();
+          addToast({
+            active: true,
+            id: Date.now(),
+            message: "Onboarding has been created",
+            type: "success",
+          });
+          // props.toggleModal();
         }
       }
     } catch (error) {
@@ -155,6 +164,9 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
         p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
+      {toasts.length ? (
+        <Toasts toasts={toasts} clearToast={clearToast} />
+      ) : null}
       <div className="w-full my-auto h-full max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-blue rounded-t-lg font-bold text-accent-yellow">
           Create Onboarding
@@ -169,11 +181,14 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
           onSubmit={(e) => submitCreateOnboarding(e)}
           className="w-full h-full p-4 flex flex-col items-center justify-center gap-4 overflow-hidden"
         >
-          <ModalNav
-            activeFormPage={activeFormPage}
-            pages={["information", "requirements"]}
-            handleActiveFormPage={handleActiveFormPage}
-          />
+          <div>
+            <ModalNav
+              activeFormPage={activeFormPage}
+              pages={["information", "requirements"]}
+              handleActiveFormPage={handleActiveFormPage}
+            />
+          </div>
+
           {activeFormPage === "information" ? (
             <div className="w-full h-full flex flex-col items-center justify-start gap-2 p-2">
               <Input

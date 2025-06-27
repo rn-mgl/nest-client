@@ -2,7 +2,7 @@
 
 import Filter from "@/src/components/global/filter/Filter";
 import Loading from "@/src/components/global/Loading";
-import Toast from "@/src/components/global/Toast";
+import Toasts from "@/src/components/global/Toasts";
 import EmployeeCard from "@/src/components/hr/employee/EmployeeCard";
 import useCategory from "@/src/hooks/useCategory";
 import useIsLoading from "@/src/hooks/useIsLoading";
@@ -98,6 +98,7 @@ const HREmployee = () => {
         message: message,
         active: true,
         type: "error",
+        id: Date.now(),
       });
 
       console.log(error);
@@ -127,7 +128,9 @@ const HREmployee = () => {
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
-      {toasts.length ? <Toast toasts={toasts} clearToast={clearToast} /> : null}
+      {toasts.length ? (
+        <Toasts toasts={toasts} clearToast={clearToast} />
+      ) : null}
       <div
         className="w-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2
               t:items-start t:p-4 gap-4 t:gap-8"
