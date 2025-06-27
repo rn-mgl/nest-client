@@ -4,12 +4,12 @@ import Filter from "@/src/components/global/filter/Filter";
 import Loading from "@/src/components/global/Loading";
 import Toasts from "@/src/components/global/Toasts";
 import EmployeeCard from "@/src/components/hr/employee/EmployeeCard";
+import { useToasts } from "@/src/context/ToastContext";
 import useCategory from "@/src/hooks/useCategory";
 import useIsLoading from "@/src/hooks/useIsLoading";
 
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
-import useToast from "@/src/hooks/useToast";
 import { UserInterface } from "@/src/interface/UserInterface";
 import {
   HR_EMPLOYEE_CATEGORY,
@@ -28,7 +28,9 @@ const HREmployee = () => {
 
   const { isLoading, handleIsLoading } = useIsLoading(true);
 
-  const { toasts, addToast, clearToast } = useToast();
+  const { toasts, addToast, clearToast } = useToasts();
+
+  console.log(toasts);
 
   const {
     search,

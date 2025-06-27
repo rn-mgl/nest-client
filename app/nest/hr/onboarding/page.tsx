@@ -19,6 +19,8 @@ import DeleteEntity from "@/src/components/hr/global/DeleteEntity";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd } from "react-icons/io5";
+import { useToasts } from "@/src/context/ToastContext";
+import Toasts from "@/src/components/global/Toasts";
 
 const HROnboarding = () => {
   const [onboardings, setOnboardings] = React.useState<
@@ -47,6 +49,8 @@ const HROnboarding = () => {
     handleSelectSort,
     handleToggleAsc,
   } = useSort("title", "Title");
+
+  const { toasts, clearToast } = useToasts();
 
   const url = process.env.URL;
   const { data } = useSession({ required: true });
@@ -164,6 +168,10 @@ const HROnboarding = () => {
           id={activeOnboardingMenu}
           toggleModal={handleCanAssignOnboarding}
         />
+      ) : null}
+
+      {toasts.length ? (
+        <Toasts toasts={toasts} clearToast={clearToast} />
       ) : null}
 
       <div

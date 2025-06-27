@@ -11,12 +11,11 @@ import {
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
+import { useToasts } from "@/src/context/ToastContext";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd, IoClose, IoReader, IoText, IoTrash } from "react-icons/io5";
 import ModalNav from "../../global/ModalNav";
-import useToast from "@/src/hooks/useToast";
-import Toasts from "../../global/Toasts";
 
 const CreateOnboarding: React.FC<ModalInterface> = (props) => {
   const [onboarding, setOnboarding] = React.useState<OnboardingInterface>({
@@ -43,7 +42,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
   ]);
 
   const { activeFormPage, handleActiveFormPage } = useModalNav("information");
-  const { toasts, addToast, clearToast } = useToast();
+  const { addToast } = useToasts();
 
   const url = process.env.URL;
   const { data } = useSession({ required: true });
@@ -151,7 +150,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
             message: "Onboarding has been created",
             type: "success",
           });
-          // props.toggleModal();
+          props.toggleModal();
         }
       }
     } catch (error) {
@@ -164,9 +163,6 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
         p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
-      {toasts.length ? (
-        <Toasts toasts={toasts} clearToast={clearToast} />
-      ) : null}
       <div className="w-full my-auto h-full max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-blue rounded-t-lg font-bold text-accent-yellow">
           Create Onboarding
