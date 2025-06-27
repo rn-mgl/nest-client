@@ -37,4 +37,4 @@ export const useToasts = () => {
   return React.useContext(ToastContext)!;
 };
 
-export { ToastContext, ToastProvider };
+export { ToastProvider };
