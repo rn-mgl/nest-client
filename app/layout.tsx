@@ -18,16 +18,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <SessionProvider>
       <ToastProvider>
-        <SessionProvider>
+        <html lang="en">
           <body
             className={`${figtree.className} w-full min-h-screen h-screen overflow-y-auto font-figtree antialiased text-neutral-900 primary-scrollbar`}
           >
             {children}
           </body>
-        </SessionProvider>
+        </html>
       </ToastProvider>
-    </html>
+    </SessionProvider>
   );
 }

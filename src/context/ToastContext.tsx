@@ -3,8 +3,13 @@ import { ToastInterface } from "../interface/ToastInterface";
 
 interface ToastContextData {
   toasts: ToastInterface[];
-  addToast: (toast: ToastInterface) => void;
-  clearToast: (id: number) => void;
+  addToast: (
+    subject: string,
+    message: string,
+    type: "info" | "success" | "warning" | "error",
+    duration?: number
+  ) => void;
+  clearToast: (id: string) => void;
 }
 
 const ToastContext = React.createContext<ToastContextData | null>(null);
@@ -12,19 +17,51 @@ const ToastContext = React.createContext<ToastContextData | null>(null);
 const ToastProvider = ({ children }: { children: React.ReactNode }) => {
   const [toasts, setToasts] = React.useState<ToastInterface[]>([]);
 
-  const clearToast = (id: number) => {
+  const clearToast = (id: string) => {
     setToasts((prev) => prev.filter((toast) => toast.id !== id));
   };
 
-  const addToast = React.useCallback((toast: ToastInterface) => {
-    setToasts((prev) => {
-      return [...prev, toast];
-    });
+  const addToast = React.useCallback(
+    (
+      subject: string,
+      message: string,
+      type: "info" | "success" | "warning" | "error",
+      duration?: number
+    ) => {
+      const newToast: ToastInterface = {
+        duration: duration ?? 3000,
+        id: Math.random().toString(36).slice(2),
+        message: message,
+        subject: subject,
+        type: type,
+        percentage: 0,
+      };
 
-    setTimeout(() => {
-      clearToast(toast.id);
-    }, 3000);
-  }, []);
+      setToasts((prev) => [...prev, newToast]);
+
+      setTimeout(() => {
+        const interval = setInterval(() => {
+          setToasts((prev) =>
+            prev.map((toast) => {
+              if (toast.id !== newToast.id) return toast;
+
+              const newPercentage = toast.percentage + 1;
+
+              if (newPercentage > 100) {
+                setTimeout(() => {
+                  clearToast(toast.id);
+                  clearInterval(interval);
+                }, 500);
+              }
+
+              return { ...toast, percentage: newPercentage };
+            })
+          );
+        }, Math.ceil(newToast.duration / 100));
+      }, 300);
+    },
+    []
+  );
 
   return (
     <ToastContext.Provider value={{ toasts, addToast, clearToast }}>

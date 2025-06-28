@@ -2,53 +2,81 @@
 
 import { ToastInterface } from "@/src/interface/ToastInterface";
 import React from "react";
-import { IoCloseCircle } from "react-icons/io5";
+import {
+  IoAlert,
+  IoBulb,
+  IoCheckmark,
+  IoClose,
+  IoWarning,
+} from "react-icons/io5";
 
 const Toasts: React.FC<{
   toasts: ToastInterface[];
-  clearToast: (id: number) => void;
+  clearToast: (id: string) => void;
 }> = (props) => {
-  const TYPE_COLOR = {
+  const TOAST_TYPE_STYLE = {
     info: {
       border: "#0084d1",
       background: "#b8e6fe",
+      icon: <IoBulb />,
     },
     warning: {
       border: "#d08700",
       background: "#fff085",
+      icon: <IoWarning />,
     },
     error: {
       border: "#e7000b",
       background: "#ffc9c9",
+      icon: <IoAlert />,
     },
     success: {
       border: "#00a63e",
       background: "#b9f8cf",
+      icon: <IoCheckmark />,
     },
   };
 
   const mappedToasts = props.toasts.map((toast, index) => {
-    const currentTypeColor = TYPE_COLOR[toast.type];
-
     return (
       <div
         key={index}
-        style={{
-          background: currentTypeColor.background,
-          borderColor: currentTypeColor.border,
-        }}
-        className="w-full p-2 border-2 rounded-md h-16 min-h-16 shadow-md flex flex-row items-start justify-center gap-2 animate-fade relative"
+        className="w-full p-2 border-2 rounded-sm shadow-md flex flex-row items-start justify-start gap-2 
+                  animate-fade relative bg-white overflow-hidden transition-all"
       >
-        <div className="w-full">
-          <p className="text-sm font-semibold">{toast.message}</p>
+        <div className="w-full p-2 h-full min-h-20 max-h-40 overflow-y-auto">
+          <div className="w-full flex flex-col items-start justify-start gap-2">
+            <div className="text-sm font-bold flex flex-row items-center w-full justify-start gap-2">
+              <p
+                style={{
+                  background: `${TOAST_TYPE_STYLE[toast.type].background}70`,
+                }}
+                className="min-w-6 w-6 min-h-6 h-6 rounded-full flex flex-col items-center justify-center"
+              >
+                {TOAST_TYPE_STYLE[toast.type].icon}
+              </p>
+              <p>{toast.subject}</p>
+            </div>
+            <p className="text-xs w-full">{toast.message}</p>
+          </div>
         </div>
-        <button
-          onClick={() => props.clearToast(toast.id)}
-          style={{ color: currentTypeColor.border }}
-          type="button"
-        >
-          <IoCloseCircle className="text-lg" />
+
+        <button onClick={() => props.clearToast(toast.id)} type="button">
+          <IoClose className="text-sm text-neutral-400 " />
         </button>
+
+        <div
+          style={{ background: `${TOAST_TYPE_STYLE[toast.type].background}70` }}
+          className="absolute bottom-0 w-full left-0 h-1 "
+        >
+          <div
+            style={{
+              width: `${toast.percentage}%`,
+              background: TOAST_TYPE_STYLE[toast.type].border,
+            }}
+            className="h-full transition-all"
+          />
+        </div>
       </div>
     );
   });

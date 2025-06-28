@@ -30,8 +30,6 @@ const HREmployee = () => {
 
   const { toasts, addToast, clearToast } = useToasts();
 
-  console.log(toasts);
-
   const {
     search,
     canSeeSearchDropDown,
@@ -96,14 +94,7 @@ const HREmployee = () => {
 
       handleIsLoading(false);
 
-      addToast({
-        message: message,
-        active: true,
-        type: "error",
-        id: Date.now(),
-      });
-
-      console.log(error);
+      addToast("Something went wrong", message, "error");
     }
   }, [url, user?.token, search, sort, category, handleIsLoading, addToast]);
 

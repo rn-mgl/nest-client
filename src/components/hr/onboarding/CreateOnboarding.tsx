@@ -144,12 +144,11 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
           if (props.refetchIndex) {
             props.refetchIndex();
           }
-          addToast({
-            active: true,
-            id: Date.now(),
-            message: "Onboarding has been created",
-            type: "success",
-          });
+          addToast(
+            "Onboarding Created",
+            `${onboarding.title} has been successfully created.`,
+            "success"
+          );
           props.toggleModal();
         }
       }

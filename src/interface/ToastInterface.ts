@@ -1,6 +1,8 @@
 export interface ToastInterface {
+  subject: string;
   message: string;
-  id: number;
+  id: string;
   type: "info" | "success" | "warning" | "error";
-  active: boolean;
+  percentage: number;
+  duration: number;
 }

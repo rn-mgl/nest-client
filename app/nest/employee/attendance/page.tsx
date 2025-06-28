@@ -3,6 +3,8 @@
 import Log from "@/src/components/employee/attendance/Log";
 import Input from "@/src/components/form/Input";
 import Select from "@/src/components/form/Select";
+import Toasts from "@/src/components/global/Toasts";
+import { useToasts } from "@/src/context/ToastContext";
 import { AttendanceInterface } from "@/src/interface/AttendanceInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
@@ -23,9 +25,11 @@ const Attendance = () => {
   const [attendance, setAttendance] = React.useState<AttendanceInterface>({
     absent: false,
     late: false,
-    login_time: "",
-    logout_time: "",
+    login_time: "-",
+    logout_time: "-",
   });
+
+  const { toasts, clearToast } = useToasts();
 
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
@@ -194,6 +198,9 @@ const Attendance = () => {
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
+      {toasts.length ? (
+        <Toasts toasts={toasts} clearToast={clearToast} />
+      ) : null}
       {canLog ? (
         <Log
           id={attendance.attendance_id ?? 0}

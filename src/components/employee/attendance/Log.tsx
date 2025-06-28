@@ -1,3 +1,4 @@
+import { useToasts } from "@/src/context/ToastContext";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
@@ -19,13 +20,15 @@ const Log: React.FC<ModalInterface & { logType: "in" | "out" }> = ({
 
   const timerRef = React.useRef<NodeJS.Timeout>();
 
+  const { addToast } = useToasts();
+
   const { data } = useSession({ required: true });
   const user = data?.user;
   const url = process.env.URL;
 
   const handleHold = () => {
     timerRef.current = setInterval(() => {
-      setPercentage((prev) => prev + 1);
+      setPercentage((prev) => (prev + 1 >= 100 ? 100 : prev + 1));
     }, 20);
   };
 
@@ -60,19 +63,29 @@ const Log: React.FC<ModalInterface & { logType: "in" | "out" }> = ({
             setPercentage(0);
             refetchIndex();
           }
+
+          addToast(
+            `Logged ${logType}`,
+            `You have logged ${logType} successfully`,
+            "success"
+          );
         }
       }
     } catch (error) {
       setStatus("failed");
       console.log(error);
     }
-  }, [url, user?.token, logType, refetchIndex, toggleModal, id]);
+  }, [url, user?.token, logType, refetchIndex, toggleModal, addToast, id]);
 
   React.useEffect(() => {
-    if (percentage === 100) {
-      clearInterval(timerRef.current);
-      setPercentage(100);
-      submitLog();
+    if (percentage >= 100) {
+      const timeout = setTimeout(() => {
+        clearInterval(timerRef.current);
+        setPercentage(100);
+        submitLog();
+      }, 300);
+
+      return () => clearTimeout(timeout);
     }
   }, [percentage, submitLog]);
 
@@ -81,7 +94,7 @@ const Log: React.FC<ModalInterface & { logType: "in" | "out" }> = ({
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex items-center justify-center 
                 p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade"
     >
-      <div className="w-full h-auto max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg ">
+      <div className="w-full h-auto max-w-(--breakpoint-t) bg-neutral-100 shadow-md rounded-lg ">
         <div
           className={`w-full flex flex-row items-center justify-between p-4  rounded-t-lg font-bold 
             ${
