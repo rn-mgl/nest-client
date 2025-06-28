@@ -48,10 +48,12 @@ const ToastProvider = ({ children }: { children: React.ReactNode }) => {
               const newPercentage = toast.percentage + 1;
 
               if (newPercentage > 100) {
-                setTimeout(() => {
+                const delay = setTimeout(() => {
                   clearToast(toast.id);
                   clearInterval(interval);
                 }, 500);
+
+                clearTimeout(delay);
               }
 
               return { ...toast, percentage: newPercentage };
