@@ -21,6 +21,8 @@ import React from "react";
 import { IoAdd } from "react-icons/io5";
 import { useToasts } from "@/src/context/ToastContext";
 import Toasts from "@/src/components/global/Toasts";
+import useIsLoading from "@/src/hooks/useIsLoading";
+import Loading from "@/src/components/global/Loading";
 
 const HROnboarding = () => {
   const [onboardings, setOnboardings] = React.useState<
@@ -52,6 +54,8 @@ const HROnboarding = () => {
 
   const { toasts, clearToast } = useToasts();
 
+  const { isLoading, handleIsLoading } = useIsLoading(true);
+
   const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -81,6 +85,7 @@ const HROnboarding = () => {
   };
 
   const getOnboardings = React.useCallback(async () => {
+    handleIsLoading(true);
     try {
       const { token } = await getCSRFToken();
 
@@ -98,11 +103,14 @@ const HROnboarding = () => {
         );
 
         setOnboardings(allOnboarding.onboardings);
+
+        handleIsLoading(false);
       }
     } catch (error) {
       console.log(error);
+      handleIsLoading(false);
     }
-  }, [url, user?.token, search, sort]);
+  }, [url, user?.token, search, sort, handleIsLoading]);
 
   const mappedOnboardings = onboardings?.map((onboarding, index) => {
     const onboardingId = onboarding.onboarding_id as number;
@@ -128,6 +136,10 @@ const HROnboarding = () => {
   React.useEffect(() => {
     getOnboardings();
   }, [getOnboardings]);
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
