@@ -15,7 +15,7 @@ import TextBlock from "@/global/field/TextBlock";
 import TextField from "@/global/field/TextField";
 import { useSession } from "next-auth/react";
 import React from "react";
-import { IoCaretForwardSharp, IoClose } from "react-icons/io5";
+import { IoClose } from "react-icons/io5";
 
 const ShowOnboarding: React.FC<ModalInterface> = (props) => {
   const [onboarding, setOnboarding] = React.useState<
@@ -62,11 +62,13 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
       return (
         <div
           key={index}
-          className="w-full flex flex-row items-center justify-start bg-white p-2 rounded-md gap-2 border-2"
+          className="w-full flex flex-col items-center justify-start rounded-md gap-2 "
         >
-          <IoCaretForwardSharp />
-          <p className="w-full overflow-y-auto max-h-24 h-full">
-            {req.document}
+          <p className="w-full h-fit bg-white p-2 border-2 rounded-md">
+            {req.title}
+          </p>
+          <p className="w-full overflow-y-auto bg-white h-40 p-2 rounded-md border-2 text-wrap break-words">
+            {req.description}
           </p>
         </div>
       );
@@ -78,10 +80,14 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
       return (
         <div
           key={index}
-          className="w-full flex flex-row items-center justify-start bg-white p-2 rounded-md gap-2 border-2"
+          className="w-full flex flex-col items-center justify-start rounded-md gap-2 "
         >
-          <IoCaretForwardSharp />
-          <p className="w-full overflow-y-auto max-h-24 h-full">{ack.policy}</p>
+          <p className="w-full h-fit bg-white p-2 border-2 rounded-md">
+            {ack.title}
+          </p>
+          <p className="w-full overflow-y-auto bg-white h-40 p-2 rounded-md border-2 text-wrap break-words">
+            {ack.description}
+          </p>
         </div>
       );
     }
@@ -109,7 +115,7 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
         <div className="w-full h-full p-4 gap-4 flex flex-col items-center justify-start overflow-hidden">
           <ModalNav
             activeFormPage={activeFormPage}
-            pages={["information", "requirements"]}
+            pages={["information", "documents", "acknowledgements"]}
             handleActiveFormPage={handleActiveFormPage}
           />
 
@@ -118,7 +124,7 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
               <TextField label="Title" value={onboarding.title} />
               <TextBlock label="Description" value={onboarding.description} />
             </div>
-          ) : (
+          ) : activeFormPage === "documents" ? (
             <div className="w-full h-full flex flex-col items-start justify-start gap-4 overflow-hidden t:flex-row">
               <div className="w-full h-full flex flex-col items-start justify-start gap-2 rounded-md overflow-hidden">
                 <p className="text-xs">Required Documents</p>
@@ -126,7 +132,9 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
                   {mappedRequiredDocuments}
                 </div>
               </div>
-
+            </div>
+          ) : activeFormPage === "acknowledgements" ? (
+            <div className="w-full h-full flex flex-col items-start justify-start gap-4 overflow-hidden t:flex-row">
               <div className="w-full h-full flex flex-col items-start justify-start gap-2 rounded-md overflow-hidden">
                 <p className="text-xs">Policy Acknowledgements</p>
                 <div className="w-full flex flex-col gap-2 items-center justify-start overflow-y-auto h-full">
@@ -134,7 +142,7 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
                 </div>
               </div>
             </div>
-          )}
+          ) : null}
         </div>
       </div>
     </div>

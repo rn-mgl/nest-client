@@ -46,6 +46,9 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
   } = useDynamicFields<OnboardingPolicyAcknowledgemenInterface>([]);
   const { activeFormPage, handleActiveFormPage } = useModalNav("information");
 
+  console.log(required_documents);
+  console.log(policy_acknowledgements);
+
   const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -155,16 +158,27 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
     return (
       <div
         key={index}
-        className="w-full flex flex-row gap-2 items-center justify-center"
+        className="w-full flex flex-row gap-2 items-start justify-center"
       >
-        <input
-          type="text"
-          name="required_documents"
-          placeholder={`Required Document ${index + 1}`}
-          onChange={(e) => handleDocumentField(e, "document", index)}
-          value={req.document}
-          className="w-full p-2 px-4 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all"
-        />
+        <div className="w-full flex flex-col items-center justify-center gap-2">
+          <input
+            type="text"
+            name="required_document_title"
+            placeholder={`Document Title ${index + 1}`}
+            onChange={(e) => handleDocumentField(e, "title", index)}
+            value={req.title}
+            className="w-full p-2 px-4 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all bg-white"
+          />
+
+          <textarea
+            name="required_document_description"
+            placeholder={`Description ${index + 1}`}
+            onChange={(e) => handleDocumentField(e, "description", index)}
+            value={req.description}
+            rows={5}
+            className="w-full p-2 px-4 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all bg-white resize-none"
+          />
+        </div>
 
         <button
           type="button"
@@ -185,16 +199,26 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
       return (
         <div
           key={index}
-          className="w-full flex flex-row gap-2 items-center justify-center"
+          className="w-full flex flex-row gap-2 items-start justify-center"
         >
-          <input
-            type="text"
-            name="policy_acknowledgements"
-            placeholder={`Policy Acknowledgement ${index + 1}`}
-            onChange={(e) => handlePolicyField(e, "policy", index)}
-            value={ack.policy}
-            className="w-full p-2 px-4 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all"
-          />
+          <div className="w-full flex flex-col items-center justify-center gap-2">
+            <input
+              type="text"
+              name="policy_acknowledgement_title"
+              placeholder={`Policy Acknowledgement ${index + 1}`}
+              onChange={(e) => handlePolicyField(e, "title", index)}
+              value={ack.title}
+              className="w-full p-2 px-4 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all bg-white"
+            />
+            <textarea
+              name="policy_acknowledgement_description"
+              placeholder={`Description ${index + 1}`}
+              onChange={(e) => handlePolicyField(e, "description", index)}
+              value={ack.description}
+              rows={5}
+              className="w-full p-2 px-4 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all resize-none bg-white"
+            />
+          </div>
 
           <button
             type="button"
@@ -236,12 +260,12 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
         >
           <ModalNav
             activeFormPage={activeFormPage}
-            pages={["information", "requirements"]}
+            pages={["information", "documents", "acknowledgements"]}
             handleActiveFormPage={handleActiveFormPage}
           />
 
           {activeFormPage === "information" ? (
-            <div className="w-full h-full flex flex-col items-center justify-start">
+            <div className="w-full h-full flex flex-col items-center justify-start gap-4">
               <Input
                 label={true}
                 id="title"
@@ -264,7 +288,7 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
                 icon={<IoReader />}
               />
             </div>
-          ) : (
+          ) : activeFormPage === "documents" ? (
             <div className="w-full h-full flex flex-col items-center justify-start gap-4 l-s:items-start l-s:justify-center t:flex-row overflow-hidden">
               <div className="w-full flex flex-col items-center justify-start gap-2 h-full overflow-hidden">
                 <div className="w-full flex flex-row items-center justify-between">
@@ -274,7 +298,9 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
                     type="button"
                     title="Add Required Documents Field"
                     className="p-2 rounded-md bg-neutral-100"
-                    onClick={() => addDocumentField({ document: "" })}
+                    onClick={() =>
+                      addDocumentField({ title: "", description: "" })
+                    }
                   >
                     <IoAdd />
                   </button>
@@ -284,7 +310,9 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
                   {mappedRequiredDocuments}
                 </div>
               </div>
-
+            </div>
+          ) : activeFormPage === "acknowledgements" ? (
+            <div className="w-full h-full flex flex-col items-center justify-start gap-4 l-s:items-start l-s:justify-center t:flex-row overflow-hidden">
               <div className="w-full flex flex-col items-center justify-start gap-2 h-full overflow-hidden">
                 <div className="w-full flex flex-row items-center justify-between">
                   <label className="text-xs">Policy Acknowledgements</label>
@@ -293,7 +321,9 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
                     type="button"
                     title="Add Required Documents Field"
                     className="p-2 rounded-md bg-neutral-100"
-                    onClick={() => addPolicyField({ policy: "" })}
+                    onClick={() =>
+                      addPolicyField({ title: "", description: "" })
+                    }
                   >
                     <IoAdd />
                   </button>
@@ -304,7 +334,7 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
                 </div>
               </div>
             </div>
-          )}
+          ) : null}
 
           <button className="t:col-span-2 w-full font-bold text-center rounded-md p-2 bg-accent-yellow text-accent-blue mt-2">
             Update

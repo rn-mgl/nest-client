@@ -3,12 +3,9 @@ import { useSession } from "next-auth/react";
 import React from "react";
 
 const AdminDashboard = () => {
-  const { data } = useSession({ required: true });
-  const user = data?.user;
+  useSession({ required: true });
 
-  console.log(user);
-
-  return <div>AdminDashboard</div>;
+  return <div></div>;
 };
 
 export default AdminDashboard;

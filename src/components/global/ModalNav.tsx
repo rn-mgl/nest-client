@@ -20,8 +20,10 @@ const ModalNav: React.FC<ModalNavInterface> = (props) => {
   });
 
   return (
-    <div className="w-full t:w-fit flex flex-row items-center justify-between gap-2 bg-neutral-200 rounded-md p-2 overflow-x-auto overflow-y-hidden">
-      {mappedNavs}
+    <div className="w-full flex flex-col items-center justify-center t:w-fit">
+      <div className="w-full t:w-fit flex flex-row items-center justify-between gap-2 bg-neutral-200 rounded-md p-2 overflow-x-auto overflow-y-hidden">
+        {mappedNavs}
+      </div>
     </div>
   );
 };

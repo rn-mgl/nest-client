@@ -7,12 +7,14 @@ export interface OnboardingInterface {
 
 export interface OnboardingRequiredDocumentsInterface {
   onboarding_required_documents_id?: number;
-  document: string;
+  title: string;
+  description: string;
 }
 
 export interface OnboardingPolicyAcknowledgemenInterface {
   onboarding_policy_acknowledgements_id?: number;
-  policy: string;
+  title: string;
+  description: string;
 }
 
 export interface EmployeeOnboardingInterface {
