@@ -283,6 +283,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
       content.type === "text" ? (
         <TextArea
           id="contents"
+          name="contents"
           onChange={(e) => handleField(e, "content", index)}
           placeholder={`Content ${index + 1}`}
           required={true}
@@ -422,6 +423,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
         <div className="w-full flex flex-col gap-2 items-start justify-center">
           <Input
             id={`content_title_${index}`}
+            name={`content_title_${index}`}
             onChange={(e) => handleField(e, "title", index)}
             placeholder={`Title ${index + 1}`}
             type="text"
@@ -431,6 +433,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
 
           <TextArea
             id={`content_content_${index}`}
+            name={`content_content_${index}`}
             onChange={(e) => handleField(e, "description", index)}
             placeholder={`Description ${index + 1}`}
             value={content.description}
@@ -473,6 +476,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
 
           <Input
             id={`choice_${choice}`}
+            name={`choice_${choice}`}
             onChange={(e) => handleReview(e, `choice_${choice}`, index)}
             placeholder={`Choice ${index2 + 1}`}
             required={true}
@@ -494,6 +498,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
           </div>
           <TextArea
             id={`question_${index}`}
+            name={`question_${index}`}
             onChange={(e) => handleReview(e, "question", index)}
             placeholder={`Question ${index + 1}`}
             required={true}
@@ -556,6 +561,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
             <div className="w-full h-full flex flex-col items-center justify-start gap-4 overflow-y-auto p-2">
               <Input
                 id="title"
+                name="title"
                 placeholder="Title"
                 required={true}
                 type="text"
@@ -567,6 +573,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
 
               <Input
                 id="deadline_days"
+                name="deadline_days"
                 placeholder="Deadline Days"
                 required={true}
                 type="number"
@@ -578,6 +585,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
 
               <TextArea
                 id="description"
+                name="description"
                 placeholder="Description"
                 value={training.description}
                 onChange={handleTraining}
@@ -626,6 +634,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
                         : null
                     }
                     id="certificate"
+                    name="certificate"
                     label="Certificate"
                     onChange={handleTraining}
                     ref={certificateRef}

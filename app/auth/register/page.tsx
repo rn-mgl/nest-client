@@ -82,6 +82,7 @@ const Register = () => {
               <Input
                 label={true}
                 id="first_name"
+                name="first_name"
                 placeholder="First Name"
                 required={true}
                 value={registerData.first_name}
@@ -93,6 +94,7 @@ const Register = () => {
               <Input
                 label={true}
                 id="last_name"
+                name="last_name"
                 placeholder="Last Name"
                 required={true}
                 value={registerData.last_name}
@@ -104,6 +106,7 @@ const Register = () => {
               <Input
                 label={true}
                 id="email"
+                name="email"
                 placeholder="E-Mail"
                 required={true}
                 value={registerData.email}
@@ -115,6 +118,7 @@ const Register = () => {
               <Input
                 label={true}
                 id="password"
+                name="password"
                 placeholder="Password"
                 required={true}
                 value={registerData.password}
@@ -138,6 +142,7 @@ const Register = () => {
               <Input
                 label={true}
                 id="password_confirmation"
+                name="password_confirmation"
                 placeholder="Confirm Password"
                 required={true}
                 value={registerData.password_confirmation}

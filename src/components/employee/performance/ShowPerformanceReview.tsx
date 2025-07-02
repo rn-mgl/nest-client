@@ -117,6 +117,7 @@ const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
         <TextBlock label={`Survey ${index + 1}`} value={content.survey} />
         <TextArea
           id={`response_${index}`}
+          name={`response_${index}`}
           onChange={(e) => handleSurvey(e, "response", index)}
           placeholder="Survey Response"
           required={true}

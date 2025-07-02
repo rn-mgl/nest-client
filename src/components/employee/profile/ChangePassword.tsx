@@ -82,6 +82,7 @@ const ChangePassword: React.FC<ModalInterface> = (props) => {
         >
           <Input
             id="current_password"
+            name="current_password"
             onChange={handlePassword}
             placeholder="Current Password"
             required={true}
@@ -105,6 +106,7 @@ const ChangePassword: React.FC<ModalInterface> = (props) => {
 
           <Input
             id="new_password"
+            name="new_password"
             onChange={handlePassword}
             placeholder="New Password"
             required={true}
@@ -128,6 +130,7 @@ const ChangePassword: React.FC<ModalInterface> = (props) => {
 
           <Input
             id="new_password_confirmation"
+            name="new_password_confirmation"
             onChange={handlePassword}
             placeholder="New Password Confirmation"
             required={true}

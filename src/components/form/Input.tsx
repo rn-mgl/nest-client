@@ -13,7 +13,7 @@ const Input: React.FC<InputInterface> = (props) => {
       <div className="w-full flex flex-col items-center justify-center relative">
         <input
           type={props.type}
-          name={props.id}
+          name={props.name}
           id={props.id}
           placeholder={props.placeholder}
           required={props.required}

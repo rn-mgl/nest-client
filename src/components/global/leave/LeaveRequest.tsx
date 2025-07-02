@@ -83,6 +83,7 @@ const LeaveRequest: React.FC<ModalInterface> = (props) => {
           <Input
             type="datetime-local"
             id="start_date"
+            name="start_date"
             placeholder="Start Date"
             required={true}
             label={true}
@@ -93,6 +94,7 @@ const LeaveRequest: React.FC<ModalInterface> = (props) => {
           <Input
             type="datetime-local"
             id="end_date"
+            name="end_date"
             placeholder="End Date"
             required={true}
             label={true}
@@ -102,6 +104,7 @@ const LeaveRequest: React.FC<ModalInterface> = (props) => {
 
           <TextArea
             id="reason"
+            name="reason"
             onChange={handleLeaveRequest}
             placeholder="Reason"
             required={true}

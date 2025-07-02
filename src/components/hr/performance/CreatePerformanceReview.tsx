@@ -132,6 +132,7 @@ const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
             <div className="w-full h-full flex flex-col items-center justify-start gap-4">
               <Input
                 id="title"
+                name="title"
                 placeholder="Title"
                 required={true}
                 type="text"
@@ -142,6 +143,7 @@ const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
               />
               <TextArea
                 id="description"
+                name="description"
                 onChange={handlePerformanceReview}
                 placeholder="Description"
                 required={true}

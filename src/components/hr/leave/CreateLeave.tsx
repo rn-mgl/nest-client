@@ -82,6 +82,7 @@ const CreateLeave: React.FC<ModalInterface> = (props) => {
           <Input
             label={true}
             id="type"
+            name="type"
             onChange={handleLeave}
             placeholder="Type"
             required={true}
@@ -92,6 +93,7 @@ const CreateLeave: React.FC<ModalInterface> = (props) => {
           <TextArea
             label={true}
             id="description"
+            name="description"
             onChange={handleLeave}
             placeholder="Description"
             required={true}

@@ -58,8 +58,8 @@ const HRAttendance = () => {
     return new Date(year, month, 1).getDay();
   };
 
-  const handleCurrentMonth = (month: number) => {
-    setCurrentMonth({ value: month, label: monthOptions[month].label });
+  const handleCurrentMonth = (month: number, label: string) => {
+    setCurrentMonth({ value: month, label: label });
   };
 
   const handleActiveSelect = () => {
@@ -194,6 +194,7 @@ const HRAttendance = () => {
           <div className="w-full flex flex-row items-start justify-between gap-2 t:gap-4 t:w-96 t:max-w-96 t:min-w-96">
             <Select
               id="month"
+              name="month"
               options={monthOptions}
               placeholder="Month"
               value={currentMonth.value}
@@ -207,6 +208,7 @@ const HRAttendance = () => {
 
             <Input
               id="year"
+              name="year"
               placeholder="Year"
               required={false}
               type="number"

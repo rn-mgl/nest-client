@@ -6,19 +6,28 @@ export interface OnboardingInterface {
 }
 
 export interface OnboardingRequiredDocumentsInterface {
-  onboarding_required_documents_id?: number;
+  onboarding_required_document_id?: number;
   title: string;
   description: string;
 }
 
+export interface EmployeeOnboardingRequiredDocumentsInterface {
+  employee_onboarding_required_document_id?: number;
+  document: string | null;
+}
+
 export interface OnboardingPolicyAcknowledgemenInterface {
-  onboarding_policy_acknowledgements_id?: number;
+  onboarding_policy_acknowledgement_id?: number;
   title: string;
   description: string;
+}
+
+export interface EmployeeOnboardingPolicyAcknowledgementInterface {
+  employee_onboarding_policy_acknowledgement_id?: number;
+  acknowledged: boolean;
 }
 
 export interface EmployeeOnboardingInterface {
   employee_onboarding_id: number | null;
-  completed_documents: number;
-  policy_acknowledged: number;
+  status: string;
 }

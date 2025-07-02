@@ -209,6 +209,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
               <Input
                 label={true}
                 id="title"
+                name="title"
                 onChange={handleOnboarding}
                 placeholder="Title"
                 required={true}
@@ -220,6 +221,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
               <TextArea
                 label={true}
                 id="description"
+                name="description"
                 onChange={handleOnboarding}
                 placeholder="Description"
                 required={true}

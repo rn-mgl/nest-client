@@ -240,6 +240,7 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
           <Input
             label={true}
             id="name"
+            name="name"
             onChange={handleDocument}
             placeholder="Name"
             required={true}
@@ -252,6 +253,7 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
             label={true}
             required={true}
             id="description"
+            name="description"
             onChange={handleDocument}
             placeholder="Description"
             value={document.description}
@@ -259,6 +261,7 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
 
           <Select
             id="path"
+            name="path"
             activeSelect={activeSelect}
             label={
               document.path && typeof document.path === "object"

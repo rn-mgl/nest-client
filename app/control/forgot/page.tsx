@@ -66,6 +66,7 @@ const Forgot = () => {
         >
           <Input
             id="email"
+            name="email"
             onChange={handleCandidate}
             placeholder="E-Mail"
             required={true}

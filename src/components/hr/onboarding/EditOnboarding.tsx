@@ -46,9 +46,6 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
   } = useDynamicFields<OnboardingPolicyAcknowledgemenInterface>([]);
   const { activeFormPage, handleActiveFormPage } = useModalNav("information");
 
-  console.log(required_documents);
-  console.log(policy_acknowledgements);
-
   const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -184,7 +181,7 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
           type="button"
           onClick={() => {
             removeDocumentField(index);
-            handleDocumentsToDelete(req.onboarding_required_documents_id);
+            handleDocumentsToDelete(req.onboarding_required_document_id);
           }}
           className="p-3 border-2 border-neutral-100 rounded-md bg-neutral-100"
         >
@@ -224,7 +221,7 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
             type="button"
             onClick={() => {
               removePolicyField(index);
-              handlePoliciesToDelete(ack.onboarding_policy_acknowledgements_id);
+              handlePoliciesToDelete(ack.onboarding_policy_acknowledgement_id);
             }}
             className="p-3 border-2 border-neutral-100 rounded-md bg-neutral-100"
           >
@@ -269,6 +266,7 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
               <Input
                 label={true}
                 id="title"
+                name="title"
                 onChange={handleOnboarding}
                 placeholder="Title"
                 required={true}
@@ -280,6 +278,7 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
               <TextArea
                 label={true}
                 id="description"
+                name="description"
                 onChange={handleOnboarding}
                 placeholder="Description"
                 required={true}

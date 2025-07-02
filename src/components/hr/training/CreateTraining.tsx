@@ -223,6 +223,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
       content.type === "text" ? (
         <TextArea
           id="contents"
+          name="contents"
           placeholder={`Content ${index + 1}`}
           value={content.content as string}
           rows={5}
@@ -232,6 +233,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
       ) : content.type === "image" ? (
         <File
           id={`imageContent_${index}`}
+          name={`imageContent_${index}`}
           label={`Image Content ${index + 1}`}
           accept="image/*"
           type="image"
@@ -249,6 +251,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
       ) : content.type === "video" ? (
         <File
           id={`videoContent_${index}`}
+          name={`videoContent_${index}`}
           label={`Video Content ${index + 1}`}
           accept="video/*"
           type="video"
@@ -266,6 +269,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
       ) : content.type === "file" ? (
         <File
           id={`fileContent_${index}`}
+          name={`fileContent_${index}`}
           label={`File Content ${index + 1}`}
           accept=".pdf"
           type="file"
@@ -295,6 +299,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
           <Input
             type="text"
             id="contents"
+            name="contents"
             placeholder={`Title ${index + 1}`}
             value={content.title}
             required={true}
@@ -303,6 +308,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
 
           <TextArea
             id="contents"
+            name="contents"
             placeholder={`Description ${index + 1}`}
             required={true}
             onChange={(e) => handleField(e, "description", index)}
@@ -343,6 +349,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
 
           <Input
             id={`choice_${choice}`}
+            name={`choice_${choice}`}
             onChange={(e) => handleReview(e, `choice_${choice}`, index)}
             placeholder={`Choice ${index2 + 1}`}
             required={true}
@@ -364,6 +371,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
           </div>
           <TextArea
             id={`question_${index}`}
+            name={`question_${index}`}
             onChange={(e) => handleReview(e, "question", index)}
             placeholder={`Question ${index + 1}`}
             required={true}
@@ -421,6 +429,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
               <div className="w-full h-full flex flex-col items-center justify-start gap-4">
                 <Input
                   id="title"
+                  name="title"
                   placeholder="Title"
                   required={true}
                   type="text"
@@ -432,6 +441,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
 
                 <Input
                   id="deadline_days"
+                  name="deadline_days"
                   placeholder="Deadline Days"
                   required={true}
                   type="number"
@@ -443,6 +453,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
 
                 <TextArea
                   id="description"
+                  name="description"
                   placeholder="Description"
                   value={training.description}
                   onChange={handleTraining}
@@ -462,6 +473,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
                       : null
                   }
                   id="certificate"
+                  name="certificate"
                   label="Certificate"
                   onChange={handleTraining}
                   ref={certificateRef}

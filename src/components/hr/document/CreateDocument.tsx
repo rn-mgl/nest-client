@@ -142,6 +142,7 @@ const CreateDocument: React.FC<ModalInterface> = (props) => {
           <Input
             label={true}
             id="name"
+            name="name"
             onChange={handleDocument}
             placeholder="Name"
             required={true}
@@ -154,6 +155,7 @@ const CreateDocument: React.FC<ModalInterface> = (props) => {
             label={true}
             required={true}
             id="description"
+            name="description"
             onChange={handleDocument}
             placeholder="Description"
             value={document.description}
@@ -162,6 +164,7 @@ const CreateDocument: React.FC<ModalInterface> = (props) => {
           <File
             accept=".pdf"
             id="document"
+            name="document"
             label="Document"
             type="file"
             onChange={handleDocument}

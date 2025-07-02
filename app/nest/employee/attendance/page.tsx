@@ -77,8 +77,8 @@ const Attendance = () => {
     setCanLog((prev) => !prev);
   };
 
-  const handleActiveMonth = (month: number) => {
-    setActiveMonth({ label: monthOptions[month].label, value: month });
+  const handleActiveMonth = (month: number, label: string) => {
+    setActiveMonth({ label: label, value: month });
   };
 
   const handleActiveYear = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -218,6 +218,7 @@ const Attendance = () => {
           <div className="w-full flex flex-row items-start justify-between gap-2 t:gap-4 t:w-96 t:max-w-96 t:min-w-96">
             <Select
               id="month"
+              name="month"
               options={monthOptions}
               placeholder="Month"
               value={activeMonth.value}
@@ -231,6 +232,7 @@ const Attendance = () => {
 
             <Input
               id="year"
+              name="year"
               placeholder="Year"
               required={false}
               type="number"

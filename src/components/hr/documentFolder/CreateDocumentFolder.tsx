@@ -86,6 +86,7 @@ const CreateDocumentFolder: React.FC<ModalInterface> = (props) => {
           <Input
             label={true}
             id="name"
+            name="name"
             onChange={handleFolder}
             placeholder="Name"
             required={true}

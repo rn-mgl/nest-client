@@ -2,6 +2,7 @@ import React from "react";
 
 export interface InputInterface {
   id: string;
+  name: string;
   value: string | number;
   placeholder: string;
   required: boolean;
@@ -18,6 +19,7 @@ export interface InputInterface {
 
 export interface TextAreaInterface {
   id: string;
+  name: string;
   value: string;
   placeholder: string;
   required: boolean;
@@ -33,6 +35,7 @@ export interface TextAreaInterface {
 
 export interface SelectInterface {
   id: string;
+  name: string;
   value: number;
   options: Array<{ value: number; label: string }>;
   placeholder: string;
@@ -57,6 +60,7 @@ export interface CheckBoxInterface {
 
 export interface FileInterface {
   id: string;
+  name: string;
   label: string;
   accept: string;
   file: File | null;

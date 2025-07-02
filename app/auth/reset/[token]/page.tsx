@@ -69,6 +69,7 @@ const Reset = () => {
         >
           <Input
             id="new_password"
+            name="new_password"
             onChange={handlePassword}
             placeholder="New Password"
             required={true}
@@ -92,6 +93,7 @@ const Reset = () => {
 
           <Input
             id="new_password_confirmation"
+            name="new_password_confirmation"
             onChange={handlePassword}
             placeholder="Confirm New Password"
             required={true}

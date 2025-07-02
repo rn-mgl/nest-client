@@ -188,6 +188,7 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
           <Input
             label={true}
             id="name"
+            name="name"
             onChange={handleFolder}
             placeholder="Name"
             required={true}
@@ -198,6 +199,7 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
 
           <Select
             id="path"
+            name="path"
             activeSelect={activeSelect}
             label={
               folder.path && typeof folder.path === "object"

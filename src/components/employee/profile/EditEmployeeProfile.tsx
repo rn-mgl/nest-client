@@ -175,6 +175,7 @@ const EditEmployeeProfile: React.FC<
 
           <Input
             id="first_name"
+            name="first_name"
             onChange={handleProfile}
             placeholder="First Name"
             required={true}
@@ -186,6 +187,7 @@ const EditEmployeeProfile: React.FC<
 
           <Input
             id="last_name"
+            name="last_name"
             onChange={handleProfile}
             placeholder="Last Name"
             required={true}

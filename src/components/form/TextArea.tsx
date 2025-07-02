@@ -12,7 +12,7 @@ const TextArea: React.FC<TextAreaInterface> = (props) => {
 
       <div className="w-full h-full flex flex-col items-center justify-center relative">
         <textarea
-          name={props.id}
+          name={props.name}
           id={props.id}
           placeholder={props.placeholder}
           required={props.required}

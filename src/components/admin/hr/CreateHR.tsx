@@ -89,6 +89,7 @@ const CreateHR: React.FC<ModalInterface> = (props) => {
           <Input
             label={true}
             id="first_name"
+            name="first_name"
             onChange={handleCredentials}
             placeholder="First Name"
             required={true}
@@ -100,6 +101,7 @@ const CreateHR: React.FC<ModalInterface> = (props) => {
           <Input
             label={true}
             id="last_name"
+            name="last_name"
             onChange={handleCredentials}
             placeholder="Last Name"
             required={true}
@@ -111,6 +113,7 @@ const CreateHR: React.FC<ModalInterface> = (props) => {
           <Input
             label={true}
             id="email"
+            name="email"
             onChange={handleCredentials}
             placeholder="Email"
             required={true}
@@ -122,6 +125,7 @@ const CreateHR: React.FC<ModalInterface> = (props) => {
           <Input
             label={true}
             id="password"
+            name="password"
             onChange={handleCredentials}
             placeholder="Password"
             required={true}
@@ -145,6 +149,7 @@ const CreateHR: React.FC<ModalInterface> = (props) => {
           <Input
             label={true}
             id="password_confirmation"
+            name="password_confirmation"
             onChange={handleCredentials}
             placeholder="Confirm Password"
             required={true}

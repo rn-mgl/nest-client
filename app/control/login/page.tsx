@@ -99,6 +99,7 @@ const AdminLogin = () => {
               <Input
                 label={true}
                 id="email"
+                name="email"
                 placeholder="E-Mail"
                 required={true}
                 value={loginData.email}
@@ -110,6 +111,7 @@ const AdminLogin = () => {
               <Input
                 label={true}
                 id="password"
+                name="password"
                 placeholder="Password"
                 required={true}
                 value={loginData.password}
