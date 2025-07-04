@@ -23,10 +23,9 @@ const AssignTraining: React.FC<ModalInterface> = (props) => {
   const handleAssignedEmployees = (id: number) => {
     setAssignedEmployees((prev) => {
       if (prev.includes(id)) {
-        const left = prev.slice(0, prev.indexOf(id));
-        const right = prev.slice(prev.indexOf(id) + 1, prev.length);
+        const removedId = prev.filter((employee) => id !== employee);
 
-        return [...left, ...right];
+        return removedId;
       } else {
         return [...prev, id];
       }

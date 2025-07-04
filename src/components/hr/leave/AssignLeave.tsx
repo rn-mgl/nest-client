@@ -24,10 +24,8 @@ const AssignLeave: React.FC<ModalInterface> = (props) => {
   const handleAssignedEmployees = (id: number) => {
     setAssignedEmployees((prev) => {
       if (prev.includes(id)) {
-        const left = prev.slice(0, prev.indexOf(id));
-        const right = prev.slice(prev.indexOf(id) + 1, prev.length);
-
-        return [...left, ...right];
+        const removedId = prev.filter((assigned) => assigned !== id);
+        return removedId;
       } else {
         return [...prev, id];
       }
@@ -56,12 +54,13 @@ const AssignLeave: React.FC<ModalInterface> = (props) => {
       const leaves = [...prev];
       const balance =
         leaves[index].balance !== null ? leaves[index].balance : 0;
+
       leaves[index] = {
         ...leaves[index],
         balance: (balance as number) + 1,
       };
 
-      return [...leaves];
+      return leaves;
     });
   };
 
@@ -76,7 +75,7 @@ const AssignLeave: React.FC<ModalInterface> = (props) => {
         balance: (balance as number) - 1 > 0 ? (balance as number) - 1 : 0,
       };
 
-      return [...leaves];
+      return leaves;
     });
   };
 

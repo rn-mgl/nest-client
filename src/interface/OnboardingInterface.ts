@@ -13,7 +13,7 @@ export interface OnboardingRequiredDocumentsInterface {
 
 export interface EmployeeOnboardingRequiredDocumentsInterface {
   employee_onboarding_required_document_id?: number;
-  document: string | null;
+  document: { rawFile: File; fileURL: string } | string | null;
 }
 
 export interface OnboardingPolicyAcknowledgemenInterface {

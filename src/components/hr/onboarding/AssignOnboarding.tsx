@@ -24,9 +24,8 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
   const handleAssignedEmployees = (id: number) => {
     setAssignedEmployees((prev) => {
       if (prev.includes(id)) {
-        const left = prev.slice(0, prev.indexOf(id));
-        const right = prev.slice(prev.indexOf(id) + 1, prev.length);
-        return [...left, ...right];
+        const removedId = prev.filter((assigned) => assigned !== id);
+        return removedId;
       } else {
         return [...prev, id];
       }

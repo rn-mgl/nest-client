@@ -125,12 +125,13 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
     const { value } = e.target;
 
     setReviews((prev) => {
-      prev[index] = {
-        ...prev[index],
+      const updated = [...prev];
+      updated[index] = {
+        ...updated[index],
         [field]: field === "answer" ? parseInt(value) : value,
       };
 
-      return [...prev];
+      return updated;
     });
   };
 
@@ -158,36 +159,18 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
     setReviewsToDelete((prev) => [...prev, id]);
   };
 
-  const removeSelectedCertificate = () => {
+  const removeCertificate = () => {
     setTraining((prev) => {
-      if (typeof prev.certificate === "string") {
-        return prev;
-      }
-
-      const trainingData = { ...prev };
-
-      trainingData.certificate = null;
-
       return {
-        ...trainingData,
+        ...prev,
+        certificate: null,
       };
     });
 
     if (certificateRef.current) {
-      certificateRef.current.files = null;
       certificateRef.current.value = "";
+      certificateRef.current.files = null;
     }
-  };
-
-  const removeUploadedCertificate = () => {
-    setTraining((prev) => {
-      const trainingData = { ...prev };
-      trainingData.certificate = null;
-
-      return {
-        ...trainingData,
-      };
-    });
   };
 
   const removeSelectedFile = (index: number) => {
@@ -617,7 +600,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
 
                     <button
                       type="button"
-                      onClick={removeUploadedCertificate}
+                      onClick={removeCertificate}
                       className="absolute -top-1 -right-1 bg-red-500 p-1 rounded-full"
                     >
                       <IoClose className="text-sm" />
@@ -638,7 +621,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
                     label="Certificate"
                     onChange={handleTraining}
                     ref={certificateRef}
-                    removeSelectedFile={removeSelectedCertificate}
+                    removeSelectedFile={removeCertificate}
                   />
                 )}
               </div>

@@ -41,8 +41,8 @@ const ToastProvider = ({ children }: { children: React.ReactNode }) => {
 
       setTimeout(() => {
         const interval = setInterval(() => {
-          setToasts((prev) =>
-            prev.map((toast) => {
+          setToasts((prev) => {
+            const updatedToast = prev.map((toast) => {
               if (toast.id !== newToast.id) return toast;
 
               const newPercentage = toast.percentage + 1;
@@ -55,8 +55,10 @@ const ToastProvider = ({ children }: { children: React.ReactNode }) => {
               }
 
               return { ...toast, percentage: newPercentage };
-            })
-          );
+            });
+
+            return updatedToast;
+          });
         }, Math.ceil(newToast.duration / 100));
       }, 300);
     },

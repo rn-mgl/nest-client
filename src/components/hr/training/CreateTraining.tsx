@@ -96,11 +96,11 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
   };
 
   const removeSelectedCertificate = () => {
-    setTraining(() => {
-      const updatedTraining = { ...training };
-      updatedTraining.certificate = null;
-
-      return { ...updatedTraining };
+    setTraining((prev) => {
+      return {
+        ...prev,
+        certificate: null,
+      };
     });
 
     if (certificateRef.current) {
@@ -143,12 +143,14 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
     const { value } = e.target;
 
     setReviews((prev) => {
-      prev[index] = {
-        ...prev[index],
+      const updated = [...prev];
+
+      updated[index] = {
+        ...updated[index],
         [field]: field === "answer" ? parseInt(value) : value,
       };
 
-      return [...prev];
+      return updated;
     });
   };
 
