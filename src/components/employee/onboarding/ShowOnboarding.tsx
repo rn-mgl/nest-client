@@ -16,6 +16,9 @@ import { IoClose } from "react-icons/io5";
 import ModalNav from "../../global/ModalNav";
 import TextBlock from "../../global/field/TextBlock";
 import TextField from "../../global/field/TextField";
+import File from "../../form/File";
+import Link from "next/link";
+import { AiFillFilePdf } from "react-icons/ai";
 
 const ShowOnboarding: React.FC<ModalInterface> = (props) => {
   const [onboarding, setOnboarding] = React.useState<{
@@ -24,7 +27,18 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
       EmployeeOnboardingPolicyAcknowledgementInterface)[];
     required_documents: (OnboardingRequiredDocumentsInterface &
       EmployeeOnboardingRequiredDocumentsInterface)[];
-  }>();
+  }>({
+    onboarding: {
+      title: "",
+      description: "",
+      employee_onboarding_id: 0,
+      status: "Pending",
+    },
+    policy_acknowledgements: [],
+    required_documents: [],
+  });
+
+  const requiredDocumentsRef = React.useRef<(HTMLInputElement | null)[]>([]);
 
   const { activeFormPage, handleActiveFormPage } = useModalNav("information");
 
@@ -88,6 +102,89 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
     }
   };
 
+  const sendRequiredDocument = async (index: number) => {
+    try {
+      const { token } = await getCSRFToken();
+
+      if (token && user?.token) {
+        const document = onboarding.required_documents[index];
+
+        const formData = new FormData();
+        formData.set(
+          "document",
+          document.document && typeof document.document === "object"
+            ? document.document.rawFile
+            : ""
+        );
+        formData.set(
+          "onboarding_required_document_id",
+          typeof document.onboarding_required_document_id === "number"
+            ? String(document.onboarding_required_document_id)
+            : ""
+        );
+
+        const { data: responseData } = await axios.post(
+          `${url}/employee/employee_onboarding_required_documents`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              "X-CSRF-TOKEN": token,
+            },
+            withCredentials: true,
+          }
+        );
+
+        if (responseData.success) {
+          await getOnboarding();
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleRequiredDocuments = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    const { files } = e.target;
+
+    if (!files || files.length < 1) return;
+
+    const file = files[0];
+    const url = URL.createObjectURL(file);
+
+    setOnboarding((prev) => {
+      const documents = [...prev.required_documents];
+      const newDocumentSet = { rawFile: file, fileURL: url };
+
+      documents[index] = { ...documents[index], document: newDocumentSet };
+
+      return {
+        ...prev,
+        required_documents: documents,
+      };
+    });
+  };
+
+  const handleRemoveSelectedDocument = (index: number) => {
+    setOnboarding((prev) => {
+      const documents = [...prev.required_documents];
+      documents[index] = { ...documents[index], document: null };
+
+      return {
+        ...prev,
+        required_documents: documents,
+      };
+    });
+
+    if (requiredDocumentsRef.current && requiredDocumentsRef.current[index]) {
+      requiredDocumentsRef.current[index].value = "";
+      requiredDocumentsRef.current[index].files = null;
+    }
+  };
+
   const mappedRequiredDocuments = onboarding?.required_documents.map(
     (document, index) => {
       return (
@@ -101,6 +198,58 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
           <div className="w-full p-2 rounded-md border-2 bg-white h-40 overflow-y-auto">
             {document.description}
           </div>
+          {document.employee_onboarding_required_document_id &&
+          typeof document.document === "string" ? (
+            <div className="w-full p-3 rounded-md border-2 bg-white text-center flex flex-col items-center justify-center relative">
+              <Link
+                href={document.document}
+                target="_blank"
+                className="flex flex-row items-center justify-center gap-2 group w-fit"
+              >
+                <div className="text-2xl aspect-square p-2 rounded-xs bg-accent-purple/50 group-hover:bg-accent-purple/80 transition-all">
+                  <AiFillFilePdf className="text-white" />
+                </div>
+                <span className="text-sm group-hover:underline underline-offset-2">
+                  View Attached {document.title} Document
+                </span>
+              </Link>
+
+              <button className="p-1 rounded-full bg-red-600 absolute top-0 right-0">
+                <IoClose />
+              </button>
+            </div>
+          ) : (
+            <div className="w-full flex flex-col items-center justify-center gap-2">
+              <File
+                accept="/pdf*"
+                file={
+                  document.document && typeof document.document === "object"
+                    ? document.document.rawFile
+                    : null
+                }
+                ref={(el) => {
+                  requiredDocumentsRef.current[index] = el;
+                }}
+                removeSelectedFile={() => handleRemoveSelectedDocument(index)}
+                id={`documentFor${document.onboarding_required_document_id}`}
+                label="Document"
+                name="required_document"
+                onChange={(e) => handleRequiredDocuments(e, index)}
+                type="file"
+                url=""
+              />
+
+              {document.document && typeof document.document === "object" ? (
+                <button
+                  type="button"
+                  onClick={() => sendRequiredDocument(index)}
+                  className="w-full p-2 rounded-md bg-accent-purple text-neutral-100 font-bold"
+                >
+                  Send
+                </button>
+              ) : null}
+            </div>
+          )}
         </div>
       );
     }
@@ -144,6 +293,14 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
   React.useEffect(() => {
     getOnboarding();
   }, [getOnboarding]);
+
+  React.useEffect(() => {
+    requiredDocumentsRef.current = onboarding.required_documents.map(
+      (_, index) => {
+        return requiredDocumentsRef.current[index] || null;
+      }
+    );
+  }, [onboarding.required_documents]);
 
   return (
     <div
