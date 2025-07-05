@@ -130,11 +130,81 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
             headers: {
               Authorization: `Bearer ${user.token}`,
               "X-CSRF-TOKEN": token,
+              "Content-Type": "multipart/form-data",
             },
             withCredentials: true,
           }
         );
 
+        if (responseData.success) {
+          await getOnboarding();
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const updateRequiredDocument = async (index: number) => {
+    try {
+      const { token } = await getCSRFToken();
+
+      if (token && user?.token) {
+        const {
+          employee_onboarding_required_document_id: documentId,
+          document: newDocument,
+        } = onboarding.required_documents[index];
+
+        const formData = new FormData();
+        formData.set(
+          "document",
+          typeof newDocument === "object" && newDocument?.rawFile
+            ? newDocument.rawFile
+            : ""
+        );
+        formData.set("_method", "PATCH");
+
+        const { data: responseData } = await axios.post(
+          `${url}/employee/employee_onboarding_required_documents/${documentId}`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              "X-CSRF-TOKEN": token,
+              "Content-Type": "multipart/form-data",
+            },
+            withCredentials: true,
+          }
+        );
+
+        if (responseData.success) {
+          await getOnboarding();
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const removeUploadedDocument = async (index: number) => {
+    try {
+      const { token } = await getCSRFToken();
+
+      const documentId =
+        onboarding.required_documents[index]
+          .employee_onboarding_required_document_id;
+
+      if (token && user?.token) {
+        const { data: responseData } = await axios.delete(
+          `${url}/employee/employee_onboarding_required_documents/${documentId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              "X-CSRF-TOKEN": token,
+            },
+            withCredentials: true,
+          }
+        );
         if (responseData.success) {
           await getOnboarding();
         }
@@ -168,7 +238,7 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
     });
   };
 
-  const handleRemoveSelectedDocument = (index: number) => {
+  const removeDocument = (index: number) => {
     setOnboarding((prev) => {
       const documents = [...prev.required_documents];
       documents[index] = { ...documents[index], document: null };
@@ -200,7 +270,7 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
           </div>
           {document.employee_onboarding_required_document_id &&
           typeof document.document === "string" ? (
-            <div className="w-full p-3 rounded-md border-2 bg-white text-center flex flex-col items-center justify-center relative">
+            <div className="w-full p-3 rounded-md border-2 bg-white flex flex-col items-center justify-center relative">
               <Link
                 href={document.document}
                 target="_blank"
@@ -214,7 +284,10 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
                 </span>
               </Link>
 
-              <button className="p-1 rounded-full bg-red-600 absolute top-0 right-0">
+              <button
+                onClick={() => removeUploadedDocument(index)}
+                className="p-1 rounded-full bg-red-600 absolute top-0 right-0"
+              >
                 <IoClose />
               </button>
             </div>
@@ -230,7 +303,7 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
                 ref={(el) => {
                   requiredDocumentsRef.current[index] = el;
                 }}
-                removeSelectedFile={() => handleRemoveSelectedDocument(index)}
+                removeSelectedFile={() => removeDocument(index)}
                 id={`documentFor${document.onboarding_required_document_id}`}
                 label="Document"
                 name="required_document"
@@ -242,7 +315,12 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
               {document.document && typeof document.document === "object" ? (
                 <button
                   type="button"
-                  onClick={() => sendRequiredDocument(index)}
+                  onClick={
+                    typeof document.employee_onboarding_required_document_id ===
+                    "number"
+                      ? () => updateRequiredDocument(index)
+                      : () => sendRequiredDocument(index)
+                  }
                   className="w-full p-2 rounded-md bg-accent-purple text-neutral-100 font-bold"
                 >
                   Send

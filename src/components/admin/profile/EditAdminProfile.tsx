@@ -48,7 +48,7 @@ const EditAdminProfile: React.FC<
     });
   };
 
-  const handleRemoveImage = () => {
+  const removeImage = () => {
     if (imageRef.current) {
       imageRef.current.files = null;
       imageRef.current.value = "";
@@ -166,7 +166,7 @@ const EditAdminProfile: React.FC<
               {typeof profile.image === "object" ||
               typeof profile.image === "string" ? (
                 <button
-                  onClick={handleRemoveImage}
+                  onClick={removeImage}
                   type="button"
                   className="text-red-600 cursor-pointer"
                 >

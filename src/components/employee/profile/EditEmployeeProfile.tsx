@@ -93,7 +93,7 @@ const EditEmployeeProfile: React.FC<
     }
   };
 
-  const handleRemoveImage = () => {
+  const removeImage = () => {
     if (imageRef.current) {
       imageRef.current.files = null;
       imageRef.current.value = "";
@@ -164,7 +164,7 @@ const EditEmployeeProfile: React.FC<
             {typeof profile.image === "object" ||
             typeof profile.image === "string" ? (
               <button
-                onClick={handleRemoveImage}
+                onClick={removeImage}
                 type="button"
                 className="text-red-600 cursor-pointer"
               >
