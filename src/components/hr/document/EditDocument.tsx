@@ -332,7 +332,7 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
               >
                 <input
                   type="file"
-                  accept=".pdf"
+                  accept="application/pdf"
                   name="document"
                   className="hidden "
                   ref={documentRef}

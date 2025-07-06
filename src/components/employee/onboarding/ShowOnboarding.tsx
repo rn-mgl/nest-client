@@ -294,7 +294,7 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
           ) : (
             <div className="w-full flex flex-col items-center justify-center gap-2">
               <File
-                accept="pdf/*"
+                accept="application/pdf"
                 file={
                   document.document && typeof document.document === "object"
                     ? document.document.rawFile

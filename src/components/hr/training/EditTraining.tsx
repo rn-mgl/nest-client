@@ -382,7 +382,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
           <label className="cursor-pointer">
             <input
               type="file"
-              accept=".pdf"
+              accept="application/pdf"
               className="hidden peer-checked"
               id={`content_${index}`}
               onChange={(e) => handleField(e, "content", index)}
@@ -608,7 +608,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
                   </div>
                 ) : (
                   <File
-                    accept=".pdf"
+                    accept="application/pdf"
                     type="file"
                     file={
                       training.certificate &&

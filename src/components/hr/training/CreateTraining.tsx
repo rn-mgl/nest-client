@@ -273,7 +273,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
           id={`fileContent_${index}`}
           name={`fileContent_${index}`}
           label={`File Content ${index + 1}`}
-          accept=".pdf"
+          accept="application/pdf"
           type="file"
           file={contentFile.rawFile}
           url={fileURL}
@@ -466,7 +466,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
                 />
 
                 <File
-                  accept=".pdf"
+                  accept="application/pdf"
                   type="file"
                   file={
                     training.certificate &&

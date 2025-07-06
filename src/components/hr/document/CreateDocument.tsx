@@ -162,7 +162,7 @@ const CreateDocument: React.FC<ModalInterface> = (props) => {
           />
 
           <File
-            accept=".pdf"
+            accept="application/pdf"
             id="document"
             name="document"
             label="Document"
