@@ -147,7 +147,7 @@ const EditHRProfile: React.FC<
           </div>
 
           <div className="w-full flex flex-row items-center justify-between">
-            <label htmlFor="image" className="text-accent-blue">
+            <label htmlFor="image" className="text-accent-blue cursor-pointer">
               <input
                 type="file"
                 accept="image/*"

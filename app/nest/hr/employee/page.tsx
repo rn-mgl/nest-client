@@ -4,6 +4,7 @@ import Filter from "@/src/components/global/filter/Filter";
 import Loading from "@/src/components/global/Loading";
 import Toasts from "@/src/components/global/Toasts";
 import EmployeeCard from "@/src/components/hr/employee/EmployeeCard";
+import ShowEmployee from "@/src/components/hr/employee/ShowEmployee";
 import { useToasts } from "@/src/context/ToastContext";
 import useCategory from "@/src/hooks/useCategory";
 import useIsLoading from "@/src/hooks/useIsLoading";
@@ -25,6 +26,7 @@ import React from "react";
 const HREmployee = () => {
   const [employees, setEmployees] = React.useState<Array<UserInterface>>();
   const [activeUserMenu, setActiveUserMenu] = React.useState(0);
+  const [activeEmployeeSeeMore, setActiveEmployeeSeeMore] = React.useState(0);
 
   const { isLoading, handleIsLoading } = useIsLoading(true);
 
@@ -58,6 +60,10 @@ const HREmployee = () => {
 
   const handleActiveEmployeeMenu = (id: number) => {
     return setActiveUserMenu((prev) => (prev === id ? 0 : id));
+  };
+
+  const handleActiveEmployeeSeeMore = (id: number) => {
+    setActiveEmployeeSeeMore((prev) => (prev === id ? 0 : id));
   };
 
   const sendMail = (email: string) => {
@@ -103,10 +109,22 @@ const HREmployee = () => {
     return (
       <EmployeeCard
         key={index}
-        employee={employee}
-        activeMenu={activeMenu}
+        role={user?.role ?? ""}
+        createdBy={false}
+        //
+        user_id={employee.user_id}
+        first_name={employee.first_name}
+        last_name={employee.last_name}
+        email_verified_at={employee.email_verified_at}
+        email={employee.email}
+        image={employee.image}
         sendMail={() => sendMail(employee.email)}
+        //
+        activeMenu={activeMenu}
         handleActiveMenu={() => handleActiveEmployeeMenu(employee.user_id)}
+        handleActiveSeeMore={() =>
+          handleActiveEmployeeSeeMore(employee.user_id)
+        }
       />
     );
   });
@@ -124,6 +142,9 @@ const HREmployee = () => {
       {toasts.length ? (
         <Toasts toasts={toasts} clearToast={clearToast} />
       ) : null}
+
+      {activeEmployeeSeeMore ? <ShowEmployee /> : null}
+
       <div
         className="w-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2
               t:items-start t:p-4 gap-4 t:gap-8"

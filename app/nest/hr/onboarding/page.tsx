@@ -15,14 +15,14 @@ import { HR_ONBOARDING_SEARCH, HR_ONBOARDING_SORT } from "@/src/utils/filters";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
+import Loading from "@/src/components/global/Loading";
+import Toasts from "@/src/components/global/Toasts";
 import DeleteEntity from "@/src/components/hr/global/DeleteEntity";
+import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd } from "react-icons/io5";
-import { useToasts } from "@/src/context/ToastContext";
-import Toasts from "@/src/components/global/Toasts";
-import useIsLoading from "@/src/hooks/useIsLoading";
-import Loading from "@/src/components/global/Loading";
 
 const HROnboarding = () => {
   const [onboardings, setOnboardings] = React.useState<
