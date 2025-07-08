@@ -74,7 +74,7 @@ const EditHRProfile: React.FC<
         formData.append(
           "image",
           profile.image && typeof profile.image === "object"
-            ? profile.image?.fileURL
+            ? profile.image?.rawFile
             : typeof profile.image === "string"
             ? profile.image
             : ""

@@ -1,6 +1,6 @@
 import React from "react";
 
-const Loading = () => {
+const PageSkeletonLoader = () => {
   return (
     <div className="w-full h-screen flex flex-col items-center justify-start overflow-hidden">
       <div
@@ -37,4 +37,4 @@ const Loading = () => {
   );
 };
 
-export default Loading;
+export default PageSkeletonLoader;

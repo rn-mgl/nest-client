@@ -15,7 +15,7 @@ import { HR_ONBOARDING_SEARCH, HR_ONBOARDING_SORT } from "@/src/utils/filters";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
-import Loading from "@/src/components/global/Loading";
+import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import Toasts from "@/src/components/global/Toasts";
 import DeleteEntity from "@/src/components/hr/global/DeleteEntity";
 import { useToasts } from "@/src/context/ToastContext";
@@ -138,7 +138,7 @@ const HROnboarding = () => {
   }, [getOnboardings]);
 
   if (isLoading) {
-    return <Loading />;
+    return <PageSkeletonLoader />;
   }
 
   return (

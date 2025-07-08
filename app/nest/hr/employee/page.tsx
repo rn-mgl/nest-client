@@ -1,7 +1,7 @@
 "use client";
 
 import Filter from "@/src/components/global/filter/Filter";
-import Loading from "@/src/components/global/Loading";
+import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import Toasts from "@/src/components/global/Toasts";
 import EmployeeCard from "@/src/components/hr/employee/EmployeeCard";
 import ShowEmployee from "@/src/components/hr/employee/ShowEmployee";
@@ -134,7 +134,7 @@ const HREmployee = () => {
   }, [getAllEmployees]);
 
   if (isLoading) {
-    return <Loading />;
+    return <PageSkeletonLoader />;
   }
 
   return (
@@ -143,7 +143,12 @@ const HREmployee = () => {
         <Toasts toasts={toasts} clearToast={clearToast} />
       ) : null}
 
-      {activeEmployeeSeeMore ? <ShowEmployee /> : null}
+      {activeEmployeeSeeMore ? (
+        <ShowEmployee
+          toggleModal={() => handleActiveEmployeeSeeMore(activeEmployeeSeeMore)}
+          id={activeEmployeeSeeMore}
+        />
+      ) : null}
 
       <div
         className="w-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2

@@ -426,7 +426,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
             handleActiveFormPage={handleActiveFormPage}
           />
 
-          <div className="w-full h-full flex flex-col items-center justify-start overflow-y-auto p-2">
+          <div className="w-full h-full flex flex-col items-center justify-start overflow-y-auto">
             {activeFormPage === "information" ? (
               <div className="w-full h-full flex flex-col items-center justify-start gap-4">
                 <Input

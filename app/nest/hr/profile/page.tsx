@@ -82,7 +82,7 @@ const Profile = () => {
       {canChangePassword ? (
         <ChangePassword toggleModal={handleCanChangePassword} />
       ) : null}
-      <div className="w-full min-h-full h-auto flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2 t:p-4 t:items-start">
+      <div className="w-full min-h-full h-auto flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2 t:p-4 t:items-start overflow-y-auto gap-4">
         <div className="w-full grid grid-cols-1 t:grid-cols-2 l-l:grid-cols-3 gap-4 items-start justify-start">
           <div className="w-full rounded-md bg-accent-blue p-4 flex flex-col items-center justify-start gap-2">
             {/* image */}
@@ -132,8 +132,8 @@ const Profile = () => {
             </div>
           </div>
 
-          <div className="w-full p-2 rounded-md bg-accent-green h-full"></div>
-          <div className="w-full p-2 rounded-md bg-accent-yellow h-full"></div>
+          <div className="w-full p-2 rounded-md bg-accent-green"></div>
+          <div className="w-full p-2 rounded-md bg-accent-yellow"></div>
         </div>
       </div>
     </div>
