@@ -93,7 +93,7 @@ const Onboarding = () => {
         onboarding={onboarding}
         handleActiveSeeMore={() =>
           handleActiveOnboardingSeeMore(
-            onboarding.employee_onboarding_id as number
+            onboarding.employee_onboarding_id ?? 0
           )
         }
       />
