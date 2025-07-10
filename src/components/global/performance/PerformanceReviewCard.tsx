@@ -1,5 +1,8 @@
 import { CardInterface } from "@/src/interface/CardInterface";
-import { PerformanceReviewInterface } from "@/src/interface/PerformanceReviewInterface";
+import {
+  EmployeePerformanceReviewInterface,
+  PerformanceReviewInterface,
+} from "@/src/interface/PerformanceReviewInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import React from "react";
 import {
@@ -11,7 +14,10 @@ import {
 } from "react-icons/io5";
 
 const PerformanceReviewCard: React.FC<
-  CardInterface & PerformanceReviewInterface & UserInterface
+  CardInterface &
+    PerformanceReviewInterface &
+    UserInterface &
+    Partial<EmployeePerformanceReviewInterface>
 > = (props) => {
   const isHR = props.role === "hr";
   return (

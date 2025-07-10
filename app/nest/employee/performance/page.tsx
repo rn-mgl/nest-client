@@ -88,6 +88,7 @@ const Performance = () => {
           //
           title={performance.title}
           description={performance.description}
+          status={performance.status}
           //
           user_id={performance.user_id}
           email={performance.email}

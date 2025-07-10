@@ -14,6 +14,7 @@ const LeaveRequest: React.FC<ModalInterface> = (props) => {
       start_date: "",
       end_date: "",
       reason: "",
+      status: "",
     }
   );
 
@@ -42,7 +43,7 @@ const LeaveRequest: React.FC<ModalInterface> = (props) => {
       if (token && user?.token) {
         const { data: responseData } = await axios.post(
           `${url}/employee/leave_request`,
-          { ...leaveRequest, leave_type: props.id },
+          { ...leaveRequest, leave_type_id: props.id },
           {
             headers: {
               Authorization: `Bearer ${user.token}`,

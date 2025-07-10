@@ -12,6 +12,7 @@ export interface PerformanceReviewSurveyInterface {
 
 export interface EmployeePerformanceReviewInterface {
   employee_performance_review_id?: number;
+  status: string;
 }
 
 export interface EmployeePerformanceReviewResponseInterface {
