@@ -87,14 +87,20 @@ const Onboarding = () => {
   const mappedOnboardings = employeeOnboardings.map((onboarding, index) => {
     return (
       <OnboardingCard
-        createdBy={false}
-        role={user?.role as string}
         key={index}
-        onboarding={onboarding}
+        createdBy={false}
+        role={user?.role ?? ""}
+        // onboarding
+        title={onboarding.title}
+        description={onboarding.description}
+        // user
+        email={onboarding.email}
+        first_name={onboarding.first_name}
+        last_name={onboarding.last_name}
+        user_id={onboarding.user_id}
+        // actions
         handleActiveSeeMore={() =>
-          handleActiveOnboardingSeeMore(
-            onboarding.employee_onboarding_id ?? 0
-          )
+          handleActiveOnboardingSeeMore(onboarding.employee_onboarding_id ?? 0)
         }
       />
     );

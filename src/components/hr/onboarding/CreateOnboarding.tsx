@@ -196,7 +196,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
         </div>
         <form
           onSubmit={(e) => submitCreateOnboarding(e)}
-          className="w-full h-full p-4 flex flex-col items-center justify-center gap-4 overflow-hidden"
+          className="w-full h-full p-2 flex flex-col items-center justify-center gap-4 overflow-hidden t:p-4"
         >
           <ModalNav
             activeFormPage={activeFormPage}

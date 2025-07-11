@@ -77,7 +77,7 @@ const ChangePassword: React.FC<ModalInterface> = (props) => {
         </div>
         <form
           onSubmit={(e) => submitChangePassword(e)}
-          className="p-4 flex flex-col items-center justify-center gap-4"
+          className="p-2 flex flex-col items-center justify-center gap-4 t:p-4"
         >
           <Input
             id="current_password"

@@ -137,7 +137,7 @@ const CreateDocument: React.FC<ModalInterface> = (props) => {
         </div>
         <form
           onSubmit={(e) => submitCreateDocument(e)}
-          className="w-full h-full p-4 flex flex-col items-center justify-start gap-4"
+          className="w-full h-full p-2 flex flex-col items-center justify-start gap-4 t:p-4"
         >
           <Input
             label={true}

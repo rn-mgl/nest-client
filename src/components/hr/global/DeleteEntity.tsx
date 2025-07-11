@@ -63,7 +63,7 @@ const DeleteEntity: React.FC<ModalInterface & DeleteModalInterface> = (
         </div>
         <form
           onSubmit={(e) => submitDeleteEntity(e)}
-          className="w-full h-full p-4 flex flex-col items-center justify-start gap-4 text-center"
+          className="w-full h-full p-2 flex flex-col items-center justify-start gap-4 text-center t:p-4"
         >
           <p className="font-bold">
             Are you sure you want to delete this {props.label}?

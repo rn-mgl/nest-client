@@ -11,9 +11,7 @@ import {
 } from "react-icons/io5";
 
 const OnboardingCard: React.FC<
-  CardInterface & {
-    onboarding: OnboardingInterface & UserInterface;
-  }
+  CardInterface & OnboardingInterface & UserInterface
 > = (props) => {
   const isHR = props.role === "hr";
 
@@ -24,11 +22,10 @@ const OnboardingCard: React.FC<
     >
       <div className="flex flex-row items-start justify-between w-full">
         <div className="flex flex-col items-start justify-start">
-          <p className="font-bold truncate">{props.onboarding.title}</p>
+          <p className="font-bold truncate">{props.title}</p>
           {isHR && (
             <p className="text-xs">
-              created by{" "}
-              {props.createdBy ? "you" : `${props.onboarding.first_name}`}
+              created by {props.createdBy ? "you" : `${props.first_name}`}
             </p>
           )}
         </div>
@@ -49,7 +46,7 @@ const OnboardingCard: React.FC<
 
       <div className="w-full h-40 max-h-40 min-h-40 flex flex-col items-center justify-start overflow-y-auto bg-neutral-200 p-2 rounded-xs">
         <p className="text-sm w-full text-wrap break-words">
-          {props.onboarding.description}
+          {props.description}
         </p>
       </div>
 

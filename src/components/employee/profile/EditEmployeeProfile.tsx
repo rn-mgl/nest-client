@@ -124,7 +124,7 @@ const EditEmployeeProfile: React.FC<
         </div>
         <form
           onSubmit={(e) => submitUpdateProfile(e)}
-          className="w-full p-4 rounded-b-md bg-neutral-100 flex flex-col items-center justify-start gap-4"
+          className="w-full p-2 rounded-b-md bg-neutral-100 flex flex-col items-center justify-start gap-4 t:p-4"
         >
           <div className="w-40 aspect-square bg-accent-blue rounded-full border-8 border-accent-yellow flex flex-col items-center justify-center relative overflow-hidden">
             {typeof profile.image === "object" && profile.image?.rawFile ? (

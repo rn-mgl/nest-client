@@ -206,7 +206,7 @@ const AssignLeave: React.FC<ModalInterface> = (props) => {
 
         <form
           onSubmit={(e) => submitAssignLeave(e)}
-          className="w-full flex flex-col items-center justify-start p-4 gap-4"
+          className="w-full flex flex-col items-center justify-start p-2 gap-4 t:p-4"
         >
           <div className="w-full h-full flex flex-col items-start justify-center border-[1px] rounded-md overflow-x-auto">
             <div className="grid min-w-[768px] grid-cols-5 w-full gap-4 p-4 items-center justify-start bg-neutral-200 font-bold">

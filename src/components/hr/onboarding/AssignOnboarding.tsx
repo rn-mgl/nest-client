@@ -132,7 +132,7 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
         </div>
         <form
           onSubmit={(e) => submitAssignOnboarding(e)}
-          className="w-full h-full p-4 flex flex-col items-start justify-center gap-4 overflow-hidden"
+          className="w-full h-full p-2 flex flex-col items-start justify-center gap-4 overflow-hidden t:p-4"
         >
           <div className="w-full h-full flex flex-col items-start justify-start border-[1px] rounded-md overflow-x-auto">
             <div className="grid grid-cols-4 p-4 items-center font-bold gap-4 justify-start min-w-[768px] w-full bg-neutral-200">

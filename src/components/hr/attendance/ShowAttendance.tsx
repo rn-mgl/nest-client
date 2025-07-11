@@ -116,7 +116,7 @@ const ShowAttendance: React.FC<ModalInterface & AttendanceDate> = (props) => {
             <IoClose />
           </button>
         </div>
-        <div className="w-full h-full p-4 flex flex-col items-center justify-center overflow-x-auto">
+        <div className="w-full h-full p-2 flex flex-col items-center justify-center overflow-x-auto t:p-4">
           <div className="w-full flex flex-col items-start justify-center overflow-x-auto border-[1px] rounded-md">
             <div className="w-full min-w-[768px] grid grid-cols-6 font-bold gap-4 bg-neutral-200 p-4">
               <p className="col-span-2">Employee</p>

@@ -124,7 +124,7 @@ const EditAdminProfile: React.FC<
         </div>
         <form
           onSubmit={submitUpdateProfile}
-          className="w-full p-4 flex flex-col items-center justify-start gap-4"
+          className="w-full p-2 flex flex-col items-center justify-start gap-4 t:p-4"
         >
           <div className="w-full flex flex-col items-center justify-start gap-4">
             <div className="w-40 aspect-square bg-accent-blue border-8 border-accent-yellow rounded-full bg-center bg-cover overflow-hidden flex flex-col items-center justify-center relative">

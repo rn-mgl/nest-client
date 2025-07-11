@@ -395,7 +395,7 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
             <IoClose />
           </button>
         </div>
-        <div className="w-full h-full flex flex-col items-center justify-start gap-4 p-4 overflow-y-hidden">
+        <div className="w-full h-full flex flex-col items-center justify-start gap-4 p-2 overflow-y-hidden t:p-4">
           <ModalNav
             activeFormPage={activeFormPage}
             handleActiveFormPage={handleActiveFormPage}

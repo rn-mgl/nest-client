@@ -163,7 +163,7 @@ const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
         </div>
         <form
           onSubmit={(e) => submitUpdatePerformanceReview(e)}
-          className="w-full h-full p-4 flex flex-col items-center justify-start gap-4 overflow-hidden"
+          className="w-full h-full p-2 flex flex-col items-center justify-start gap-4 overflow-hidden t:p-4"
         >
           <ModalNav
             activeFormPage={activeFormPage}

@@ -418,7 +418,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
 
         <form
           onSubmit={(e) => submitCreateTraining(e)}
-          className="w-full h-full p-4 flex flex-col gap-4 overflow-hidden items-center justify-start"
+          className="w-full h-full p-2 flex flex-col gap-4 overflow-hidden items-center justify-start t:p-4"
         >
           <ModalNav
             activeFormPage={activeFormPage}

@@ -79,7 +79,7 @@ const LeaveRequest: React.FC<ModalInterface> = (props) => {
         </div>
         <form
           onSubmit={(e) => submitLeaveRequest(e)}
-          className="w-full flex flex-col items-center justify-start p-4 gap-4"
+          className="w-full flex flex-col items-center justify-start p-2 gap-4 t:p-4"
         >
           <Input
             type="datetime-local"

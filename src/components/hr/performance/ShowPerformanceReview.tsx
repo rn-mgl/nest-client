@@ -90,7 +90,7 @@ const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
           </button>
         </div>
 
-        <div className="w-full h-full p-4 flex flex-col items-center justify-start gap-4 overflow-hidden">
+        <div className="w-full h-full p-2 flex flex-col items-center justify-start gap-4 overflow-hidden t:p-4">
           <ModalNav
             activeFormPage={activeFormPage}
             pages={["information", "surveys"]}

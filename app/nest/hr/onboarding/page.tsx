@@ -113,17 +113,25 @@ const HROnboarding = () => {
   }, [url, user?.token, search, sort, handleIsLoading]);
 
   const mappedOnboardings = onboardings?.map((onboarding, index) => {
-    const onboardingId = onboarding.onboarding_id as number;
+    const onboardingId = onboarding.onboarding_id ?? 0;
     const activeMenu = activeOnboardingMenu === onboardingId;
     const createdBy = user?.current === onboarding.created_by;
 
     return (
       <OnboardingCard
-        role={user?.role as string}
         key={index}
-        onboarding={onboarding}
+        role={user?.role ?? ""}
         activeMenu={activeMenu}
         createdBy={createdBy}
+        // onboarding
+        title={onboarding.title}
+        description={onboarding.description}
+        // user
+        email={onboarding.email}
+        first_name={onboarding.first_name}
+        last_name={onboarding.last_name}
+        user_id={onboarding.user_id}
+        // actions
         handleActiveMenu={() => handleActiveOnboardingMenu(onboardingId)}
         handleActiveSeeMore={() => handleActiveOnboardingSeeMore(onboardingId)}
         handleCanAssign={handleCanAssignOnboarding}

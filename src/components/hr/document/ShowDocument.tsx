@@ -73,7 +73,7 @@ const ShowDocument: React.FC<ModalInterface> = (props) => {
             <IoClose />
           </button>
         </div>
-        <div className="w-full h-full p-4 rounded-b-md flex flex-col items-center justify-start gap-4">
+        <div className="w-full h-full p-2 rounded-b-md flex flex-col items-center justify-start gap-4 t:p-4">
           <TextField label="Name" value={document.name} />
           <TextBlock label="Description" value={document.description} />
           <TextField

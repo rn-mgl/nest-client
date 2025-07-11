@@ -116,7 +116,7 @@ const Log: React.FC<ModalInterface & { logType: "in" | "out" }> = ({
             <IoClose />
           </button>
         </div>
-        <div className="w-full p-4 rounded-b-md flex flex-col items-center justify-start gap-4">
+        <div className="w-full p-2 rounded-b-md flex flex-col items-center justify-start gap-4 t:p-4">
           <p className="text-center font-bold">
             Hold the button to log {logType}.
           </p>
