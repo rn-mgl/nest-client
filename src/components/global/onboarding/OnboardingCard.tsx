@@ -1,5 +1,8 @@
 import { CardInterface } from "@/src/interface/CardInterface";
-import { OnboardingInterface } from "@/src/interface/OnboardingInterface";
+import {
+  EmployeeOnboardingInterface,
+  OnboardingInterface,
+} from "@/src/interface/OnboardingInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import React from "react";
 import {
@@ -11,7 +14,10 @@ import {
 } from "react-icons/io5";
 
 const OnboardingCard: React.FC<
-  CardInterface & OnboardingInterface & UserInterface
+  CardInterface &
+    OnboardingInterface &
+    UserInterface &
+    Partial<EmployeeOnboardingInterface>
 > = (props) => {
   const isHR = props.role === "hr";
 
@@ -30,7 +36,7 @@ const OnboardingCard: React.FC<
           )}
         </div>
 
-        {isHR && (
+        {isHR ? (
           <button
             onClick={props.handleActiveMenu}
             className="p-2 rounded-full bg-neutral-100 transition-all"
@@ -41,6 +47,8 @@ const OnboardingCard: React.FC<
               }`}
             />
           </button>
+        ) : (
+          <p className="text-sm">{props.status ?? ""}</p>
         )}
       </div>
 
