@@ -93,6 +93,7 @@ const Onboarding = () => {
         // onboarding
         title={onboarding.title}
         description={onboarding.description}
+        status={onboarding.status}
         // user
         email={onboarding.email}
         first_name={onboarding.first_name}
