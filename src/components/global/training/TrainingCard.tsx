@@ -26,34 +26,34 @@ const TrainingCard: React.FC<
       className="w-full min-h-[17rem] p-4 rounded-md bg-neutral-100 flex 
                         flex-col items-center justify-start gap-4 relative max-w-full transition-all"
     >
-      <div className="flex flex-row items-start justify-between w-full">
-        <div className="flex flex-col items-start justify-start w-full gap-1">
-          <p className="font-bold truncate">{props.title}</p>
+      <div className="flex flex-col items-start justify-between w-full gap-2">
+        <div className="w-full flex flex-row items-center justify-between">
+          <div className="flex flex-col items-start justify-start w-full gap-1">
+            <p className="font-bold truncate">{props.title}</p>
+          </div>
 
-          {isEmployee ? (
-            <div className="w-full gap-4 flex flex-row items-center justify-between ">
-              <p className="text-sm" title="Deadline">
-                {props.deadline ?? "No Deadline"}
-              </p>
-            </div>
+          {isHR ? (
+            <button
+              onClick={props.handleActiveMenu}
+              className="p-2 rounded-full bg-neutral-100 transition-all"
+            >
+              <IoEllipsisVertical
+                className={`${
+                  props.activeMenu ? "text-accent-blue" : "text-neutral-900"
+                }`}
+              />
+            </button>
+          ) : isEmployee ? (
+            <p className="text-sm" title="Status">
+              {props.status}
+            </p>
           ) : null}
         </div>
 
-        {isHR ? (
-          <button
-            onClick={props.handleActiveMenu}
-            className="p-2 rounded-full bg-neutral-100 transition-all"
-          >
-            <IoEllipsisVertical
-              className={`${
-                props.activeMenu ? "text-accent-blue" : "text-neutral-900"
-              }`}
-            />
-          </button>
-        ) : isEmployee ? (
-          <p className="text-sm" title="Status">
-            {props.status}
-          </p>
+        {isEmployee ? (
+          <div className="w-full flex flex-row items-start text-sm truncate justify-start font-semibold">
+            {props.deadline ?? "No Deadline"}
+          </div>
         ) : null}
       </div>
 
