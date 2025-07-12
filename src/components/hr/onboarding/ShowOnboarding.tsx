@@ -64,12 +64,8 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
           key={index}
           className="w-full flex flex-col items-center justify-start rounded-md gap-2 "
         >
-          <p className="w-full h-fit bg-white p-2 border-2 rounded-md">
-            {req.title}
-          </p>
-          <p className="w-full overflow-y-auto bg-white h-40 p-2 rounded-md border-2 text-wrap break-words">
-            {req.description}
-          </p>
+          <TextField label="" value={req.title} />
+          <TextBlock label="" value={req.description} />
         </div>
       );
     }
@@ -82,12 +78,8 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
           key={index}
           className="w-full flex flex-col items-center justify-start rounded-md gap-2 "
         >
-          <p className="w-full h-fit bg-white p-2 border-2 rounded-md">
-            {ack.title}
-          </p>
-          <p className="w-full overflow-y-auto bg-white h-40 p-2 rounded-md border-2 text-wrap break-words">
-            {ack.description}
-          </p>
+          <TextField label="" value={ack.title} />
+          <TextBlock label="" value={ack.description} />
         </div>
       );
     }

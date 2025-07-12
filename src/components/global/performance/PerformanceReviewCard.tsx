@@ -20,6 +20,7 @@ const PerformanceReviewCard: React.FC<
     Partial<EmployeePerformanceReviewInterface>
 > = (props) => {
   const isHR = props.role === "hr";
+  const isEmployee = props.role === "employee";
   return (
     <div
       className="w-full min-h-[17rem] p-4 rounded-md bg-neutral-100 flex 
@@ -41,6 +42,8 @@ const PerformanceReviewCard: React.FC<
               }`}
             />
           </button>
+        ) : isEmployee ? (
+          <p className="text-sm">{props.status ?? ""}</p>
         ) : null}
       </div>
 

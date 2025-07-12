@@ -95,6 +95,7 @@ const Training = () => {
         certificate={training.certificate}
         status={training.status}
         deadline={training.deadline}
+        created_by={training.created_by}
         //
         user_id={training.user_id}
         email={training.email}

@@ -4,6 +4,7 @@ export interface TrainingInterface {
   deadline_days: number;
   description: string;
   certificate: { rawFile: File; fileURL: string } | string | null;
+  created_by?: number;
 }
 
 export interface TrainingContentInterface {

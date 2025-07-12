@@ -102,7 +102,7 @@ const HRTraining = () => {
 
   const mappedTrainings = trainings.map((training, index) => {
     const trainingId = training.training_id as number;
-    const createdBy = training.user_id === user?.current;
+    const createdBy = training.created_by === user?.current;
     const activeMenu = activeTrainingMenu === trainingId;
     return (
       <TrainingCard

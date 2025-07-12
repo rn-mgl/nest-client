@@ -11,7 +11,7 @@ import axios from "axios";
 
 import { useSession } from "next-auth/react";
 import React from "react";
-import { IoCaretForwardSharp, IoClose } from "react-icons/io5";
+import { IoClose } from "react-icons/io5";
 import ModalNav from "../../global/ModalNav";
 import TextBlock from "../../global/field/TextBlock";
 import TextField from "../../global/field/TextField";
@@ -60,12 +60,8 @@ const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
 
   const mappedSurveys = performanceReview.contents.map((content, index) => {
     return (
-      <div
-        key={index}
-        className="w-full flex flex-row items-center justify-start bg-white p-2 rounded-md gap-2 break-words border-2"
-      >
-        <IoCaretForwardSharp />
-        <p className="w-full overflow-y-auto max-h-24">{content.survey}</p>
+      <div key={index} className="w-full">
+        <TextBlock label="" value={content.survey} />
       </div>
     );
   });
