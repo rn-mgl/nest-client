@@ -32,9 +32,6 @@ const TrainingCard: React.FC<
 
           {isEmployee ? (
             <div className="w-full gap-4 flex flex-row items-center justify-between ">
-              <p className="text-sm" title="Status">
-                {props.status}
-              </p>
               <p className="text-sm" title="Deadline">
                 {props.deadline ?? "No Deadline"}
               </p>
@@ -53,6 +50,10 @@ const TrainingCard: React.FC<
               }`}
             />
           </button>
+        ) : isEmployee ? (
+          <p className="text-sm" title="Status">
+            {props.status}
+          </p>
         ) : null}
       </div>
 
