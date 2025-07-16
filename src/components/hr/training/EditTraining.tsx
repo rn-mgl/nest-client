@@ -256,17 +256,17 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
   const mappedContents = fields.map((content, index) => {
     const contentFile = content.content;
     const fileURL =
-      typeof contentFile === "object"
+      typeof contentFile === "object" // if object, local blob url
         ? contentFile.fileURL
-        : typeof contentFile === "string"
+        : typeof contentFile === "string" // if string, it is a cloudinary url
         ? contentFile
         : "";
 
     const dynamicContent =
       content.type === "text" ? (
         <TextArea
-          id="contents"
-          name="contents"
+          id="content"
+          name="content"
           onChange={(e) => handleField(e, "content", index)}
           placeholder={`Content ${index + 1}`}
           required={true}
@@ -274,15 +274,21 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
         />
       ) : content.type === "image" ? (
         <div className="w-full flex flex-col items-start justify-center gap-2">
-          {fileURL && (
-            <div className="relative flex flex-col items-center justify-center w-full">
-              <Image
-                src={fileURL}
-                alt="file"
-                width={1500}
-                height={1500}
-                className="rounded-md w-full"
-              />
+          {typeof contentFile === "string" && contentFile !== "" ? (
+            <div className="relative flex flex-col items-center justify-center w-full bg-white rounded-md">
+              <Link
+                target="_blank"
+                href={contentFile}
+                className="w-full h-full"
+              >
+                <Image
+                  src={fileURL}
+                  alt="file"
+                  width={1500}
+                  height={1500}
+                  className="rounded-md w-full"
+                />
+              </Link>
 
               <button
                 type="button"
@@ -295,33 +301,35 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
                 <IoClose className="text-xs" />
               </button>
             </div>
+          ) : (
+            <File
+              accept="image/*"
+              file={
+                typeof contentFile === "object" ? contentFile.rawFile : null
+              }
+              id={`trainingContent_${index}`}
+              label={`Image Content ${index + 1}`}
+              name="content"
+              onChange={(e) => handleField(e, "content", index)}
+              ref={(el) => {
+                inputRefs.current[index] = el;
+              }}
+              removeSelectedFile={() => {
+                removeSelectedFile(index);
+                removeTargetFieldValue("content", index);
+              }}
+              type="image"
+              url={typeof contentFile === "object" ? contentFile.fileURL : ""}
+            />
           )}
-
-          <div className="w-full flex flex-row items-center justify-between">
-            <label className="cursor-pointer">
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                id={`content_${index}`}
-                onChange={(e) => handleField(e, "content", index)}
-                ref={(el) => {
-                  inputRefs.current[index] = el;
-                }}
-              />
-
-              <span>
-                <IoImage className="text-accent-blue" />
-              </span>
-            </label>
-          </div>
         </div>
       ) : content.type === "video" ? (
         <div className="w-full flex flex-col items-start justify-center gap-2">
-          {fileURL && (
+          {typeof contentFile === "string" && contentFile !== "" ? (
             <div className="relative flex flex-col items-center justify-center">
-              <video src={fileURL} controls className="rounded-md w-full" />
-
+              <Link href={contentFile} target="_blank">
+                <video src={fileURL} controls className="rounded-md w-full" />
+              </Link>
               <button
                 type="button"
                 onClick={() => {
@@ -333,39 +341,45 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
                 <IoClose className="text-xs" />
               </button>
             </div>
-          )}
-
-          <label className="cursor-pointer">
-            <input
-              type="file"
+          ) : (
+            <File
               accept="video/*"
-              className="hidden"
-              id={`content_${index}`}
+              type="video"
+              file={
+                typeof contentFile === "object" ? contentFile.rawFile : null
+              }
+              id={`trainingContent_${index}`}
+              label={`Video Content ${index + 1}`}
+              name="content"
               onChange={(e) => handleField(e, "content", index)}
               ref={(el) => {
                 inputRefs.current[index] = el;
               }}
+              removeSelectedFile={() => {
+                removeSelectedFile(index);
+                removeTargetFieldValue("content", index);
+              }}
+              url={typeof contentFile === "object" ? contentFile.fileURL : ""}
             />
-
-            <span>
-              <IoVideocam className="text-accent-blue" />
-            </span>
-          </label>
+          )}
         </div>
       ) : content.type === "file" ? (
         <div className="w-full flex flex-col items-start justify-start gap-2">
-          {fileURL && (
+          {typeof contentFile === "string" && contentFile !== "" ? (
             <div className="p-2 w-full rounded-md border-2 bg-white flex flex-col items-start justify-start relative">
-              <div className="w-full flex flex-row items-center justify-start gap-2">
+              <Link
+                target="_blank"
+                href={contentFile}
+                className="w-full flex flex-row items-center justify-start gap-2 group"
+              >
                 <div className="aspect-square p-2.5 rounded-xs bg-accent-blue/50">
                   <AiFillFilePdf className="text-white text-2xl" />
                 </div>
-                <p className="truncate text-sm m-s:w-[10ch] m-m:w-[17ch] m-l:w-[20ch] t:w-full">
-                  {typeof contentFile === "object"
-                    ? contentFile.rawFile.name
-                    : `View File`}
+                <p className="truncate text-sm m-s:w-[10ch] m-m:w-[17ch] m-l:w-[20ch] t:w-full group-hover:underline underline-offset-2">
+                  View File Content {index + 1}
                 </p>
-              </div>
+              </Link>
+
               <button
                 type="button"
                 onClick={() => {
@@ -377,24 +391,27 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
                 <IoClose className="text-xs" />
               </button>
             </div>
-          )}
-
-          <label className="cursor-pointer">
-            <input
-              type="file"
+          ) : (
+            <File
               accept="application/pdf"
-              className="hidden peer-checked"
-              id={`content_${index}`}
+              file={
+                typeof contentFile === "object" ? contentFile.rawFile : null
+              }
+              id={`trainingContent_${index}`}
+              label={`File Content ${index + 1}`}
+              name="content"
               onChange={(e) => handleField(e, "content", index)}
               ref={(el) => {
                 inputRefs.current[index] = el;
               }}
+              removeSelectedFile={() => {
+                removeSelectedFile(index);
+                removeTargetFieldValue("content", index);
+              }}
+              type="file"
+              url={typeof contentFile === "object" ? contentFile.fileURL : ""}
             />
-
-            <span>
-              <AiFillFilePdf className="text-accent-blue" />
-            </span>
-          </label>
+          )}
         </div>
       ) : null;
 

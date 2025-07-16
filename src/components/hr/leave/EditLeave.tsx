@@ -92,7 +92,7 @@ const EditLeave: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex items-center justify-center 
                 p-4 t:p-8 z-50 bg-linear-to-b from-accent-yellow/30 to-accent-purple/30 animate-fade"
     >
-      <div className="w-full h-auto max-w-(--breakpoint-t) bg-neutral-100 shadow-md rounded-lg ">
+      <div className="w-full h-full max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-yellow rounded-t-lg font-bold text-accent-blue">
           Update Leave
           <button
