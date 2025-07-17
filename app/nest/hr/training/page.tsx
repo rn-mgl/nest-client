@@ -19,6 +19,8 @@ import { HR_TRAINING_SEARCH, HR_TRAINING_SORT } from "@/utils/filters";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd } from "react-icons/io5";
+import useIsLoading from "@/src/hooks/useIsLoading";
+import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 
 const HRTraining = () => {
   const [trainings, setTrainings] = React.useState<
@@ -46,6 +48,8 @@ const HRTraining = () => {
     handleSelectSort,
     handleToggleAsc,
   } = useSort("created_at", "Created At");
+
+  const { isLoading, handleIsLoading } = useIsLoading(true);
 
   const url = process.env.URL;
   const { data } = useSession({ required: true });
@@ -77,6 +81,7 @@ const HRTraining = () => {
 
   const getTrainings = React.useCallback(async () => {
     try {
+      handleIsLoading(true);
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
@@ -95,10 +100,10 @@ const HRTraining = () => {
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      handleIsLoading(false);
     }
-  }, [user?.token, url, search, sort]);
-
-  console.log(trainings);
+  }, [user?.token, url, search, sort, handleIsLoading]);
 
   const mappedTrainings = trainings.map((training, index) => {
     const trainingId = training.training_id as number;
@@ -134,6 +139,10 @@ const HRTraining = () => {
   React.useEffect(() => {
     getTrainings();
   }, [getTrainings]);
+
+  if (isLoading) {
+    return <PageSkeletonLoader />;
+  }
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">

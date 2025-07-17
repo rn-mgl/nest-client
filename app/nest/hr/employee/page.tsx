@@ -27,6 +27,7 @@ const HREmployee = () => {
   const [employees, setEmployees] = React.useState<Array<UserInterface>>();
   const [activeUserMenu, setActiveUserMenu] = React.useState(0);
   const [activeEmployeeSeeMore, setActiveEmployeeSeeMore] = React.useState(0);
+  const [activeTab, setActiveTab] = React.useState("Employees");
 
   const { isLoading, handleIsLoading } = useIsLoading(true);
 
@@ -58,12 +59,24 @@ const HREmployee = () => {
   const { data } = useSession({ required: true });
   const user = data?.user;
 
+  const tabs = [
+    "Employees",
+    "Onboardings",
+    "Leaves",
+    "Performances",
+    "Trainings",
+  ];
+
   const handleActiveEmployeeMenu = (id: number) => {
     return setActiveUserMenu((prev) => (prev === id ? 0 : id));
   };
 
   const handleActiveEmployeeSeeMore = (id: number) => {
     setActiveEmployeeSeeMore((prev) => (prev === id ? 0 : id));
+  };
+
+  const handleActiveTab = (tab: string) => {
+    setActiveTab(tab);
   };
 
   const sendMail = (email: string) => {
@@ -98,9 +111,9 @@ const HREmployee = () => {
         message = error?.response?.data.message ?? error.message;
       }
 
-      handleIsLoading(false);
-
       addToast("Something went wrong", message, "error");
+    } finally {
+      handleIsLoading(false);
     }
   }, [url, user?.token, search, sort, category, handleIsLoading, addToast]);
 
@@ -129,6 +142,22 @@ const HREmployee = () => {
     );
   });
 
+  const mappedTabs = tabs.map((tab, index) => {
+    return (
+      <button
+        key={index}
+        onClick={() => handleActiveTab(tab)}
+        className={`w-full p-2 px-4 rounded-t-md text-sm transition-all ${
+          activeTab === tab
+            ? "text-accent-blue font-bold border-b-2 border-accent-blue"
+            : "border-b-2"
+        }`}
+      >
+        {tab}
+      </button>
+    );
+  });
+
   React.useEffect(() => {
     getAllEmployees();
   }, [getAllEmployees]);
@@ -138,7 +167,7 @@ const HREmployee = () => {
   }
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-start">
+    <div className="w-full min-h-full h-auto flex flex-col items-center justify-start">
       {toasts.length ? (
         <Toasts toasts={toasts} clearToast={clearToast} />
       ) : null}
@@ -151,37 +180,48 @@ const HREmployee = () => {
       ) : null}
 
       <div
-        className="w-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2
-              t:items-start t:p-4 gap-4 t:gap-8"
+        className="w-full min-h-full h-auto flex flex-col items-start justify-start max-w-(--breakpoint-l-l) p-2
+                  t:p-4"
       >
-        <Filter
-          useSearchFilter={true}
-          useSortFilter={true}
-          useCategoryFilter={true}
-          searchKey={debounceSearch.searchKey}
-          searchLabel={debounceSearch.searchLabel}
-          searchValue={debounceSearch.searchValue}
-          searchKeyLabelPairs={HR_EMPLOYEE_SEARCH}
-          canSeeSearchDropDown={canSeeSearchDropDown}
-          selectSearch={handleSelectSearch}
-          toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
-          onChange={handleSearch}
-          categoryLabel={category.categoryLabel}
-          canSeeCategoryDropDown={canSeeCategoryDropDown}
-          categoryKeyValuePairs={HR_EMPLOYEE_CATEGORY}
-          toggleCanSeeCategoryDropDown={handleCanSeeCategoryDropDown}
-          selectCategory={handleSelectCategory}
-          sortKey={sort.sortKey}
-          sortLabel={sort.sortLabel}
-          isAsc={sort.isAsc}
-          canSeeSortDropDown={canSeeSortDropDown}
-          sortKeyLabelPairs={HR_EMPLOYEE_SORT}
-          toggleAsc={handleToggleAsc}
-          selectSort={handleSelectSort}
-          toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
-        />
-        <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">
-          {mappedEmployees}
+        <div className="w-full min-h-full h-auto flex flex-col items-start justify-start gap-4 t:gap-8">
+          <div className="w-full">
+            <div className="w-full flex flex-row overflow-x-auto">
+              {mappedTabs}
+            </div>
+          </div>
+
+          <div className="w-full flex flex-col items-center justify-start gap-4 t:gap-8">
+            <Filter
+              useSearchFilter={true}
+              useSortFilter={true}
+              useCategoryFilter={true}
+              searchKey={debounceSearch.searchKey}
+              searchLabel={debounceSearch.searchLabel}
+              searchValue={debounceSearch.searchValue}
+              searchKeyLabelPairs={HR_EMPLOYEE_SEARCH}
+              canSeeSearchDropDown={canSeeSearchDropDown}
+              selectSearch={handleSelectSearch}
+              toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
+              onChange={handleSearch}
+              categoryLabel={category.categoryLabel}
+              canSeeCategoryDropDown={canSeeCategoryDropDown}
+              categoryKeyValuePairs={HR_EMPLOYEE_CATEGORY}
+              toggleCanSeeCategoryDropDown={handleCanSeeCategoryDropDown}
+              selectCategory={handleSelectCategory}
+              sortKey={sort.sortKey}
+              sortLabel={sort.sortLabel}
+              isAsc={sort.isAsc}
+              canSeeSortDropDown={canSeeSortDropDown}
+              sortKeyLabelPairs={HR_EMPLOYEE_SORT}
+              toggleAsc={handleToggleAsc}
+              selectSort={handleSelectSort}
+              toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
+            />
+
+            <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">
+              {mappedEmployees}
+            </div>
+          </div>
         </div>
       </div>
     </div>
