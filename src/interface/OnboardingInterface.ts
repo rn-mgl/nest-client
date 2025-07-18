@@ -30,4 +30,5 @@ export interface EmployeeOnboardingPolicyAcknowledgementInterface {
 export interface EmployeeOnboardingInterface {
   employee_onboarding_id?: number;
   status: string;
+  created_at?: string;
 }

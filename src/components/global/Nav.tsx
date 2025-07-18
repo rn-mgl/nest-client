@@ -96,7 +96,7 @@ const Nav: React.FC<SideNavInterface & { children: React.ReactNode }> = (
   }, [path, user?.role]);
 
   return (
-    <div className="w-full h-full flex flex-row items-start justify-center">
+    <div className="w-full h-full flex flex-row items-start justify-start">
       {/* side nav */}
       <div
         className={`w-full h-full fixed top-0 left-0 bg-white flex flex-col items-center justify-start transition-all

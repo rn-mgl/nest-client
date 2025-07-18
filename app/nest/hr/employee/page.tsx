@@ -11,6 +11,10 @@ import useIsLoading from "@/src/hooks/useIsLoading";
 
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
+import {
+  EmployeeOnboardingInterface,
+  OnboardingInterface,
+} from "@/src/interface/OnboardingInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import {
   HR_EMPLOYEE_CATEGORY,
@@ -21,13 +25,17 @@ import { getCSRFToken } from "@/src/utils/token";
 import axios, { AxiosError } from "axios";
 
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 import React from "react";
 
 const HREmployee = () => {
   const [employees, setEmployees] = React.useState<Array<UserInterface>>();
+  const [onboardings, setOnboardings] = React.useState<
+    (UserInterface & OnboardingInterface & EmployeeOnboardingInterface)[]
+  >([]);
   const [activeUserMenu, setActiveUserMenu] = React.useState(0);
   const [activeEmployeeSeeMore, setActiveEmployeeSeeMore] = React.useState(0);
-  const [activeTab, setActiveTab] = React.useState("Employees");
+  const [activeTab, setActiveTab] = React.useState("employees");
 
   const { isLoading, handleIsLoading } = useIsLoading(true);
 
@@ -60,11 +68,11 @@ const HREmployee = () => {
   const user = data?.user;
 
   const tabs = [
-    "Employees",
-    "Onboardings",
-    "Leaves",
-    "Performances",
-    "Trainings",
+    "employees",
+    "onboardings",
+    "leaves",
+    "performances",
+    "trainings",
   ];
 
   const handleActiveEmployeeMenu = (id: number) => {
@@ -83,39 +91,93 @@ const HREmployee = () => {
     window.location.href = `mailto:${email}`;
   };
 
-  const getAllEmployees = React.useCallback(async () => {
-    try {
-      handleIsLoading(true);
-      const { token } = await getCSRFToken();
+  const getAllEmployees = React.useCallback(
+    async (tab: string) => {
+      try {
+        handleIsLoading(true);
+        const { token } = await getCSRFToken();
 
-      if (token && user?.token) {
-        const { data: responseData } = await axios.get(`${url}/hr/employee`, {
-          headers: {
-            Authorization: `Bearer ${user?.token}`,
-            "X-CSRF-TOKEN": token,
-          },
-          withCredentials: true,
-          params: { ...search, ...sort, ...category },
-        });
+        if (token && user?.token) {
+          const { data: responseData } = await axios.get(`${url}/hr/employee`, {
+            headers: {
+              Authorization: `Bearer ${user?.token}`,
+              "X-CSRF-TOKEN": token,
+            },
+            withCredentials: true,
+            params: { ...search, ...sort, ...category, tab },
+          });
 
-        if (responseData.employees) {
-          setEmployees(responseData.employees);
+          if (responseData.data) {
+            setEmployees(responseData.data);
+          }
+
+          handleIsLoading(false);
+        }
+      } catch (error) {
+        let message = "An error occurred when getting the employees.";
+
+        if (error instanceof AxiosError) {
+          message = error?.response?.data.message ?? error.message;
         }
 
+        addToast("Something went wrong", message, "error");
+      } finally {
         handleIsLoading(false);
       }
-    } catch (error) {
-      let message = "An error occurred when getting the employees.";
+    },
+    [url, user?.token, search, sort, category, handleIsLoading, addToast]
+  );
 
-      if (error instanceof AxiosError) {
-        message = error?.response?.data.message ?? error.message;
+  const getEmployeeOnboardings = React.useCallback(
+    async (tab: string) => {
+      try {
+        const { token } = await getCSRFToken();
+
+        if (token && user?.token) {
+          const { data: responseData } = await axios.get(`${url}/hr/employee`, {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              "X-CSRF-TOKEN": token,
+            },
+            params: { ...search, ...sort, ...category, tab },
+            withCredentials: true,
+          });
+
+          if (responseData.data) {
+            setOnboardings(responseData.data);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+
+        let message = "An error occurred when getting the onboardings.";
+
+        if (error instanceof AxiosError) {
+          message = error.response?.data.message ?? error.message;
+        }
+
+        addToast("Something went wrong", message, "error");
       }
+    },
+    [url, user?.token, search, sort, category, addToast]
+  );
 
-      addToast("Something went wrong", message, "error");
-    } finally {
-      handleIsLoading(false);
+  const getPageData = React.useCallback(async () => {
+    try {
+      switch (activeTab) {
+        case "employees":
+          await getAllEmployees(activeTab);
+          break;
+        case "onboardings":
+          await getEmployeeOnboardings(activeTab);
+          break;
+        default:
+          break;
+      }
+    } catch (error) {
+      console.log(error);
     }
-  }, [url, user?.token, search, sort, category, handleIsLoading, addToast]);
+  }, [activeTab, getAllEmployees, getEmployeeOnboardings]);
 
   const mappedEmployees = employees?.map((employee, index) => {
     const activeMenu = activeUserMenu === employee.user_id;
@@ -142,12 +204,64 @@ const HREmployee = () => {
     );
   });
 
+  const mappedOnboardings = onboardings.map((onboarding, index) => {
+    const assignedDate = onboarding.created_at
+      ? new Date(onboarding.created_at).toLocaleDateString()
+      : "-";
+    const assignedTime = onboarding.created_at
+      ? new Date(onboarding.created_at).toLocaleTimeString()
+      : "-";
+
+    return (
+      <div
+        key={index}
+        className="w-full p-4 border grid grid-cols-6 gap-4 min-w-(--breakpoint-t) last:rounded-b-md l-s:min-w-full"
+      >
+        <div
+          className={`aspect-square w-full rounded-full max-w-10 relative 
+                flex flex-col items-start justify-center overflow-clip ${
+                  onboarding.image ? "bg-accent-purple/30" : "bg-accent-purple "
+                }`}
+        >
+          {typeof onboarding.image === "string" && onboarding.image !== "" ? (
+            <Image
+              src={onboarding.image}
+              alt="profile"
+              width={300}
+              height={300}
+              className="absolute"
+            />
+          ) : null}
+        </div>
+        <div className="w-full flex flex-col items-start justify-center">
+          <p className="truncate w-full">
+            {onboarding.first_name} {onboarding.last_name}
+          </p>
+        </div>
+        <div className="w-full flex flex-col items-start justify-center">
+          <p className="truncate w-full">{onboarding.email}</p>
+        </div>
+        <div className="w-full flex flex-col items-start justify-center">
+          <p className="truncate w-full">{onboarding.title}</p>
+        </div>
+        <div className="w-full flex flex-col items-start justify-center">
+          <p className="truncate w-full">{onboarding.status}</p>
+        </div>
+        <div className="w-full flex flex-col items-start justify-center">
+          <p className="truncate w-full">
+            {assignedDate} {assignedTime}
+          </p>
+        </div>
+      </div>
+    );
+  });
+
   const mappedTabs = tabs.map((tab, index) => {
     return (
       <button
         key={index}
         onClick={() => handleActiveTab(tab)}
-        className={`w-full p-2 px-4 rounded-t-md text-sm transition-all ${
+        className={`w-full p-2 px-4 rounded-t-md text-sm transition-all capitalize ${
           activeTab === tab
             ? "text-accent-blue font-bold border-b-2 border-accent-blue"
             : "border-b-2"
@@ -159,8 +273,8 @@ const HREmployee = () => {
   });
 
   React.useEffect(() => {
-    getAllEmployees();
-  }, [getAllEmployees]);
+    getPageData();
+  }, [getPageData]);
 
   if (isLoading) {
     return <PageSkeletonLoader />;
@@ -218,9 +332,27 @@ const HREmployee = () => {
               toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
             />
 
-            <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">
-              {mappedEmployees}
-            </div>
+            {activeTab === "employees" ? (
+              <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">
+                {mappedEmployees}
+              </div>
+            ) : activeTab === "onboardings" ? (
+              <div className="w-full flex flex-col items-start justify-start overflow-x-auto">
+                <div className="w-full flex flex-col items-center justify-center min-w-(--breakpoint-t) l-s:min-w-full">
+                  <div className="w-full grid grid-cols-6 bg-accent-blue p-4 gap-4 rounded-t-md items-start">
+                    <div className="font-bold text-neutral-100">Image</div>
+                    <div className="font-bold text-neutral-100">Name</div>
+                    <div className="font-bold text-neutral-100">Email</div>
+                    <div className="font-bold text-neutral-100">Title</div>
+                    <div className="font-bold text-neutral-100">Status</div>
+                    <div className="font-bold text-neutral-100">
+                      Assigned On
+                    </div>
+                  </div>
+                  {mappedOnboardings}
+                </div>
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
