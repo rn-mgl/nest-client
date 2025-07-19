@@ -170,6 +170,7 @@ const HREmployee = () => {
   const getEmployeeOnboardings = React.useCallback(
     async (tab: string) => {
       try {
+        handleIsLoading(true);
         const { token } = await getCSRFToken();
 
         if (token && user?.token) {
@@ -185,6 +186,8 @@ const HREmployee = () => {
           if (responseData.onboardings) {
             setOnboardings(responseData.onboardings);
           }
+
+          handleIsLoading(false);
         }
       } catch (error) {
         console.log(error);
@@ -196,9 +199,11 @@ const HREmployee = () => {
         }
 
         addToast("Something went wrong", message, "error");
+      } finally {
+        handleIsLoading(false);
       }
     },
-    [url, user?.token, search, sort, category, addToast]
+    [url, user?.token, search, sort, category, addToast, handleIsLoading]
   );
 
   const getPageData = React.useCallback(async () => {
@@ -301,10 +306,6 @@ const HREmployee = () => {
     getPageData();
   }, [getPageData]);
 
-  if (isLoading) {
-    return <PageSkeletonLoader />;
-  }
-
   return (
     <div className="w-full min-h-full h-auto flex flex-col items-center justify-start">
       {toasts.length ? (
@@ -359,7 +360,9 @@ const HREmployee = () => {
               toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
             />
 
-            {activeTab === "employees" ? (
+            {isLoading ? (
+              <PageSkeletonLoader />
+            ) : activeTab === "employees" ? (
               <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">
                 {mappedEmployees}
               </div>

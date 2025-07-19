@@ -145,10 +145,6 @@ const HROnboarding = () => {
     getOnboardings();
   }, [getOnboardings]);
 
-  if (isLoading) {
-    return <PageSkeletonLoader />;
-  }
-
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
       {canCreateOnboarding ? (
@@ -227,9 +223,13 @@ const HROnboarding = () => {
           Create Onboarding <IoAdd className="text-lg" />
         </button>
 
-        <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">
-          {mappedOnboardings}
-        </div>
+        {isLoading ? (
+          <PageSkeletonLoader />
+        ) : (
+          <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">
+            {mappedOnboardings}
+          </div>
+        )}
       </div>
     </div>
   );
