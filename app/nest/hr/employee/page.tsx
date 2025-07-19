@@ -13,6 +13,11 @@ import useIsLoading from "@/src/hooks/useIsLoading";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import {
+  LeaveBalanceInterface,
+  LeaveInterface,
+  LeaveRequestInterface,
+} from "@/src/interface/LeaveInterface";
+import {
   EmployeeOnboardingInterface,
   OnboardingInterface,
 } from "@/src/interface/OnboardingInterface";
@@ -36,6 +41,12 @@ const HREmployee = () => {
   const [employees, setEmployees] = React.useState<Array<UserInterface>>();
   const [onboardings, setOnboardings] = React.useState<
     (UserInterface & OnboardingInterface & EmployeeOnboardingInterface)[]
+  >([]);
+  const [leaves, setLeaves] = React.useState<
+    (UserInterface &
+      LeaveInterface &
+      LeaveBalanceInterface &
+      LeaveRequestInterface)[]
   >([]);
   const [activeUserMenu, setActiveUserMenu] = React.useState(0);
   const [activeEmployeeSeeMore, setActiveEmployeeSeeMore] = React.useState(0);
@@ -206,6 +217,32 @@ const HREmployee = () => {
     [url, user?.token, search, sort, category, addToast, handleIsLoading]
   );
 
+  const getEmployeeLeaves = React.useCallback(
+    async (tab: string) => {
+      try {
+        const { token } = await getCSRFToken();
+
+        if (token && user?.token) {
+          const { data: responseData } = await axios.get(`${url}/hr/employee`, {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              "X-CSRF-TOKEN": token,
+            },
+            params: { ...search, ...sort, ...category, tab },
+            withCredentials: true,
+          });
+
+          if (responseData.leaves) {
+            setLeaves(responseData.leaves);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [url, user?.token, search, sort, category]
+  );
+
   const getPageData = React.useCallback(async () => {
     try {
       switch (activeTab) {
@@ -215,13 +252,15 @@ const HREmployee = () => {
         case "onboardings":
           await getEmployeeOnboardings(activeTab);
           break;
+        case "leaves":
+          await getEmployeeLeaves(activeTab);
         default:
           break;
       }
     } catch (error) {
       console.log(error);
     }
-  }, [activeTab, getAllEmployees, getEmployeeOnboardings]);
+  }, [activeTab, getAllEmployees, getEmployeeOnboardings, getEmployeeLeaves]);
 
   const mappedEmployees = employees?.map((employee, index) => {
     const activeMenu = activeUserMenu === employee.user_id;
@@ -283,6 +322,53 @@ const HREmployee = () => {
       title: onboarding.title,
       status: onboarding.status,
       assigned_on: `${assignedDate} ${assignedTime}`,
+    };
+  });
+
+  const mappedLeaves = leaves.map((leave) => {
+    const {
+      first_name,
+      last_name,
+      email,
+      start_date,
+      end_date,
+      status,
+      reason,
+      balance,
+    } = leave;
+
+    const hasImage = typeof leave.image === "string" && leave.image !== "";
+    const startDate = new Date(start_date).toLocaleDateString();
+    const startTime = new Date(startDate).toLocaleTimeString();
+    const endDate = new Date(end_date).toLocaleDateString();
+    const endTime = new Date(end_date).toLocaleTimeString();
+
+    return {
+      image: (
+        <div
+          className={`flex flex-col items-center justify-center rounded-full overflow-clip relative max-w-10 aspect-square ${
+            hasImage ? "bg-accent-blue/30" : "bg-accent-blue"
+          }`}
+        >
+          {hasImage ? (
+            <Image
+              src={(leave.image as string) ?? ""}
+              width={300}
+              height={300}
+              alt="profile"
+              className="absolute"
+            />
+          ) : null}
+        </div>
+      ),
+      first_name,
+      last_name,
+      email,
+      start_date: `${startDate} ${startTime}`,
+      end_date: `${endDate} ${endTime}`,
+      status,
+      reason,
+      balance,
     };
   });
 
@@ -379,6 +465,24 @@ const HREmployee = () => {
                     "Assigned On",
                   ]}
                   contents={mappedOnboardings}
+                  color="blue"
+                />
+              </div>
+            ) : activeTab === "leaves" ? (
+              <div className="w-full flex flex-col items-center justify-start overflow-x-auto">
+                <Table
+                  headers={[
+                    "Image",
+                    "First Name",
+                    "Last Name",
+                    "Email",
+                    "Start",
+                    "End",
+                    "Status",
+                    "Reason",
+                    "Balance",
+                  ]}
+                  contents={mappedLeaves}
                   color="blue"
                 />
               </div>
