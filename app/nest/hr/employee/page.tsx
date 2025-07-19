@@ -2,6 +2,7 @@
 
 import Filter from "@/src/components/global/filter/Filter";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
+import Table from "@/src/components/global/Table";
 import Toasts from "@/src/components/global/Toasts";
 import EmployeeCard from "@/src/components/hr/employee/EmployeeCard";
 import ShowEmployee from "@/src/components/hr/employee/ShowEmployee";
@@ -242,7 +243,7 @@ const HREmployee = () => {
     );
   });
 
-  const mappedOnboardings = onboardings.map((onboarding, index) => {
+  const mappedOnboardings = onboardings.map((onboarding) => {
     const assignedDate = onboarding.created_at
       ? new Date(onboarding.created_at).toLocaleDateString()
       : "-";
@@ -250,49 +251,34 @@ const HREmployee = () => {
       ? new Date(onboarding.created_at).toLocaleTimeString()
       : "-";
 
-    return (
-      <div
-        key={index}
-        className="w-full p-4 border grid grid-cols-7 gap-4 min-w-(--breakpoint-t) last:rounded-b-md l-s:min-w-full"
-      >
+    const hasImage =
+      typeof onboarding.image === "string" && onboarding.image !== "";
+
+    return {
+      image: (
         <div
-          className={`aspect-square w-full rounded-full max-w-10 relative 
-                flex flex-col items-start justify-center overflow-clip ${
-                  onboarding.image ? "bg-accent-purple/30" : "bg-accent-purple "
-                }`}
+          className={`flex flex-col items-center justify-center rounded-full overflow-clip relative max-w-10 aspect-square ${
+            hasImage ? "bg-accent-blue/30" : "bg-accent-blue"
+          }`}
         >
-          {typeof onboarding.image === "string" && onboarding.image !== "" ? (
+          {hasImage ? (
             <Image
-              src={onboarding.image}
-              alt="profile"
+              src={(onboarding.image as string) ?? ""}
               width={300}
               height={300}
+              alt="profile"
               className="absolute"
             />
           ) : null}
         </div>
-        <div className="w-full flex flex-col items-start justify-center">
-          <p className="truncate w-full">{onboarding.first_name}</p>
-        </div>
-        <div className="w-full flex flex-col items-start justify-center">
-          <p className="truncate w-full">{onboarding.last_name}</p>
-        </div>
-        <div className="w-full flex flex-col items-start justify-center">
-          <p className="truncate w-full">{onboarding.email}</p>
-        </div>
-        <div className="w-full flex flex-col items-start justify-center">
-          <p className="truncate w-full">{onboarding.title}</p>
-        </div>
-        <div className="w-full flex flex-col items-start justify-center">
-          <p className="truncate w-full">{onboarding.status}</p>
-        </div>
-        <div className="w-full flex flex-col items-start justify-center">
-          <p className="truncate w-full">
-            {assignedDate} {assignedTime}
-          </p>
-        </div>
-      </div>
-    );
+      ),
+      first_name: onboarding.first_name,
+      last_name: onboarding.last_name,
+      email: onboarding.email,
+      title: onboarding.title,
+      status: onboarding.status,
+      assigned_on: `${assignedDate} ${assignedTime}`,
+    };
   });
 
   const mappedTabs = tabs.map((tab, index) => {
@@ -379,20 +365,19 @@ const HREmployee = () => {
               </div>
             ) : activeTab === "onboardings" ? (
               <div className="w-full flex flex-col items-start justify-start overflow-x-auto">
-                <div className="w-full flex flex-col items-center justify-center min-w-(--breakpoint-t) l-s:min-w-full">
-                  <div className="w-full grid grid-cols-7 bg-accent-blue p-4 gap-4 rounded-t-md items-start">
-                    <div className="font-bold text-neutral-100">Image</div>
-                    <div className="font-bold text-neutral-100">First Name</div>
-                    <div className="font-bold text-neutral-100">Last Name</div>
-                    <div className="font-bold text-neutral-100">Email</div>
-                    <div className="font-bold text-neutral-100">Title</div>
-                    <div className="font-bold text-neutral-100">Status</div>
-                    <div className="font-bold text-neutral-100">
-                      Assigned On
-                    </div>
-                  </div>
-                  {mappedOnboardings}
-                </div>
+                <Table
+                  headers={[
+                    "Image",
+                    "First Name",
+                    "Last Name",
+                    "Email",
+                    "Title",
+                    "Status",
+                    "Assigned On",
+                  ]}
+                  contents={mappedOnboardings}
+                  color="blue"
+                />
               </div>
             ) : null}
           </div>

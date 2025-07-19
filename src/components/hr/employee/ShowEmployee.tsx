@@ -28,10 +28,11 @@ import { IoClose, IoMail } from "react-icons/io5";
 import OnboardingCard from "@/global/onboarding/OnboardingCard";
 import ShowOnboarding from "@/hr/onboarding/ShowOnboarding";
 import LeaveCard from "@/global/leave/LeaveCard";
-import PerformanceReviewCard from "../../global/performance/PerformanceReviewCard";
-import ShowPerformanceReview from "../performance/ShowPerformanceReview";
-import TrainingCard from "../../global/training/TrainingCard";
-import ShowTraining from "../training/ShowTraining";
+import PerformanceReviewCard from "@/global/performance/PerformanceReviewCard";
+import ShowPerformanceReview from "@/hr/performance/ShowPerformanceReview";
+import TrainingCard from "@/global/training/TrainingCard";
+import ShowTraining from "@/hr/training/ShowTraining";
+import Table from "@/global/Table";
 
 const ShowEmployee: React.FC<ModalInterface> = (props) => {
   const [employee, setEmployee] = React.useState<UserInterface>({
@@ -162,30 +163,19 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
     );
   });
 
-  const mappedLeaveRequests = leaveRequests.map((leave, index) => {
-    return (
-      <div
-        key={index}
-        className="grid grid-cols-5 gap-4 w-full min-w-(--breakpoint-t) p-4 break-words hover:bg-neutral-100 transition-all
-                  [&_p]:truncate [&_p]:whitespace-pre hover:[&_p]:text-wrap hover:[&_p]:overflow-visible"
-      >
-        <div>
-          <p>{leave.type}</p>
-        </div>
-        <div>
-          <p>{leave.reason}</p>
-        </div>
-        <div>
-          <p>{leave.status}</p>
-        </div>
-        <div>
-          <p>{leave.start_date}</p>
-        </div>
-        <div>
-          <p>{leave.end_date}</p>
-        </div>
-      </div>
-    );
+  const mappedLeaveRequests = leaveRequests.map((leave) => {
+    const startDate = new Date(leave.start_date).toLocaleDateString();
+    const startTime = new Date(leave.start_date).toLocaleTimeString();
+    const endDate = new Date(leave.end_date).toLocaleDateString();
+    const endTime = new Date(leave.end_date).toLocaleTimeString();
+
+    return {
+      type: leave.type,
+      reason: leave.reason,
+      status: leave.status,
+      start_date: `${startDate} ${startTime}`,
+      end_date: `${endDate} ${endTime}`,
+    };
   });
 
   const mappedPerformanceReviews = performanceReviews.map(
@@ -371,27 +361,11 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
 
             {leaveRequests.length ? (
               <div className="w-full overflow-x-auto flex flex-col items-start justify-start">
-                <div className="w-full gap-4 grid grid-cols-5 min-w-(--breakpoint-t) font-bold border-1 p-4 rounded-t-md bg-neutral-200 text-neutral-900">
-                  <div className="w-full overflow-hidden">
-                    <p className="w-full truncate">Leave Type</p>
-                  </div>
-                  <div className="w-full overflow-hidden">
-                    <p className="w-full truncate">Reason</p>
-                  </div>
-                  <div className="w-full overflow-hidden">
-                    <p className="w-full truncate">Status</p>
-                  </div>
-                  <div className="w-full overflow-hidden">
-                    <p className="w-full truncate">Start</p>
-                  </div>
-                  <div className="w-full overflow-hidden">
-                    <p className="w-full truncate">End</p>
-                  </div>
-                </div>
-
-                <div className="w-full rounded-b-md flex flex-col items-start justify-start border-1 min-w-(--breakpoint-t)">
-                  {mappedLeaveRequests}
-                </div>
+                <Table
+                  headers={["Leave Type", "Reason", "Status", "Start", "End"]}
+                  contents={mappedLeaveRequests}
+                  color="neutral"
+                />
               </div>
             ) : (
               <div>No Leave Requests Found</div>
