@@ -97,6 +97,57 @@ export const HR_EMPLOYEE_SEARCH: SearchPairsInterface[] = [
   },
 ];
 
+// for hr to filter employee onboardings
+export const HR_EMPLOYEE_ONBOARDING_CATEGORY: CategoryPairsInterface[] = [
+  {
+    key: "status",
+    labelValue: [
+      { label: "All", value: "all" },
+      { label: "Pending", value: "Pending" },
+      { label: "In Progress", value: "In Progress" },
+      { label: "Done", value: "Done" },
+    ],
+  },
+];
+
+export const HR_EMPLOYEE_ONBOARDING_SORT: SortPairsInterface[] = [
+  {
+    key: "first_name",
+    label: "First Name",
+  },
+  {
+    key: "last_name",
+    label: "Last Name",
+  },
+  {
+    key: "email",
+    label: "Email",
+  },
+  {
+    key: "created_at",
+    label: "Assigned On",
+  },
+];
+
+export const HR_EMPLOYEE_ONBOARDING_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "first_name",
+    label: "First Name",
+  },
+  {
+    key: "last_name",
+    label: "Last Name",
+  },
+  {
+    key: "email",
+    label: "Email",
+  },
+  {
+    key: "status",
+    label: "Status",
+  },
+];
+
 // for hr to filter leave
 export const HR_LEAVE_CATEGORY: CategoryPairsInterface[] = [
   {

@@ -18,6 +18,9 @@ import {
 import { UserInterface } from "@/src/interface/UserInterface";
 import {
   HR_EMPLOYEE_CATEGORY,
+  HR_EMPLOYEE_ONBOARDING_CATEGORY,
+  HR_EMPLOYEE_ONBOARDING_SEARCH,
+  HR_EMPLOYEE_ONBOARDING_SORT,
   HR_EMPLOYEE_SEARCH,
   HR_EMPLOYEE_SORT,
 } from "@/src/utils/filters";
@@ -37,6 +40,27 @@ const HREmployee = () => {
   const [activeEmployeeSeeMore, setActiveEmployeeSeeMore] = React.useState(0);
   const [activeTab, setActiveTab] = React.useState("employees");
 
+  const searchFilters =
+    activeTab === "employees"
+      ? HR_EMPLOYEE_SEARCH
+      : activeTab === "onboardings"
+      ? HR_EMPLOYEE_ONBOARDING_SEARCH
+      : [];
+
+  const sortFilters =
+    activeTab === "employees"
+      ? HR_EMPLOYEE_SORT
+      : activeTab === "onboardings"
+      ? HR_EMPLOYEE_ONBOARDING_SORT
+      : [];
+
+  const categoryFilters =
+    activeTab === "employees"
+      ? HR_EMPLOYEE_CATEGORY
+      : activeTab === "onboardings"
+      ? HR_EMPLOYEE_ONBOARDING_CATEGORY
+      : [];
+
   const { isLoading, handleIsLoading } = useIsLoading(true);
 
   const { toasts, addToast, clearToast } = useToasts();
@@ -49,6 +73,7 @@ const HREmployee = () => {
     handleCanSeeSearchDropDown,
     handleSelectSearch,
   } = useSearch("first_name", "First Name");
+
   const {
     canSeeSortDropDown,
     sort,
@@ -56,6 +81,7 @@ const HREmployee = () => {
     handleSelectSort,
     handleToggleAsc,
   } = useSort("first_name", "First Name");
+
   const {
     canSeeCategoryDropDown,
     category,
@@ -83,8 +109,20 @@ const HREmployee = () => {
     setActiveEmployeeSeeMore((prev) => (prev === id ? 0 : id));
   };
 
+  // set filters
   const handleActiveTab = (tab: string) => {
     setActiveTab(tab);
+
+    switch (tab) {
+      case "employees":
+        handleSelectSort("first_name", "First Name");
+        handleSelectCategory("verified", "all", "All");
+        break;
+      case "onboardings":
+        handleSelectSort("created_at", "Assigned On");
+        handleSelectCategory("status", "all", "All");
+        break;
+    }
   };
 
   const sendMail = (email: string) => {
@@ -107,8 +145,8 @@ const HREmployee = () => {
             params: { ...search, ...sort, ...category, tab },
           });
 
-          if (responseData.data) {
-            setEmployees(responseData.data);
+          if (responseData.employees) {
+            setEmployees(responseData.employees);
           }
 
           handleIsLoading(false);
@@ -143,8 +181,8 @@ const HREmployee = () => {
             withCredentials: true,
           });
 
-          if (responseData.data) {
-            setOnboardings(responseData.data);
+          if (responseData.onboardings) {
+            setOnboardings(responseData.onboardings);
           }
         }
       } catch (error) {
@@ -215,7 +253,7 @@ const HREmployee = () => {
     return (
       <div
         key={index}
-        className="w-full p-4 border grid grid-cols-6 gap-4 min-w-(--breakpoint-t) last:rounded-b-md l-s:min-w-full"
+        className="w-full p-4 border grid grid-cols-7 gap-4 min-w-(--breakpoint-t) last:rounded-b-md l-s:min-w-full"
       >
         <div
           className={`aspect-square w-full rounded-full max-w-10 relative 
@@ -234,9 +272,10 @@ const HREmployee = () => {
           ) : null}
         </div>
         <div className="w-full flex flex-col items-start justify-center">
-          <p className="truncate w-full">
-            {onboarding.first_name} {onboarding.last_name}
-          </p>
+          <p className="truncate w-full">{onboarding.first_name}</p>
+        </div>
+        <div className="w-full flex flex-col items-start justify-center">
+          <p className="truncate w-full">{onboarding.last_name}</p>
         </div>
         <div className="w-full flex flex-col items-start justify-center">
           <p className="truncate w-full">{onboarding.email}</p>
@@ -312,21 +351,23 @@ const HREmployee = () => {
               searchKey={debounceSearch.searchKey}
               searchLabel={debounceSearch.searchLabel}
               searchValue={debounceSearch.searchValue}
-              searchKeyLabelPairs={HR_EMPLOYEE_SEARCH}
+              searchKeyLabelPairs={searchFilters}
               canSeeSearchDropDown={canSeeSearchDropDown}
               selectSearch={handleSelectSearch}
               toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
               onChange={handleSearch}
+              //
               categoryLabel={category.categoryLabel}
               canSeeCategoryDropDown={canSeeCategoryDropDown}
-              categoryKeyValuePairs={HR_EMPLOYEE_CATEGORY}
+              categoryKeyValuePairs={categoryFilters}
               toggleCanSeeCategoryDropDown={handleCanSeeCategoryDropDown}
               selectCategory={handleSelectCategory}
+              //
               sortKey={sort.sortKey}
               sortLabel={sort.sortLabel}
               isAsc={sort.isAsc}
               canSeeSortDropDown={canSeeSortDropDown}
-              sortKeyLabelPairs={HR_EMPLOYEE_SORT}
+              sortKeyLabelPairs={sortFilters}
               toggleAsc={handleToggleAsc}
               selectSort={handleSelectSort}
               toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
@@ -339,9 +380,10 @@ const HREmployee = () => {
             ) : activeTab === "onboardings" ? (
               <div className="w-full flex flex-col items-start justify-start overflow-x-auto">
                 <div className="w-full flex flex-col items-center justify-center min-w-(--breakpoint-t) l-s:min-w-full">
-                  <div className="w-full grid grid-cols-6 bg-accent-blue p-4 gap-4 rounded-t-md items-start">
+                  <div className="w-full grid grid-cols-7 bg-accent-blue p-4 gap-4 rounded-t-md items-start">
                     <div className="font-bold text-neutral-100">Image</div>
-                    <div className="font-bold text-neutral-100">Name</div>
+                    <div className="font-bold text-neutral-100">First Name</div>
+                    <div className="font-bold text-neutral-100">Last Name</div>
                     <div className="font-bold text-neutral-100">Email</div>
                     <div className="font-bold text-neutral-100">Title</div>
                     <div className="font-bold text-neutral-100">Status</div>

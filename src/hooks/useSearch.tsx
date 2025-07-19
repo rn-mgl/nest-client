@@ -57,7 +57,7 @@ export default function useSearch(
 
         return prev;
       });
-    }, 500);
+    }, 200);
 
     return () => clearTimeout(debounce);
   }, [debounceSearch]);
