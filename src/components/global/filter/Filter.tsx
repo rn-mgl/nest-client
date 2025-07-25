@@ -41,17 +41,16 @@ const Filter: React.FC<
   });
 
   const mappedCategories = props.categoryKeyValuePairs?.map((category) => {
-    return category.labelValue.map((label, index) => {
+    return category.values.map((value, index) => {
       return (
         <button
           onClick={() => {
-            if (props.selectCategory)
-              props.selectCategory(category.key, label.value, label.label);
+            if (props.selectCategory) props.selectCategory(category.key, value);
           }}
           key={index}
           className="p-2 w-full transition-all bg-neutral-200 rounded-xs"
         >
-          {label.label}
+          {value}
         </button>
       );
     });
@@ -118,7 +117,7 @@ const Filter: React.FC<
 
         {props.useCategoryFilter ? (
           <Category
-            categoryLabel={props.categoryLabel ?? ""}
+            categoryValue={props.categoryValue ?? ""}
             toggleCanSeeCategoryDropDown={
               props.toggleCanSeeCategoryDropDown ?? (() => {})
             }

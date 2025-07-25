@@ -70,7 +70,7 @@ const HRDocument = () => {
     canSeeCategoryDropDown,
     handleCanSeeCategoryDropDown,
     handleSelectCategory,
-  } = useCategory("All", "All", "All");
+  } = useCategory("", "All");
   const {
     sort,
     canSeeSortDropDown,
@@ -326,7 +326,7 @@ const HRDocument = () => {
           selectSearch={handleSelectSearch}
           toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
           onChange={handleSearch}
-          categoryLabel={category.categoryLabel}
+          categoryValue={category.categoryValue}
           canSeeCategoryDropDown={canSeeCategoryDropDown}
           categoryKeyValuePairs={HR_DOCUMENTS_CATEGORY}
           toggleCanSeeCategoryDropDown={handleCanSeeCategoryDropDown}

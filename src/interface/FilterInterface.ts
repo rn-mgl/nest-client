@@ -3,20 +3,24 @@ export interface SearchInterface {
   searchValue: string;
   searchLabel: string;
   canSeeSearchDropDown: boolean;
+  searchKeyLabelPairs?: Array<{
+    key: string;
+    label: string;
+  }>;
   toggleCanSeeSearchDropDown: () => void;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   selectSearch: (key: string, label: string) => void;
 }
 
 export interface CategoryInterface {
-  categoryLabel: string;
+  categoryValue: string;
   canSeeCategoryDropDown: boolean;
+  categoryKeyValuePairs?: Array<{
+    key: string;
+    values: string[];
+  }>;
   toggleCanSeeCategoryDropDown: () => void;
-  selectCategory: (
-    key: string,
-    value: string | boolean | null,
-    label: string
-  ) => void;
+  selectCategory: (key: string, values: string) => void;
 }
 
 export interface SortInterface {
@@ -24,6 +28,10 @@ export interface SortInterface {
   sortLabel: string;
   isAsc: boolean;
   canSeeSortDropDown: boolean;
+  sortKeyLabelPairs?: Array<{
+    key: string;
+    label: string;
+  }>;
   toggleCanSeeSortDropDown: () => void;
   toggleAsc: () => void;
   selectSort: (key: string, label: string) => void;
@@ -33,16 +41,4 @@ export interface FilterInterface {
   useSearchFilter?: boolean;
   useSortFilter?: boolean;
   useCategoryFilter?: boolean;
-  searchKeyLabelPairs?: Array<{
-    key: string;
-    label: string;
-  }>;
-  categoryKeyValuePairs?: Array<{
-    key: string;
-    labelValue: Array<{ label: string; value: string | boolean | null }>;
-  }>;
-  sortKeyLabelPairs?: Array<{
-    key: string;
-    label: string;
-  }>;
 }

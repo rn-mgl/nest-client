@@ -50,7 +50,7 @@ const AdminHR = () => {
     category,
     handleCanSeeCategoryDropDown,
     handleSelectCategory,
-  } = useCategory("verified", "All", "Verified");
+  } = useCategory("verified", "All");
 
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -241,7 +241,7 @@ const AdminHR = () => {
           selectSearch={handleSelectSearch}
           toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
           onChange={handleSearch}
-          categoryLabel={category.categoryLabel}
+          categoryValue={category.categoryValue}
           canSeeCategoryDropDown={canSeeCategoryDropDown}
           categoryKeyValuePairs={ADMIN_HR_CATEGORY}
           toggleCanSeeCategoryDropDown={handleCanSeeCategoryDropDown}

@@ -52,7 +52,7 @@ const Onboarding = () => {
     canSeeCategoryDropDown,
     handleCanSeeCategoryDropDown,
     handleSelectCategory,
-  } = useCategory("status", "All", "All");
+  } = useCategory("status", "All");
 
   const handleActiveOnboardingSeeMore = (id: number) => {
     setActiveOnboardingSeeMore((prev) => (prev === id ? 0 : id));
@@ -130,7 +130,7 @@ const Onboarding = () => {
           useCategoryFilter={true}
           //
           categoryKeyValuePairs={EMPLOYEE_ONBOARDING_CATEGORY}
-          categoryLabel={category.categoryLabel}
+          categoryValue={category.categoryValue}
           canSeeCategoryDropDown={canSeeCategoryDropDown}
           selectCategory={handleSelectCategory}
           toggleCanSeeCategoryDropDown={handleCanSeeCategoryDropDown}

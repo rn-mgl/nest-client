@@ -8,7 +8,7 @@ const Category: React.FC<CategoryInterface> = (props) => {
         onClick={props.toggleCanSeeCategoryDropDown}
         className="p-2 rounded-md border-2 w-full truncate"
       >
-        {props.categoryLabel}
+        {props.categoryValue}
       </button>
     </div>
   );

@@ -46,7 +46,7 @@ const Training = () => {
     canSeeCategoryDropDown,
     handleCanSeeCategoryDropDown,
     handleSelectCategory,
-  } = useCategory("status", "All", "All");
+  } = useCategory("status", "All");
 
   const { data: session } = useSession({ required: true });
   const user = session?.user;
@@ -140,7 +140,7 @@ const Training = () => {
           selectSearch={handleSelectSearch}
           searchKeyLabelPairs={EMPLOYEE_TRAINING_SEARCH}
           //
-          categoryLabel={category.categoryLabel}
+          categoryValue={category.categoryValue}
           canSeeCategoryDropDown={canSeeCategoryDropDown}
           toggleCanSeeCategoryDropDown={handleCanSeeCategoryDropDown}
           selectCategory={handleSelectCategory}
