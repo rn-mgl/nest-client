@@ -99,7 +99,7 @@ const HREmployee = () => {
     category,
     handleCanSeeCategoryDropDown,
     handleSelectCategory,
-  } = useCategory("verified", "all", "All");
+  } = useCategory("verified", "All", "All");
 
   const url = process.env.URL;
   const { data } = useSession({ required: true });
@@ -128,11 +128,11 @@ const HREmployee = () => {
     switch (tab) {
       case "employees":
         handleSelectSort("first_name", "First Name");
-        handleSelectCategory("verified", "all", "All");
+        handleSelectCategory("verified", "All", "All");
         break;
       case "onboardings":
         handleSelectSort("created_at", "Assigned On");
-        handleSelectCategory("status", "all", "All");
+        handleSelectCategory("status", "All", "All");
         break;
     }
   };
@@ -330,6 +330,7 @@ const HREmployee = () => {
       first_name,
       last_name,
       email,
+      type,
       start_date,
       end_date,
       status,
@@ -364,6 +365,7 @@ const HREmployee = () => {
       first_name,
       last_name,
       email,
+      type,
       start_date: `${startDate} ${startTime}`,
       end_date: `${endDate} ${endTime}`,
       status,
@@ -476,6 +478,7 @@ const HREmployee = () => {
                     "First Name",
                     "Last Name",
                     "Email",
+                    "Type",
                     "Start",
                     "End",
                     "Status",

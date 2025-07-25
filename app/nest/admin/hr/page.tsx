@@ -50,7 +50,7 @@ const AdminHR = () => {
     category,
     handleCanSeeCategoryDropDown,
     handleSelectCategory,
-  } = useCategory("verified", "all", "Verified");
+  } = useCategory("verified", "All", "Verified");
 
   const { data } = useSession({ required: true });
   const user = data?.user;

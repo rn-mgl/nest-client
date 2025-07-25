@@ -56,7 +56,7 @@ const Document = () => {
     canSeeCategoryDropDown,
     handleCanSeeCategoryDropDown,
     handleSelectCategory,
-  } = useCategory("all", "all", "All");
+  } = useCategory("All", "All", "All");
   const {
     sort,
     canSeeSortDropDown,

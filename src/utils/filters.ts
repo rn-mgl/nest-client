@@ -18,7 +18,7 @@ export const ADMIN_HR_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "verified",
     labelValue: [
-      { label: "All", value: "all" },
+      { label: "All", value: "All" },
       { label: "Verified", value: true },
       { label: "Deactivated", value: false },
     ],
@@ -60,7 +60,7 @@ export const HR_EMPLOYEE_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "verified",
     labelValue: [
-      { label: "All", value: "all" },
+      { label: "All", value: "All" },
       { label: "Verified", value: true },
       { label: "Deactivated", value: false },
     ],
@@ -102,7 +102,7 @@ export const HR_EMPLOYEE_ONBOARDING_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "status",
     labelValue: [
-      { label: "All", value: "all" },
+      { label: "All", value: "All" },
       { label: "Pending", value: "Pending" },
       { label: "In Progress", value: "In Progress" },
       { label: "Done", value: "Done" },
@@ -148,11 +148,66 @@ export const HR_EMPLOYEE_ONBOARDING_SEARCH: SearchPairsInterface[] = [
   },
 ];
 
+// for hr to filter employee leave
+export const HR_EMPLOYEE_LEAVE_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "first_name",
+    label: "First Name",
+  },
+  {
+    key: "last_name",
+    label: "Last Name",
+  },
+  {
+    key: "email",
+    label: "Email",
+  },
+  {
+    key: "reason",
+    label: "Reason",
+  },
+];
+
+export const HR_EMPLOYEE_LEAVE_SORT: SortPairsInterface[] = [
+  {
+    key: "start_date",
+    label: "Start Date",
+  },
+  {
+    key: "end_date",
+    label: "End Date",
+  },
+  {
+    key: "created_at",
+    label: "Filed On",
+  },
+  {
+    key: "balance",
+    label: "Balance",
+  },
+];
+
+export const HR_EMPLOYEE_LEAVE_CATEGORY: CategoryPairsInterface[] = [
+  {
+    key: "status",
+    labelValue: [
+      {
+        label: "Pending",
+        value: "Pending",
+      },
+      {
+        label: "Ongoing",
+        value: "Ongoing",
+      },
+    ],
+  },
+];
+
 // for hr to filter leave
 export const HR_LEAVE_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "",
-    labelValue: [{ label: "", value: "all" }],
+    labelValue: [{ label: "", value: "All" }],
   },
 ];
 
@@ -182,7 +237,7 @@ export const HR_LEAVE_SEARCH: SearchPairsInterface[] = [
 export const HR_ONBOARDING_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "",
-    labelValue: [{ label: "", value: "all" }],
+    labelValue: [{ label: "", value: "All" }],
   },
 ];
 
@@ -213,7 +268,7 @@ export const HR_ONBOARDING_SEARCH: SearchPairsInterface[] = [
 export const HR_PERFORMANCE_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "",
-    labelValue: [{ label: "", value: "all" }],
+    labelValue: [{ label: "", value: "All" }],
   },
 ];
 
@@ -244,7 +299,7 @@ export const HR_PERFORMANCE_SEARCH: SearchPairsInterface[] = [
 export const HR_TRAINING_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "",
-    labelValue: [{ label: "", value: "all" }],
+    labelValue: [{ label: "", value: "All" }],
   },
 ];
 
@@ -276,9 +331,9 @@ export const HR_DOCUMENTS_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "-",
     labelValue: [
-      { label: "All", value: "all" },
-      { label: "Documents", value: "documents" },
-      { label: "Folders", value: "folders" },
+      { label: "All", value: "All" },
+      { label: "Documents", value: "Documents" },
+      { label: "Folders", value: "Folders" },
     ],
   },
 ];
@@ -340,7 +395,7 @@ export const EMPLOYEE_ONBOARDING_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "status",
     labelValue: [
-      { label: "All", value: "all" },
+      { label: "All", value: "All" },
       { label: "Pending", value: "Pending" },
       { label: "In Progress", value: "In Progress" },
       { label: "Done", value: "Done" },
@@ -408,7 +463,7 @@ export const EMPLOYEE_TRAINING_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "status",
     labelValue: [
-      { label: "All", value: "all" },
+      { label: "All", value: "All" },
       { label: "Pending", value: "Pending" },
       { label: "In Progress", value: "In Progress" },
       { label: "Done", value: "Done" },
@@ -422,9 +477,9 @@ export const EMPLOYEE_DOCUMENTS_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "-",
     labelValue: [
-      { label: "All", value: "all" },
-      { label: "Documents", value: "documents" },
-      { label: "Folders", value: "folders" },
+      { label: "All", value: "All" },
+      { label: "Documents", value: "Documents" },
+      { label: "Folders", value: "Folders" },
     ],
   },
 ];
