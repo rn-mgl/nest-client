@@ -24,6 +24,9 @@ import {
 import { UserInterface } from "@/src/interface/UserInterface";
 import {
   HR_EMPLOYEE_CATEGORY,
+  HR_EMPLOYEE_LEAVE_CATEGORY,
+  HR_EMPLOYEE_LEAVE_SEARCH,
+  HR_EMPLOYEE_LEAVE_SORT,
   HR_EMPLOYEE_ONBOARDING_CATEGORY,
   HR_EMPLOYEE_ONBOARDING_SEARCH,
   HR_EMPLOYEE_ONBOARDING_SORT,
@@ -57,6 +60,8 @@ const HREmployee = () => {
       ? HR_EMPLOYEE_SEARCH
       : activeTab === "onboardings"
       ? HR_EMPLOYEE_ONBOARDING_SEARCH
+      : activeTab === "leaves"
+      ? HR_EMPLOYEE_LEAVE_SEARCH
       : [];
 
   const sortFilters =
@@ -64,6 +69,8 @@ const HREmployee = () => {
       ? HR_EMPLOYEE_SORT
       : activeTab === "onboardings"
       ? HR_EMPLOYEE_ONBOARDING_SORT
+      : activeTab === "leaves"
+      ? HR_EMPLOYEE_LEAVE_SORT
       : [];
 
   const categoryFilters =
@@ -71,6 +78,8 @@ const HREmployee = () => {
       ? HR_EMPLOYEE_CATEGORY
       : activeTab === "onboardings"
       ? HR_EMPLOYEE_ONBOARDING_CATEGORY
+      : activeTab === "leaves"
+      ? HR_EMPLOYEE_LEAVE_CATEGORY
       : [];
 
   const { isLoading, handleIsLoading } = useIsLoading(true);
@@ -123,6 +132,8 @@ const HREmployee = () => {
 
   // set filters
   const handleActiveTab = (tab: string) => {
+    if (tab === activeTab) return;
+
     setActiveTab(tab);
 
     switch (tab) {
@@ -133,6 +144,13 @@ const HREmployee = () => {
       case "onboardings":
         handleSelectSort("created_at", "Assigned On");
         handleSelectCategory("status", "All");
+        break;
+      case "leaves":
+        handleSelectSort("start_date", "Start Date");
+        handleSelectCategory("status", "All");
+        if (!sort.isAsc) {
+          handleToggleAsc();
+        }
         break;
     }
   };

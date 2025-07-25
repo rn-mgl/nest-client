@@ -15,5 +15,6 @@ export interface LeaveRequestInterface {
   end_date: string;
   reason: string;
   status: string;
+  requested_at?: string;
   approved_by?: number;
 }

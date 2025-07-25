@@ -177,7 +177,27 @@ export const HR_EMPLOYEE_LEAVE_SORT: SortPairsInterface[] = [
 export const HR_EMPLOYEE_LEAVE_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "status",
-    values: ["Pending", "In Progress", "Done", "Rejected"],
+    values: ["All", "Pending", "In Progress", "Done", "Rejected"],
+  },
+  {
+    key: "type",
+    values: [
+      "Work From Home Leave",
+      "Unpaid Leave",
+      "Study Leave",
+      "Sick Leave",
+      "Short-Term Leave",
+      "Sabbatical Leave",
+      "Quarantine Leave",
+      "Paternity Leave",
+      "Maternity Leave",
+      "Marriage Leave",
+      "Emergency Leave",
+      "Compensatory Leave",
+      "Casual Leave",
+      "Bereavement Leave",
+      "Annual Leave",
+    ],
   },
 ];
 
