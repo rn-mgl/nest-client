@@ -365,7 +365,7 @@ const HREmployee = () => {
       ? new Date(onboarding.created_at).toLocaleDateString()
       : "-";
     const assignedTime = onboarding.created_at
-      ? new Date(onboarding.created_at).toLocaleTimeString
+      ? new Date(onboarding.created_at).toLocaleTimeString()
       : "-";
 
     const hasImage =
