@@ -21,6 +21,10 @@ import {
   EmployeeOnboardingInterface,
   OnboardingInterface,
 } from "@/src/interface/OnboardingInterface";
+import {
+  EmployeePerformanceReviewInterface,
+  PerformanceReviewInterface,
+} from "@/src/interface/PerformanceReviewInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import {
   HR_EMPLOYEE_CATEGORY,
@@ -30,6 +34,9 @@ import {
   HR_EMPLOYEE_ONBOARDING_CATEGORY,
   HR_EMPLOYEE_ONBOARDING_SEARCH,
   HR_EMPLOYEE_ONBOARDING_SORT,
+  HR_EMPLOYEE_PERFORMANCE_CATEGORY,
+  HR_EMPLOYEE_PERFORMANCE_SEARCH,
+  HR_EMPLOYEE_PERFORMANCE_SORT,
   HR_EMPLOYEE_SEARCH,
   HR_EMPLOYEE_SORT,
 } from "@/src/utils/filters";
@@ -51,36 +58,35 @@ const HREmployee = () => {
       LeaveBalanceInterface &
       LeaveRequestInterface)[]
   >([]);
+  const [performances, setPerformances] = React.useState<
+    (UserInterface &
+      PerformanceReviewInterface &
+      EmployeePerformanceReviewInterface)[]
+  >([]);
   const [activeUserMenu, setActiveUserMenu] = React.useState(0);
   const [activeEmployeeSeeMore, setActiveEmployeeSeeMore] = React.useState(0);
   const [activeTab, setActiveTab] = React.useState("employees");
 
-  const searchFilters =
-    activeTab === "employees"
-      ? HR_EMPLOYEE_SEARCH
-      : activeTab === "onboardings"
-      ? HR_EMPLOYEE_ONBOARDING_SEARCH
-      : activeTab === "leaves"
-      ? HR_EMPLOYEE_LEAVE_SEARCH
-      : [];
+  const searchFilters = {
+    employees: HR_EMPLOYEE_SEARCH,
+    onboardings: HR_EMPLOYEE_ONBOARDING_SEARCH,
+    leaves: HR_EMPLOYEE_LEAVE_SEARCH,
+    performances: HR_EMPLOYEE_PERFORMANCE_SEARCH,
+  };
 
-  const sortFilters =
-    activeTab === "employees"
-      ? HR_EMPLOYEE_SORT
-      : activeTab === "onboardings"
-      ? HR_EMPLOYEE_ONBOARDING_SORT
-      : activeTab === "leaves"
-      ? HR_EMPLOYEE_LEAVE_SORT
-      : [];
+  const sortFilters = {
+    employees: HR_EMPLOYEE_SORT,
+    onboardings: HR_EMPLOYEE_ONBOARDING_SORT,
+    leaves: HR_EMPLOYEE_LEAVE_SORT,
+    performances: HR_EMPLOYEE_PERFORMANCE_SORT,
+  };
 
-  const categoryFilters =
-    activeTab === "employees"
-      ? HR_EMPLOYEE_CATEGORY
-      : activeTab === "onboardings"
-      ? HR_EMPLOYEE_ONBOARDING_CATEGORY
-      : activeTab === "leaves"
-      ? HR_EMPLOYEE_LEAVE_CATEGORY
-      : [];
+  const categoryFilters = {
+    employees: HR_EMPLOYEE_CATEGORY,
+    onboardings: HR_EMPLOYEE_ONBOARDING_CATEGORY,
+    leaves: HR_EMPLOYEE_LEAVE_CATEGORY,
+    performances: HR_EMPLOYEE_PERFORMANCE_CATEGORY,
+  };
 
   const { isLoading, handleIsLoading } = useIsLoading(true);
 
@@ -148,9 +154,10 @@ const HREmployee = () => {
       case "leaves":
         handleSelectSort("start_date", "Start Date");
         handleSelectCategory("status", "All");
-        if (!sort.isAsc) {
-          handleToggleAsc();
-        }
+        break;
+      case "performances":
+        handleSelectSort("created_at", "Assigned On");
+        handleSelectCategory("status", "All");
         break;
     }
   };
@@ -178,8 +185,6 @@ const HREmployee = () => {
           if (responseData.employees) {
             setEmployees(responseData.employees);
           }
-
-          handleIsLoading(false);
         }
       } catch (error) {
         let message = "An error occurred when getting the employees.";
@@ -215,8 +220,6 @@ const HREmployee = () => {
           if (responseData.onboardings) {
             setOnboardings(responseData.onboardings);
           }
-
-          handleIsLoading(false);
         }
       } catch (error) {
         console.log(error);
@@ -238,6 +241,7 @@ const HREmployee = () => {
   const getEmployeeLeaves = React.useCallback(
     async (tab: string) => {
       try {
+        handleIsLoading(true);
         const { token } = await getCSRFToken();
 
         if (token && user?.token) {
@@ -256,11 +260,52 @@ const HREmployee = () => {
         }
       } catch (error) {
         console.log(error);
+
+        let message = "An error occurred when getting the employee leaves";
+
+        if (error instanceof AxiosError) {
+          message = error.response?.data.message ?? error.message;
+        }
+
+        addToast("Something went wrong", message, "error");
+      } finally {
+        handleIsLoading(false);
       }
     },
-    [url, user?.token, search, sort, category]
+    [url, user?.token, search, sort, category, handleIsLoading, addToast]
   );
 
+  const getEmployeePerformances = React.useCallback(
+    async (tab: string) => {
+      try {
+        handleIsLoading(true);
+
+        const { token } = await getCSRFToken();
+
+        if (token && user?.token) {
+          const { data: responseData } = await axios.get(`${url}/hr/employee`, {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              "X-CSRF-TOKEN": token,
+            },
+            params: { ...search, ...sort, ...category, tab },
+            withCredentials: true,
+          });
+
+          if (responseData.performances) {
+            setPerformances(responseData.performances);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        handleIsLoading(false);
+      }
+    },
+    [url, user?.token, search, sort, category, handleIsLoading]
+  );
+
+  // main anchor of getting page data when the active tab changes
   const getPageData = React.useCallback(async () => {
     try {
       switch (activeTab) {
@@ -272,13 +317,23 @@ const HREmployee = () => {
           break;
         case "leaves":
           await getEmployeeLeaves(activeTab);
+          break;
+        case "performances":
+          await getEmployeePerformances(activeTab);
+          break;
         default:
           break;
       }
     } catch (error) {
       console.log(error);
     }
-  }, [activeTab, getAllEmployees, getEmployeeOnboardings, getEmployeeLeaves]);
+  }, [
+    activeTab,
+    getAllEmployees,
+    getEmployeeOnboardings,
+    getEmployeeLeaves,
+    getEmployeePerformances,
+  ]);
 
   const mappedEmployees = employees?.map((employee, index) => {
     const activeMenu = activeUserMenu === employee.user_id;
@@ -310,7 +365,7 @@ const HREmployee = () => {
       ? new Date(onboarding.created_at).toLocaleDateString()
       : "-";
     const assignedTime = onboarding.created_at
-      ? new Date(onboarding.created_at).toLocaleTimeString()
+      ? new Date(onboarding.created_at).toLocaleTimeString
       : "-";
 
     const hasImage =
@@ -392,6 +447,43 @@ const HREmployee = () => {
     };
   });
 
+  const mappedPerformances = performances.map((performance) => {
+    const hasImage =
+      typeof performance.image === "string" && performance.image !== "";
+
+    const assignedDate = performance.created_at
+      ? new Date(performance.created_at).toLocaleDateString()
+      : "-";
+    const assignedTime = performance.created_at
+      ? new Date(performance.created_at).toLocaleTimeString()
+      : "-";
+
+    return {
+      image: (
+        <div
+          className={`max-w-10 flex flex-col items-center justify-center relative aspect-square rounded-full overflow-clip 
+                      ${hasImage ? "bg-accent-blue/30" : "bg-accent-blue"}`}
+        >
+          {hasImage ? (
+            <Image
+              src={(performance.image as string) ?? ""}
+              alt="profile"
+              width={300}
+              height={300}
+              className="absolute"
+            />
+          ) : null}
+        </div>
+      ),
+      first_name: performance.first_name,
+      last_name: performance.last_name,
+      email: performance.email,
+      title: performance.title,
+      status: performance.status,
+      assigned_on: `${assignedDate} ${assignedTime}`,
+    };
+  });
+
   const mappedTabs = tabs.map((tab, index) => {
     return (
       <button
@@ -444,7 +536,7 @@ const HREmployee = () => {
               searchKey={debounceSearch.searchKey}
               searchLabel={debounceSearch.searchLabel}
               searchValue={debounceSearch.searchValue}
-              searchKeyLabelPairs={searchFilters}
+              searchKeyLabelPairs={searchFilters[activeTab as keyof object]}
               canSeeSearchDropDown={canSeeSearchDropDown}
               selectSearch={handleSelectSearch}
               toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
@@ -452,7 +544,7 @@ const HREmployee = () => {
               //
               categoryValue={category.categoryValue}
               canSeeCategoryDropDown={canSeeCategoryDropDown}
-              categoryKeyValuePairs={categoryFilters}
+              categoryKeyValuePairs={categoryFilters[activeTab as keyof object]}
               toggleCanSeeCategoryDropDown={handleCanSeeCategoryDropDown}
               selectCategory={handleSelectCategory}
               //
@@ -460,7 +552,7 @@ const HREmployee = () => {
               sortLabel={sort.sortLabel}
               isAsc={sort.isAsc}
               canSeeSortDropDown={canSeeSortDropDown}
-              sortKeyLabelPairs={sortFilters}
+              sortKeyLabelPairs={sortFilters[activeTab as keyof object]}
               toggleAsc={handleToggleAsc}
               selectSort={handleSelectSort}
               toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
@@ -504,6 +596,22 @@ const HREmployee = () => {
                     "Balance",
                   ]}
                   contents={mappedLeaves}
+                  color="blue"
+                />
+              </div>
+            ) : activeTab === "performances" ? (
+              <div className="w-full flex flex-col items-center justify-start overflow-x-auto">
+                <Table
+                  headers={[
+                    "Image",
+                    "First Name",
+                    "Last Name",
+                    "Email",
+                    "Title",
+                    "Status",
+                    "Assigned On",
+                  ]}
+                  contents={mappedPerformances}
                   color="blue"
                 />
               </div>

@@ -165,10 +165,6 @@ export const HR_EMPLOYEE_LEAVE_SORT: SortPairsInterface[] = [
     label: "End Date",
   },
   {
-    key: "created_at",
-    label: "Filed On",
-  },
-  {
     key: "balance",
     label: "Balance",
   },
@@ -198,6 +194,44 @@ export const HR_EMPLOYEE_LEAVE_CATEGORY: CategoryPairsInterface[] = [
       "Bereavement Leave",
       "Annual Leave",
     ],
+  },
+];
+
+// for hr to filter employee performances
+export const HR_EMPLOYEE_PERFORMANCE_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "first_name",
+    label: "First Name",
+  },
+  {
+    key: "last_name",
+    label: "Last Name",
+  },
+  {
+    key: "email",
+    label: "Email",
+  },
+  {
+    key: "title",
+    label: "Title",
+  },
+];
+
+export const HR_EMPLOYEE_PERFORMANCE_SORT: SortPairsInterface[] = [
+  {
+    key: "title",
+    label: "Title",
+  },
+  {
+    key: "created_at",
+    label: "Assigned On",
+  },
+];
+
+export const HR_EMPLOYEE_PERFORMANCE_CATEGORY: CategoryPairsInterface[] = [
+  {
+    key: "status",
+    values: ["All", "Pending", "In Progress", "Done"],
   },
 ];
 

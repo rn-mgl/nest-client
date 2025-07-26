@@ -81,15 +81,15 @@ const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
     return (
       <div
         key={index}
-        className="w-full flex flex-row gap-2 items-center justify-center"
+        className="w-full flex flex-row gap-2 items-start justify-center"
       >
         <textarea
           name="surveys"
           placeholder={`Survey ${index + 1}`}
           onChange={(e) => handleField(e, "survey", index)}
           value={survey.survey}
-          rows={3}
-          className="w-full p-2 px-4 pr-8 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all resize-none"
+          rows={5}
+          className="w-full p-2 px-4 pr-8 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all resize-none bg-white"
         />
 
         <button

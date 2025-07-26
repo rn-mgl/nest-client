@@ -6,10 +6,10 @@ const ModalNav: React.FC<ModalNavInterface> = (props) => {
     return (
       <button
         key={index}
-        className={`w-full p-2 t:px-4 rounded-md text-sm transition-all hover:bg-neutral-300 capitalize ${
+        className={`w-full p-2 t:px-4 text-sm transition-all capitalize ${
           props.activeFormPage === page
-            ? " text-neutral-900 font-bold bg-white"
-            : null
+            ? " text-accent-blue font-bold border-b-2 border-accent-blue"
+            : "border-b-2"
         }`}
         onClick={() => props.handleActiveFormPage(page)}
         type="button"
@@ -20,8 +20,8 @@ const ModalNav: React.FC<ModalNavInterface> = (props) => {
   });
 
   return (
-    <div className="w-full flex flex-col items-center justify-center t:w-fit">
-      <div className="w-full t:w-fit flex flex-row items-center justify-between gap-2 bg-neutral-200 rounded-md p-2 overflow-x-auto overflow-y-hidden">
+    <div className="w-full flex flex-col items-center justify-center">
+      <div className="w-full flex flex-row items-center justify-between overflow-x-auto overflow-y-hidden">
         {mappedNavs}
       </div>
     </div>

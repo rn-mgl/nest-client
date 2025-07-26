@@ -48,9 +48,9 @@ export default function useSearch(
     const debounce = setTimeout(() => {
       setSearch((prev) => {
         if (
-          prev.searchKey !== debounceSearch.searchKey ||
-          prev.searchLabel !== debounceSearch.searchLabel ||
-          prev.searchValue !== debounceSearch.searchValue
+          prev.searchValue !== debounceSearch.searchValue ||
+          (prev.searchKey !== debounceSearch.searchKey &&
+            debounceSearch.searchValue !== "")
         ) {
           return debounceSearch;
         }
