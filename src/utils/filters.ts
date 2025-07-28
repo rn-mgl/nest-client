@@ -235,6 +235,48 @@ export const HR_EMPLOYEE_PERFORMANCE_CATEGORY: CategoryPairsInterface[] = [
   },
 ];
 
+// for hr to filter employee trainings
+export const HR_EMPLOYEE_TRAINING_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "first_name",
+    label: "First Name",
+  },
+  {
+    key: "last_name",
+    label: "Last Name",
+  },
+  {
+    key: "email",
+    label: "Email",
+  },
+  {
+    key: "title",
+    label: "Title",
+  },
+];
+
+export const HR_EMPLOYEE_TRAINING_SORT: SortPairsInterface[] = [
+  {
+    key: "created_at",
+    label: "Assigned On",
+  },
+  {
+    key: "deadline",
+    label: "Deadline",
+  },
+  {
+    key: "score",
+    label: "Score",
+  },
+];
+
+export const HR_EMPLOYEE_TRAINING_CATEGORY: CategoryPairsInterface[] = [
+  {
+    key: "status",
+    values: ["All", "Pending", "In Progress", "Done"],
+  },
+];
+
 // for hr to filter leave
 export const HR_LEAVE_CATEGORY: CategoryPairsInterface[] = [
   {

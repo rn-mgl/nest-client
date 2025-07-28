@@ -25,6 +25,10 @@ import {
   EmployeePerformanceReviewInterface,
   PerformanceReviewInterface,
 } from "@/src/interface/PerformanceReviewInterface";
+import {
+  EmployeeTrainingInterface,
+  TrainingInterface,
+} from "@/src/interface/TrainingInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import {
   HR_EMPLOYEE_CATEGORY,
@@ -39,6 +43,9 @@ import {
   HR_EMPLOYEE_PERFORMANCE_SORT,
   HR_EMPLOYEE_SEARCH,
   HR_EMPLOYEE_SORT,
+  HR_EMPLOYEE_TRAINING_CATEGORY,
+  HR_EMPLOYEE_TRAINING_SEARCH,
+  HR_EMPLOYEE_TRAINING_SORT,
 } from "@/src/utils/filters";
 import { getCSRFToken } from "@/src/utils/token";
 import axios, { AxiosError } from "axios";
@@ -63,6 +70,9 @@ const HREmployee = () => {
       PerformanceReviewInterface &
       EmployeePerformanceReviewInterface)[]
   >([]);
+  const [trainings, setTrainings] = React.useState<
+    (TrainingInterface & EmployeeTrainingInterface & UserInterface)[]
+  >([]);
   const [activeUserMenu, setActiveUserMenu] = React.useState(0);
   const [activeEmployeeSeeMore, setActiveEmployeeSeeMore] = React.useState(0);
   const [activeTab, setActiveTab] = React.useState("employees");
@@ -72,6 +82,7 @@ const HREmployee = () => {
     onboardings: HR_EMPLOYEE_ONBOARDING_SEARCH,
     leaves: HR_EMPLOYEE_LEAVE_SEARCH,
     performances: HR_EMPLOYEE_PERFORMANCE_SEARCH,
+    trainings: HR_EMPLOYEE_TRAINING_SEARCH,
   };
 
   const sortFilters = {
@@ -79,6 +90,7 @@ const HREmployee = () => {
     onboardings: HR_EMPLOYEE_ONBOARDING_SORT,
     leaves: HR_EMPLOYEE_LEAVE_SORT,
     performances: HR_EMPLOYEE_PERFORMANCE_SORT,
+    trainings: HR_EMPLOYEE_TRAINING_SORT,
   };
 
   const categoryFilters = {
@@ -86,6 +98,7 @@ const HREmployee = () => {
     onboardings: HR_EMPLOYEE_ONBOARDING_CATEGORY,
     leaves: HR_EMPLOYEE_LEAVE_CATEGORY,
     performances: HR_EMPLOYEE_PERFORMANCE_CATEGORY,
+    trainings: HR_EMPLOYEE_TRAINING_CATEGORY,
   };
 
   const { isLoading, handleIsLoading } = useIsLoading(true);
@@ -157,6 +170,10 @@ const HREmployee = () => {
         break;
       case "performances":
         handleSelectSort("created_at", "Assigned On");
+        handleSelectCategory("status", "All");
+        break;
+      case "trainings":
+        handleSelectSort("deadline", "Deadline");
         handleSelectCategory("status", "All");
         break;
     }
@@ -305,6 +322,43 @@ const HREmployee = () => {
     [url, user?.token, search, sort, category, handleIsLoading]
   );
 
+  const getEmployeeTrainings = React.useCallback(
+    async (tab: string) => {
+      try {
+        handleIsLoading(true);
+        const { token } = await getCSRFToken();
+
+        if (token && user?.token) {
+          const { data: responseData } = await axios.get(`${url}/hr/employee`, {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              "X-CSRF-TOKEN": token,
+            },
+            params: { ...search, ...sort, ...category, tab },
+            withCredentials: true,
+          });
+
+          if (responseData.trainings) {
+            setTrainings(responseData.trainings);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+
+        let message = "An error occurred when fetching the trainings.";
+
+        if (error instanceof AxiosError) {
+          message = error.response?.data.message ?? error.message;
+        }
+
+        addToast("Something went wrong", message, "error", 5000);
+      } finally {
+        handleIsLoading(false);
+      }
+    },
+    [url, user?.token, search, sort, category, handleIsLoading, addToast]
+  );
+
   // main anchor of getting page data when the active tab changes
   const getPageData = React.useCallback(async () => {
     try {
@@ -321,6 +375,8 @@ const HREmployee = () => {
         case "performances":
           await getEmployeePerformances(activeTab);
           break;
+        case "trainings":
+          await getEmployeeTrainings(activeTab);
         default:
           break;
       }
@@ -333,6 +389,7 @@ const HREmployee = () => {
     getEmployeeOnboardings,
     getEmployeeLeaves,
     getEmployeePerformances,
+    getEmployeeTrainings,
   ]);
 
   const mappedEmployees = employees?.map((employee, index) => {
@@ -484,6 +541,46 @@ const HREmployee = () => {
     };
   });
 
+  const mappedTrainings = trainings.map((training) => {
+    const hasImage =
+      typeof training.image === "string" && training.image !== "";
+    const deadlineDate = new Date(training.deadline).toLocaleDateString();
+    const deadlineTime = new Date(training.deadline).toLocaleTimeString();
+    const assignedDate = training.created_at
+      ? new Date(training.created_at).toLocaleDateString()
+      : "-";
+    const assignedTime = training.created_at
+      ? new Date(training.created_at).toLocaleTimeString()
+      : "-";
+
+    return {
+      image: (
+        <div
+          className={`max-w-10 flex flex-col items-center justify-center relative aspect-square rounded-full overflow-clip 
+                      ${hasImage ? "bg-accent-blue/30" : "bg-accent-blue"}`}
+        >
+          {hasImage ? (
+            <Image
+              src={(training.image as string) ?? ""}
+              alt="profile"
+              width={300}
+              height={300}
+              className="absolute"
+            />
+          ) : null}
+        </div>
+      ),
+      first_name: training.first_name,
+      last_name: training.last_name,
+      email: training.email,
+      title: training.title,
+      deadline: `${deadlineDate} ${deadlineTime}`,
+      status: training.status,
+      score: training.score ?? "-",
+      assigned_on: `${assignedDate} ${assignedTime}`,
+    };
+  });
+
   const mappedTabs = tabs.map((tab, index) => {
     return (
       <button
@@ -612,6 +709,24 @@ const HREmployee = () => {
                     "Assigned On",
                   ]}
                   contents={mappedPerformances}
+                  color="blue"
+                />
+              </div>
+            ) : activeTab === "trainings" ? (
+              <div className="w-full flex flex-col items-center justify-start overflow-x-auto">
+                <Table
+                  headers={[
+                    "Image",
+                    "First Name",
+                    "Last Name",
+                    "Email",
+                    "Title",
+                    "Deadline",
+                    "Status",
+                    "Score",
+                    "Assigned On",
+                  ]}
+                  contents={mappedTrainings}
                   color="blue"
                 />
               </div>

@@ -20,6 +20,7 @@ export interface EmployeeTrainingInterface {
   status: string;
   deadline: string;
   score: number | null;
+  created_at?: string;
 }
 
 export interface TrainingReviewInterface {
