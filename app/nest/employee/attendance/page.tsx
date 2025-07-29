@@ -3,7 +3,7 @@
 import Log from "@/src/components/employee/attendance/Log";
 import Input from "@/src/components/form/Input";
 import Select from "@/src/components/form/Select";
-import Toasts from "@/src/components/global/Toasts";
+import Toasts from "@/src/components/global/popup/Toasts";
 import { useToasts } from "@/src/context/ToastContext";
 import { AttendanceInterface } from "@/src/interface/AttendanceInterface";
 import { getCSRFToken } from "@/src/utils/token";

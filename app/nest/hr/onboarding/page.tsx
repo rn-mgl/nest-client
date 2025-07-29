@@ -16,7 +16,7 @@ import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
-import Toasts from "@/src/components/global/Toasts";
+import Toasts from "@/src/components/global/popup/Toasts";
 import DeleteEntity from "@/src/components/hr/global/DeleteEntity";
 import { useToasts } from "@/src/context/ToastContext";
 import useIsLoading from "@/src/hooks/useIsLoading";

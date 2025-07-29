@@ -29,7 +29,7 @@ const Log: React.FC<ModalInterface & { logType: "in" | "out" }> = ({
   const handleHold = () => {
     timerRef.current = setInterval(() => {
       setPercentage((prev) => (prev + 1 >= 100 ? 100 : prev + 1));
-    }, 20);
+    }, 50);
   };
 
   const removeHold = () => {

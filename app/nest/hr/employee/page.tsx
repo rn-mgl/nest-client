@@ -1,9 +1,10 @@
 "use client";
 
+import Table from "@/src/components/global/field/Table";
 import Filter from "@/src/components/global/filter/Filter";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
-import Table from "@/src/components/global/Table";
-import Toasts from "@/src/components/global/Toasts";
+import Alert from "@/src/components/global/popup/Alert";
+import Toasts from "@/src/components/global/popup/Toasts";
 import EmployeeCard from "@/src/components/hr/employee/EmployeeCard";
 import ShowEmployee from "@/src/components/hr/employee/ShowEmployee";
 import { useToasts } from "@/src/context/ToastContext";
@@ -53,6 +54,7 @@ import axios, { AxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import React from "react";
+import { IoCheckmark, IoClose, IoWarning } from "react-icons/io5";
 
 const HREmployee = () => {
   const [employees, setEmployees] = React.useState<Array<UserInterface>>();
@@ -76,6 +78,8 @@ const HREmployee = () => {
   const [activeUserMenu, setActiveUserMenu] = React.useState(0);
   const [activeEmployeeSeeMore, setActiveEmployeeSeeMore] = React.useState(0);
   const [activeTab, setActiveTab] = React.useState("employees");
+  const [canAcceptLeave, setCanAcceptLeave] = React.useState(false);
+  const [canRejectLeave, setCanRejectLeave] = React.useState(false);
 
   const searchFilters = {
     employees: HR_EMPLOYEE_SEARCH,
@@ -147,6 +151,14 @@ const HREmployee = () => {
 
   const handleActiveEmployeeSeeMore = (id: number) => {
     setActiveEmployeeSeeMore((prev) => (prev === id ? 0 : id));
+  };
+
+  const handleCanAcceptLeave = () => {
+    setCanAcceptLeave((prev) => !prev);
+  };
+
+  const handleCanRejectLeave = () => {
+    setCanRejectLeave((prev) => !prev);
   };
 
   // set filters
@@ -501,6 +513,26 @@ const HREmployee = () => {
       status,
       reason,
       balance,
+      action: (
+        <div className="w-full flex flex-row flex-wrap items-center justify-start gap-2">
+          <button
+            onClick={handleCanAcceptLeave}
+            className="bg-accent-blue p-2 rounded-md text-accent-yellow font-bold w-full flex items-center justify-center l-l:w-fit"
+          >
+            <span className="flex items-center justify-center font-bold">
+              <IoCheckmark />
+            </span>
+          </button>
+          <button
+            onClick={handleCanRejectLeave}
+            className="bg-red-600 p-2 rounded-md text-neutral-100 font-bold w-full flex items-center justify-center l-l:w-fit"
+          >
+            <span className="flex items-center justify-center font-bold">
+              <IoClose />
+            </span>
+          </button>
+        </div>
+      ),
     };
   });
 
@@ -614,6 +646,26 @@ const HREmployee = () => {
         />
       ) : null}
 
+      {activeTab === "leaves" && canAcceptLeave ? (
+        <Alert
+          title="Accept Leave?"
+          body="Are you sure you want to accept this leave request?"
+          confirmAlert={() => {}}
+          toggleAlert={handleCanAcceptLeave}
+          icon={<IoWarning />}
+        />
+      ) : null}
+
+      {activeTab === "leaves" && canRejectLeave ? (
+        <Alert
+          title="Reject Leave?"
+          body="Are you sure you want to reject this leave request?"
+          confirmAlert={() => console.log("rejected")}
+          toggleAlert={handleCanRejectLeave}
+          icon={<IoWarning />}
+        />
+      ) : null}
+
       <div
         className="w-full min-h-full h-auto flex flex-col items-start justify-start max-w-(--breakpoint-l-l) p-2
                   t:p-4"
@@ -691,6 +743,7 @@ const HREmployee = () => {
                     "Status",
                     "Reason",
                     "Balance",
+                    "Action",
                   ]}
                   contents={mappedLeaves}
                   color="blue"

@@ -29,7 +29,7 @@ const ToastProvider = ({ children }: { children: React.ReactNode }) => {
       duration?: number
     ) => {
       const newToast: ToastInterface = {
-        duration: duration ?? 3000,
+        duration: duration ?? 5000,
         id: Math.random().toString(36).slice(2),
         message: message,
         subject: subject,

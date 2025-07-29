@@ -1,5 +1,13 @@
 "use client";
 
+import LeaveCard from "@/global/leave/LeaveCard";
+import OnboardingCard from "@/global/onboarding/OnboardingCard";
+import PerformanceReviewCard from "@/global/performance/PerformanceReviewCard";
+import TrainingCard from "@/global/training/TrainingCard";
+import ShowOnboarding from "@/hr/onboarding/ShowOnboarding";
+import ShowPerformanceReview from "@/hr/performance/ShowPerformanceReview";
+import ShowTraining from "@/hr/training/ShowTraining";
+import Table from "@/src/components/global/field/Table";
 import {
   LeaveBalanceInterface,
   LeaveInterface,
@@ -25,14 +33,6 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import React from "react";
 import { IoClose, IoMail } from "react-icons/io5";
-import OnboardingCard from "@/global/onboarding/OnboardingCard";
-import ShowOnboarding from "@/hr/onboarding/ShowOnboarding";
-import LeaveCard from "@/global/leave/LeaveCard";
-import PerformanceReviewCard from "@/global/performance/PerformanceReviewCard";
-import ShowPerformanceReview from "@/hr/performance/ShowPerformanceReview";
-import TrainingCard from "@/global/training/TrainingCard";
-import ShowTraining from "@/hr/training/ShowTraining";
-import Table from "@/global/Table";
 
 const ShowEmployee: React.FC<ModalInterface> = (props) => {
   const [employee, setEmployee] = React.useState<UserInterface>({
