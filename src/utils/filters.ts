@@ -173,7 +173,7 @@ export const HR_EMPLOYEE_LEAVE_SORT: SortPairsInterface[] = [
 export const HR_EMPLOYEE_LEAVE_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "status",
-    values: ["All", "Pending", "In Progress", "Done", "Rejected"],
+    values: ["All", "Pending", "In Progress", "Done"],
   },
   {
     key: "type",

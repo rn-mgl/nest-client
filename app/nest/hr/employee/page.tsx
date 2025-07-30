@@ -78,8 +78,11 @@ const HREmployee = () => {
   const [activeUserMenu, setActiveUserMenu] = React.useState(0);
   const [activeEmployeeSeeMore, setActiveEmployeeSeeMore] = React.useState(0);
   const [activeTab, setActiveTab] = React.useState("employees");
-  const [canAcceptLeave, setCanAcceptLeave] = React.useState(false);
-  const [canRejectLeave, setCanRejectLeave] = React.useState(false);
+  const [canRespondToLeaveRequest, setCanRespondToLeaveRequest] =
+    React.useState<{ id: number; approved: boolean }>({
+      id: 0,
+      approved: false,
+    });
 
   const searchFilters = {
     employees: HR_EMPLOYEE_SEARCH,
@@ -153,12 +156,8 @@ const HREmployee = () => {
     setActiveEmployeeSeeMore((prev) => (prev === id ? 0 : id));
   };
 
-  const handleCanAcceptLeave = () => {
-    setCanAcceptLeave((prev) => !prev);
-  };
-
-  const handleCanRejectLeave = () => {
-    setCanRejectLeave((prev) => !prev);
+  const handleCanRespondToLeaveRequest = (id: number, approved: boolean) => {
+    setCanRespondToLeaveRequest({ id, approved });
   };
 
   // set filters
@@ -195,200 +194,185 @@ const HREmployee = () => {
     window.location.href = `mailto:${email}`;
   };
 
-  const getAllEmployees = React.useCallback(
-    async (tab: string) => {
-      try {
-        handleIsLoading(true);
-        const { token } = await getCSRFToken();
+  const getAllEmployees = React.useCallback(async () => {
+    try {
+      handleIsLoading(true);
+      const { token } = await getCSRFToken();
 
-        if (token && user?.token) {
-          const { data: responseData } = await axios.get(`${url}/hr/employee`, {
-            headers: {
-              Authorization: `Bearer ${user?.token}`,
-              "X-CSRF-TOKEN": token,
-            },
-            withCredentials: true,
-            params: { ...search, ...sort, ...category, tab },
-          });
+      if (token && user?.token) {
+        const { data: responseData } = await axios.get(`${url}/hr/employee`, {
+          headers: {
+            Authorization: `Bearer ${user?.token}`,
+            "X-CSRF-TOKEN": token,
+          },
+          withCredentials: true,
+          params: { ...search, ...sort, ...category, tab: "employees" },
+        });
 
-          if (responseData.employees) {
-            setEmployees(responseData.employees);
-          }
+        if (responseData.employees) {
+          setEmployees(responseData.employees);
         }
-      } catch (error) {
-        let message = "An error occurred when getting the employees.";
-
-        if (error instanceof AxiosError) {
-          message = error?.response?.data.message ?? error.message;
-        }
-
-        addToast("Something went wrong", message, "error");
-      } finally {
-        handleIsLoading(false);
       }
-    },
-    [url, user?.token, search, sort, category, handleIsLoading, addToast]
-  );
+    } catch (error) {
+      let message = "An error occurred when getting the employees.";
 
-  const getEmployeeOnboardings = React.useCallback(
-    async (tab: string) => {
-      try {
-        handleIsLoading(true);
-        const { token } = await getCSRFToken();
-
-        if (token && user?.token) {
-          const { data: responseData } = await axios.get(`${url}/hr/employee`, {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-              "X-CSRF-TOKEN": token,
-            },
-            params: { ...search, ...sort, ...category, tab },
-            withCredentials: true,
-          });
-
-          if (responseData.onboardings) {
-            setOnboardings(responseData.onboardings);
-          }
-        }
-      } catch (error) {
-        console.log(error);
-
-        let message = "An error occurred when getting the onboardings.";
-
-        if (error instanceof AxiosError) {
-          message = error.response?.data.message ?? error.message;
-        }
-
-        addToast("Something went wrong", message, "error");
-      } finally {
-        handleIsLoading(false);
+      if (error instanceof AxiosError) {
+        message = error?.response?.data.message ?? error.message;
       }
-    },
-    [url, user?.token, search, sort, category, addToast, handleIsLoading]
-  );
 
-  const getEmployeeLeaves = React.useCallback(
-    async (tab: string) => {
-      try {
-        handleIsLoading(true);
-        const { token } = await getCSRFToken();
+      addToast("Something went wrong", message, "error");
+    } finally {
+      handleIsLoading(false);
+    }
+  }, [url, user?.token, search, sort, category, handleIsLoading, addToast]);
 
-        if (token && user?.token) {
-          const { data: responseData } = await axios.get(`${url}/hr/employee`, {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-              "X-CSRF-TOKEN": token,
-            },
-            params: { ...search, ...sort, ...category, tab },
-            withCredentials: true,
-          });
+  const getEmployeeOnboardings = React.useCallback(async () => {
+    try {
+      handleIsLoading(true);
+      const { token } = await getCSRFToken();
 
-          if (responseData.leaves) {
-            setLeaves(responseData.leaves);
-          }
+      if (token && user?.token) {
+        const { data: responseData } = await axios.get(`${url}/hr/employee`, {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+            "X-CSRF-TOKEN": token,
+          },
+          params: { ...search, ...sort, ...category, tab: "onboardings" },
+          withCredentials: true,
+        });
+
+        if (responseData.onboardings) {
+          setOnboardings(responseData.onboardings);
         }
-      } catch (error) {
-        console.log(error);
-
-        let message = "An error occurred when getting the employee leaves";
-
-        if (error instanceof AxiosError) {
-          message = error.response?.data.message ?? error.message;
-        }
-
-        addToast("Something went wrong", message, "error");
-      } finally {
-        handleIsLoading(false);
       }
-    },
-    [url, user?.token, search, sort, category, handleIsLoading, addToast]
-  );
+    } catch (error) {
+      console.log(error);
 
-  const getEmployeePerformances = React.useCallback(
-    async (tab: string) => {
-      try {
-        handleIsLoading(true);
+      let message = "An error occurred when getting the onboardings.";
 
-        const { token } = await getCSRFToken();
-
-        if (token && user?.token) {
-          const { data: responseData } = await axios.get(`${url}/hr/employee`, {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-              "X-CSRF-TOKEN": token,
-            },
-            params: { ...search, ...sort, ...category, tab },
-            withCredentials: true,
-          });
-
-          if (responseData.performances) {
-            setPerformances(responseData.performances);
-          }
-        }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        handleIsLoading(false);
+      if (error instanceof AxiosError) {
+        message = error.response?.data.message ?? error.message;
       }
-    },
-    [url, user?.token, search, sort, category, handleIsLoading]
-  );
 
-  const getEmployeeTrainings = React.useCallback(
-    async (tab: string) => {
-      try {
-        handleIsLoading(true);
-        const { token } = await getCSRFToken();
+      addToast("Something went wrong", message, "error");
+    } finally {
+      handleIsLoading(false);
+    }
+  }, [url, user?.token, search, sort, category, addToast, handleIsLoading]);
 
-        if (token && user?.token) {
-          const { data: responseData } = await axios.get(`${url}/hr/employee`, {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-              "X-CSRF-TOKEN": token,
-            },
-            params: { ...search, ...sort, ...category, tab },
-            withCredentials: true,
-          });
+  const getEmployeeLeaves = React.useCallback(async () => {
+    try {
+      handleIsLoading(true);
+      const { token } = await getCSRFToken();
 
-          if (responseData.trainings) {
-            setTrainings(responseData.trainings);
-          }
+      if (token && user?.token) {
+        const { data: responseData } = await axios.get(`${url}/hr/employee`, {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+            "X-CSRF-TOKEN": token,
+          },
+          params: { ...search, ...sort, ...category, tab: "leaves" },
+          withCredentials: true,
+        });
+
+        if (responseData.leaves) {
+          setLeaves(responseData.leaves);
         }
-      } catch (error) {
-        console.log(error);
-
-        let message = "An error occurred when fetching the trainings.";
-
-        if (error instanceof AxiosError) {
-          message = error.response?.data.message ?? error.message;
-        }
-
-        addToast("Something went wrong", message, "error", 5000);
-      } finally {
-        handleIsLoading(false);
       }
-    },
-    [url, user?.token, search, sort, category, handleIsLoading, addToast]
-  );
+    } catch (error) {
+      console.log(error);
+
+      let message = "An error occurred when getting the employee leaves";
+
+      if (error instanceof AxiosError) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Something went wrong", message, "error");
+    } finally {
+      handleIsLoading(false);
+    }
+  }, [url, user?.token, search, sort, category, handleIsLoading, addToast]);
+
+  const getEmployeePerformances = React.useCallback(async () => {
+    try {
+      handleIsLoading(true);
+
+      const { token } = await getCSRFToken();
+
+      if (token && user?.token) {
+        const { data: responseData } = await axios.get(`${url}/hr/employee`, {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+            "X-CSRF-TOKEN": token,
+          },
+          params: { ...search, ...sort, ...category, tab: "performances" },
+          withCredentials: true,
+        });
+
+        if (responseData.performances) {
+          setPerformances(responseData.performances);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      handleIsLoading(false);
+    }
+  }, [url, user?.token, search, sort, category, handleIsLoading]);
+
+  const getEmployeeTrainings = React.useCallback(async () => {
+    try {
+      handleIsLoading(true);
+      const { token } = await getCSRFToken();
+
+      if (token && user?.token) {
+        const { data: responseData } = await axios.get(`${url}/hr/employee`, {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+            "X-CSRF-TOKEN": token,
+          },
+          params: { ...search, ...sort, ...category, tab: "trainings" },
+          withCredentials: true,
+        });
+
+        if (responseData.trainings) {
+          setTrainings(responseData.trainings);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+
+      let message = "An error occurred when fetching the trainings.";
+
+      if (error instanceof AxiosError) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Something went wrong", message, "error", 5000);
+    } finally {
+      handleIsLoading(false);
+    }
+  }, [url, user?.token, search, sort, category, handleIsLoading, addToast]);
 
   // main anchor of getting page data when the active tab changes
   const getPageData = React.useCallback(async () => {
     try {
       switch (activeTab) {
         case "employees":
-          await getAllEmployees(activeTab);
+          await getAllEmployees();
           break;
         case "onboardings":
-          await getEmployeeOnboardings(activeTab);
+          await getEmployeeOnboardings();
           break;
         case "leaves":
-          await getEmployeeLeaves(activeTab);
+          await getEmployeeLeaves();
           break;
         case "performances":
-          await getEmployeePerformances(activeTab);
+          await getEmployeePerformances();
           break;
         case "trainings":
-          await getEmployeeTrainings(activeTab);
+          await getEmployeeTrainings();
         default:
           break;
       }
@@ -403,6 +387,42 @@ const HREmployee = () => {
     getEmployeePerformances,
     getEmployeeTrainings,
   ]);
+
+  const handleLeaveRequestStatus = async (approved: boolean) => {
+    try {
+      const { token } = await getCSRFToken();
+
+      if (token && user?.token) {
+        const { data: responseData } = await axios.patch(
+          `${url}/hr/leave_request/${canRespondToLeaveRequest.id}`,
+          { approved },
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              "X-CSRF-TOKEN": token,
+            },
+            withCredentials: true,
+          }
+        );
+
+        if (responseData.success) {
+          handleCanRespondToLeaveRequest(0, false);
+          await getEmployeeLeaves();
+        }
+      }
+    } catch (error) {
+      console.log(error);
+
+      let message =
+        "An error occurred when try to respond to the leave request";
+
+      if (error instanceof AxiosError) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Something went wrong", message, "error");
+    }
+  };
 
   const mappedEmployees = employees?.map((employee, index) => {
     const activeMenu = activeUserMenu === employee.user_id;
@@ -516,7 +536,9 @@ const HREmployee = () => {
       action: (
         <div className="w-full flex flex-row flex-wrap items-center justify-start gap-2">
           <button
-            onClick={handleCanAcceptLeave}
+            onClick={() =>
+              handleCanRespondToLeaveRequest(leave.leave_request_id ?? 0, true)
+            }
             className="bg-accent-blue p-2 rounded-md text-accent-yellow font-bold w-full flex items-center justify-center l-l:w-fit"
           >
             <span className="flex items-center justify-center font-bold">
@@ -524,7 +546,9 @@ const HREmployee = () => {
             </span>
           </button>
           <button
-            onClick={handleCanRejectLeave}
+            onClick={() =>
+              handleCanRespondToLeaveRequest(leave.leave_request_id ?? 0, false)
+            }
             className="bg-red-600 p-2 rounded-md text-neutral-100 font-bold w-full flex items-center justify-center l-l:w-fit"
           >
             <span className="flex items-center justify-center font-bold">
@@ -646,22 +670,18 @@ const HREmployee = () => {
         />
       ) : null}
 
-      {activeTab === "leaves" && canAcceptLeave ? (
+      {canRespondToLeaveRequest.id ? (
         <Alert
-          title="Accept Leave?"
-          body="Are you sure you want to accept this leave request?"
-          confirmAlert={() => {}}
-          toggleAlert={handleCanAcceptLeave}
-          icon={<IoWarning />}
-        />
-      ) : null}
-
-      {activeTab === "leaves" && canRejectLeave ? (
-        <Alert
-          title="Reject Leave?"
-          body="Are you sure you want to reject this leave request?"
-          confirmAlert={() => console.log("rejected")}
-          toggleAlert={handleCanRejectLeave}
+          title={`${
+            canRespondToLeaveRequest.approved ? "Approve" : "Reject"
+          } Leave?`}
+          body={`Are you sure you want to ${
+            canRespondToLeaveRequest.approved ? "approve" : "reject"
+          } this leave request?`}
+          confirmAlert={() =>
+            handleLeaveRequestStatus(canRespondToLeaveRequest.approved)
+          }
+          toggleAlert={() => handleCanRespondToLeaveRequest(0, false)}
           icon={<IoWarning />}
         />
       ) : null}

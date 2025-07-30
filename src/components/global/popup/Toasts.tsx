@@ -83,7 +83,7 @@ const Toasts: React.FC<{
 
   return (
     <div
-      className="fixed top-0 z-60 flex flex-col items-center justify-center w-full p-2 t:p-4 t:max-w-(--breakpoint-m-l) 
+      className="fixed top-0 z-70 flex flex-col items-center justify-center w-full p-2 t:p-4 t:max-w-(--breakpoint-m-l) 
                 l-s:bottom-0 l-s:top-auto l-s:right-0"
     >
       <div className="flex flex-col items-center justify-start gap-2 l-s:flex-col-reverse w-full">

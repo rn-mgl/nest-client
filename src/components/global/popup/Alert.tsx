@@ -4,7 +4,7 @@ import React from "react";
 const Alert: React.FC<AlertInterface> = (props) => {
   return (
     <div
-      className="w-full h-full fixed top-0 left-0 z-70 bg-gradient-to-br from-accent-blue/30 to-accent-green/30 backdrop-blur-md
+      className="w-full h-full fixed top-0 left-0 z-60 bg-gradient-to-br from-accent-blue/30 to-accent-green/30 backdrop-blur-md
                 animate-fade flex flex-col items-center justify-center p-4 t:p-8"
     >
       <div className="w-full flex flex-col items-center justify-center shadow-md max-w-(--breakpoint-m-l)">
