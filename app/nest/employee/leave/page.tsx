@@ -8,6 +8,7 @@ import useSort from "@/src/hooks/useSort";
 import {
   LeaveBalanceInterface,
   LeaveInterface,
+  LeaveRequestInterface,
 } from "@/src/interface/LeaveInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import {
@@ -23,11 +24,17 @@ const Leave = () => {
   const [leaveBalances, setLeaveBalances] = React.useState<
     (LeaveBalanceInterface & LeaveInterface & UserInterface)[]
   >([]);
+  const [leaveRequests, setLeaveRequests] = React.useState<
+    (LeaveInterface & LeaveRequestInterface)[]
+  >([]);
   const [selectedLeaveRequest, setSelectedLeaveRequest] = React.useState(0);
+  const [activeTab, setActiveTab] = React.useState("leaves");
 
   const { data: session } = useSession({ required: true });
   const user = session?.user;
   const url = process.env.URL;
+
+  const tabs = ["leaves", "requests"];
 
   const {
     search,
@@ -45,6 +52,14 @@ const Leave = () => {
     handleSelectSort,
     handleToggleAsc,
   } = useSort("type", "Leave Type");
+
+  const handleActiveTab = (tab: string) => {
+    if (tab === activeTab) {
+      return;
+    }
+
+    setActiveTab(tab);
+  };
 
   const getLeaveBalances = React.useCallback(async () => {
     try {
@@ -72,13 +87,53 @@ const Leave = () => {
     }
   }, [user?.token, url, search, sort]);
 
+  const getLeaveRequests = React.useCallback(async () => {
+    try {
+      const { token } = await getCSRFToken();
+
+      if (token && user?.token) {
+        const { data: responseData } = await axios.get(
+          `${url}/employee/leave_request`,
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              "X-CSRF-TOKEN": token,
+            },
+            withCredentials: true,
+          }
+        );
+
+        if (responseData.requests) {
+          setLeaveRequests(responseData.requests);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, [url, user?.token]);
+
+  const getPageData = React.useCallback(async () => {
+    try {
+      switch (activeTab) {
+        case "leaves":
+          getLeaveBalances();
+          break;
+        case "requests":
+          getLeaveRequests();
+          break;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, [activeTab, getLeaveBalances, getLeaveRequests]);
+
   const handleSelectedLeaveRequest = (leave_type_id: number) => {
     setSelectedLeaveRequest((prev) =>
       prev === leave_type_id ? 0 : leave_type_id
     );
   };
 
-  const mappedLeaves = leaveBalances.map((leave, index) => {
+  const mappedLeaveBalances = leaveBalances.map((leave, index) => {
     return (
       <LeaveCard
         key={index}
@@ -103,9 +158,29 @@ const Leave = () => {
     );
   });
 
+  const mappedLeaveRequests = leaveRequests.map((leave, index) => {
+    return <div key={index}>{leave.type}</div>;
+  });
+
+  const mappedTabs = tabs.map((tab, index) => {
+    return (
+      <button
+        key={index}
+        onClick={() => handleActiveTab(tab)}
+        className={`capitalize w-full border-b-2 p-2 transition-all ${
+          tab === activeTab
+            ? "text-accent-blue border-accent-blue font-bold"
+            : ""
+        }`}
+      >
+        {tab}
+      </button>
+    );
+  });
+
   React.useEffect(() => {
-    getLeaveBalances();
-  }, [getLeaveBalances]);
+    getPageData();
+  }, [getPageData]);
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
@@ -116,35 +191,46 @@ const Leave = () => {
           refetchIndex={getLeaveBalances}
         />
       ) : null}
-      <div
-        className="w-full h-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2
-                    t:items-start t:p-4 gap-4 t:gap-8"
-      >
-        <Filter
-          useCategoryFilter={false}
-          useSearchFilter={true}
-          useSortFilter={true}
-          //
-          canSeeSearchDropDown={canSeeSearchDropDown}
-          searchKey={debounceSearch.searchKey}
-          searchLabel={debounceSearch.searchLabel}
-          searchValue={debounceSearch.searchValue}
-          searchKeyLabelPairs={EMPLOYEE_LEAVE_SEARCH}
-          toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
-          selectSearch={handleSelectSearch}
-          onChange={handleSearch}
-          //
-          isAsc={sort.isAsc}
-          sortKey={sort.sortKey}
-          sortLabel={sort.sortLabel}
-          canSeeSortDropDown={canSeeSortDropDown}
-          sortKeyLabelPairs={EMPLOYEE_LEAVE_SORT}
-          selectSort={handleSelectSort}
-          toggleAsc={handleToggleAsc}
-          toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
-        />
-        <div className="grid grid-cols-1 gap-4 t:grid-cols-2 l-s:grid-cols-3">
-          {mappedLeaves}
+
+      <div className="w-full h-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2 t:p-4 gap-4 t:gap-8">
+        <div className="flex flex-row items-center justify-between w-full">
+          {mappedTabs}
+        </div>
+
+        <div className="w-full flex flex-col items-center justify-center gap-4 t:gap-8">
+          <Filter
+            useCategoryFilter={false}
+            useSearchFilter={true}
+            useSortFilter={true}
+            //
+            canSeeSearchDropDown={canSeeSearchDropDown}
+            searchKey={debounceSearch.searchKey}
+            searchLabel={debounceSearch.searchLabel}
+            searchValue={debounceSearch.searchValue}
+            searchKeyLabelPairs={EMPLOYEE_LEAVE_SEARCH}
+            toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
+            selectSearch={handleSelectSearch}
+            onChange={handleSearch}
+            //
+            isAsc={sort.isAsc}
+            sortKey={sort.sortKey}
+            sortLabel={sort.sortLabel}
+            canSeeSortDropDown={canSeeSortDropDown}
+            sortKeyLabelPairs={EMPLOYEE_LEAVE_SORT}
+            selectSort={handleSelectSort}
+            toggleAsc={handleToggleAsc}
+            toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
+          />
+
+          {activeTab === "leaves" ? (
+            <div className="grid grid-cols-1 gap-4 t:grid-cols-2 l-s:grid-cols-3">
+              {mappedLeaveBalances}
+            </div>
+          ) : activeTab === "requests" ? (
+            <div className="grid grid-cols-1 t:grid-cols-2 l-s:grid-cols-3">
+              {mappedLeaveRequests}
+            </div>
+          ) : null}
         </div>
       </div>
     </div>

@@ -686,125 +686,120 @@ const HREmployee = () => {
         />
       ) : null}
 
-      <div
-        className="w-full min-h-full h-auto flex flex-col items-start justify-start max-w-(--breakpoint-l-l) p-2
-                  t:p-4"
-      >
-        <div className="w-full min-h-full h-auto flex flex-col items-start justify-start gap-4 t:gap-8">
-          <div className="w-full">
-            <div className="w-full flex flex-row overflow-x-auto">
-              {mappedTabs}
+      <div className="gap-4 t:gap-8 w-full min-h-full h-auto flex flex-col items-start justify-start max-w-(--breakpoint-l-l) p-2 t:p-4">
+        <div className="w-full">
+          <div className="w-full flex flex-row overflow-x-auto">
+            {mappedTabs}
+          </div>
+        </div>
+
+        <div className="w-full flex flex-col items-center justify-start gap-4 t:gap-8">
+          <Filter
+            useSearchFilter={true}
+            useSortFilter={true}
+            useCategoryFilter={true}
+            searchKey={debounceSearch.searchKey}
+            searchLabel={debounceSearch.searchLabel}
+            searchValue={debounceSearch.searchValue}
+            searchKeyLabelPairs={searchFilters[activeTab as keyof object]}
+            canSeeSearchDropDown={canSeeSearchDropDown}
+            selectSearch={handleSelectSearch}
+            toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
+            onChange={handleSearch}
+            //
+            categoryValue={category.categoryValue}
+            canSeeCategoryDropDown={canSeeCategoryDropDown}
+            categoryKeyValuePairs={categoryFilters[activeTab as keyof object]}
+            toggleCanSeeCategoryDropDown={handleCanSeeCategoryDropDown}
+            selectCategory={handleSelectCategory}
+            //
+            sortKey={sort.sortKey}
+            sortLabel={sort.sortLabel}
+            isAsc={sort.isAsc}
+            canSeeSortDropDown={canSeeSortDropDown}
+            sortKeyLabelPairs={sortFilters[activeTab as keyof object]}
+            toggleAsc={handleToggleAsc}
+            selectSort={handleSelectSort}
+            toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
+          />
+
+          {isLoading ? (
+            <PageSkeletonLoader />
+          ) : activeTab === "employees" ? (
+            <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">
+              {mappedEmployees}
             </div>
-          </div>
-
-          <div className="w-full flex flex-col items-center justify-start gap-4 t:gap-8">
-            <Filter
-              useSearchFilter={true}
-              useSortFilter={true}
-              useCategoryFilter={true}
-              searchKey={debounceSearch.searchKey}
-              searchLabel={debounceSearch.searchLabel}
-              searchValue={debounceSearch.searchValue}
-              searchKeyLabelPairs={searchFilters[activeTab as keyof object]}
-              canSeeSearchDropDown={canSeeSearchDropDown}
-              selectSearch={handleSelectSearch}
-              toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
-              onChange={handleSearch}
-              //
-              categoryValue={category.categoryValue}
-              canSeeCategoryDropDown={canSeeCategoryDropDown}
-              categoryKeyValuePairs={categoryFilters[activeTab as keyof object]}
-              toggleCanSeeCategoryDropDown={handleCanSeeCategoryDropDown}
-              selectCategory={handleSelectCategory}
-              //
-              sortKey={sort.sortKey}
-              sortLabel={sort.sortLabel}
-              isAsc={sort.isAsc}
-              canSeeSortDropDown={canSeeSortDropDown}
-              sortKeyLabelPairs={sortFilters[activeTab as keyof object]}
-              toggleAsc={handleToggleAsc}
-              selectSort={handleSelectSort}
-              toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
-            />
-
-            {isLoading ? (
-              <PageSkeletonLoader />
-            ) : activeTab === "employees" ? (
-              <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">
-                {mappedEmployees}
-              </div>
-            ) : activeTab === "onboardings" ? (
-              <div className="w-full flex flex-col items-start justify-start overflow-x-auto">
-                <Table
-                  headers={[
-                    "Image",
-                    "First Name",
-                    "Last Name",
-                    "Email",
-                    "Title",
-                    "Status",
-                    "Assigned On",
-                  ]}
-                  contents={mappedOnboardings}
-                  color="blue"
-                />
-              </div>
-            ) : activeTab === "leaves" ? (
-              <div className="w-full flex flex-col items-center justify-start overflow-x-auto">
-                <Table
-                  headers={[
-                    "Image",
-                    "First Name",
-                    "Last Name",
-                    "Email",
-                    "Type",
-                    "Start",
-                    "End",
-                    "Status",
-                    "Reason",
-                    "Balance",
-                    "Action",
-                  ]}
-                  contents={mappedLeaves}
-                  color="blue"
-                />
-              </div>
-            ) : activeTab === "performances" ? (
-              <div className="w-full flex flex-col items-center justify-start overflow-x-auto">
-                <Table
-                  headers={[
-                    "Image",
-                    "First Name",
-                    "Last Name",
-                    "Email",
-                    "Title",
-                    "Status",
-                    "Assigned On",
-                  ]}
-                  contents={mappedPerformances}
-                  color="blue"
-                />
-              </div>
-            ) : activeTab === "trainings" ? (
-              <div className="w-full flex flex-col items-center justify-start overflow-x-auto">
-                <Table
-                  headers={[
-                    "Image",
-                    "First Name",
-                    "Last Name",
-                    "Email",
-                    "Title",
-                    "Deadline",
-                    "Status",
-                    "Score",
-                    "Assigned On",
-                  ]}
-                  contents={mappedTrainings}
-                  color="blue"
-                />
-              </div>
-            ) : null}
-          </div>
+          ) : activeTab === "onboardings" ? (
+            <div className="w-full flex flex-col items-start justify-start overflow-x-auto">
+              <Table
+                headers={[
+                  "Image",
+                  "First Name",
+                  "Last Name",
+                  "Email",
+                  "Title",
+                  "Status",
+                  "Assigned On",
+                ]}
+                contents={mappedOnboardings}
+                color="blue"
+              />
+            </div>
+          ) : activeTab === "leaves" ? (
+            <div className="w-full flex flex-col items-center justify-start overflow-x-auto">
+              <Table
+                headers={[
+                  "Image",
+                  "First Name",
+                  "Last Name",
+                  "Email",
+                  "Type",
+                  "Start",
+                  "End",
+                  "Status",
+                  "Reason",
+                  "Balance",
+                  "Action",
+                ]}
+                contents={mappedLeaves}
+                color="blue"
+              />
+            </div>
+          ) : activeTab === "performances" ? (
+            <div className="w-full flex flex-col items-center justify-start overflow-x-auto">
+              <Table
+                headers={[
+                  "Image",
+                  "First Name",
+                  "Last Name",
+                  "Email",
+                  "Title",
+                  "Status",
+                  "Assigned On",
+                ]}
+                contents={mappedPerformances}
+                color="blue"
+              />
+            </div>
+          ) : activeTab === "trainings" ? (
+            <div className="w-full flex flex-col items-center justify-start overflow-x-auto">
+              <Table
+                headers={[
+                  "Image",
+                  "First Name",
+                  "Last Name",
+                  "Email",
+                  "Title",
+                  "Deadline",
+                  "Status",
+                  "Score",
+                  "Assigned On",
+                ]}
+                contents={mappedTrainings}
+                color="blue"
+              />
+            </div>
+          ) : null}
         </div>
       </div>
     </div>
