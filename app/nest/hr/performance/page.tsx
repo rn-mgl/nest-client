@@ -1,7 +1,7 @@
 "use client";
 
 import Filter from "@/src/components/global/filter/Filter";
-import DeleteEntity from "@/src/components/hr/global/DeleteEntity";
+import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import AssignPerformanceReview from "@/src/components/hr/performance/AssignPerformanceReview";
 import CreatePerformanceReview from "@/src/components/hr/performance/CreatePerformanceReview";
 import EditPerformanceReview from "@/src/components/hr/performance/EditPerformanceReview";

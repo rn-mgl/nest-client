@@ -17,7 +17,7 @@ import axios from "axios";
 
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import Toasts from "@/src/components/global/popup/Toasts";
-import DeleteEntity from "@/src/components/hr/global/DeleteEntity";
+import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import { useToasts } from "@/src/context/ToastContext";
 import useIsLoading from "@/src/hooks/useIsLoading";
 import { useSession } from "next-auth/react";

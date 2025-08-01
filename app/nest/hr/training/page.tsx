@@ -9,7 +9,7 @@ import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
 import Filter from "@/src/components/global/filter/Filter";
-import DeleteEntity from "@/src/components/hr/global/DeleteEntity";
+import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import AssignTraining from "@/src/components/hr/training/AssignTraining";
 import TrainingCard from "@/src/components/global/training/TrainingCard";
 

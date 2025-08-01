@@ -26,7 +26,7 @@ import {
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
-import DeleteEntity from "@/src/components/hr/global/DeleteEntity";
+import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useParams } from "next/navigation";

@@ -14,6 +14,7 @@ const DeleteEntity: React.FC<ModalInterface & DeleteModalInterface> = (
   const { data: session } = useSession({ required: true });
   const user = session?.user;
   const url = process.env.URL;
+  const role = user?.role ?? "";
 
   const submitDeleteEntity = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,7 +24,7 @@ const DeleteEntity: React.FC<ModalInterface & DeleteModalInterface> = (
 
       if (token && user?.token) {
         const { data: responseData } = await axios.delete(
-          `${url}/hr/${props.route}/${props.id}`,
+          `${url}/${role}/${props.route}/${props.id}`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,

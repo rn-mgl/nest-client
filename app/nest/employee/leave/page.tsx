@@ -1,8 +1,11 @@
 "use client";
 
+import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import Filter from "@/src/components/global/filter/Filter";
+import EditLeaveRequest from "@/src/components/global/leave/EditLeaveRequest";
 import LeaveCard from "@/src/components/global/leave/LeaveCard";
-import LeaveRequest from "@/src/components/global/leave/LeaveRequest";
+import LeaveRequestCard from "@/src/components/global/leave/LeaveRequestCard";
+import LeaveRequestForm from "@/src/components/global/leave/LeaveRequestForm";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import {
@@ -28,6 +31,10 @@ const Leave = () => {
     (LeaveInterface & LeaveRequestInterface)[]
   >([]);
   const [selectedLeaveRequest, setSelectedLeaveRequest] = React.useState(0);
+  const [activeLeaveRequestMenu, setActiveLeaveRequestMenu] = React.useState(0);
+  const [canEditLeaveRequest, setCanEditLeaveRequest] = React.useState(false);
+  const [canDeleteLeaveRequest, setCanDeleteLeaveRequest] =
+    React.useState(false);
   const [activeTab, setActiveTab] = React.useState("leaves");
 
   const { data: session } = useSession({ required: true });
@@ -133,6 +140,18 @@ const Leave = () => {
     );
   };
 
+  const handleActiveLeaveRequestMenu = (id: number) => {
+    setActiveLeaveRequestMenu((prev) => (prev === id ? 0 : id));
+  };
+
+  const handleCanEditLeaveRequest = () => {
+    setCanEditLeaveRequest((prev) => !prev);
+  };
+
+  const handleCanDeleteLeaveRequest = () => {
+    setCanDeleteLeaveRequest((prev) => !prev);
+  };
+
   const mappedLeaveBalances = leaveBalances.map((leave, index) => {
     return (
       <LeaveCard
@@ -159,7 +178,44 @@ const Leave = () => {
   });
 
   const mappedLeaveRequests = leaveRequests.map((leave, index) => {
-    return <div key={index}>{leave.type}</div>;
+    const createdBy = leave.user_id === user?.current;
+    const requestedAtDate = leave.requested_at
+      ? new Date(leave.requested_at).toLocaleDateString()
+      : "-";
+    const requestAtTime = leave.requested_at
+      ? new Date(leave.requested_at).toLocaleTimeString()
+      : "-";
+
+    const startDate = new Date(leave.start_date).toLocaleDateString();
+    const startTime = new Date(leave.start_date).toLocaleTimeString();
+
+    const endDate = new Date(leave.end_date).toLocaleDateString();
+    const endTime = new Date(leave.end_date).toLocaleTimeString();
+
+    return (
+      <LeaveRequestCard
+        key={index}
+        createdBy={createdBy}
+        //
+        description={leave.description}
+        approved_by={leave.approved_by}
+        start_date={`${startDate} ${startTime}`}
+        end_date={`${endDate} ${endTime}`}
+        reason={leave.reason}
+        status={leave.status}
+        role={user?.role ?? ""}
+        type={leave.type}
+        user_id={leave.user_id}
+        requested_at={`${requestedAtDate} ${requestAtTime}`}
+        //
+        activeMenu={activeLeaveRequestMenu === leave.leave_request_id}
+        handleActiveMenu={() =>
+          handleActiveLeaveRequestMenu(leave.leave_request_id ?? 0)
+        }
+        handleCanEdit={handleCanEditLeaveRequest}
+        handleCanDelete={handleCanDeleteLeaveRequest}
+      />
+    );
   });
 
   const mappedTabs = tabs.map((tab, index) => {
@@ -185,19 +241,37 @@ const Leave = () => {
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
       {selectedLeaveRequest ? (
-        <LeaveRequest
+        <LeaveRequestForm
           id={selectedLeaveRequest}
           toggleModal={() => handleSelectedLeaveRequest(0)}
           refetchIndex={getLeaveBalances}
         />
       ) : null}
 
-      <div className="w-full h-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2 t:p-4 gap-4 t:gap-8">
+      {canEditLeaveRequest ? (
+        <EditLeaveRequest
+          toggleModal={handleCanEditLeaveRequest}
+          refetchIndex={getLeaveRequests}
+          id={activeLeaveRequestMenu}
+        />
+      ) : null}
+
+      {canDeleteLeaveRequest ? (
+        <DeleteEntity
+          route="leave_request"
+          toggleModal={handleCanDeleteLeaveRequest}
+          refetchIndex={getLeaveRequests}
+          id={activeLeaveRequestMenu}
+          label="Leave Request"
+        />
+      ) : null}
+
+      <div className="w-full h-auto flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2 t:p-4 gap-4 t:gap-8">
         <div className="flex flex-row items-center justify-between w-full">
           {mappedTabs}
         </div>
 
-        <div className="w-full flex flex-col items-center justify-center gap-4 t:gap-8">
+        <div className="w-full flex flex-col items-center justify-center gap-4 t:gap-8 ">
           <Filter
             useCategoryFilter={false}
             useSearchFilter={true}
@@ -223,11 +297,11 @@ const Leave = () => {
           />
 
           {activeTab === "leaves" ? (
-            <div className="grid grid-cols-1 gap-4 t:grid-cols-2 l-s:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3 w-full h-auto">
               {mappedLeaveBalances}
             </div>
           ) : activeTab === "requests" ? (
-            <div className="grid grid-cols-1 t:grid-cols-2 l-s:grid-cols-3">
+            <div className="grid grid-cols-1 t:grid-cols-2 l-l:grid-cols-3 gap-4 w-full h-auto">
               {mappedLeaveRequests}
             </div>
           ) : null}

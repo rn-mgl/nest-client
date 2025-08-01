@@ -1,7 +1,7 @@
 "use client";
 
 import Filter from "@/src/components/global/filter/Filter";
-import DeleteEntity from "@/src/components/hr/global/DeleteEntity";
+import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import AssignLeave from "@/src/components/hr/leave/AssignLeave";
 import CreateLeave from "@/src/components/hr/leave/CreateLeave";
 import EditLeave from "@/src/components/hr/leave/EditLeave";

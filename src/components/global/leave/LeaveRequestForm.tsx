@@ -1,20 +1,21 @@
+import Input from "@/form/Input";
+import TextArea from "@/form/TextArea";
 import { LeaveRequestInterface } from "@/src/interface/LeaveInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
+import { getCSRFToken } from "@/src/utils/token";
+import axios from "axios";
+import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose, IoText } from "react-icons/io5";
-import Input from "../../form/Input";
-import TextArea from "../../form/TextArea";
-import { getCSRFToken } from "@/src/utils/token";
-import { useSession } from "next-auth/react";
-import axios from "axios";
 
-const LeaveRequest: React.FC<ModalInterface> = (props) => {
+const LeaveRequestForm: React.FC<ModalInterface> = (props) => {
   const [leaveRequest, setLeaveRequest] = React.useState<LeaveRequestInterface>(
     {
       start_date: "",
       end_date: "",
       reason: "",
       status: "",
+      user_id: 0,
     }
   );
 
@@ -122,4 +123,4 @@ const LeaveRequest: React.FC<ModalInterface> = (props) => {
   );
 };
 
-export default LeaveRequest;
+export default LeaveRequestForm;
