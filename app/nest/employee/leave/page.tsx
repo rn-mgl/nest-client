@@ -6,6 +6,7 @@ import Filter from "@/src/components/global/filter/Filter";
 import EditLeaveRequest from "@/src/components/global/leave/EditLeaveRequest";
 import LeaveBalanceCard from "@/src/components/global/leave/LeaveBalanceCard";
 import LeaveRequestForm from "@/src/components/global/leave/LeaveRequestForm";
+import Tabs from "@/src/components/global/Tabs";
 import useCategory from "@/src/hooks/useCategory";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
@@ -18,8 +19,8 @@ import { UserInterface } from "@/src/interface/UserInterface";
 import {
   EMPLOYEE_LEAVE_REQUEST_CATEGORY,
   EMPLOYEE_LEAVE_REQUEST_SORT,
-  EMPLOYEE_LEAVE_SEARCH,
-  EMPLOYEE_LEAVE_SORT,
+  EMPLOYEE_LEAVE_BALANCE_SEARCH,
+  EMPLOYEE_LEAVE_BALANCE_SORT,
 } from "@/src/utils/filters";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
@@ -43,10 +44,8 @@ const Leave = () => {
   const user = session?.user;
   const url = process.env.URL;
 
-  const tabs = ["leaves", "requests"];
-
   const sortFilter = {
-    leaves: EMPLOYEE_LEAVE_SORT,
+    leaves: EMPLOYEE_LEAVE_BALANCE_SORT,
     requests: EMPLOYEE_LEAVE_REQUEST_SORT,
   };
 
@@ -86,7 +85,7 @@ const Leave = () => {
     setActiveTab(tab);
 
     switch (tab) {
-      case "leaves":
+      case "balances":
         handleSelectSort("type", "Leave Type");
         break;
       case "requests":
@@ -237,22 +236,6 @@ const Leave = () => {
     };
   });
 
-  const mappedTabs = tabs.map((tab, index) => {
-    return (
-      <button
-        key={index}
-        onClick={() => handleActiveTab(tab)}
-        className={`capitalize w-full border-b-2 p-2 transition-all ${
-          tab === activeTab
-            ? "text-accent-blue border-accent-blue font-bold"
-            : ""
-        }`}
-      >
-        {tab}
-      </button>
-    );
-  });
-
   React.useEffect(() => {
     getPageData();
   }, [getPageData]);
@@ -286,9 +269,11 @@ const Leave = () => {
       ) : null}
 
       <div className="w-full h-auto flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2 t:p-4 gap-4 t:gap-8">
-        <div className="flex flex-row items-center justify-between w-full">
-          {mappedTabs}
-        </div>
+        <Tabs
+          activeTab={activeTab}
+          handleActiveTab={handleActiveTab}
+          tabs={["balances", "requests"]}
+        />
 
         <div className="w-full flex flex-col items-center justify-center gap-4 t:gap-8 ">
           <Filter
@@ -300,7 +285,7 @@ const Leave = () => {
             searchKey={debounceSearch.searchKey}
             searchLabel={debounceSearch.searchLabel}
             searchValue={debounceSearch.searchValue}
-            searchKeyLabelPairs={EMPLOYEE_LEAVE_SEARCH}
+            searchKeyLabelPairs={EMPLOYEE_LEAVE_BALANCE_SEARCH}
             toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
             selectSearch={handleSelectSearch}
             onChange={handleSearch}
@@ -321,7 +306,7 @@ const Leave = () => {
             toggleCanSeeCategoryDropDown={handleCanSeeCategoryDropDown}
           />
 
-          {activeTab === "leaves" ? (
+          {activeTab === "balances" ? (
             <div className="grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3 w-full h-auto">
               {mappedLeaveBalances}
             </div>

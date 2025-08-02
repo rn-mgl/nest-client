@@ -35,8 +35,8 @@ import { UserInterface } from "@/src/interface/UserInterface";
 import {
   HR_EMPLOYEE_CATEGORY,
   HR_EMPLOYEE_LEAVE_CATEGORY,
-  HR_EMPLOYEE_LEAVE_SEARCH,
-  HR_EMPLOYEE_LEAVE_SORT,
+  HR_EMPLOYEE_LEAVE_TYPE_SEARCH,
+  HR_EMPLOYEE_LEAVE_TYPE_SORT,
   HR_EMPLOYEE_ONBOARDING_CATEGORY,
   HR_EMPLOYEE_ONBOARDING_SEARCH,
   HR_EMPLOYEE_ONBOARDING_SORT,
@@ -90,7 +90,7 @@ const HREmployee = () => {
   const searchFilters = {
     employees: HR_EMPLOYEE_SEARCH,
     onboardings: HR_EMPLOYEE_ONBOARDING_SEARCH,
-    leaves: HR_EMPLOYEE_LEAVE_SEARCH,
+    leaves: HR_EMPLOYEE_LEAVE_TYPE_SEARCH,
     performances: HR_EMPLOYEE_PERFORMANCE_SEARCH,
     trainings: HR_EMPLOYEE_TRAINING_SEARCH,
   };
@@ -98,7 +98,7 @@ const HREmployee = () => {
   const sortFilters = {
     employees: HR_EMPLOYEE_SORT,
     onboardings: HR_EMPLOYEE_ONBOARDING_SORT,
-    leaves: HR_EMPLOYEE_LEAVE_SORT,
+    leaves: HR_EMPLOYEE_LEAVE_TYPE_SORT,
     performances: HR_EMPLOYEE_PERFORMANCE_SORT,
     trainings: HR_EMPLOYEE_TRAINING_SORT,
   };

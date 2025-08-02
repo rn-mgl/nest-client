@@ -136,7 +136,7 @@ export const HR_EMPLOYEE_ONBOARDING_SEARCH: SearchPairsInterface[] = [
 ];
 
 // for hr to filter employee leave
-export const HR_EMPLOYEE_LEAVE_SEARCH: SearchPairsInterface[] = [
+export const HR_EMPLOYEE_LEAVE_TYPE_SEARCH: SearchPairsInterface[] = [
   {
     key: "first_name",
     label: "First Name",
@@ -155,7 +155,7 @@ export const HR_EMPLOYEE_LEAVE_SEARCH: SearchPairsInterface[] = [
   },
 ];
 
-export const HR_EMPLOYEE_LEAVE_SORT: SortPairsInterface[] = [
+export const HR_EMPLOYEE_LEAVE_TYPE_SORT: SortPairsInterface[] = [
   {
     key: "start_date",
     label: "Start Date",
@@ -278,14 +278,8 @@ export const HR_EMPLOYEE_TRAINING_CATEGORY: CategoryPairsInterface[] = [
 ];
 
 // for hr to filter leave
-export const HR_LEAVE_CATEGORY: CategoryPairsInterface[] = [
-  {
-    key: "",
-    values: ["All"],
-  },
-];
 
-export const HR_LEAVE_SORT: SortPairsInterface[] = [
+export const HR_LEAVE_TYPE_SORT: SortPairsInterface[] = [
   {
     key: "type",
     label: "Leave Type",
@@ -296,7 +290,7 @@ export const HR_LEAVE_SORT: SortPairsInterface[] = [
   },
 ];
 
-export const HR_LEAVE_SEARCH: SearchPairsInterface[] = [
+export const HR_LEAVE_TYPE_SEARCH: SearchPairsInterface[] = [
   {
     key: "type",
     label: "Leave Type",
@@ -304,6 +298,18 @@ export const HR_LEAVE_SEARCH: SearchPairsInterface[] = [
   {
     key: "description",
     label: "Description",
+  },
+];
+
+// for hr to filter leave request
+export const HR_LEAVE_BALANCE_SORT: SortPairsInterface[] = [
+  {
+    key: "balance",
+    label: "Balance",
+  },
+  {
+    key: "type",
+    label: "Leave Type",
   },
 ];
 
@@ -470,14 +476,14 @@ export const EMPLOYEE_ONBOARDING_CATEGORY: CategoryPairsInterface[] = [
 
 // for employee to filter leave types
 
-export const EMPLOYEE_LEAVE_SEARCH: SearchPairsInterface[] = [
+export const EMPLOYEE_LEAVE_BALANCE_SEARCH: SearchPairsInterface[] = [
   {
     key: "type",
     label: "Type",
   },
 ];
 
-export const EMPLOYEE_LEAVE_SORT: SortPairsInterface[] = [
+export const EMPLOYEE_LEAVE_BALANCE_SORT: SortPairsInterface[] = [
   {
     key: "type",
     label: "Type",

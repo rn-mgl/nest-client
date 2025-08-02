@@ -14,7 +14,11 @@ import {
   LeaveInterface,
 } from "@/src/interface/LeaveInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
-import { HR_LEAVE_SEARCH, HR_LEAVE_SORT } from "@/src/utils/filters";
+import {
+  HR_LEAVE_BALANCE_SORT,
+  HR_LEAVE_TYPE_SEARCH,
+  HR_LEAVE_TYPE_SORT,
+} from "@/src/utils/filters";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
@@ -57,6 +61,11 @@ const HRLeave = () => {
     handleToggleAsc,
   } = useSort("type", "Leave Type");
 
+  const sortFilters = {
+    types: HR_LEAVE_TYPE_SORT,
+    balances: HR_LEAVE_BALANCE_SORT,
+  };
+
   const { data } = useSession({ required: true });
   const url = process.env.URL;
   const user = data?.user;
@@ -81,6 +90,15 @@ const HRLeave = () => {
     if (tab === activeTab) return;
 
     setActiveTab(tab);
+
+    switch (tab) {
+      case "types":
+        handleSelectSort("type", "Leave Type");
+        break;
+      case "balances":
+        handleSelectSort("balance", "Balance");
+        break;
+    }
   };
 
   const handleCanCreateLeave = () => {
@@ -145,7 +163,7 @@ const HRLeave = () => {
       case "types":
         getLeaveTypes();
         break;
-      case "leaves":
+      case "balances":
         getLeaveBalances();
         break;
     }
@@ -243,7 +261,7 @@ const HRLeave = () => {
         <Tabs
           activeTab={activeTab}
           handleActiveTab={handleActiveTab}
-          tabs={["types", "leaves", "requests"]}
+          tabs={["types", "balances", "requests"]}
         />
 
         <Filter
@@ -253,7 +271,7 @@ const HRLeave = () => {
           searchKey={debounceSearch.searchKey}
           searchLabel={debounceSearch.searchLabel}
           searchValue={debounceSearch.searchValue}
-          searchKeyLabelPairs={HR_LEAVE_SEARCH}
+          searchKeyLabelPairs={HR_LEAVE_TYPE_SEARCH}
           canSeeSearchDropDown={canSeeSearchDropDown}
           selectSearch={handleSelectSearch}
           toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
@@ -262,7 +280,7 @@ const HRLeave = () => {
           sortLabel={sort.sortLabel}
           isAsc={sort.isAsc}
           canSeeSortDropDown={canSeeSortDropDown}
-          sortKeyLabelPairs={HR_LEAVE_SORT}
+          sortKeyLabelPairs={sortFilters[activeTab as keyof object]}
           toggleAsc={handleToggleAsc}
           selectSort={handleSelectSort}
           toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
@@ -282,7 +300,7 @@ const HRLeave = () => {
               {mappedLeaves}
             </div>
           </React.Fragment>
-        ) : activeTab === "leaves" ? (
+        ) : activeTab === "balances" ? (
           <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">
             {mappedLeaveBalances}
           </div>
