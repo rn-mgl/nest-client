@@ -11,7 +11,7 @@ const LeaveRequestCard: React.FC<
 > = (props) => {
   return (
     <div className="w-full h-full bg-neutral-100 rounded-md flex flex-col items-center justify-start gap-4 p-4 max-h-80 relative overflow-hidden">
-      <div className="flex flex-row items-center justify-start w-full">
+      <div className="flex flex-row items-start justify-start w-full">
         <div className="flex flex-col items-start justify-center w-full">
           <p className="font-bold">{props.type}</p>
           <p className="text-xs">{props.requested_at}</p>
@@ -54,6 +54,10 @@ const LeaveRequestCard: React.FC<
       ) : null}
 
       <div className="flex flex-col items-center justify-start gap-2 w-full h-full overflow-hidden">
+        <div className="w-full flex flex-col items-center justify-start gap-2 text-sm bg-neutral-200 p-2 rounded-sm">
+          <p className="text-sm w-full">{props.status}</p>
+        </div>
+
         <div className="w-full flex flex-col items-center justify-start gap-2 text-sm bg-neutral-200 p-2 rounded-sm">
           <p className="text-sm w-full">{props.start_date}</p>
         </div>
