@@ -301,7 +301,7 @@ export const HR_LEAVE_TYPE_SEARCH: SearchPairsInterface[] = [
   },
 ];
 
-// for hr to filter leave request
+// for hr to filter leave balance
 export const HR_LEAVE_BALANCE_SORT: SortPairsInterface[] = [
   {
     key: "balance",
@@ -310,6 +310,40 @@ export const HR_LEAVE_BALANCE_SORT: SortPairsInterface[] = [
   {
     key: "type",
     label: "Leave Type",
+  },
+];
+
+// for hr to filter leave request
+export const HR_LEAVE_REQUEST_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "type",
+    label: "Leave Type",
+  },
+  {
+    key: "reason",
+    label: "Reason",
+  },
+];
+
+export const HR_LEAVE_REQUEST_SORT: SortPairsInterface[] = [
+  {
+    key: "start_date",
+    label: "Start Date",
+  },
+  {
+    key: "end_date",
+    label: "End Date",
+  },
+  {
+    key: "created_at",
+    label: "Requested At",
+  },
+];
+
+export const HR_LEAVE_REQUEST_CATEGORY: CategoryPairsInterface[] = [
+  {
+    key: "status",
+    values: ["All", "Pending", "In Progress", "Done", "Approved", "Rejected"],
   },
 ];
 

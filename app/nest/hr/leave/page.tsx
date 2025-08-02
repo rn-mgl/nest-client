@@ -17,6 +17,9 @@ import {
 import { UserInterface } from "@/src/interface/UserInterface";
 import {
   HR_LEAVE_BALANCE_SORT,
+  HR_LEAVE_REQUEST_CATEGORY,
+  HR_LEAVE_REQUEST_SEARCH,
+  HR_LEAVE_REQUEST_SORT,
   HR_LEAVE_TYPE_SEARCH,
   HR_LEAVE_TYPE_SORT,
 } from "@/src/utils/filters";
@@ -32,6 +35,7 @@ import LeaveBalanceCard from "@/src/components/global/leave/LeaveBalanceCard";
 import LeaveRequestForm from "@/src/components/global/leave/LeaveRequestForm";
 import Table from "@/src/components/global/field/Table";
 import EditLeaveRequest from "@/src/components/global/leave/EditLeaveRequest";
+import useCategory from "@/src/hooks/useCategory";
 
 const HRLeave = () => {
   const [canCreateLeaveType, setCanCreateLeaveType] = React.useState(false);
@@ -61,6 +65,7 @@ const HRLeave = () => {
     handleCanSeeSearchDropDown,
     handleSelectSearch,
   } = useSearch("type", "Leave Type");
+
   const {
     canSeeSortDropDown,
     sort,
@@ -69,9 +74,26 @@ const HRLeave = () => {
     handleToggleAsc,
   } = useSort("type", "Leave Type");
 
+  const {
+    category,
+    canSeeCategoryDropDown,
+    handleCanSeeCategoryDropDown,
+    handleSelectCategory,
+  } = useCategory("status", "All");
+
+  const searchFilters = {
+    types: HR_LEAVE_TYPE_SEARCH,
+    requests: HR_LEAVE_REQUEST_SEARCH,
+  };
+
   const sortFilters = {
     types: HR_LEAVE_TYPE_SORT,
     balances: HR_LEAVE_BALANCE_SORT,
+    requests: HR_LEAVE_REQUEST_SORT,
+  };
+
+  const categoryFilters = {
+    requests: HR_LEAVE_REQUEST_CATEGORY,
   };
 
   const { data } = useSession({ required: true });
@@ -109,10 +131,15 @@ const HRLeave = () => {
 
     switch (tab) {
       case "types":
+        handleSelectSearch("type", "Leave Type");
         handleSelectSort("type", "Leave Type");
         break;
       case "balances":
         handleSelectSort("balance", "Balance");
+        break;
+      case "requests":
+        handleSelectSearch("type", "Leave Type");
+        handleSelectSort("created_at", "Requested At");
         break;
     }
   };
@@ -187,6 +214,7 @@ const HRLeave = () => {
               "X-CSRF-TOKEN": token,
             },
             withCredentials: true,
+            params: { ...search, ...sort, ...category },
           }
         );
 
@@ -197,7 +225,7 @@ const HRLeave = () => {
     } catch (error) {
       console.log(error);
     }
-  }, [url, user?.token]);
+  }, [url, user?.token, search, sort, category]);
 
   const getPageData = React.useCallback(async () => {
     switch (activeTab) {
@@ -377,15 +405,17 @@ const HRLeave = () => {
         <Filter
           useSearchFilter={true}
           useSortFilter={true}
-          useCategoryFilter={false}
+          useCategoryFilter={activeTab === "requests"}
+          //
           searchKey={debounceSearch.searchKey}
           searchLabel={debounceSearch.searchLabel}
           searchValue={debounceSearch.searchValue}
-          searchKeyLabelPairs={HR_LEAVE_TYPE_SEARCH}
+          searchKeyLabelPairs={searchFilters[activeTab as keyof object]}
           canSeeSearchDropDown={canSeeSearchDropDown}
           selectSearch={handleSelectSearch}
           toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
           onChange={handleSearch}
+          //
           sortKey={sort.sortKey}
           sortLabel={sort.sortLabel}
           isAsc={sort.isAsc}
@@ -394,6 +424,12 @@ const HRLeave = () => {
           toggleAsc={handleToggleAsc}
           selectSort={handleSelectSort}
           toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
+          //
+          categoryValue={category.categoryValue}
+          canSeeCategoryDropDown={canSeeCategoryDropDown}
+          categoryKeyValuePairs={categoryFilters[activeTab as keyof object]}
+          selectCategory={handleSelectCategory}
+          toggleCanSeeCategoryDropDown={handleCanSeeCategoryDropDown}
         />
 
         {activeTab === "types" ? (
