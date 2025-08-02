@@ -1,13 +1,13 @@
 import { CardInterface } from "@/src/interface/CardInterface";
 import {
-  LeaveInterface,
+  LeaveTypeInterface,
   LeaveRequestInterface,
 } from "@/src/interface/LeaveInterface";
 import React from "react";
 import { IoEllipsisVertical, IoPencil, IoTrash } from "react-icons/io5";
 
 const LeaveRequestCard: React.FC<
-  CardInterface & LeaveInterface & LeaveRequestInterface
+  CardInterface & LeaveTypeInterface & LeaveRequestInterface
 > = (props) => {
   return (
     <div className="w-full h-full bg-neutral-100 rounded-md flex flex-col items-center justify-start gap-4 p-4 max-h-80 relative overflow-hidden">

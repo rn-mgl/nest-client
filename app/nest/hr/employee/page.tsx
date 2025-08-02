@@ -16,7 +16,7 @@ import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import {
   LeaveBalanceInterface,
-  LeaveInterface,
+  LeaveTypeInterface,
   LeaveRequestInterface,
 } from "@/src/interface/LeaveInterface";
 import {
@@ -64,7 +64,7 @@ const HREmployee = () => {
   >([]);
   const [leaves, setLeaves] = React.useState<
     (UserInterface &
-      LeaveInterface &
+      LeaveTypeInterface &
       LeaveBalanceInterface &
       LeaveRequestInterface)[]
   >([]);

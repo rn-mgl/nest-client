@@ -1,11 +1,11 @@
 import {
   LeaveBalanceInterface,
-  LeaveInterface,
+  LeaveTypeInterface,
 } from "@/src/interface/LeaveInterface";
 import React from "react";
 
 const LeaveBalanceCard: React.FC<
-  LeaveInterface &
+  LeaveTypeInterface &
     LeaveBalanceInterface & { toggleSelectedLeaveRequest?: () => void }
 > = (props) => {
   return (

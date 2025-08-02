@@ -37,7 +37,7 @@ const Table: React.FC<TableInterface> = (props) => {
         style={{
           gridTemplateColumns: `repeat(${columns.length}, minmax(0, 1fr))`,
         }}
-        className="w-full items-center justify-start truncate grid border gap-4 p-4 last:rounded-b-md hover:[&_div]:text-wrap 
+        className="w-full items-center justify-start truncate grid border gap-4 p-4 last:rounded-b-md hover:[&>div]:text-wrap 
                 hover:bg-neutral-50 transition-all hover:[&>div]:break-words hover:[&>div]:whitespace-normal"
       >
         {mappedContents}

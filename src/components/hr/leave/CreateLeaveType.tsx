@@ -1,6 +1,6 @@
 import Input from "@/components/form/Input";
 import { ModalInterface } from "@/interface/ModalInterface";
-import { LeaveInterface } from "@/src/interface/LeaveInterface";
+import { LeaveTypeInterface } from "@/src/interface/LeaveInterface";
 import React from "react";
 import { IoClose, IoOptions, IoReader } from "react-icons/io5";
 import TextArea from "../../form/TextArea";
@@ -8,8 +8,8 @@ import { getCSRFToken } from "@/src/utils/token";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 
-const CreateLeave: React.FC<ModalInterface> = (props) => {
-  const [leave, setLeave] = React.useState<LeaveInterface>({
+const CreateLeaveType: React.FC<ModalInterface> = (props) => {
+  const [leaveType, setLeaveType] = React.useState<LeaveTypeInterface>({
     type: "",
     description: "",
   });
@@ -17,12 +17,12 @@ const CreateLeave: React.FC<ModalInterface> = (props) => {
   const { data } = useSession({ required: true });
   const user = data?.user;
 
-  const handleLeave = (
+  const handleLeaveType = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
 
-    setLeave((prev) => {
+    setLeaveType((prev) => {
       return {
         ...prev,
         [name]: value,
@@ -30,7 +30,7 @@ const CreateLeave: React.FC<ModalInterface> = (props) => {
     });
   };
 
-  const submitCreateLeave = async (e: React.FormEvent<HTMLFormElement>) => {
+  const submitCreateLeaveType = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
@@ -39,7 +39,7 @@ const CreateLeave: React.FC<ModalInterface> = (props) => {
       if (token && user?.token) {
         const { data: createdLeave } = await axios.post(
           `${url}/hr/leave_type`,
-          { ...leave },
+          { ...leaveType },
           {
             headers: {
               "X-CSRF-TOKEN": token,
@@ -76,28 +76,28 @@ const CreateLeave: React.FC<ModalInterface> = (props) => {
           </button>
         </div>
         <form
-          onSubmit={(e) => submitCreateLeave(e)}
+          onSubmit={(e) => submitCreateLeaveType(e)}
           className="w-full h-full p-2 flex flex-col items-center justify-start gap-4 t:p-4"
         >
           <Input
             label={true}
             id="type"
             name="type"
-            onChange={handleLeave}
+            onChange={handleLeaveType}
             placeholder="Type"
             required={true}
             type="text"
-            value={leave.type}
+            value={leaveType.type}
             icon={<IoOptions />}
           />
           <TextArea
             label={true}
             id="description"
             name="description"
-            onChange={handleLeave}
+            onChange={handleLeaveType}
             placeholder="Description"
             required={true}
-            value={leave.description}
+            value={leaveType.description}
             rows={10}
             icon={<IoReader />}
           />
@@ -111,4 +111,4 @@ const CreateLeave: React.FC<ModalInterface> = (props) => {
   );
 };
 
-export default CreateLeave;
+export default CreateLeaveType;

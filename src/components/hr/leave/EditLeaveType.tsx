@@ -1,7 +1,7 @@
 import React from "react";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { IoClose, IoOptions, IoReader } from "react-icons/io5";
-import { LeaveInterface } from "@/src/interface/LeaveInterface";
+import { LeaveTypeInterface } from "@/src/interface/LeaveInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import { useSession } from "next-auth/react";
 import axios from "axios";
@@ -9,8 +9,8 @@ import axios from "axios";
 import Input from "@/components/form/Input";
 import TextArea from "@/components/form/TextArea";
 
-const EditLeave: React.FC<ModalInterface> = (props) => {
-  const [leave, setLeave] = React.useState<LeaveInterface>({
+const EditLeaveType: React.FC<ModalInterface> = (props) => {
+  const [leaveType, setLeaveType] = React.useState<LeaveTypeInterface>({
     type: "",
     description: "",
   });
@@ -18,11 +18,11 @@ const EditLeave: React.FC<ModalInterface> = (props) => {
   const { data } = useSession({ required: true });
   const user = data?.user;
 
-  const handleLeave = (
+  const handleLeaveType = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setLeave((prev) => {
+    setLeaveType((prev) => {
       return {
         ...prev,
         [name]: value,
@@ -30,7 +30,7 @@ const EditLeave: React.FC<ModalInterface> = (props) => {
     });
   };
 
-  const getLeave = React.useCallback(async () => {
+  const getLeaveType = React.useCallback(async () => {
     try {
       const { token } = await getCSRFToken();
 
@@ -46,14 +46,14 @@ const EditLeave: React.FC<ModalInterface> = (props) => {
           }
         );
 
-        setLeave(leaveData.leave);
+        setLeaveType(leaveData.leaveType);
       }
     } catch (error) {
       console.log(error);
     }
   }, [url, user?.token, props.id]);
 
-  const submitUpdateLeave = async (e: React.FormEvent<HTMLFormElement>) => {
+  const submitUpdateLeaveType = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       const { token } = await getCSRFToken();
@@ -61,7 +61,7 @@ const EditLeave: React.FC<ModalInterface> = (props) => {
       if (token) {
         const { data: updatedLeave } = await axios.patch(
           `${url}/hr/leave_type/${props.id}`,
-          { ...leave },
+          { ...leaveType },
           {
             headers: {
               "X-CSRF-TOKEN": token,
@@ -84,8 +84,8 @@ const EditLeave: React.FC<ModalInterface> = (props) => {
   };
 
   React.useEffect(() => {
-    getLeave();
-  }, [getLeave]);
+    getLeaveType();
+  }, [getLeaveType]);
 
   return (
     <div
@@ -94,7 +94,7 @@ const EditLeave: React.FC<ModalInterface> = (props) => {
     >
       <div className="w-full h-full max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-yellow rounded-t-lg font-bold text-accent-blue">
-          Update Leave
+          Update Leave Type
           <button
             onClick={props.toggleModal}
             className="p-2 rounded-full hover:bg-accent-blue/20 transition-all text-xl"
@@ -103,28 +103,28 @@ const EditLeave: React.FC<ModalInterface> = (props) => {
           </button>
         </div>
         <form
-          onSubmit={(e) => submitUpdateLeave(e)}
+          onSubmit={(e) => submitUpdateLeaveType(e)}
           className="w-full h-full p-2 flex flex-col items-center justify-start gap-4 t:p-4"
         >
           <Input
             label={true}
             id="type"
             name="type"
-            onChange={handleLeave}
+            onChange={handleLeaveType}
             placeholder="Type"
             required={true}
             type="text"
-            value={leave.type}
+            value={leaveType.type}
             icon={<IoOptions />}
           />
           <TextArea
             label={true}
             id="description"
             name="description"
-            onChange={handleLeave}
+            onChange={handleLeaveType}
             placeholder="Description"
             required={true}
-            value={leave.description}
+            value={leaveType.description}
             rows={10}
             icon={<IoReader />}
           />
@@ -138,4 +138,4 @@ const EditLeave: React.FC<ModalInterface> = (props) => {
   );
 };
 
-export default EditLeave;
+export default EditLeaveType;

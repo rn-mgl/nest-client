@@ -10,7 +10,7 @@ import ShowTraining from "@/hr/training/ShowTraining";
 import Table from "@/src/components/global/field/Table";
 import {
   LeaveBalanceInterface,
-  LeaveInterface,
+  LeaveTypeInterface,
   LeaveRequestInterface,
 } from "@/src/interface/LeaveInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
@@ -47,10 +47,10 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
     (EmployeeOnboardingInterface & OnboardingInterface & UserInterface)[]
   >([]);
   const [leaveBalances, setLeaveBalances] = React.useState<
-    (LeaveBalanceInterface & LeaveInterface & UserInterface)[]
+    (LeaveBalanceInterface & LeaveTypeInterface & UserInterface)[]
   >([]);
   const [leaveRequests, setLeaveRequests] = React.useState<
-    (LeaveRequestInterface & LeaveInterface)[]
+    (LeaveRequestInterface & LeaveTypeInterface)[]
   >([]);
   const [performanceReviews, setPerformanceReviews] = React.useState<
     (EmployeePerformanceReviewInterface &

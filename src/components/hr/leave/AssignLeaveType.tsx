@@ -9,7 +9,7 @@ import React from "react";
 import { IoAdd, IoClose, IoRemove } from "react-icons/io5";
 import Assignee from "../global/Assignee";
 
-const AssignLeave: React.FC<ModalInterface> = (props) => {
+const AssignLeaveType: React.FC<ModalInterface> = (props) => {
   const [employeeLeaves, setEmployeeLeaves] = React.useState<
     (UserInterface & LeaveBalanceInterface)[]
   >([]);
@@ -109,7 +109,7 @@ const AssignLeave: React.FC<ModalInterface> = (props) => {
     }
   }, [user?.token, url, props.id]);
 
-  const submitAssignLeave = async (e: React.FormEvent<HTMLFormElement>) => {
+  const submitAssignLeaveType = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       const { token } = await getCSRFToken();
@@ -205,7 +205,7 @@ const AssignLeave: React.FC<ModalInterface> = (props) => {
         </div>
 
         <form
-          onSubmit={(e) => submitAssignLeave(e)}
+          onSubmit={(e) => submitAssignLeaveType(e)}
           className="w-full flex flex-col items-center justify-start p-2 gap-4 t:p-4"
         >
           <div className="w-full h-full flex flex-col items-start justify-center border-[1px] rounded-md overflow-x-auto">
@@ -231,4 +231,4 @@ const AssignLeave: React.FC<ModalInterface> = (props) => {
   );
 };
 
-export default AssignLeave;
+export default AssignLeaveType;

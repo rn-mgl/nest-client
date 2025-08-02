@@ -12,7 +12,7 @@ import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import {
   LeaveBalanceInterface,
-  LeaveInterface,
+  LeaveTypeInterface,
   LeaveRequestInterface,
 } from "@/src/interface/LeaveInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
@@ -30,10 +30,10 @@ import { IoPencil, IoTrash } from "react-icons/io5";
 
 const Leave = () => {
   const [leaveBalances, setLeaveBalances] = React.useState<
-    (LeaveBalanceInterface & LeaveInterface & UserInterface)[]
+    (LeaveBalanceInterface & LeaveTypeInterface & UserInterface)[]
   >([]);
   const [leaveRequests, setLeaveRequests] = React.useState<
-    (LeaveInterface & LeaveRequestInterface)[]
+    (LeaveTypeInterface & LeaveRequestInterface)[]
   >([]);
   const [selectedLeaveRequest, setSelectedLeaveRequest] = React.useState(0);
   const [canEditLeaveRequest, setCanEditLeaveRequest] = React.useState(0);
