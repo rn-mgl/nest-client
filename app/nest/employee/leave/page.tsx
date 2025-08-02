@@ -4,7 +4,7 @@ import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import Table from "@/src/components/global/field/Table";
 import Filter from "@/src/components/global/filter/Filter";
 import EditLeaveRequest from "@/src/components/global/leave/EditLeaveRequest";
-import LeaveCard from "@/src/components/global/leave/LeaveCard";
+import LeaveBalanceCard from "@/src/components/global/leave/LeaveBalanceCard";
 import LeaveRequestForm from "@/src/components/global/leave/LeaveRequestForm";
 import useCategory from "@/src/hooks/useCategory";
 import useSearch from "@/src/hooks/useSearch";
@@ -178,21 +178,13 @@ const Leave = () => {
 
   const mappedLeaveBalances = leaveBalances.map((leave, index) => {
     return (
-      <LeaveCard
+      <LeaveBalanceCard
         key={index}
-        role={user?.role ?? "employee"}
-        createdBy={false}
         //
         type={leave.type}
         description={leave.description}
         balance={leave.balance}
         leave_balance_id={leave.leave_balance_id}
-        //
-        first_name={leave.first_name}
-        last_name={leave.last_name}
-        email={leave.email}
-        email_verified_at={leave.email_verified_at}
-        user_id={leave.user_id}
         //
         toggleSelectedLeaveRequest={() =>
           handleSelectedLeaveRequest(leave.leave_type_id ?? 0)

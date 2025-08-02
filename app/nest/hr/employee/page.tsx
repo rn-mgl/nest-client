@@ -5,6 +5,7 @@ import Filter from "@/src/components/global/filter/Filter";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import Alert from "@/src/components/global/popup/Alert";
 import Toasts from "@/src/components/global/popup/Toasts";
+import Tabs from "@/src/components/global/Tabs";
 import EmployeeCard from "@/src/components/hr/employee/EmployeeCard";
 import ShowEmployee from "@/src/components/hr/employee/ShowEmployee";
 import { useToasts } from "@/src/context/ToastContext";
@@ -78,11 +79,13 @@ const HREmployee = () => {
   const [activeUserMenu, setActiveUserMenu] = React.useState(0);
   const [activeEmployeeSeeMore, setActiveEmployeeSeeMore] = React.useState(0);
   const [activeTab, setActiveTab] = React.useState("employees");
-  const [canRespondToLeaveRequest, setCanRespondToLeaveRequest] =
-    React.useState<{ id: number; approved: boolean }>({
-      id: 0,
-      approved: false,
-    });
+  const [respondToLeaveRequest, setRespondToLeaveRequest] = React.useState<{
+    id: number;
+    approved: boolean;
+  }>({
+    id: 0,
+    approved: false,
+  });
 
   const searchFilters = {
     employees: HR_EMPLOYEE_SEARCH,
@@ -140,14 +143,6 @@ const HREmployee = () => {
   const { data } = useSession({ required: true });
   const user = data?.user;
 
-  const tabs = [
-    "employees",
-    "onboardings",
-    "leaves",
-    "performances",
-    "trainings",
-  ];
-
   const handleActiveEmployeeMenu = (id: number) => {
     return setActiveUserMenu((prev) => (prev === id ? 0 : id));
   };
@@ -156,8 +151,8 @@ const HREmployee = () => {
     setActiveEmployeeSeeMore((prev) => (prev === id ? 0 : id));
   };
 
-  const handleCanRespondToLeaveRequest = (id: number, approved: boolean) => {
-    setCanRespondToLeaveRequest({ id, approved });
+  const handleRespondToLeaveRequest = (id: number, approved: boolean) => {
+    setRespondToLeaveRequest({ id, approved });
   };
 
   // set filters
@@ -394,7 +389,7 @@ const HREmployee = () => {
 
       if (token && user?.token) {
         const { data: responseData } = await axios.patch(
-          `${url}/hr/leave_request/${canRespondToLeaveRequest.id}`,
+          `${url}/hr/employee_leave_request/${respondToLeaveRequest.id}`,
           { approved },
           {
             headers: {
@@ -406,7 +401,7 @@ const HREmployee = () => {
         );
 
         if (responseData.success) {
-          handleCanRespondToLeaveRequest(0, false);
+          handleRespondToLeaveRequest(0, false);
           await getEmployeeLeaves();
         }
       }
@@ -537,7 +532,7 @@ const HREmployee = () => {
         <div className="w-full flex flex-row flex-wrap items-center justify-start gap-2">
           <button
             onClick={() =>
-              handleCanRespondToLeaveRequest(leave.leave_request_id ?? 0, true)
+              handleRespondToLeaveRequest(leave.leave_request_id ?? 0, true)
             }
             className="bg-accent-blue p-2 rounded-md text-accent-yellow font-bold w-full flex items-center justify-center l-l:w-fit"
           >
@@ -547,7 +542,7 @@ const HREmployee = () => {
           </button>
           <button
             onClick={() =>
-              handleCanRespondToLeaveRequest(leave.leave_request_id ?? 0, false)
+              handleRespondToLeaveRequest(leave.leave_request_id ?? 0, false)
             }
             className="bg-red-600 p-2 rounded-md text-neutral-100 font-bold w-full flex items-center justify-center l-l:w-fit"
           >
@@ -637,22 +632,6 @@ const HREmployee = () => {
     };
   });
 
-  const mappedTabs = tabs.map((tab, index) => {
-    return (
-      <button
-        key={index}
-        onClick={() => handleActiveTab(tab)}
-        className={`w-full p-2 px-4 rounded-t-md text-sm transition-all capitalize ${
-          activeTab === tab
-            ? "text-accent-blue font-bold border-b-2 border-accent-blue"
-            : "border-b-2"
-        }`}
-      >
-        {tab}
-      </button>
-    );
-  });
-
   React.useEffect(() => {
     getPageData();
   }, [getPageData]);
@@ -670,28 +649,34 @@ const HREmployee = () => {
         />
       ) : null}
 
-      {canRespondToLeaveRequest.id ? (
+      {respondToLeaveRequest.id ? (
         <Alert
           title={`${
-            canRespondToLeaveRequest.approved ? "Approve" : "Reject"
+            respondToLeaveRequest.approved ? "Approve" : "Reject"
           } Leave?`}
           body={`Are you sure you want to ${
-            canRespondToLeaveRequest.approved ? "approve" : "reject"
+            respondToLeaveRequest.approved ? "approve" : "reject"
           } this leave request?`}
           confirmAlert={() =>
-            handleLeaveRequestStatus(canRespondToLeaveRequest.approved)
+            handleLeaveRequestStatus(respondToLeaveRequest.approved)
           }
-          toggleAlert={() => handleCanRespondToLeaveRequest(0, false)}
+          toggleAlert={() => handleRespondToLeaveRequest(0, false)}
           icon={<IoWarning />}
         />
       ) : null}
 
       <div className="gap-4 t:gap-8 w-full min-h-full h-auto flex flex-col items-start justify-start max-w-(--breakpoint-l-l) p-2 t:p-4">
-        <div className="w-full">
-          <div className="w-full flex flex-row overflow-x-auto">
-            {mappedTabs}
-          </div>
-        </div>
+        <Tabs
+          activeTab={activeTab}
+          handleActiveTab={handleActiveTab}
+          tabs={[
+            "employees",
+            "onboardings",
+            "leaves",
+            "performances",
+            "trainings",
+          ]}
+        />
 
         <div className="w-full flex flex-col items-center justify-start gap-4 t:gap-8">
           <Filter

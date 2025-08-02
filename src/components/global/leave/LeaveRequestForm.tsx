@@ -14,7 +14,7 @@ const LeaveRequestForm: React.FC<ModalInterface> = (props) => {
       start_date: "",
       end_date: "",
       reason: "",
-      status: "",
+      status: "Pending",
       user_id: 0,
     }
   );
@@ -22,6 +22,7 @@ const LeaveRequestForm: React.FC<ModalInterface> = (props) => {
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
   const user = session?.user;
+  const role = user?.role;
 
   const handleLeaveRequest = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -43,8 +44,8 @@ const LeaveRequestForm: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: responseData } = await axios.post(
-          `${url}/employee/leave_request`,
-          { ...leaveRequest, leave_type_id: props.id },
+          `${url}/${role}/leave_request`,
+          { ...leaveRequest, user_id: user.current, leave_type_id: props.id },
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
@@ -68,7 +69,7 @@ const LeaveRequestForm: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
               p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
-      <div className="w-full max-h-full my-auto max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
+      <div className="w-full max-h-full h-full my-auto max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-blue rounded-t-lg font-bold text-accent-yellow">
           Request Leave
           <button
@@ -80,7 +81,7 @@ const LeaveRequestForm: React.FC<ModalInterface> = (props) => {
         </div>
         <form
           onSubmit={(e) => submitLeaveRequest(e)}
-          className="w-full flex flex-col items-center justify-start p-2 gap-4 t:p-4"
+          className="w-full h-full flex flex-col items-center justify-start p-2 gap-4 t:p-4"
         >
           <Input
             type="datetime-local"
@@ -114,6 +115,7 @@ const LeaveRequestForm: React.FC<ModalInterface> = (props) => {
             rows={10}
             icon={<IoText />}
           />
+
           <button className="w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2">
             Send
           </button>
