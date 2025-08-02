@@ -468,7 +468,7 @@ export const EMPLOYEE_ONBOARDING_CATEGORY: CategoryPairsInterface[] = [
   },
 ];
 
-// for employee to filter leave
+// for employee to filter leave types
 
 export const EMPLOYEE_LEAVE_SEARCH: SearchPairsInterface[] = [
   {
@@ -485,6 +485,30 @@ export const EMPLOYEE_LEAVE_SORT: SortPairsInterface[] = [
   {
     key: "balance",
     label: "Balance",
+  },
+];
+
+// for employee to filter leave requests
+
+export const EMPLOYEE_LEAVE_REQUEST_SORT: SortPairsInterface[] = [
+  {
+    key: "start_date",
+    label: "Start Date",
+  },
+  {
+    key: "end_date",
+    label: "End Date",
+  },
+  {
+    key: "created_at",
+    label: "Requested At",
+  },
+];
+
+export const EMPLOYEE_LEAVE_REQUEST_CATEGORY: CategoryPairsInterface[] = [
+  {
+    key: "status",
+    values: ["All", "Pending", "In Progress", "Done", "Approved", "Rejected"],
   },
 ];
 

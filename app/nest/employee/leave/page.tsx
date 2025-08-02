@@ -6,6 +6,7 @@ import EditLeaveRequest from "@/src/components/global/leave/EditLeaveRequest";
 import LeaveCard from "@/src/components/global/leave/LeaveCard";
 import LeaveRequestCard from "@/src/components/global/leave/LeaveRequestCard";
 import LeaveRequestForm from "@/src/components/global/leave/LeaveRequestForm";
+import useCategory from "@/src/hooks/useCategory";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import {
@@ -15,6 +16,8 @@ import {
 } from "@/src/interface/LeaveInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import {
+  EMPLOYEE_LEAVE_REQUEST_CATEGORY,
+  EMPLOYEE_LEAVE_REQUEST_SORT,
   EMPLOYEE_LEAVE_SEARCH,
   EMPLOYEE_LEAVE_SORT,
 } from "@/src/utils/filters";
@@ -43,6 +46,15 @@ const Leave = () => {
 
   const tabs = ["leaves", "requests"];
 
+  const sortFilter = {
+    leaves: EMPLOYEE_LEAVE_SORT,
+    requests: EMPLOYEE_LEAVE_REQUEST_SORT,
+  };
+
+  const categoryFilter = {
+    requests: EMPLOYEE_LEAVE_REQUEST_CATEGORY,
+  };
+
   const {
     search,
     debounceSearch,
@@ -60,12 +72,28 @@ const Leave = () => {
     handleToggleAsc,
   } = useSort("type", "Leave Type");
 
+  const {
+    category,
+    canSeeCategoryDropDown,
+    handleCanSeeCategoryDropDown,
+    handleSelectCategory,
+  } = useCategory("status", "All");
+
   const handleActiveTab = (tab: string) => {
     if (tab === activeTab) {
       return;
     }
 
     setActiveTab(tab);
+
+    switch (tab) {
+      case "leaves":
+        handleSelectSort("type", "Leave Type");
+        break;
+      case "requests":
+        handleSelectSort("created_at", "Requested At");
+        break;
+    }
   };
 
   const getLeaveBalances = React.useCallback(async () => {
@@ -107,6 +135,7 @@ const Leave = () => {
               "X-CSRF-TOKEN": token,
             },
             withCredentials: true,
+            params: { ...search, ...sort, ...category },
           }
         );
 
@@ -117,7 +146,7 @@ const Leave = () => {
     } catch (error) {
       console.log(error);
     }
-  }, [url, user?.token]);
+  }, [url, user?.token, search, sort, category]);
 
   const getPageData = React.useCallback(async () => {
     try {
@@ -273,7 +302,7 @@ const Leave = () => {
 
         <div className="w-full flex flex-col items-center justify-center gap-4 t:gap-8 ">
           <Filter
-            useCategoryFilter={false}
+            useCategoryFilter={activeTab === "requests"}
             useSearchFilter={true}
             useSortFilter={true}
             //
@@ -290,10 +319,16 @@ const Leave = () => {
             sortKey={sort.sortKey}
             sortLabel={sort.sortLabel}
             canSeeSortDropDown={canSeeSortDropDown}
-            sortKeyLabelPairs={EMPLOYEE_LEAVE_SORT}
+            sortKeyLabelPairs={sortFilter[activeTab as keyof object]}
             selectSort={handleSelectSort}
             toggleAsc={handleToggleAsc}
             toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
+            //
+            categoryValue={category.categoryValue}
+            categoryKeyValuePairs={categoryFilter[activeTab as keyof object]}
+            canSeeCategoryDropDown={canSeeCategoryDropDown}
+            selectCategory={handleSelectCategory}
+            toggleCanSeeCategoryDropDown={handleCanSeeCategoryDropDown}
           />
 
           {activeTab === "leaves" ? (
