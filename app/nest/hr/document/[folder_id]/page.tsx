@@ -1,13 +1,13 @@
 "use client";
 
+import DocumentCard from "@/src/components/global/document/DocumentCard";
+import FolderCard from "@/src/components/global/document/FolderCard";
+import ShowDocument from "@/src/components/global/document/ShowDocument";
 import Filter from "@/src/components/global/filter/Filter";
 import CreateDocument from "@/src/components/hr/document/CreateDocument";
-import DocumentCard from "@/src/components/hr/document/DocumentCard";
 import EditDocument from "@/src/components/hr/document/EditDocument";
-import ShowDocument from "@/src/components/hr/document/ShowDocument";
-import CreateDocumentFolder from "@/src/components/hr/documentFolder/CreateDocumentFolder";
-import EditFolder from "@/src/components/hr/documentFolder/EditFolder";
-import FolderCard from "@/src/components/hr/documentFolder/FolderCard";
+import CreateDocumentFolder from "@/src/components/hr/document/CreateDocumentFolder";
+import EditFolder from "@/src/components/hr/document/EditFolder";
 import useCategory from "@/src/hooks/useCategory";
 
 import useSearch from "@/src/hooks/useSearch";

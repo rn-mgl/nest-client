@@ -30,6 +30,11 @@ const TrainingCard: React.FC<
         <div className="w-full flex flex-row items-center justify-between">
           <div className="flex flex-col items-start justify-start w-full gap-1">
             <p className="font-bold truncate">{props.title}</p>
+            {isHR ? (
+              <p className="text-xs">
+                created by {props.createdBy ? "you" : props.first_name}
+              </p>
+            ) : null}
           </div>
 
           {isHR ? (
@@ -65,7 +70,7 @@ const TrainingCard: React.FC<
 
       <button
         onClick={props.handleActiveSeeMore}
-        className="text-xs hover:underline transition-all underline-offset-2 flex flex-row items-center justify-start gap-1"
+        className="text-xs transition-all flex flex-row items-center justify-center gap-1 p-2 rounded-md bg-accent-blue text-neutral-100 w-full"
       >
         See More <IoArrowForward />
       </button>

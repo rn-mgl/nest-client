@@ -69,7 +69,7 @@ const DocumentCard: React.FC<
       <div className="w-full flex flex-col items-center justify-center ">
         <button
           onClick={props.handleActiveSeeMore}
-          className="text-xs flex flex-row items-center justify-center gap-1 hover:underline underline-offset-2"
+          className="text-xs flex flex-row items-center justify-center gap-1 w-full p-2 rounded-md bg-accent-blue text-neutral-100"
         >
           See More <IoArrowForward />
         </button>

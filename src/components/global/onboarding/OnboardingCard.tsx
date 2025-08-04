@@ -60,7 +60,7 @@ const OnboardingCard: React.FC<
 
       <button
         onClick={props.handleActiveSeeMore}
-        className="text-xs hover:underline transition-all underline-offset-2 flex flex-row items-center justify-start gap-1"
+        className="text-xs bg-accent-blue text-neutral-100  w-full  p-2 text-center flex flex-row items-center justify-center gap-1 rounded-md"
       >
         See More <IoArrowForward />
       </button>

@@ -1,9 +1,9 @@
 "use client";
 
-import ShowDocument from "@/src/components/employee/document/ShowDocument";
+import ShowDocument from "@/src/components/global/document/ShowDocument";
 import Filter from "@/src/components/global/filter/Filter";
-import DocumentCard from "@/src/components/hr/document/DocumentCard";
-import FolderCard from "@/src/components/hr/documentFolder/FolderCard";
+import DocumentCard from "@/src/components/global/document/DocumentCard";
+import FolderCard from "@/src/components/global/document/FolderCard";
 import useCategory from "@/src/hooks/useCategory";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
