@@ -55,7 +55,7 @@ const LeaveRequestCard: React.FC<
 
       <div className="flex flex-col items-center justify-start gap-2 w-full h-full overflow-hidden">
         <div className="w-full flex flex-col items-center justify-start gap-2 text-sm bg-neutral-200 p-2 rounded-sm">
-          <p className="text-sm w-full">{props.status}</p>
+          <p className="text-sm w-full capitalize">{props.status}</p>
         </div>
 
         <div className="w-full flex flex-col items-center justify-start gap-2 text-sm bg-neutral-200 p-2 rounded-sm">

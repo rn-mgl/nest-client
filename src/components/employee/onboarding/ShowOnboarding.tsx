@@ -32,7 +32,7 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
       title: "",
       description: "",
       employee_onboarding_id: 0,
-      status: "Pending",
+      status: "",
     },
     policy_acknowledgements: [],
     required_documents: [],

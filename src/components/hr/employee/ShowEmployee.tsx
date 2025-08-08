@@ -128,7 +128,7 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
         // onboarding
         title={onboarding.title}
         description={onboarding.description}
-        status={onboarding.status}
+        status={onboarding.status.replaceAll("_", " ")}
         // user
         email={onboarding.email}
         first_name={onboarding.first_name}
@@ -172,7 +172,9 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
     return {
       type: leave.type,
       reason: leave.reason,
-      status: leave.status,
+      status: (
+        <span className="capitalize">{leave.status.replaceAll("_", " ")}</span>
+      ),
       start_date: `${startDate} ${startTime}`,
       end_date: `${endDate} ${endTime}`,
     };
@@ -190,7 +192,7 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
           //
           title={performance.title}
           description={performance.description}
-          status={performance.status}
+          status={performance.status.replaceAll("_", " ")}
           //
           email={performance.email}
           first_name={performance.first_name}
@@ -225,7 +227,7 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
         deadline_days={training.deadline_days}
         deadline={deadline}
         created_by={training.created_by}
-        status={training.status}
+        status={training.status.replaceAll("_", " ")}
         score={training.score}
         //
         email={training.email}

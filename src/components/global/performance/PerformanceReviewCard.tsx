@@ -48,7 +48,7 @@ const PerformanceReviewCard: React.FC<
             />
           </button>
         ) : isEmployee ? (
-          <p className="text-sm">{props.status ?? ""}</p>
+          <p className="text-sm capitalize">{props.status}</p>
         ) : null}
       </div>
 

@@ -14,7 +14,7 @@ const LeaveRequestForm: React.FC<ModalInterface> = (props) => {
       start_date: "",
       end_date: "",
       reason: "",
-      status: "Pending",
+      status: "",
       user_id: 0,
     }
   );

@@ -477,29 +477,21 @@ const HREmployee = () => {
       last_name: onboarding.last_name,
       email: onboarding.email,
       title: onboarding.title,
-      status: onboarding.status,
+      status: (
+        <span className="capitalize">
+          {onboarding.status.replaceAll("_", " ")}
+        </span>
+      ),
       assigned_on: `${assignedDate} ${assignedTime}`,
     };
   });
 
   const mappedLeaves = leaves.map((leave) => {
-    const {
-      first_name,
-      last_name,
-      email,
-      type,
-      start_date,
-      end_date,
-      status,
-      reason,
-      balance,
-    } = leave;
-
     const hasImage = typeof leave.image === "string" && leave.image !== "";
-    const startDate = new Date(start_date).toLocaleDateString();
+    const startDate = new Date(leave.start_date).toLocaleDateString();
     const startTime = new Date(startDate).toLocaleTimeString();
-    const endDate = new Date(end_date).toLocaleDateString();
-    const endTime = new Date(end_date).toLocaleTimeString();
+    const endDate = new Date(leave.end_date).toLocaleDateString();
+    const endTime = new Date(leave.end_date).toLocaleTimeString();
 
     return {
       image: (
@@ -519,15 +511,17 @@ const HREmployee = () => {
           ) : null}
         </div>
       ),
-      first_name,
-      last_name,
-      email,
-      type,
+      first_name: leave.first_name,
+      last_name: leave.last_name,
+      email: leave.email,
+      type: leave.type,
       start_date: `${startDate} ${startTime}`,
       end_date: `${endDate} ${endTime}`,
-      status,
-      reason,
-      balance,
+      status: (
+        <span className="capitalize">{leave.status.replaceAll("_", " ")}</span>
+      ),
+      reason: leave.reason,
+      balance: leave.balance,
       action: (
         <div className="w-full flex flex-row flex-wrap items-center justify-start gap-2">
           <button
@@ -587,7 +581,11 @@ const HREmployee = () => {
       last_name: performance.last_name,
       email: performance.email,
       title: performance.title,
-      status: performance.status,
+      status: (
+        <span className="capitalize">
+          {performance.status.replaceAll("_", " ")}
+        </span>
+      ),
       assigned_on: `${assignedDate} ${assignedTime}`,
     };
   });
@@ -626,7 +624,11 @@ const HREmployee = () => {
       email: training.email,
       title: training.title,
       deadline: `${deadlineDate} ${deadlineTime}`,
-      status: training.status,
+      status: (
+        <span className="capitalize">
+          {training.status.replaceAll("_", " ")}
+        </span>
+      ),
       score: training.score ?? "-",
       assigned_on: `${assignedDate} ${assignedTime}`,
     };

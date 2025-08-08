@@ -49,7 +49,7 @@ const TrainingCard: React.FC<
               />
             </button>
           ) : isEmployee ? (
-            <p className="text-sm" title="Status">
+            <p className="text-sm capitalize" title="Status">
               {props.status}
             </p>
           ) : null}

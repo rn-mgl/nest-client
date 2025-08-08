@@ -301,7 +301,11 @@ const HRLeave = () => {
 
     return {
       type: request.type,
-      status: request.status,
+      status: (
+        <span className="capitalize">
+          {request.status.replaceAll("_", " ")}
+        </span>
+      ),
       requested_at: `${requestedAtDate} ${requestedAtTime}`,
       start_date: `${startDate} ${startTime}`,
       end_date: `${endDate} ${endTime}`,

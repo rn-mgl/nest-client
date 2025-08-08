@@ -48,7 +48,7 @@ const OnboardingCard: React.FC<
             />
           </button>
         ) : (
-          <p className="text-sm">{props.status ?? ""}</p>
+          <p className="text-sm capitalize">{props.status}</p>
         )}
       </div>
 
