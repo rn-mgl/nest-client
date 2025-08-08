@@ -79,7 +79,7 @@ const HRLeave = () => {
     canSeeCategoryDropDown,
     handleCanSeeCategoryDropDown,
     handleSelectCategory,
-  } = useCategory("status", "All");
+  } = useCategory("status", "all");
 
   const searchFilters = {
     types: HR_LEAVE_TYPE_SEARCH,

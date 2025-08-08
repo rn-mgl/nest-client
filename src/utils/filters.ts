@@ -17,7 +17,7 @@ interface SearchPairsInterface {
 export const ADMIN_HR_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "verified",
-    values: ["All", "Verified", "Deactivated"],
+    values: ["all", "verified", "deactivated"],
   },
 ];
 
@@ -55,7 +55,7 @@ export const ADMIN_HR_SEARCH: SearchPairsInterface[] = [
 export const HR_EMPLOYEE_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "verified",
-    values: ["All", "Verified", "Deactivated"],
+    values: ["all", "verified", "deactivated"],
   },
 ];
 
@@ -93,7 +93,7 @@ export const HR_EMPLOYEE_SEARCH: SearchPairsInterface[] = [
 export const HR_EMPLOYEE_ONBOARDING_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "status",
-    values: ["All", "Pending", "In Progress", "Done"],
+    values: ["all", "pending", "in_progress", "done"],
   },
 ];
 
@@ -173,7 +173,7 @@ export const HR_EMPLOYEE_LEAVE_TYPE_SORT: SortPairsInterface[] = [
 export const HR_EMPLOYEE_LEAVE_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "status",
-    values: ["All", "Pending", "In Progress", "Done"],
+    values: ["all", "pending", "in_progress", "done"],
   },
   {
     key: "type",
@@ -231,7 +231,7 @@ export const HR_EMPLOYEE_PERFORMANCE_SORT: SortPairsInterface[] = [
 export const HR_EMPLOYEE_PERFORMANCE_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "status",
-    values: ["All", "Pending", "In Progress", "Done"],
+    values: ["all", "pending", "in_progress", "done"],
   },
 ];
 
@@ -273,7 +273,7 @@ export const HR_EMPLOYEE_TRAINING_SORT: SortPairsInterface[] = [
 export const HR_EMPLOYEE_TRAINING_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "status",
-    values: ["All", "Pending", "In Progress", "Done"],
+    values: ["all", "pending", "in_progress", "done"],
   },
 ];
 
@@ -343,18 +343,11 @@ export const HR_LEAVE_REQUEST_SORT: SortPairsInterface[] = [
 export const HR_LEAVE_REQUEST_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "status",
-    values: ["All", "Pending", "In Progress", "Done", "Approved", "Rejected"],
+    values: ["all", "pending", "in_progress", "done", "approved", "rejected"],
   },
 ];
 
 // for hr to filter onboarding
-export const HR_ONBOARDING_CATEGORY: CategoryPairsInterface[] = [
-  {
-    key: "",
-    values: ["All"],
-  },
-];
-
 export const HR_ONBOARDING_SORT: SortPairsInterface[] = [
   {
     key: "title",
@@ -379,13 +372,6 @@ export const HR_ONBOARDING_SEARCH: SearchPairsInterface[] = [
 
 // for hr to filter performance reviews
 
-export const HR_PERFORMANCE_CATEGORY: CategoryPairsInterface[] = [
-  {
-    key: "",
-    values: ["All"],
-  },
-];
-
 export const HR_PERFORMANCE_SORT: SortPairsInterface[] = [
   {
     key: "title",
@@ -409,13 +395,6 @@ export const HR_PERFORMANCE_SEARCH: SearchPairsInterface[] = [
 ];
 
 // for hr to filter training
-
-export const HR_TRAINING_CATEGORY: CategoryPairsInterface[] = [
-  {
-    key: "",
-    values: ["All"],
-  },
-];
 
 export const HR_TRAINING_SORT: SortPairsInterface[] = [
   {
@@ -443,8 +422,8 @@ export const HR_TRAINING_SEARCH: SearchPairsInterface[] = [
 
 export const HR_DOCUMENTS_CATEGORY: CategoryPairsInterface[] = [
   {
-    key: "-",
-    values: ["All", "Documents", "Folders"],
+    key: "",
+    values: ["all", "documents", "folders"],
   },
 ];
 
@@ -504,7 +483,7 @@ export const EMPLOYEE_ONBOARDING_SORT: SortPairsInterface[] = [
 export const EMPLOYEE_ONBOARDING_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "status",
-    values: ["All", "Pending", "In Progress", "Done"],
+    values: ["all", "pending", "in_progress", "done"],
   },
 ];
 
@@ -548,7 +527,7 @@ export const EMPLOYEE_LEAVE_REQUEST_SORT: SortPairsInterface[] = [
 export const EMPLOYEE_LEAVE_REQUEST_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "status",
-    values: ["All", "Pending", "In Progress", "Done", "Approved", "Rejected"],
+    values: ["all", "pending", "in_progress", "done", "approved", "rejected"],
   },
 ];
 
@@ -591,7 +570,7 @@ export const EMPLOYEE_TRAINING_SORT: SortPairsInterface[] = [
 export const EMPLOYEE_TRAINING_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "status",
-    values: ["All", "Pending", "In Progress", "Done"],
+    values: ["all", "pending", "in_progress", "done"],
   },
 ];
 
@@ -599,8 +578,8 @@ export const EMPLOYEE_TRAINING_CATEGORY: CategoryPairsInterface[] = [
 
 export const EMPLOYEE_DOCUMENTS_CATEGORY: CategoryPairsInterface[] = [
   {
-    key: "-",
-    values: ["All", "Documents", "Folders"],
+    key: "",
+    values: ["all", "documents", "folders"],
   },
 ];
 

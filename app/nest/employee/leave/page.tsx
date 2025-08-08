@@ -38,14 +38,14 @@ const Leave = () => {
   const [selectedLeaveRequest, setSelectedLeaveRequest] = React.useState(0);
   const [canEditLeaveRequest, setCanEditLeaveRequest] = React.useState(0);
   const [canDeleteLeaveRequest, setCanDeleteLeaveRequest] = React.useState(0);
-  const [activeTab, setActiveTab] = React.useState("leaves");
+  const [activeTab, setActiveTab] = React.useState("balances");
 
   const { data: session } = useSession({ required: true });
   const user = session?.user;
   const url = process.env.URL;
 
   const sortFilter = {
-    leaves: EMPLOYEE_LEAVE_BALANCE_SORT,
+    balances: EMPLOYEE_LEAVE_BALANCE_SORT,
     requests: EMPLOYEE_LEAVE_REQUEST_SORT,
   };
 
@@ -75,7 +75,7 @@ const Leave = () => {
     canSeeCategoryDropDown,
     handleCanSeeCategoryDropDown,
     handleSelectCategory,
-  } = useCategory("status", "All");
+  } = useCategory("status", "all");
 
   const handleActiveTab = (tab: string) => {
     if (tab === activeTab) {
@@ -149,7 +149,7 @@ const Leave = () => {
   const getPageData = React.useCallback(async () => {
     try {
       switch (activeTab) {
-        case "leaves":
+        case "balances":
           getLeaveBalances();
           break;
         case "requests":

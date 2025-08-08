@@ -52,7 +52,7 @@ const Onboarding = () => {
     canSeeCategoryDropDown,
     handleCanSeeCategoryDropDown,
     handleSelectCategory,
-  } = useCategory("status", "All");
+  } = useCategory("status", "all");
 
   const handleActiveOnboardingSeeMore = (id: number) => {
     setActiveOnboardingSeeMore((prev) => (prev === id ? 0 : id));

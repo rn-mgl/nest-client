@@ -42,15 +42,17 @@ const Filter: React.FC<
 
   const mappedCategories = props.categoryKeyValuePairs?.map((category) => {
     return category.values.map((value, index) => {
+      const formattedValue = value.replaceAll("_", " ");
+
       return (
         <button
           onClick={() => {
             if (props.selectCategory) props.selectCategory(category.key, value);
           }}
           key={index}
-          className="p-2 w-full transition-all bg-neutral-200 rounded-xs"
+          className="p-2 w-full transition-all bg-neutral-200 rounded-xs capitalize"
         >
-          {value}
+          {formattedValue}
         </button>
       );
     });

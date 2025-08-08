@@ -70,7 +70,7 @@ const HRDocument = () => {
     canSeeCategoryDropDown,
     handleCanSeeCategoryDropDown,
     handleSelectCategory,
-  } = useCategory("", "All");
+  } = useCategory("", "all");
   const {
     sort,
     canSeeSortDropDown,
@@ -317,8 +317,8 @@ const HRDocument = () => {
           searchLabel={debounceSearch.searchLabel}
           searchValue={debounceSearch.searchValue}
           searchKeyLabelPairs={
-            category.categoryValue === "All" ||
-            category.categoryValue === "Documents"
+            category.categoryValue === "all" ||
+            category.categoryValue === "documents"
               ? HR_DOCUMENTS_SEARCH
               : HR_FOLDERS_SEARCH
           }

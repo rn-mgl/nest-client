@@ -46,7 +46,7 @@ const Training = () => {
     canSeeCategoryDropDown,
     handleCanSeeCategoryDropDown,
     handleSelectCategory,
-  } = useCategory("status", "All");
+  } = useCategory("status", "all");
 
   const { data: session } = useSession({ required: true });
   const user = session?.user;
