@@ -1,5 +1,5 @@
 import React from "react";
-import { ToastInterface } from "../interface/ToastInterface";
+import { ToastInterface } from "@/interface/ToastInterface";
 
 interface ToastContextData {
   toasts: ToastInterface[];

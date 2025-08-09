@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import React from "react";
 import { IoClose, IoImage, IoText, IoTrash } from "react-icons/io5";
-import Input from "../../form/Input";
+import Input from "@/form/Input";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 

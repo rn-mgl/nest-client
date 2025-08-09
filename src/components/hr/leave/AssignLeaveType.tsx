@@ -7,7 +7,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd, IoClose, IoRemove } from "react-icons/io5";
-import Assignee from "../global/Assignee";
+import Assignee from "@/global/Assignee";
 
 const AssignLeaveType: React.FC<ModalInterface> = (props) => {
   const [employeeLeaves, setEmployeeLeaves] = React.useState<

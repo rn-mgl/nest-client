@@ -7,7 +7,7 @@ import axios from "axios";
 import { signOut, useSession } from "next-auth/react";
 import React from "react";
 import { IoClose, IoEye, IoEyeOff } from "react-icons/io5";
-import Input from "../../form/Input";
+import Input from "@/form/Input";
 
 const ChangePassword: React.FC<ModalInterface> = (props) => {
   const [password, setPassword] = React.useState({

@@ -5,7 +5,7 @@ import { ProfileInterface } from "@/src/interface/ProfileInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import React from "react";
 import { IoClose, IoImage, IoText, IoTrash } from "react-icons/io5";
-import Input from "../../form/Input";
+import Input from "@/form/Input";
 import Image from "next/image";
 import { getCSRFToken } from "@/src/utils/token";
 import { useSession } from "next-auth/react";

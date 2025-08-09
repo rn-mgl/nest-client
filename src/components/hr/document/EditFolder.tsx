@@ -7,8 +7,8 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose, IoText } from "react-icons/io5";
-import Input from "../../form/Input";
-import Select from "../../form/Select";
+import Input from "@/form/Input";
+import Select from "@/form/Select";
 
 const EditFolder: React.FC<ModalInterface> = (props) => {
   const [folder, setFolder] = React.useState<DocumentFolderInterface>({

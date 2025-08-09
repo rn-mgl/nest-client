@@ -7,7 +7,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose } from "react-icons/io5";
-import Assignee from "../global/Assignee";
+import Assignee from "@/hr/global/Assignee";
 
 const AssignOnboarding: React.FC<ModalInterface> = (props) => {
   const [employeeOnboardings, setEmployeeOnboardings] = React.useState<

@@ -25,8 +25,8 @@ import {
   IoTrash,
   IoVideocam,
 } from "react-icons/io5";
-import File from "../../form/File";
-import Radio from "../../form/Radio";
+import File from "@/form/File";
+import Radio from "@/form/Radio";
 
 const CreateTraining: React.FC<ModalInterface> = (props) => {
   const [training, setTraining] = React.useState<TrainingInterface>({

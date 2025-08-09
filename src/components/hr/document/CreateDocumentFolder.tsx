@@ -2,7 +2,7 @@ import { DocumentFolderInterface } from "@/src/interface/DocumentInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import React from "react";
 import { IoClose, IoText } from "react-icons/io5";
-import Input from "../../form/Input";
+import Input from "@/form/Input";
 import { getCSRFToken } from "@/src/utils/token";
 import { useSession } from "next-auth/react";
 import axios from "axios";

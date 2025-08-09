@@ -9,7 +9,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import React from "react";
 import { IoClose, IoImage, IoPerson, IoTrash } from "react-icons/io5";
-import Input from "../../form/Input";
+import Input from "@/form/Input";
 
 const EditAdminProfile: React.FC<
   ModalInterface & { profile: UserInterface & ProfileInterface }

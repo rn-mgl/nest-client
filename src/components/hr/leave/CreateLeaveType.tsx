@@ -3,7 +3,7 @@ import { ModalInterface } from "@/interface/ModalInterface";
 import { LeaveTypeInterface } from "@/src/interface/LeaveInterface";
 import React from "react";
 import { IoClose, IoOptions, IoReader } from "react-icons/io5";
-import TextArea from "../../form/TextArea";
+import TextArea from "@/form/TextArea";
 import { getCSRFToken } from "@/src/utils/token";
 import { useSession } from "next-auth/react";
 import axios from "axios";

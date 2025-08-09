@@ -13,9 +13,9 @@ import Link from "next/link";
 import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
 import { IoClose } from "react-icons/io5";
-import ModalNav from "../../global/ModalNav";
-import TextBlock from "../../global/field/TextBlock";
-import TextField from "../../global/field/TextField";
+import ModalNav from "@/global/ModalNav";
+import TextBlock from "@/global/field/TextBlock";
+import TextField from "@/global/field/TextField";
 
 const ShowTraining: React.FC<ModalInterface> = (props) => {
   const [training, setTraining] = React.useState<

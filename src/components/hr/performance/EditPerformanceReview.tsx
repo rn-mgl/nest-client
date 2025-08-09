@@ -14,7 +14,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd, IoClose, IoReader, IoText, IoTrash } from "react-icons/io5";
-import ModalNav from "../../global/ModalNav";
+import ModalNav from "@/global/ModalNav";
 
 const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
   const [performance, setPerformanceReview] =

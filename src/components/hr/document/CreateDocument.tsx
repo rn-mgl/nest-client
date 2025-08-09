@@ -7,9 +7,9 @@ import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
 import React from "react";
 import { IoClose, IoText } from "react-icons/io5";
-import File from "../../form/File";
-import Input from "../../form/Input";
-import TextArea from "../../form/TextArea";
+import File from "@/form/File";
+import Input from "@/form/Input";
+import TextArea from "@/form/TextArea";
 
 const CreateDocument: React.FC<ModalInterface> = (props) => {
   const [document, setDocument] = React.useState<DocumentInterface>({

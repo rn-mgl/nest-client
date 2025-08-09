@@ -1,6 +1,6 @@
 import { UserInterface } from "@/src/interface/UserInterface";
 import React from "react";
-import CheckBox from "../../form/CheckBox";
+import CheckBox from "@/form/CheckBox";
 
 const Assignee: React.FC<{
   user: UserInterface;

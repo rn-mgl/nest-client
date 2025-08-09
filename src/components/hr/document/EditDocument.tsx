@@ -7,11 +7,11 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
 import { IoAdd, IoClose, IoText } from "react-icons/io5";
-import Input from "../../form/Input";
-import TextArea from "../../form/TextArea";
+import Input from "@/form/Input";
+import TextArea from "@/form/TextArea";
 import Link from "next/link";
 import useSelect from "@/src/hooks/useSelect";
-import Select from "../../form/Select";
+import Select from "@/form/Select";
 
 const EditDocument: React.FC<ModalInterface> = (props) => {
   const [document, setDocument] = React.useState<DocumentInterface>({
