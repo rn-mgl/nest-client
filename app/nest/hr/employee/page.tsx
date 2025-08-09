@@ -192,13 +192,11 @@ const HREmployee = () => {
   const getAllEmployees = React.useCallback(async () => {
     try {
       handleIsLoading(true);
-      const { token } = await getCSRFToken();
 
-      if (token && user?.token) {
+      if (user?.token) {
         const { data: responseData } = await axios.get(`${url}/hr/employee`, {
           headers: {
             Authorization: `Bearer ${user?.token}`,
-            "X-CSRF-TOKEN": token,
           },
           withCredentials: true,
           params: { ...search, ...sort, ...category, tab: "employees" },
@@ -224,13 +222,11 @@ const HREmployee = () => {
   const getEmployeeOnboardings = React.useCallback(async () => {
     try {
       handleIsLoading(true);
-      const { token } = await getCSRFToken();
 
-      if (token && user?.token) {
+      if (user?.token) {
         const { data: responseData } = await axios.get(`${url}/hr/employee`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
-            "X-CSRF-TOKEN": token,
           },
           params: { ...search, ...sort, ...category, tab: "onboardings" },
           withCredentials: true,
@@ -258,13 +254,11 @@ const HREmployee = () => {
   const getEmployeeLeaves = React.useCallback(async () => {
     try {
       handleIsLoading(true);
-      const { token } = await getCSRFToken();
 
-      if (token && user?.token) {
+      if (user?.token) {
         const { data: responseData } = await axios.get(`${url}/hr/employee`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
-            "X-CSRF-TOKEN": token,
           },
           params: { ...search, ...sort, ...category, tab: "leaves" },
           withCredentials: true,
@@ -293,13 +287,10 @@ const HREmployee = () => {
     try {
       handleIsLoading(true);
 
-      const { token } = await getCSRFToken();
-
-      if (token && user?.token) {
+      if (user?.token) {
         const { data: responseData } = await axios.get(`${url}/hr/employee`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
-            "X-CSRF-TOKEN": token,
           },
           params: { ...search, ...sort, ...category, tab: "performances" },
           withCredentials: true,
@@ -319,13 +310,11 @@ const HREmployee = () => {
   const getEmployeeTrainings = React.useCallback(async () => {
     try {
       handleIsLoading(true);
-      const { token } = await getCSRFToken();
 
-      if (token && user?.token) {
+      if (user?.token) {
         const { data: responseData } = await axios.get(`${url}/hr/employee`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
-            "X-CSRF-TOKEN": token,
           },
           params: { ...search, ...sort, ...category, tab: "trainings" },
           withCredentials: true,

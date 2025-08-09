@@ -1,20 +1,26 @@
 export interface HRDashboardInterface {
   attendances: {
-    In: number;
-    Out: number;
-    Late: number;
-    Absent: number;
+    in: number;
+    out: number;
+    late: number;
+    absent: number;
   };
-  leaves: StatusInterface & { Approved: number; Rejected: number };
-  documents: number;
+  leaves: StatusInterface & { approved: number; rejected: number };
+  documents: {
+    documents: number;
+    folders: number;
+  };
   onboardings: StatusInterface;
   performances: StatusInterface;
   trainings: StatusInterface;
-  users: number;
+  users: {
+    hr: number;
+    employee: number;
+  };
 }
 
 interface StatusInterface {
-  Pending: number;
-  "In Progress": number;
-  Done: number;
+  pending: number;
+  in_progress: number;
+  done: number;
 }
