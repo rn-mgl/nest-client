@@ -8,6 +8,7 @@ import {
   IoArrowRedoOutline,
   IoArrowUndoOutline,
   IoCheckmarkCircleOutline,
+  IoCheckmarkDoneCircleOutline,
   IoCloseCircleOutline,
   IoDocumentOutline,
   IoEllipsisHorizontalCircleOutline,
@@ -92,7 +93,7 @@ const Employee = () => {
         <div className="w-full h-full p-4 rounded-lg bg-neutral-100  gap-4 flex flex-col items-start justify-start">
           <p className="font-medium text-xl">Today&apos;s Attendance</p>
 
-          <div className="w-full h-full grid grid-cols-1 gap-4">
+          <div className="w-full grid grid-cols-1 gap-4">
             <div className="w-full p-2 rounded-md bg-neutral-200 flex flex-row items-center justify-between gap-2">
               <div className="bg-accent-blue/50 text-neutral-100 flex flex-col items-center justify-center aspect-square w-fit p-2 rounded-md">
                 <IoArrowRedoOutline className="text-2xl" />
@@ -181,6 +182,29 @@ const Employee = () => {
                   }`}
                 >
                   {dashboard.attendances.absent ? (
+                    <IoCheckmarkCircleOutline className="text-2xl" />
+                  ) : (
+                    <IoCloseCircleOutline className="text-2xl" />
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="w-full p-2 rounded-md bg-neutral-200 flex flex-row items-center justify-between gap-2">
+              <div className="p-2 rounded-md bg-neutral-900/50 text-neutral-100 w-fit">
+                <IoCheckmarkDoneCircleOutline className="text-2xl" />
+              </div>
+              <div className="w-full flex flex-row items-center justify-between">
+                <p>Logs Done</p>
+
+                <div
+                  className={`p-2 rounded-md text-neutral-100 w-fit aspect-square ${
+                    dashboard.attendances.in && dashboard.attendances.out
+                      ? "bg-accent-green/50"
+                      : "bg-red-600/50"
+                  }`}
+                >
+                  {dashboard.attendances.in && dashboard.attendances.out ? (
                     <IoCheckmarkCircleOutline className="text-2xl" />
                   ) : (
                     <IoCloseCircleOutline className="text-2xl" />
