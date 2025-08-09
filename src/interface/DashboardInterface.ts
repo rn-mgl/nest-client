@@ -1,3 +1,9 @@
+import { UserInterface } from "./UserInterface";
+
+export interface AdminDashboardInterface {
+  hrs: UserInterface[];
+}
+
 export interface HRDashboardInterface extends BaseDashboardInterface {
   attendances: {
     in: number;

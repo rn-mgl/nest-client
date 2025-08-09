@@ -6,4 +6,5 @@ export interface UserInterface {
   email_verified_at?: string | null;
   image?: { rawFile: File; fileURL: string } | string | null;
   password?: string;
+  created_at?: string;
 }
