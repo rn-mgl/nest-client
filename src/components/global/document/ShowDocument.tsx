@@ -3,16 +3,15 @@ import {
   DocumentInterface,
 } from "@/src/interface/DocumentInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
-import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
+import TextBlock from "@/global/field/TextBlock";
+import TextField from "@/global/field/TextField";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
 import { IoClose } from "react-icons/io5";
-import TextBlock from "@/global/field/TextBlock";
-import TextField from "@/global/field/TextField";
 
 const ShowDocument: React.FC<ModalInterface> = (props) => {
   const [document, setDocument] = React.useState<

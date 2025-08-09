@@ -3,7 +3,6 @@ import ChangePassword from "@/src/components/hr/profile/ChangePassword";
 import EditHRProfile from "@/src/components/hr/profile/EditHRProfile";
 import { ProfileInterface } from "@/src/interface/ProfileInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
-import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";

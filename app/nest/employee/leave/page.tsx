@@ -12,17 +12,16 @@ import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import {
   LeaveBalanceInterface,
-  LeaveTypeInterface,
   LeaveRequestInterface,
+  LeaveTypeInterface,
 } from "@/src/interface/LeaveInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import {
-  EMPLOYEE_LEAVE_REQUEST_CATEGORY,
-  EMPLOYEE_LEAVE_REQUEST_SORT,
   EMPLOYEE_LEAVE_BALANCE_SEARCH,
   EMPLOYEE_LEAVE_BALANCE_SORT,
+  EMPLOYEE_LEAVE_REQUEST_CATEGORY,
+  EMPLOYEE_LEAVE_REQUEST_SORT,
 } from "@/src/utils/filters";
-import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";

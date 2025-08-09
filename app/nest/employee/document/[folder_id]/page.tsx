@@ -1,9 +1,9 @@
 "use client";
 
-import ShowDocument from "@/src/components/global/document/ShowDocument";
-import Filter from "@/src/components/global/filter/Filter";
 import DocumentCard from "@/src/components/global/document/DocumentCard";
 import FolderCard from "@/src/components/global/document/FolderCard";
+import ShowDocument from "@/src/components/global/document/ShowDocument";
+import Filter from "@/src/components/global/filter/Filter";
 import useCategory from "@/src/hooks/useCategory";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
@@ -17,7 +17,6 @@ import {
   EMPLOYEE_DOCUMENTS_SEARCH,
   EMPLOYEE_DOCUMENTS_SORT,
 } from "@/src/utils/filters";
-import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Link from "next/link";

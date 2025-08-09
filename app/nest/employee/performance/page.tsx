@@ -13,7 +13,6 @@ import {
   EMPLOYEE_PERFORMANCE_REVIEW_SEARCH,
   EMPLOYEE_PERFORMANCE_REVIEW_SORT,
 } from "@/src/utils/filters";
-import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";

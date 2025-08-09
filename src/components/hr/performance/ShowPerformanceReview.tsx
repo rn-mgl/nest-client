@@ -6,7 +6,6 @@ import {
   PerformanceReviewInterface,
   PerformanceReviewSurveyInterface,
 } from "@/src/interface/PerformanceReviewInterface";
-import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
 import { useSession } from "next-auth/react";

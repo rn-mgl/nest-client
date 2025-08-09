@@ -5,22 +5,21 @@ import EditTraining from "@/src/components/hr/training/EditTraining";
 import ShowTraining from "@/src/components/hr/training/ShowTraining";
 import { TrainingInterface } from "@/src/interface/TrainingInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
-import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
-import Filter from "@/src/components/global/filter/Filter";
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
-import AssignTraining from "@/src/components/hr/training/AssignTraining";
+import Filter from "@/src/components/global/filter/Filter";
 import TrainingCard from "@/src/components/global/training/TrainingCard";
+import AssignTraining from "@/src/components/hr/training/AssignTraining";
 
+import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { HR_TRAINING_SEARCH, HR_TRAINING_SORT } from "@/utils/filters";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd } from "react-icons/io5";
-import useIsLoading from "@/src/hooks/useIsLoading";
-import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 
 const HRTraining = () => {
   const [trainings, setTrainings] = React.useState<

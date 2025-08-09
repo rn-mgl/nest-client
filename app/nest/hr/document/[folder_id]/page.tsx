@@ -5,8 +5,8 @@ import FolderCard from "@/src/components/global/document/FolderCard";
 import ShowDocument from "@/src/components/global/document/ShowDocument";
 import Filter from "@/src/components/global/filter/Filter";
 import CreateDocument from "@/src/components/hr/document/CreateDocument";
-import EditDocument from "@/src/components/hr/document/EditDocument";
 import CreateDocumentFolder from "@/src/components/hr/document/CreateDocumentFolder";
+import EditDocument from "@/src/components/hr/document/EditDocument";
 import EditFolder from "@/src/components/hr/document/EditFolder";
 import useCategory from "@/src/hooks/useCategory";
 
@@ -23,7 +23,6 @@ import {
   HR_DOCUMENTS_SORT,
   HR_FOLDERS_SEARCH,
 } from "@/src/utils/filters";
-import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";

@@ -15,7 +15,6 @@ import {
   EMPLOYEE_TRAINING_SEARCH,
   EMPLOYEE_TRAINING_SORT,
 } from "@/src/utils/filters";
-import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";

@@ -5,7 +5,6 @@ import {
   TrainingInterface,
   TrainingReviewInterface,
 } from "@/src/interface/TrainingInterface";
-import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
 import { useSession } from "next-auth/react";

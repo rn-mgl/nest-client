@@ -3,7 +3,6 @@
 import { AttendanceInterface } from "@/src/interface/AttendanceInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
-import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
 import { useSession } from "next-auth/react";

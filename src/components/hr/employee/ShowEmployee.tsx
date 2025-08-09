@@ -10,8 +10,8 @@ import ShowTraining from "@/hr/training/ShowTraining";
 import Table from "@/src/components/global/field/Table";
 import {
   LeaveBalanceInterface,
-  LeaveTypeInterface,
   LeaveRequestInterface,
+  LeaveTypeInterface,
 } from "@/src/interface/LeaveInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
@@ -27,7 +27,6 @@ import {
   TrainingInterface,
 } from "@/src/interface/TrainingInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
-import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";

@@ -7,7 +7,6 @@ import {
   OnboardingPolicyAcknowledgemenInterface,
   OnboardingRequiredDocumentsInterface,
 } from "@/src/interface/OnboardingInterface";
-import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
 import ModalNav from "@/global/ModalNav";

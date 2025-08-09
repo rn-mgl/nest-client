@@ -12,12 +12,11 @@ import useSort from "@/src/hooks/useSort";
 import { OnboardingInterface } from "@/src/interface/OnboardingInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import { HR_ONBOARDING_SEARCH, HR_ONBOARDING_SORT } from "@/src/utils/filters";
-import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
+import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import Toasts from "@/src/components/global/popup/Toasts";
-import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import { useToasts } from "@/src/context/ToastContext";
 import useIsLoading from "@/src/hooks/useIsLoading";
 import { useSession } from "next-auth/react";

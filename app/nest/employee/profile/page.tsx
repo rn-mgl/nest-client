@@ -4,7 +4,6 @@ import ChangePassword from "@/src/components/employee/profile/ChangePassword";
 import EditEmployeeProfile from "@/src/components/employee/profile/EditEmployeeProfile";
 import { ProfileInterface } from "@/src/interface/ProfileInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
-import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";

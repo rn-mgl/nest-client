@@ -4,7 +4,6 @@ import Input from "@/src/components/form/Input";
 import Select from "@/src/components/form/Select";
 import ShowAttendance from "@/src/components/hr/attendance/ShowAttendance";
 import { AttendanceStatisticsInterface } from "@/src/interface/AttendanceInterface";
-import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
 import { useSession } from "next-auth/react";
