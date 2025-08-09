@@ -32,14 +32,11 @@ const EditLeaveType: React.FC<ModalInterface> = (props) => {
 
   const getLeaveType = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken();
-
-      if (token && user?.token) {
+      if (user?.token) {
         const { data: leaveData } = await axios.get(
           `${url}/hr/leave_type/${props.id}`,
           {
             headers: {
-              "X-CSRF-TOKEN": token,
               Authorization: `Bearer ${user?.token}`,
             },
             withCredentials: true,

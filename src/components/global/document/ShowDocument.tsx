@@ -33,15 +33,12 @@ const ShowDocument: React.FC<ModalInterface> = (props) => {
 
   const getDocumentDetails = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken();
-
-      if (token && user?.token) {
+      if (user?.token) {
         const { data: documentDetails } = await axios.get(
           `${url}/${role}/document/${props.id}`,
           {
             headers: {
               Authorization: `Bearer ${user?.token}`,
-              "X-CSRF-TOKEN": token,
             },
             withCredentials: true,
           }

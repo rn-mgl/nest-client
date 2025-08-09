@@ -36,15 +36,12 @@ const Profile = () => {
 
   const getProfile = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken();
-
-      if (token && user?.token) {
+      if (user?.token) {
         const { data: responseData } = await axios.get(
           `${url}/employee/profile/${currentUser}`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
-              "X-CSRF-TOKEN": token,
             },
             withCredentials: true,
           }

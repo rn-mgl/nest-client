@@ -126,15 +126,12 @@ const HRDocument = () => {
 
   const getDocuments = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken();
-
-      if (token && user?.token) {
+      if (user?.token) {
         const {
           data: { documents },
         } = await axios.get(`${url}/hr/document`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
-            "X-CSRF-TOKEN": token,
           },
           withCredentials: true,
           params: { path: folderId, ...search, ...sort, ...category },
@@ -151,15 +148,12 @@ const HRDocument = () => {
 
   const getFolder = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken();
-
-      if (token && user?.token) {
+      if (user?.token) {
         const { data: folderDetails } = await axios.get(
           `${url}/hr/document_folder/${folderId}`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
-              "X-CSRF-TOKEN": token,
             },
             withCredentials: true,
           }

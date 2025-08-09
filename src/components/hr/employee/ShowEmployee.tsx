@@ -73,15 +73,12 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
 
   const getEmployee = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken();
-
-      if (token && user?.token) {
+      if (user?.token) {
         const { data: responseData } = await axios.get(
           `${url}/hr/employee/${props.id}`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
-              "X-CSRF-TOKEN": token,
             },
             withCredentials: true,
           }

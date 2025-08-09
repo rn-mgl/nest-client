@@ -154,12 +154,9 @@ const HRLeave = () => {
 
   const getLeaveTypes = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken();
-
-      if (token && user?.token) {
+      if (user?.token) {
         const { data: responseData } = await axios.get(`${url}/hr/leave_type`, {
           headers: {
-            "X-CSRF-TOKEN": token,
             Authorization: `Bearer ${user?.token}`,
           },
           withCredentials: true,
@@ -177,15 +174,12 @@ const HRLeave = () => {
 
   const getLeaveBalances = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken();
-
-      if (token && user?.token) {
+      if (user?.token) {
         const { data: responseData } = await axios.get(
           `${url}/hr/leave_balance`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
-              "X-CSRF-TOKEN": token,
             },
             withCredentials: true,
             params: { ...search, ...sort },
@@ -203,15 +197,12 @@ const HRLeave = () => {
 
   const getLeaveRequest = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken();
-
-      if (token && user?.token) {
+      if (user?.token) {
         const { data: responseData } = await axios.get(
           `${url}/hr/leave_request`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
-              "X-CSRF-TOKEN": token,
             },
             withCredentials: true,
             params: { ...search, ...sort, ...category },

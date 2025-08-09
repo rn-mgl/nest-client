@@ -27,16 +27,13 @@ const ShowAttendance: React.FC<ModalInterface & AttendanceDate> = (props) => {
 
   const getAttendanceDetails = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken();
-
-      if (token && user?.token) {
+      if (user?.token) {
         const stringDate = `${props.year}-${props.month + 1}-${props.date}`;
         const { data: details } = await axios.get(
           `${url}/hr/attendance/${stringDate}`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
-              "X-CSRF-TOKEN": token,
             },
             withCredentials: true,
           }

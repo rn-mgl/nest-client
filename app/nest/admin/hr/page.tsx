@@ -70,14 +70,11 @@ const AdminHR = () => {
 
   const getAllHRs = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken();
-
-      if (token && user?.token) {
+      if (user?.token) {
         const {
           data: { hrs },
         } = await axios.get(`${url}/admin/hr`, {
           headers: {
-            "X-CSRF-TOKEN": token,
             Authorization: `Bearer ${user?.token}`,
           },
           params: {

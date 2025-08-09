@@ -81,15 +81,12 @@ const AssignLeaveType: React.FC<ModalInterface> = (props) => {
 
   const getEmployeeLeaves = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken();
-
-      if (token && user?.token) {
+      if (user?.token) {
         const { data: responseData } = await axios.get<{
           users: (UserInterface & LeaveBalanceInterface)[];
         }>(`${url}/hr/employee_leave_balance`, {
           headers: {
             Authorization: `Bearer ${user?.token}`,
-            "X-CSRF-TOKEN": token,
           },
           withCredentials: true,
           params: { leave_type_id: props.id },

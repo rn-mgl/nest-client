@@ -81,13 +81,10 @@ const HRAttendance = () => {
 
   const getAttendanceStatistics = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken();
-
-      if (token && user?.token) {
+      if (user?.token) {
         const { data: statistics } = await axios.get(`${url}/hr/attendance`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
-            "X-CSRF-TOKEN": token,
           },
           withCredentials: true,
           params: {

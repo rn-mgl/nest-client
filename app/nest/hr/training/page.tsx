@@ -82,13 +82,11 @@ const HRTraining = () => {
   const getTrainings = React.useCallback(async () => {
     try {
       handleIsLoading(true);
-      const { token } = await getCSRFToken();
 
-      if (token && user?.token) {
+      if (user?.token) {
         const { data } = await axios.get(`${url}/hr/training`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
-            "X-CSRF-TOKEN": token,
           },
           params: { ...search, ...sort },
           withCredentials: true,

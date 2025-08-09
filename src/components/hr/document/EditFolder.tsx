@@ -46,15 +46,12 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
 
   const getFolder = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken();
-
-      if (token && user?.token) {
+      if (user?.token) {
         const { data: folderDetails } = await axios.get(
           `${url}/hr/document_folder/${props.id}`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
-              "X-CSRF-TOKEN": token,
             },
             withCredentials: true,
           }
@@ -115,15 +112,12 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
 
   const getPaths = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken();
-
-      if (token && user?.token && typeof folder.path === "number") {
+      if (user?.token && typeof folder.path === "number") {
         const { data: folders } = await axios.get<{
           paths: { label: string; value: number }[];
         }>(`${url}/hr/document_folder/paths`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
-            "X-CSRF-TOKEN": token,
           },
           params: { path: folder.path },
           withCredentials: true,

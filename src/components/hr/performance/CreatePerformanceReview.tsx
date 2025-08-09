@@ -49,16 +49,13 @@ const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
     e.preventDefault();
 
     try {
-      const { token } = await getCSRFToken();
-
-      if (token && user?.token) {
+      if (user?.token) {
         const { data: createdPerformanceReview } = await axios.post(
           `${url}/hr/performance_review`,
           { ...performance, surveys: fields },
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
-              "X-CSRF-TOKEN": token,
             },
             withCredentials: true,
           }

@@ -87,15 +87,12 @@ const HROnboarding = () => {
   const getOnboardings = React.useCallback(async () => {
     handleIsLoading(true);
     try {
-      const { token } = await getCSRFToken();
-
-      if (token && user?.token) {
+      if (user?.token) {
         const { data: allOnboarding } = await axios.get(
           `${url}/hr/onboarding`,
           {
             headers: {
               Authorization: `Bearer ${user?.token}`,
-              "X-CSRF-TOKEN": token,
             },
             withCredentials: true,
             params: { ...search, ...sort },

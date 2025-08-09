@@ -86,15 +86,12 @@ const PerformanceReview = () => {
 
   const getPerformanceReviews = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken();
-
-      if (token && user?.token) {
+      if (user?.token) {
         const { data: allPerformanceReviews } = await axios.get(
           `${url}/hr/performance_review`,
           {
             headers: {
               Authorization: `Bearer ${user?.token}`,
-              "X-CSRF-TOKEN": token,
             },
             withCredentials: true,
             params: { ...search, ...sort },

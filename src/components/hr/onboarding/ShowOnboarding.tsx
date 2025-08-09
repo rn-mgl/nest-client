@@ -38,12 +38,10 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
 
   const getOnboarding = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken();
-      if (token) {
+      if (user?.token) {
         const { data } = await axios.get(`${url}/hr/onboarding/${props.id}`, {
           headers: {
             Authorization: `Bearer ${user?.token}`,
-            "X-CSRF-TOKEN": token,
           },
           withCredentials: true,
         });

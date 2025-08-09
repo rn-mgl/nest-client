@@ -34,15 +34,12 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
 
   const getDocument = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken();
-
-      if (token && user?.token) {
+      if (user?.token) {
         const { data: documentDetails } = await axios.get(
           `${url}/hr/document/${props.id}`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
-              "X-CSRF-TOKEN": token,
             },
             withCredentials: true,
           }
@@ -59,15 +56,12 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
 
   const getPaths = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken();
-
-      if (token && user?.token && typeof document.path === "number") {
+      if (user?.token && typeof document.path === "number") {
         const { data: folders } = await axios.get<{
           paths: { label: string; value: number }[];
         }>(`${url}/hr/document_folder/paths`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
-            "X-CSRF-TOKEN": token,
           },
           params: { path: document.path },
           withCredentials: true,

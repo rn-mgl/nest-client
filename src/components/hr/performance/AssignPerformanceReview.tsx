@@ -32,15 +32,12 @@ const AssignPerformanceReview: React.FC<ModalInterface> = (props) => {
 
   const getEmployeePerformanceReviews = React.useCallback(async () => {
     try {
-      const { token } = await getCSRFToken();
-
-      if (token) {
+      if (user?.token) {
         const { data: responseData } = await axios.get<{
           employees: (EmployeePerformanceReviewInterface & UserInterface)[];
         }>(`${url}/hr/employee_performance_review`, {
           headers: {
             Authorization: `Bearer ${user?.token}`,
-            "X-CSRF-TOKEN": token,
           },
           withCredentials: true,
           params: { performance_review_id: props.id },

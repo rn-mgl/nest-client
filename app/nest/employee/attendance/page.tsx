@@ -161,16 +161,14 @@ const Attendance = () => {
     if (activeGreaterThenCurrentFullDate) return;
 
     try {
-      const { token } = await getCSRFToken();
       const stringDate = `${activeYear}-${activeMonth.value + 1}-${activeDate}`;
 
-      if (token && user?.token) {
+      if (user?.token) {
         const { data: attendance } = await axios.get(
           `${url}/employee/attendance/${stringDate}`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
-              "X-CSRF-TOKEN": token,
             },
             withCredentials: true,
           }
