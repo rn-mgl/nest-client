@@ -17,8 +17,8 @@ const Employee = () => {
   const [dashboard, setDashboard] = React.useState<EmployeeDashboardInterface>({
     attendances: {
       absent: false,
-      in: null,
-      out: null,
+      in: false,
+      out: false,
       late: false,
     },
     documents: {
