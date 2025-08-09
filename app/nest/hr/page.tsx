@@ -21,7 +21,7 @@ import {
 } from "react-icons/io5";
 
 const HRDashboard = () => {
-  const [dashboard, setDashboards] = React.useState<HRDashboardInterface>({
+  const [dashboard, setDashboard] = React.useState<HRDashboardInterface>({
     documents: {
       documents: 0,
       folders: 0,
@@ -63,7 +63,7 @@ const HRDashboard = () => {
         );
 
         if (responseData) {
-          setDashboards(responseData);
+          setDashboard(responseData);
         }
       }
     } catch (error) {
