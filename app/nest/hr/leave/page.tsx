@@ -198,7 +198,7 @@ const HRLeave = () => {
     try {
       if (user?.token) {
         const { data: responseData } = await axios.get(
-          `${url}/hr/leave_request`,
+          `${url}/hr/employee_leave_request`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
