@@ -1,30 +1,27 @@
 import { useToasts } from "@/src/context/ToastContext";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose } from "react-icons/io5";
 
-const Log: React.FC<ModalInterface & { logType: "in" | "out" }> = ({
-  id,
-  logType,
-  toggleModal,
-  refetchIndex,
-}) => {
+const Log: React.FC<ModalInterface> = (props) => {
   const [percentage, setPercentage] = React.useState(0);
   const [status, setStatus] = React.useState<"base" | "logging" | "failed">(
     "base"
   );
-
   const timerRef = React.useRef<NodeJS.Timeout>();
 
   const { addToast } = useToasts();
 
+  const { id, toggleModal, refetchIndex } = props;
+
   const { data } = useSession({ required: true });
   const user = data?.user;
   const url = process.env.URL;
+  const logType = id === 0 ? "in" : "out";
 
   const handleHold = () => {
     timerRef.current = setInterval(() => {
@@ -39,15 +36,14 @@ const Log: React.FC<ModalInterface & { logType: "in" | "out" }> = ({
     }
   };
 
-  const submitLog = React.useCallback(async () => {
-    setStatus("logging");
+  const submitLogIn = React.useCallback(async () => {
     try {
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
-        const { data: logged } = await axios.post(
+        const { data: responseData } = await axios.post(
           `${url}/employee/attendance`,
-          { type: logType, attendance_id: id },
+          {},
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
@@ -57,25 +53,93 @@ const Log: React.FC<ModalInterface & { logType: "in" | "out" }> = ({
           }
         );
 
-        if (logged.success) {
+        if (responseData.success) {
           toggleModal();
           if (refetchIndex) {
             setPercentage(0);
             refetchIndex();
           }
 
-          addToast(
-            `Logged ${logType}`,
-            `You have logged ${logType} successfully`,
-            "success"
-          );
+          addToast(`Logged in`, `You have logged in successfully`, "success");
         }
       }
     } catch (error) {
-      setStatus("failed");
       console.log(error);
+
+      let message = "An error occurred when logging out";
+
+      if (error instanceof AxiosError) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Something went wrong", message, "error");
+      clearInterval(timerRef.current);
+      setPercentage(0);
+      setStatus("base");
+
+      return false;
     }
-  }, [url, user?.token, logType, refetchIndex, toggleModal, addToast, id]);
+  }, [url, user?.token, addToast, refetchIndex, toggleModal]);
+
+  const submitLogOut = React.useCallback(async () => {
+    try {
+      const { token } = await getCSRFToken();
+
+      if (token && user?.token) {
+        const { data: responseData } = await axios.patch(
+          `${url}/employee/attendance/${id}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              "X-CSRF-TOKEN": token,
+            },
+            withCredentials: true,
+          }
+        );
+
+        if (responseData.success) {
+          toggleModal();
+          if (refetchIndex) {
+            setPercentage(0);
+            refetchIndex();
+          }
+
+          addToast(`Logged out`, `You have logged out successfully`, "success");
+        }
+      }
+    } catch (error) {
+      console.log(error);
+
+      let message = "An error occurred when logging out";
+
+      if (error instanceof AxiosError) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Something went wrong", message, "error");
+      clearInterval(timerRef.current);
+      setPercentage(0);
+      setStatus("base");
+
+      return false;
+    }
+  }, [url, user?.token, id, addToast, refetchIndex, toggleModal]);
+
+  const submitLog = React.useCallback(async () => {
+    setStatus("logging");
+
+    switch (logType) {
+      case "in":
+        await submitLogIn();
+        break;
+      case "out":
+        await submitLogOut();
+        break;
+      default:
+        break;
+    }
+  }, [logType, submitLogIn, submitLogOut]);
 
   React.useEffect(() => {
     if (percentage >= 100) {
@@ -116,6 +180,7 @@ const Log: React.FC<ModalInterface & { logType: "in" | "out" }> = ({
             <IoClose />
           </button>
         </div>
+
         <div className="w-full p-2 rounded-b-md flex flex-col items-center justify-start gap-4 t:p-4">
           <p className="text-center font-bold">
             Hold the button to log {logType}.

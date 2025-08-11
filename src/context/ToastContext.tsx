@@ -16,9 +16,12 @@ const ToastContext = React.createContext<ToastContextData | null>(null);
 
 const ToastProvider = ({ children }: { children: React.ReactNode }) => {
   const [toasts, setToasts] = React.useState<ToastInterface[]>([]);
+  const intervalsRef = React.useRef<{ [id: string]: NodeJS.Timeout }>({});
 
   const clearToast = (id: string) => {
     setToasts((prev) => prev.filter((toast) => toast.id !== id));
+    clearInterval(intervalsRef.current[id]);
+    delete intervalsRef.current[id];
   };
 
   const addToast = React.useCallback(
@@ -48,7 +51,6 @@ const ToastProvider = ({ children }: { children: React.ReactNode }) => {
               const newPercentage = toast.percentage + 1;
 
               if (newPercentage > 100) {
-                clearInterval(interval);
                 setTimeout(() => {
                   clearToast(toast.id);
                 }, 500);
@@ -60,6 +62,8 @@ const ToastProvider = ({ children }: { children: React.ReactNode }) => {
             return updatedToast;
           });
         }, Math.ceil(newToast.duration / 100));
+
+        intervalsRef.current[newToast.id] = interval;
       }, 300);
     },
     []

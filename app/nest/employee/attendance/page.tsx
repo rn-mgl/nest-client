@@ -34,12 +34,12 @@ const Attendance = () => {
   const currentMonth = new Date().getMonth();
   const currentDate = new Date().getDate();
 
-  const equalActiveAndCurrentFullDate =
+  const activeEqualToCurrentDate =
     currentDate === activeDate &&
     currentMonth === activeMonth.value &&
     currentYear === activeYear;
 
-  const activeGreaterThenCurrentFullDate =
+  const activeGreaterThanCurrentDate =
     currentDate < activeDate ||
     currentMonth < activeMonth.value ||
     currentYear < activeYear;
@@ -157,7 +157,7 @@ const Attendance = () => {
   });
 
   const getAttendance = React.useCallback(async () => {
-    if (activeGreaterThenCurrentFullDate) return;
+    if (activeGreaterThanCurrentDate) return;
 
     try {
       const stringDate = `${activeYear}-${activeMonth.value + 1}-${activeDate}`;
@@ -186,7 +186,7 @@ const Attendance = () => {
     activeYear,
     activeMonth,
     activeDate,
-    activeGreaterThenCurrentFullDate,
+    activeGreaterThanCurrentDate,
   ]);
 
   React.useEffect(() => {
@@ -198,11 +198,11 @@ const Attendance = () => {
       {toasts.length ? (
         <Toasts toasts={toasts} clearToast={clearToast} />
       ) : null}
+
       {canLog ? (
         <Log
           id={attendance.attendance_id ?? 0}
           toggleModal={handleCanLog}
-          logType={!attendance.login_time ? "in" : "out"}
           refetchIndex={getAttendance}
         />
       ) : null}
@@ -240,28 +240,33 @@ const Attendance = () => {
             />
           </div>
 
-          {equalActiveAndCurrentFullDate &&
-          (!attendance.login_time || !attendance.logout_time) ? (
-            <button
-              onClick={handleCanLog}
-              className={`${
-                !attendance.login_time
-                  ? "bg-accent-blue text-accent-yellow"
-                  : "bg-red-600 text-white"
-              }  w-full p-2 rounded-md font-bold flex flex-row items-center justify-center 
-                          gap-2 t:w-fit t:px-4 transition-all`}
-            >
-              {!attendance.login_time ? "Log In" : "Log Out"}
-              <IoCalendar className="text-lg" />
-            </button>
-          ) : equalActiveAndCurrentFullDate ? (
-            <div
-              className="w-full flex flex-col items-center justify-center p-2 rounded-md 
+          {activeEqualToCurrentDate &&
+            (!attendance.login_time ? (
+              <button
+                onClick={handleCanLog}
+                className="bg-accent-blue text-accent-yellow w-full p-2 rounded-md font-bold flex flex-row items-center justify-center 
+                          gap-2 t:w-fit t:px-4 transition-all"
+              >
+                Log In
+                <IoCalendar className="text-lg" />
+              </button>
+            ) : !attendance.logout_time ? (
+              <button
+                onClick={handleCanLog}
+                className="bg-red-600 text-white w-full p-2 rounded-md font-bold flex flex-row items-center justify-center 
+                          gap-2 t:w-fit t:px-4 transition-all"
+              >
+                Log Out
+                <IoCalendar className="text-lg" />
+              </button>
+            ) : (
+              <div
+                className="w-full flex flex-col items-center justify-center p-2 rounded-md 
                       text-accent-blue border-accent-blue border-2 font-bold t:w-fit t:px-4"
-            >
-              <p>Attendance Completed</p>
-            </div>
-          ) : null}
+              >
+                <p>Attendance Completed</p>
+              </div>
+            ))}
         </div>
 
         <div className="w-full flex flex-col items-center justify-center text-xs t:text-sm">
