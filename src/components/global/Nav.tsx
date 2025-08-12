@@ -60,8 +60,10 @@ const Nav: React.FC<SideNavInterface & { children: React.ReactNode }> = (
   };
 
   const mappedLinks = props.navLinks.map((link) => {
+    const mainPath = link.url.split("/")[1];
+
     const activeLink =
-      link.url === "" ? path === props.home : path?.includes(link.url);
+      link.url === "" ? path === props.home : path?.includes(mainPath);
 
     return (
       <Link
