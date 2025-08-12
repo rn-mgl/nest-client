@@ -8,7 +8,7 @@ import useCategory from "@/src/hooks/useCategory";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import {
-  DocumentFolderInterface,
+  FolderInterface,
   DocumentInterface,
 } from "@/src/interface/DocumentInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
@@ -26,9 +26,9 @@ import { IoArrowBack } from "react-icons/io5";
 
 const Document = () => {
   const [documents, setDocuments] = React.useState<
-    ((DocumentInterface | DocumentFolderInterface) & UserInterface)[]
+    ((DocumentInterface | FolderInterface) & UserInterface)[]
   >([]);
-  const [folder, setFolder] = React.useState<DocumentFolderInterface>({
+  const [folder, setFolder] = React.useState<FolderInterface>({
     name: "",
     path: 0,
   });
@@ -95,7 +95,7 @@ const Document = () => {
     try {
       if (user?.token) {
         const { data: responseData } = await axios.get(
-          `${url}/employee/document_folder/${folderId}`,
+          `${url}/employee/folder/${folderId}`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,

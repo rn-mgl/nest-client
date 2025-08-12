@@ -8,7 +8,7 @@ export interface DocumentInterface {
   type: string;
 }
 
-export interface DocumentFolderInterface {
+export interface FolderInterface {
   id?: number;
   name: string;
   path?: { label: string; value: number } | number;

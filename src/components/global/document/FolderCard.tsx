@@ -1,13 +1,13 @@
 import { CardInterface } from "@/src/interface/CardInterface";
-import { DocumentFolderInterface } from "@/src/interface/DocumentInterface";
+import { FolderInterface } from "@/src/interface/DocumentInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import Link from "next/link";
 import React from "react";
 import { IoEllipsisVertical, IoPencil, IoTrash } from "react-icons/io5";
 
-const FolderCard: React.FC<
-  CardInterface & DocumentFolderInterface & UserInterface
-> = (props) => {
+const FolderCard: React.FC<CardInterface & FolderInterface & UserInterface> = (
+  props
+) => {
   const role = props.role;
   const isHR = role === "hr";
 

@@ -1,5 +1,5 @@
 import {
-  DocumentFolderInterface,
+  FolderInterface,
   DocumentInterface,
 } from "@/src/interface/DocumentInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
@@ -15,7 +15,7 @@ import { IoClose } from "react-icons/io5";
 
 const ShowDocument: React.FC<ModalInterface> = (props) => {
   const [document, setDocument] = React.useState<
-    DocumentInterface & { folder: DocumentFolderInterface | null }
+    DocumentInterface & { folder: FolderInterface | null }
   >({
     name: "",
     document: "",

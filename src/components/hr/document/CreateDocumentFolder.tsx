@@ -1,4 +1,4 @@
-import { DocumentFolderInterface } from "@/src/interface/DocumentInterface";
+import { FolderInterface } from "@/src/interface/DocumentInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import React from "react";
 import { IoClose, IoText } from "react-icons/io5";
@@ -9,8 +9,8 @@ import axios from "axios";
 
 import { useParams } from "next/navigation";
 
-const CreateDocumentFolder: React.FC<ModalInterface> = (props) => {
-  const [folder, setFolder] = React.useState<DocumentFolderInterface>({
+const CreateFolder: React.FC<ModalInterface> = (props) => {
+  const [folder, setFolder] = React.useState<FolderInterface>({
     name: "",
   });
 
@@ -41,7 +41,7 @@ const CreateDocumentFolder: React.FC<ModalInterface> = (props) => {
         const {
           data: { success },
         } = await axios.post(
-          `${url}/hr/document_folder`,
+          `${url}/hr/folder`,
           { ...folder, path: folderId },
           {
             headers: {
@@ -104,4 +104,4 @@ const CreateDocumentFolder: React.FC<ModalInterface> = (props) => {
   );
 };
 
-export default CreateDocumentFolder;
+export default CreateFolder;

@@ -1,5 +1,5 @@
 import useSelect from "@/src/hooks/useSelect";
-import { DocumentFolderInterface } from "@/src/interface/DocumentInterface";
+import { FolderInterface } from "@/src/interface/DocumentInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
@@ -11,7 +11,7 @@ import Input from "@/form/Input";
 import Select from "@/form/Select";
 
 const EditFolder: React.FC<ModalInterface> = (props) => {
-  const [folder, setFolder] = React.useState<DocumentFolderInterface>({
+  const [folder, setFolder] = React.useState<FolderInterface>({
     name: "",
     path: 0,
   });
@@ -48,7 +48,7 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
     try {
       if (user?.token) {
         const { data: folderDetails } = await axios.get(
-          `${url}/hr/document_folder/${props.id}`,
+          `${url}/hr/folder/${props.id}`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
@@ -78,7 +78,7 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: updatedFolder } = await axios.patch(
-          `${url}/hr/document_folder/${props.id}`,
+          `${url}/hr/folder/${props.id}`,
           {
             name: folder.name,
             path:
@@ -115,7 +115,7 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
       if (user?.token && typeof folder.path === "number") {
         const { data: folders } = await axios.get<{
           paths: { label: string; value: number }[];
-        }>(`${url}/hr/document_folder/paths`, {
+        }>(`${url}/hr/folder/paths`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },

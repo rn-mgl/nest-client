@@ -5,7 +5,7 @@ import FolderCard from "@/src/components/global/document/FolderCard";
 import ShowDocument from "@/src/components/global/document/ShowDocument";
 import Filter from "@/src/components/global/filter/Filter";
 import CreateDocument from "@/src/components/hr/document/CreateDocument";
-import CreateDocumentFolder from "@/src/components/hr/document/CreateDocumentFolder";
+import CreateFolder from "@/src/components/hr/document/CreateFolder";
 import EditDocument from "@/src/components/hr/document/EditDocument";
 import EditFolder from "@/src/components/hr/document/EditFolder";
 import useCategory from "@/src/hooks/useCategory";
@@ -13,7 +13,7 @@ import useCategory from "@/src/hooks/useCategory";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import {
-  DocumentFolderInterface,
+  FolderInterface,
   DocumentInterface,
 } from "@/src/interface/DocumentInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
@@ -34,7 +34,7 @@ import { IoAdd, IoArrowBack } from "react-icons/io5";
 
 const HRDocument = () => {
   const [canCreateDocument, setCanCreateDocument] = React.useState(false);
-  const [folder, setFolder] = React.useState<DocumentFolderInterface>({
+  const [folder, setFolder] = React.useState<FolderInterface>({
     name: "",
     path: { label: "Home", value: 0 },
   });
@@ -45,8 +45,7 @@ const HRDocument = () => {
   }>({ type: "", id: 0 });
   const [documents, setDocuments] = React.useState<
     Array<
-      | (DocumentInterface & UserInterface)
-      | (DocumentFolderInterface & UserInterface)
+      (DocumentInterface & UserInterface) | (FolderInterface & UserInterface)
     >
   >([]);
   const [canEditDocument, setCanEditDocument] = React.useState(false);
@@ -149,7 +148,7 @@ const HRDocument = () => {
     try {
       if (user?.token) {
         const { data: folderDetails } = await axios.get(
-          `${url}/hr/document_folder/${folderId}`,
+          `${url}/hr/folder/${folderId}`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
@@ -249,7 +248,7 @@ const HRDocument = () => {
       ) : null}
 
       {canCreateFolder ? (
-        <CreateDocumentFolder
+        <CreateFolder
           toggleModal={handleCanCreateFolder}
           refetchIndex={getDocuments}
         />
@@ -283,7 +282,7 @@ const HRDocument = () => {
 
       {canDeleteFolder ? (
         <DeleteEntity
-          route="document_folder"
+          route="folder"
           label="Folder"
           id={activeDocumentMenu.id}
           toggleModal={handleCanDeleteFolder}

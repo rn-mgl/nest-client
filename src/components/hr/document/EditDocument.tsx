@@ -59,7 +59,7 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
       if (user?.token && typeof document.path === "number") {
         const { data: folders } = await axios.get<{
           paths: { label: string; value: number }[];
-        }>(`${url}/hr/document_folder/paths`, {
+        }>(`${url}/hr/folder/paths`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
