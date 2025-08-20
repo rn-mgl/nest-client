@@ -45,7 +45,7 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
   };
 
   const getAvailablePaths = React.useCallback(
-    async (path: number) => {
+    async (folder: number) => {
       try {
         if (user?.token) {
           const { data: folders } = await axios.get<{
@@ -54,7 +54,7 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
             headers: {
               Authorization: `Bearer ${user.token}`,
             },
-            params: { path, folder: props.id },
+            params: { folder },
             withCredentials: true,
           });
 
@@ -83,19 +83,18 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
   const getFolder = React.useCallback(async () => {
     try {
       if (user?.token) {
-        const { data: responseData } = await axios.get(
-          `${url}/hr/folder/${props.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-            withCredentials: true,
-          }
-        );
+        const { data: responseData } = await axios.get<{
+          folder: FolderInterface;
+        }>(`${url}/hr/folder/${props.id}`, {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+          withCredentials: true,
+        });
 
         if (responseData.folder) {
           setFolder(responseData.folder);
-          await getAvailablePaths(responseData.folder.path);
+          await getAvailablePaths(responseData.folder.id as number);
         }
       }
     } catch (error) {

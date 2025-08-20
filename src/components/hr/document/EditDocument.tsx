@@ -32,66 +32,62 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
   const { data } = useSession({ required: true });
   const user = data?.user;
 
-  const getDocument = React.useCallback(async () => {
-    try {
-      if (user?.token) {
-        const { data: documentDetails } = await axios.get(
-          `${url}/hr/document/${props.id}`,
-          {
+  const getAvailablePaths = React.useCallback(
+    async (folder: number) => {
+      try {
+        if (user?.token) {
+          const { data: responseData } = await axios.get<{
+            paths: { label: string; value: number }[];
+          }>(`${url}/hr/folder/paths`, {
             headers: {
               Authorization: `Bearer ${user.token}`,
             },
+            params: { folder },
             withCredentials: true,
+          });
+
+          if (responseData.paths) {
+            const pathValue = responseData.paths.find(
+              (path) => path.value === folder
+            );
+            setPaths(responseData.paths);
+            setDocument((prev) => {
+              return {
+                ...prev,
+                path: pathValue,
+              };
+            });
           }
-        );
-
-        if (documentDetails.document) {
-          setDocument(documentDetails.document);
         }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [url, user?.token, props.id]);
+    },
+    [url, user?.token]
+  );
 
-  const getPaths = React.useCallback(async () => {
+  const getDocument = React.useCallback(async () => {
     try {
-      if (user?.token && typeof document.path === "number") {
-        const { data: folders } = await axios.get<{
-          paths: { label: string; value: number }[];
-        }>(`${url}/hr/folder/paths`, {
+      if (user?.token) {
+        const { data: responseData } = await axios.get<{
+          document: DocumentInterface;
+        }>(`${url}/hr/document/${props.id}`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
-          params: { path: document.path },
           withCredentials: true,
         });
 
-        if (folders.paths) {
-          // start off with Home
-          folders.paths.unshift({ label: "Home", value: 0 });
-          setPaths(folders.paths);
-
-          const pathValue = folders.paths.find((path) => {
-            return (
-              document.path &&
-              typeof document.path === "number" &&
-              document.path === path.value
-            );
-          });
-
-          setDocument((prev) => {
-            return {
-              ...prev,
-              path: pathValue,
-            };
-          });
+        if (responseData.document) {
+          setDocument(responseData.document);
+          // get all paths after successfully getting document info
+          await getAvailablePaths(0);
         }
       }
     } catch (error) {
       console.log(error);
     }
-  }, [url, user?.token, document.path]);
+  }, [url, user?.token, props.id, getAvailablePaths]);
 
   const submitUpdateDocument = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -207,10 +203,6 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
   React.useEffect(() => {
     getDocument();
   }, [getDocument]);
-
-  React.useEffect(() => {
-    getPaths();
-  }, [getPaths]);
 
   return (
     <div
