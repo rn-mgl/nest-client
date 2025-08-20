@@ -146,7 +146,7 @@ const HRDocument = () => {
 
   const getFolder = React.useCallback(async () => {
     try {
-      if (user?.token) {
+      if (user?.token && folderId) {
         const { data: folderDetails } = await axios.get(
           `${url}/hr/folder/${folderId}`,
           {

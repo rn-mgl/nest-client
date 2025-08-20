@@ -92,7 +92,7 @@ const HRDashboard = () => {
 
             <div>
               <p className="text-6xl font-bold">
-                {dashboard.users.hr + dashboard.users.employee}
+                {(dashboard.users.hr ?? 0) + (dashboard.users.employee ?? 0)}
               </p>
               <p className="">Total Users</p>
             </div>
@@ -107,7 +107,7 @@ const HRDashboard = () => {
                 </div>
               </div>
 
-              <p className="text-3xl font-bold">{dashboard.users.hr}</p>
+              <p className="text-3xl font-bold">{dashboard.users.hr ?? 0}</p>
             </div>
 
             <div className="bg-neutral-100 rounded-xl p-4 flex flex-col items-start justify-between">
@@ -119,7 +119,9 @@ const HRDashboard = () => {
                   </div>
                 </div>
               </div>
-              <p className="text-3xl font-bold">{dashboard.users.employee}</p>
+              <p className="text-3xl font-bold">
+                {dashboard.users.employee ?? 0}
+              </p>
             </div>
           </div>
         </div>

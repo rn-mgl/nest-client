@@ -44,10 +44,46 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
     });
   };
 
+  const getAvailablePaths = React.useCallback(
+    async (path: number) => {
+      try {
+        if (user?.token) {
+          const { data: folders } = await axios.get<{
+            paths: { label: string; value: number }[];
+          }>(`${url}/hr/folder/paths`, {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+            params: { path, folder: props.id },
+            withCredentials: true,
+          });
+
+          if (folders.paths) {
+            // find the path that the folder currently uses for ui rendering
+            const pathValue = folders.paths.find(
+              (path) => path.value === props.id
+            );
+
+            setPaths(folders.paths);
+            setFolder((prev) => {
+              return {
+                ...prev,
+                path: pathValue,
+              };
+            });
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [url, user?.token, props.id]
+  );
+
   const getFolder = React.useCallback(async () => {
     try {
       if (user?.token) {
-        const { data: folderDetails } = await axios.get(
+        const { data: responseData } = await axios.get(
           `${url}/hr/folder/${props.id}`,
           {
             headers: {
@@ -57,14 +93,15 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
           }
         );
 
-        if (folderDetails.folder) {
-          setFolder(folderDetails.folder);
+        if (responseData.folder) {
+          setFolder(responseData.folder);
+          await getAvailablePaths(responseData.folder.path);
         }
       }
     } catch (error) {
       console.log(error);
     }
-  }, [url, user?.token, props.id]);
+  }, [url, user?.token, props.id, getAvailablePaths]);
 
   const submitUpdateFolder = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -110,55 +147,9 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
     }
   };
 
-  const getPaths = React.useCallback(async () => {
-    try {
-      if (user?.token && typeof folder.path === "number") {
-        const { data: folders } = await axios.get<{
-          paths: { label: string; value: number }[];
-        }>(`${url}/hr/folder/paths`, {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-          params: { path: folder.path },
-          withCredentials: true,
-        });
-
-        if (folders.paths) {
-          folders.paths.unshift({ label: "Home", value: 0 });
-          const folderPaths = folders.paths.filter(
-            (path) => path.value !== props.id
-          );
-
-          setPaths(folderPaths);
-
-          const pathValue = folders.paths.find((path) => {
-            return (
-              folder.path &&
-              typeof folder.path === "number" &&
-              path.value === folder.path
-            );
-          });
-
-          setFolder((prev) => {
-            return {
-              ...prev,
-              path: pathValue,
-            };
-          });
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [url, user?.token, folder.path, props.id]);
-
   React.useEffect(() => {
     getFolder();
   }, [getFolder]);
-
-  React.useEffect(() => {
-    getPaths();
-  }, [getPaths]);
 
   return (
     <div
@@ -195,23 +186,21 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
             id="path"
             name="path"
             activeSelect={activeSelect}
+            onChange={handlePaths}
+            options={paths}
+            placeholder="Path"
+            required={true}
+            toggleSelect={toggleSelect}
             label={
               folder.path && typeof folder.path === "object"
                 ? folder.path.label
                 : "Home"
             }
-            options={paths}
-            placeholder="Path"
-            required={true}
-            toggleSelect={toggleSelect}
             value={
               folder.path && typeof folder.path === "object"
                 ? folder.path.value
-                : typeof folder.path === "number"
-                ? folder.path
                 : 0
             }
-            onChange={handlePaths}
           />
 
           <button className="w-full font-bold text-center rounded-md p-2 bg-accent-yellow text-accent-blue mt-2">
