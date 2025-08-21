@@ -85,7 +85,7 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
       if (token && user?.token) {
         const { data: responseData } = await axios.post(
           `${url}/hr/employee_onboarding`,
-          { employee_ids: assignedEmployees, onboarding_id: props.id },
+          { user_ids: assignedEmployees, onboarding_id: props.id },
           {
             headers: {
               Authorization: `Bearer ${user.token}`,

@@ -119,7 +119,7 @@ const AssignLeaveType: React.FC<ModalInterface> = (props) => {
               ...leave,
               balance: leave.balance ?? 0,
             })),
-            employee_ids: assignedEmployees,
+            user_ids: assignedEmployees,
             leave_type_id: props.id,
           },
           {
