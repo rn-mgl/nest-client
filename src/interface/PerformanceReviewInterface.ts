@@ -11,12 +11,12 @@ export interface PerformanceReviewSurveyInterface {
 }
 
 export interface EmployeePerformanceReviewInterface {
-  employee_performance_review_id?: number;
+  user_performance_review_id?: number;
   status: string;
   created_at?: string;
 }
 
 export interface EmployeePerformanceReviewResponseInterface {
-  employee_performance_review_response_id?: number;
+  user_performance_review_response_id?: number;
   response: string | null;
 }

@@ -97,7 +97,7 @@ const Onboarding = () => {
         user_id={onboarding.user_id}
         // actions
         handleActiveSeeMore={() =>
-          handleActiveOnboardingSeeMore(onboarding.employee_onboarding_id ?? 0)
+          handleActiveOnboardingSeeMore(onboarding.user_onboarding_id ?? 0)
         }
       />
     );

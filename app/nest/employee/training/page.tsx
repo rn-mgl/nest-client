@@ -100,7 +100,7 @@ const Training = () => {
         last_name={training.last_name}
         //
         handleActiveSeeMore={() =>
-          handleActiveTrainingSeeMore(training.employee_training_id ?? 0)
+          handleActiveTrainingSeeMore(training.user_training_id ?? 0)
         }
       />
     );

@@ -48,7 +48,7 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
           setEmployeeOnboardings(responseData.employees);
           setAssignedEmployees(
             responseData.employees
-              .filter((e) => e.employee_onboarding_id !== null)
+              .filter((e) => e.user_onboarding_id !== null)
               .map((e) => e.user_id as number)
           );
         }

@@ -48,7 +48,7 @@ const AssignPerformanceReview: React.FC<ModalInterface> = (props) => {
           setAssignedEmployees(
             responseData.employees
               .filter(
-                (employee) => employee.employee_performance_review_id !== null
+                (employee) => employee.user_performance_review_id !== null
               )
               .map((employee) => employee.user_id)
           );

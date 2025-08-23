@@ -31,7 +31,7 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
     onboarding: {
       title: "",
       description: "",
-      employee_onboarding_id: 0,
+      user_onboarding_id: 0,
       status: "",
     },
     policy_acknowledgements: [],
@@ -148,7 +148,7 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const {
-          employee_onboarding_required_document_id: documentId,
+          user_onboarding_required_document_id: documentId,
           document: newDocument,
         } = onboarding.required_documents[index];
 
@@ -189,7 +189,7 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
 
       const documentId =
         onboarding.required_documents[index]
-          .employee_onboarding_required_document_id;
+          .user_onboarding_required_document_id;
 
       if (token && user?.token) {
         const { data: responseData } = await axios.delete(
@@ -265,7 +265,7 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
           <div className="w-full p-2 rounded-md border-2 bg-white h-40 overflow-y-auto">
             {document.description}
           </div>
-          {document.employee_onboarding_required_document_id &&
+          {document.user_onboarding_required_document_id &&
           typeof document.document === "string" ? (
             <div className="w-full p-3 rounded-md border-2 bg-white flex flex-col items-center justify-center relative">
               <Link
@@ -313,7 +313,7 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
                 <button
                   type="button"
                   onClick={
-                    typeof document.employee_onboarding_required_document_id ===
+                    typeof document.user_onboarding_required_document_id ===
                     "number"
                       ? () => updateRequiredDocument(index)
                       : () => sendRequiredDocument(index)

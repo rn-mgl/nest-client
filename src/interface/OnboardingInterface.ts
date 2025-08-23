@@ -12,7 +12,7 @@ export interface OnboardingRequiredDocumentsInterface {
 }
 
 export interface EmployeeOnboardingRequiredDocumentsInterface {
-  employee_onboarding_required_document_id?: number;
+  user_onboarding_required_document_id?: number;
   document: { rawFile: File; fileURL: string } | string | null;
 }
 
@@ -23,12 +23,12 @@ export interface OnboardingPolicyAcknowledgemenInterface {
 }
 
 export interface EmployeeOnboardingPolicyAcknowledgementInterface {
-  employee_onboarding_policy_acknowledgement_id?: number;
+  user_onboarding_policy_acknowledgement_id?: number;
   acknowledged: boolean;
 }
 
 export interface EmployeeOnboardingInterface {
-  employee_onboarding_id?: number;
+  user_onboarding_id?: number;
   status: string;
   created_at?: string;
 }

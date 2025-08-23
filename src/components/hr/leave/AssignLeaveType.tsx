@@ -115,7 +115,7 @@ const AssignLeaveType: React.FC<ModalInterface> = (props) => {
         const { data: responseData } = await axios.post(
           `${url}/hr/employee_leave_balance`,
           {
-            employee_leaves: employeeLeaves.map((leave) => ({
+            user_leaves: employeeLeaves.map((leave) => ({
               ...leave,
               balance: leave.balance ?? 0,
             })),

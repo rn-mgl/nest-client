@@ -16,7 +16,7 @@ export interface TrainingContentInterface {
 }
 
 export interface EmployeeTrainingInterface {
-  employee_training_id?: number;
+  user_training_id?: number;
   status: string;
   deadline: string;
   score: number | null;
@@ -35,7 +35,7 @@ export interface TrainingReviewInterface {
 }
 
 export interface EmployeeTrainingReviewResponseInterface {
-  employee_training_review_response_id?: number;
-  employee_answer: number;
+  user_training_review_response_id?: number;
+  user_answer: number;
   is_correct: boolean;
 }

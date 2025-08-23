@@ -56,7 +56,7 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
     setTraining((prev) => {
       prev["reviews"][index] = {
         ...prev["reviews"][index],
-        employee_answer: parseInt(value),
+        user_answer: parseInt(value),
       };
 
       return { ...prev };
@@ -173,8 +173,7 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
   });
 
   const mappedReviews = training.reviews.map((review, index) => {
-    const alreadyAnswered =
-      review.employee_training_review_response_id !== null;
+    const alreadyAnswered = review.user_training_review_response_id !== null;
 
     const mappedChoices = [1, 2, 3, 4].map((choice, index2) => {
       const currChoice =
@@ -189,9 +188,7 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
             <div className="p-1 rounded-md bg-white border-2">
               <div
                 className={`p-4 rounded-sm ${
-                  review.employee_answer === choice
-                    ? "bg-accent-green"
-                    : "bg-white"
+                  review.user_answer === choice ? "bg-accent-green" : "bg-white"
                 }`}
               ></div>
             </div>
@@ -199,7 +196,7 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
             <Radio
               name={`question_${index}_answer`}
               value={choice}
-              isChecked={review.employee_answer === choice}
+              isChecked={review.user_answer === choice}
               onChange={(e) => handleAnswer(e, index)}
             />
           )}

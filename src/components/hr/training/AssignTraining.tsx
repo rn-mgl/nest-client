@@ -49,7 +49,7 @@ const AssignTraining: React.FC<ModalInterface> = (props) => {
           setEmployeeTrainings(responseData.employees);
           setAssignedEmployees(
             responseData.employees
-              .filter((employee) => employee.employee_training_id !== null)
+              .filter((employee) => employee.user_training_id !== null)
               .map((employee) => employee.user_id)
           );
         }

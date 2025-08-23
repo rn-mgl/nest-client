@@ -94,7 +94,7 @@ const Performance = () => {
           //
           handleActiveSeeMore={() =>
             handleActivePerformanceReviewSeeMore(
-              performance.employee_performance_review_id ?? 0
+              performance.user_performance_review_id ?? 0
             )
           }
         />
