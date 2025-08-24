@@ -93,7 +93,7 @@ const Document = () => {
 
   const getFolder = React.useCallback(async () => {
     try {
-      if (user?.token) {
+      if (user?.token && folderId) {
         const { data: responseData } = await axios.get(
           `${url}/employee/folder/${folderId}`,
           {
