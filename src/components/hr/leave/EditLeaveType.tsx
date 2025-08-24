@@ -43,7 +43,7 @@ const EditLeaveType: React.FC<ModalInterface> = (props) => {
           }
         );
 
-        setLeaveType(leaveData.leaveType);
+        setLeaveType(leaveData.leave);
       }
     } catch (error) {
       console.log(error);
