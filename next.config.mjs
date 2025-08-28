@@ -2,7 +2,16 @@
 const nextConfig = {
   reactStrictMode: false,
   images: {
-    remotePatterns: [{ protocol: "https", hostname: "res.cloudinary.com" }],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "cornflowerblue-gnu-854994.hostingersite.com",
+      },
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
+    ],
   },
   env: {
     URL: process.env.URL,

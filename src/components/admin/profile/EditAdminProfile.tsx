@@ -148,7 +148,10 @@ const EditAdminProfile: React.FC<
             </div>
 
             <div className="w-full flex flex-row items-center justify-between">
-              <label className="text-accent-blue" htmlFor="image">
+              <label
+                className="text-accent-blue cursor-pointer"
+                htmlFor="image"
+              >
                 <input
                   type="file"
                   accept="image/*"
