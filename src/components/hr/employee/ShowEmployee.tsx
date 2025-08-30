@@ -1,6 +1,5 @@
 "use client";
 
-import LeaveCard from "@/global/leave/LeaveCard";
 import OnboardingCard from "@/global/onboarding/OnboardingCard";
 import PerformanceReviewCard from "@/global/performance/PerformanceReviewCard";
 import TrainingCard from "@/global/training/TrainingCard";
@@ -138,25 +137,12 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
     );
   });
 
-  const mappedLeaveBalances = leaveBalances.map((leave, index) => {
-    const createdBy = leave.created_by === user?.current;
-
-    return (
-      <LeaveCard
-        key={index}
-        createdBy={createdBy}
-        role="employee" // set role as employee for the card view
-        //
-        type={leave.type}
-        description={leave.description}
-        balance={leave.balance}
-        //
-        email={leave.email}
-        first_name={leave.first_name}
-        last_name={leave.last_name}
-        user_id={leave.user_id}
-      />
-    );
+  const mappedLeaveBalances = leaveBalances.map((leave) => {
+    return {
+      leave_type: leave.type,
+      description: leave.description,
+      balance: leave.balance,
+    };
   });
 
   const mappedLeaveRequests = leaveRequests.map((leave) => {
@@ -272,7 +258,7 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
         />
       ) : null}
 
-      <div className="w-full my-auto h-full max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
+      <div className="w-full my-auto h-full max-w-(--breakpoint-l-l) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-purple rounded-t-lg font-bold text-neutral-100">
           {props.label ?? "Employee Details"}
           <button
@@ -325,7 +311,7 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
 
           {/* onboardings */}
           <div className="w-full flex flex-col items-center justify-center gap-4 p-2 rounded-md bg-white t:p-4">
-            <div className="w-full p-2 rounded-md bg-accent-purple text-center text-neutral-100 font-bold">
+            <div className="w-full p-2 rounded-md bg-accent-purple text-center text-neutral-100 font-medium">
               Onboardings
             </div>
             {onboardings.length ? (
@@ -339,12 +325,16 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
 
           {/* leave balances */}
           <div className="w-full flex flex-col items-center justify-center gap-4 p-2 bg-white rounded-md t:p-4">
-            <div className="w-full p-2 rounded-md bg-accent-purple font-bold text-neutral-100 text-center">
+            <div className="w-full p-2 rounded-md bg-accent-purple font-medium text-neutral-100 text-center">
               Leave Balances
             </div>
             {leaveBalances.length ? (
-              <div className="w-full grid grid-cols-1 t:grid-cols-2 gap-4">
-                {mappedLeaveBalances}
+              <div className="w-full overflow-x-auto">
+                <Table
+                  color="neutral"
+                  contents={mappedLeaveBalances}
+                  headers={["Leave Type", "Description", "Balance"]}
+                />
               </div>
             ) : (
               <div>No Leaves Found</div>
@@ -353,7 +343,7 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
 
           {/* leave requests */}
           <div className="w-full p-2 flex flex-col items-center justify-start rounded-md bg-white t:p-4 gap-4">
-            <div className="w-full p-2 rounded-md bg-accent-purple text-neutral-100 font-bold text-center">
+            <div className="w-full p-2 rounded-md bg-accent-purple text-neutral-100 font-medium text-center">
               Leave Requests
             </div>
 
@@ -372,7 +362,7 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
 
           {/* performance reviews */}
           <div className="w-full p-2 rounded-md bg-white t:p-4 flex flex-col items-center justify-start gap-4">
-            <div className="w-full p-2 rounded-md bg-accent-purple font-bold text-neutral-100 text-center">
+            <div className="w-full p-2 rounded-md bg-accent-purple font-medium text-neutral-100 text-center">
               Performance Reviews
             </div>
 
@@ -387,7 +377,7 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
 
           {/* trainings */}
           <div className="w-full p-2 rounded-md bg-white t:p-4 flex flex-col items-center justify-start gap-4">
-            <div className="w-full p-2 rounded-md bg-accent-purple text-neutral-100 font-bold text-center">
+            <div className="w-full p-2 rounded-md bg-accent-purple text-neutral-100 font-medium text-center">
               Trainings
             </div>
             {trainings.length ? (

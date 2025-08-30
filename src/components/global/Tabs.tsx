@@ -1,23 +1,24 @@
+import Link from "next/link";
 import React from "react";
 
 const Tabs: React.FC<{
   tabs: string[];
+  path: string;
   activeTab: string;
-  handleActiveTab: (tab: string) => void;
 }> = (props) => {
   const mappedTabs = props.tabs.map((tab, index) => {
     return (
-      <button
+      <Link
         key={index}
-        onClick={() => props.handleActiveTab(tab)}
-        className={`w-full p-2 border-b-2 capitalize text-sm ${
+        href={`${props.path}?tab=${tab}`}
+        className={`w-full p-2 border-b-2 capitalize text-sm text-center ${
           props.activeTab === tab
             ? "text-accent-blue font-bold border-b-accent-blue"
             : ""
         }`}
       >
         {tab}
-      </button>
+      </Link>
     );
   });
 

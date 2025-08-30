@@ -16,8 +16,8 @@ import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import {
   LeaveBalanceInterface,
-  LeaveTypeInterface,
   LeaveRequestInterface,
+  LeaveTypeInterface,
 } from "@/src/interface/LeaveInterface";
 import {
   EmployeeOnboardingInterface,
@@ -54,6 +54,7 @@ import axios, { AxiosError } from "axios";
 
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import { usePathname, useSearchParams } from "next/navigation";
 import React from "react";
 import { IoCheckmark, IoClose, IoWarning } from "react-icons/io5";
 
@@ -116,7 +117,6 @@ const HREmployee = () => {
   const { toasts, addToast, clearToast } = useToasts();
 
   const {
-    search,
     canSeeSearchDropDown,
     debounceSearch,
     handleSearch,
@@ -143,6 +143,10 @@ const HREmployee = () => {
   const { data } = useSession({ required: true });
   const user = data?.user;
 
+  const params = useSearchParams();
+  const currentPath = usePathname();
+  const tab = params?.get("tab");
+
   const handleActiveEmployeeMenu = (id: number) => {
     return setActiveUserMenu((prev) => (prev === id ? 0 : id));
   };
@@ -155,222 +159,60 @@ const HREmployee = () => {
     setRespondToLeaveRequest({ id, approved });
   };
 
-  // set filters
-  const handleActiveTab = (tab: string) => {
-    if (tab === activeTab) return;
-
-    setActiveTab(tab);
-
-    switch (tab) {
-      case "employees":
-        handleSelectSort("first_name", "First Name");
-        handleSelectCategory("verified", "all");
-        break;
-      case "onboardings":
-        handleSelectSort("created_at", "Assigned On");
-        handleSelectCategory("status", "all");
-        break;
-      case "leaves":
-        handleSelectSort("start_date", "Start Date");
-        handleSelectCategory("status", "all");
-        break;
-      case "performances":
-        handleSelectSort("created_at", "Assigned On");
-        handleSelectCategory("status", "all");
-        break;
-      case "trainings":
-        handleSelectSort("deadline", "Deadline");
-        handleSelectCategory("status", "all");
-        break;
-    }
-  };
-
   const sendMail = (email: string) => {
     window.location.href = `mailto:${email}`;
   };
 
-  const getAllEmployees = React.useCallback(async () => {
-    try {
-      handleIsLoading(true);
+  const getEmployeeData = React.useCallback(
+    async (tab: string) => {
+      try {
+        handleIsLoading(true);
 
-      if (user?.token) {
-        const { data: responseData } = await axios.get(`${url}/hr/employee`, {
-          headers: {
-            Authorization: `Bearer ${user?.token}`,
-          },
-          withCredentials: true,
-          params: { ...search, ...sort, ...category, tab: "employees" },
-        });
+        if (user?.token) {
+          const { data: responseData } = await axios.get(`${url}/hr/employee`, {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+            params: { tab },
+            withCredentials: true,
+          });
 
-        if (responseData.employees) {
-          setEmployees(responseData.employees);
+          if (responseData[tab]) {
+            switch (tab) {
+              case "employees":
+                setEmployees(responseData[tab]);
+                break;
+              case "onboardings":
+                setOnboardings(responseData[tab]);
+                break;
+              case "leaves":
+                setLeaves(responseData[tab]);
+                break;
+              case "performances":
+                setPerformances(responseData[tab]);
+                break;
+              case "trainings":
+                setTrainings(responseData[tab]);
+                break;
+            }
+          }
         }
-      }
-    } catch (error) {
-      let message = "An error occurred when getting the employees.";
+      } catch (error) {
+        console.log(error);
 
-      if (error instanceof AxiosError) {
-        message = error?.response?.data.message ?? error.message;
-      }
+        let message = "An error occurred when fetching the trainings.";
 
-      addToast("Something went wrong", message, "error");
-    } finally {
-      handleIsLoading(false);
-    }
-  }, [url, user?.token, search, sort, category, handleIsLoading, addToast]);
-
-  const getEmployeeOnboardings = React.useCallback(async () => {
-    try {
-      handleIsLoading(true);
-
-      if (user?.token) {
-        const { data: responseData } = await axios.get(`${url}/hr/employee`, {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-          params: { ...search, ...sort, ...category, tab: "onboardings" },
-          withCredentials: true,
-        });
-
-        if (responseData.onboardings) {
-          setOnboardings(responseData.onboardings);
+        if (error instanceof AxiosError) {
+          message = error.response?.data.message ?? error.message;
         }
+
+        addToast("Something went wrong", message, "error", 5000);
+      } finally {
+        handleIsLoading(false);
       }
-    } catch (error) {
-      console.log(error);
-
-      let message = "An error occurred when getting the onboardings.";
-
-      if (error instanceof AxiosError) {
-        message = error.response?.data.message ?? error.message;
-      }
-
-      addToast("Something went wrong", message, "error");
-    } finally {
-      handleIsLoading(false);
-    }
-  }, [url, user?.token, search, sort, category, addToast, handleIsLoading]);
-
-  const getEmployeeLeaves = React.useCallback(async () => {
-    try {
-      handleIsLoading(true);
-
-      if (user?.token) {
-        const { data: responseData } = await axios.get(`${url}/hr/employee`, {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-          params: { ...search, ...sort, ...category, tab: "leaves" },
-          withCredentials: true,
-        });
-
-        if (responseData.leaves) {
-          setLeaves(responseData.leaves);
-        }
-      }
-    } catch (error) {
-      console.log(error);
-
-      let message = "An error occurred when getting the employee leaves";
-
-      if (error instanceof AxiosError) {
-        message = error.response?.data.message ?? error.message;
-      }
-
-      addToast("Something went wrong", message, "error");
-    } finally {
-      handleIsLoading(false);
-    }
-  }, [url, user?.token, search, sort, category, handleIsLoading, addToast]);
-
-  const getEmployeePerformances = React.useCallback(async () => {
-    try {
-      handleIsLoading(true);
-
-      if (user?.token) {
-        const { data: responseData } = await axios.get(`${url}/hr/employee`, {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-          params: { ...search, ...sort, ...category, tab: "performances" },
-          withCredentials: true,
-        });
-
-        if (responseData.performances) {
-          setPerformances(responseData.performances);
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      handleIsLoading(false);
-    }
-  }, [url, user?.token, search, sort, category, handleIsLoading]);
-
-  const getEmployeeTrainings = React.useCallback(async () => {
-    try {
-      handleIsLoading(true);
-
-      if (user?.token) {
-        const { data: responseData } = await axios.get(`${url}/hr/employee`, {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-          params: { ...search, ...sort, ...category, tab: "trainings" },
-          withCredentials: true,
-        });
-
-        if (responseData.trainings) {
-          setTrainings(responseData.trainings);
-        }
-      }
-    } catch (error) {
-      console.log(error);
-
-      let message = "An error occurred when fetching the trainings.";
-
-      if (error instanceof AxiosError) {
-        message = error.response?.data.message ?? error.message;
-      }
-
-      addToast("Something went wrong", message, "error", 5000);
-    } finally {
-      handleIsLoading(false);
-    }
-  }, [url, user?.token, search, sort, category, handleIsLoading, addToast]);
-
-  // main anchor of getting page data when the active tab changes
-  const getPageData = React.useCallback(async () => {
-    try {
-      switch (activeTab) {
-        case "employees":
-          await getAllEmployees();
-          break;
-        case "onboardings":
-          await getEmployeeOnboardings();
-          break;
-        case "leaves":
-          await getEmployeeLeaves();
-          break;
-        case "performances":
-          await getEmployeePerformances();
-          break;
-        case "trainings":
-          await getEmployeeTrainings();
-        default:
-          break;
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [
-    activeTab,
-    getAllEmployees,
-    getEmployeeOnboardings,
-    getEmployeeLeaves,
-    getEmployeePerformances,
-    getEmployeeTrainings,
-  ]);
+    },
+    [url, user?.token, handleIsLoading, addToast]
+  );
 
   const handleLeaveRequestStatus = async (approved: boolean) => {
     try {
@@ -391,7 +233,7 @@ const HREmployee = () => {
 
         if (responseData.success) {
           handleRespondToLeaveRequest(0, false);
-          await getEmployeeLeaves();
+          await getEmployeeData("leaves");
         }
       }
     } catch (error) {
@@ -407,6 +249,8 @@ const HREmployee = () => {
       addToast("Something went wrong", message, "error");
     }
   };
+
+  console.log(employees);
 
   const mappedEmployees = employees?.map((employee, index) => {
     const activeMenu = activeUserMenu === employee.user_id;
@@ -624,8 +468,12 @@ const HREmployee = () => {
   });
 
   React.useEffect(() => {
-    getPageData();
-  }, [getPageData]);
+    getEmployeeData(activeTab);
+  }, [getEmployeeData, activeTab]);
+
+  React.useEffect(() => {
+    setActiveTab(tab ?? "employees");
+  }, [setActiveTab, tab]);
 
   return (
     <div className="w-full min-h-full h-auto flex flex-col items-center justify-start">
@@ -658,8 +506,8 @@ const HREmployee = () => {
 
       <div className="gap-4 t:gap-8 w-full min-h-full h-auto flex flex-col items-start justify-start max-w-(--breakpoint-l-l) p-2 t:p-4">
         <Tabs
-          activeTab={activeTab}
-          handleActiveTab={handleActiveTab}
+          activeTab={tab ?? "employees"}
+          path={currentPath ?? ""}
           tabs={[
             "employees",
             "onboardings",

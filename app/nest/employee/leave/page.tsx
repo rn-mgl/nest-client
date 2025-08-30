@@ -24,6 +24,7 @@ import {
 } from "@/src/utils/filters";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import { usePathname, useSearchParams } from "next/navigation";
 import React from "react";
 import { IoPencil, IoTrash } from "react-icons/io5";
 
@@ -42,6 +43,10 @@ const Leave = () => {
   const { data: session } = useSession({ required: true });
   const user = session?.user;
   const url = process.env.URL;
+
+  const currentPath = usePathname();
+  const params = useSearchParams();
+  const tab = params?.get("tab");
 
   const sortFilter = {
     balances: EMPLOYEE_LEAVE_BALANCE_SORT,
@@ -75,23 +80,6 @@ const Leave = () => {
     handleCanSeeCategoryDropDown,
     handleSelectCategory,
   } = useCategory("status", "all");
-
-  const handleActiveTab = (tab: string) => {
-    if (tab === activeTab) {
-      return;
-    }
-
-    setActiveTab(tab);
-
-    switch (tab) {
-      case "balances":
-        handleSelectSort("type", "Leave Type");
-        break;
-      case "requests":
-        handleSelectSort("created_at", "Requested At");
-        break;
-    }
-  };
 
   const getLeaveBalances = React.useCallback(async () => {
     try {
@@ -139,20 +127,23 @@ const Leave = () => {
     }
   }, [url, user?.token, search, sort, category]);
 
-  const getPageData = React.useCallback(async () => {
-    try {
-      switch (activeTab) {
-        case "balances":
-          getLeaveBalances();
-          break;
-        case "requests":
-          getLeaveRequests();
-          break;
+  const getPageData = React.useCallback(
+    async (tab: string) => {
+      try {
+        switch (tab) {
+          case "balances":
+            getLeaveBalances();
+            break;
+          case "requests":
+            getLeaveRequests();
+            break;
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [activeTab, getLeaveBalances, getLeaveRequests]);
+    },
+    [getLeaveBalances, getLeaveRequests]
+  );
 
   const handleSelectedLeaveRequest = (leave_type_id: number) => {
     setSelectedLeaveRequest((prev) =>
@@ -230,8 +221,12 @@ const Leave = () => {
   });
 
   React.useEffect(() => {
-    getPageData();
-  }, [getPageData]);
+    getPageData(activeTab);
+  }, [getPageData, activeTab]);
+
+  React.useEffect(() => {
+    setActiveTab(tab ?? "balances");
+  }, [setActiveTab, tab]);
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
@@ -264,7 +259,7 @@ const Leave = () => {
       <div className="w-full h-auto flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2 t:p-4 gap-4 t:gap-8">
         <Tabs
           activeTab={activeTab}
-          handleActiveTab={handleActiveTab}
+          path={currentPath ?? ""}
           tabs={["balances", "requests"]}
         />
 

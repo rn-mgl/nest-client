@@ -35,6 +35,7 @@ import EditLeaveRequest from "@/src/components/global/leave/EditLeaveRequest";
 import LeaveBalanceCard from "@/src/components/global/leave/LeaveBalanceCard";
 import LeaveRequestForm from "@/src/components/global/leave/LeaveRequestForm";
 import useCategory from "@/src/hooks/useCategory";
+import { usePathname, useSearchParams } from "next/navigation";
 
 const HRLeave = () => {
   const [canCreateLeaveType, setCanCreateLeaveType] = React.useState(false);
@@ -99,6 +100,10 @@ const HRLeave = () => {
   const url = process.env.URL;
   const user = data?.user;
 
+  const currentPath = usePathname();
+  const params = useSearchParams();
+  const tab = params?.get("tab");
+
   const handleActiveLeaveTypeMenu = (id: number) => {
     setActiveLeaveTypeMenu((prev) => (prev === id ? 0 : id));
   };
@@ -121,26 +126,6 @@ const HRLeave = () => {
 
   const handleCanDeleteLeaveRequest = (id: number) => {
     setCanDeleteLeaveRequest((prev) => (prev === id ? 0 : id));
-  };
-
-  const handleActiveTab = (tab: string) => {
-    if (tab === activeTab) return;
-
-    setActiveTab(tab);
-
-    switch (tab) {
-      case "types":
-        handleSelectSearch("type", "Leave Type");
-        handleSelectSort("type", "Leave Type");
-        break;
-      case "balances":
-        handleSelectSort("balance", "Balance");
-        break;
-      case "requests":
-        handleSelectSearch("type", "Leave Type");
-        handleSelectSort("created_at", "Requested At");
-        break;
-    }
   };
 
   const handleCanCreateLeaveType = () => {
@@ -217,19 +202,22 @@ const HRLeave = () => {
     }
   }, [url, user?.token, search, sort, category]);
 
-  const getPageData = React.useCallback(async () => {
-    switch (activeTab) {
-      case "types":
-        getLeaveTypes();
-        break;
-      case "balances":
-        getLeaveBalances();
-        break;
-      case "requests":
-        getLeaveRequest();
-        break;
-    }
-  }, [activeTab, getLeaveTypes, getLeaveBalances, getLeaveRequest]);
+  const getPageData = React.useCallback(
+    async (tab: string) => {
+      switch (tab) {
+        case "types":
+          getLeaveTypes();
+          break;
+        case "balances":
+          getLeaveBalances();
+          break;
+        case "requests":
+          getLeaveRequest();
+          break;
+      }
+    },
+    [getLeaveTypes, getLeaveBalances, getLeaveRequest]
+  );
 
   const mappedLeaves = leaveTypes.map((leave, index) => {
     const leaveId = leave.leave_type_id as number; // leave ids in this page have leaveids (from db)
@@ -324,8 +312,12 @@ const HRLeave = () => {
   });
 
   React.useEffect(() => {
-    getPageData();
-  }, [getPageData]);
+    getPageData(activeTab);
+  }, [getPageData, activeTab]);
+
+  React.useEffect(() => {
+    setActiveTab(tab ?? "types");
+  }, [setActiveTab, tab]);
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
@@ -392,7 +384,7 @@ const HRLeave = () => {
       >
         <Tabs
           activeTab={activeTab}
-          handleActiveTab={handleActiveTab}
+          path={currentPath ?? ""}
           tabs={["types", "balances", "requests"]}
         />
 

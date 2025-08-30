@@ -65,7 +65,7 @@ const Table: React.FC<TableInterface> = (props) => {
         </div>
       ) : (
         <div className="p-4 border-b-1 border-l-1 border-r-1 w-full rounded-b-md text-center text-neutral-400 italic select-none">
-          <p>No rows found</p>
+          <p>No records found</p>
         </div>
       )}
     </div>
