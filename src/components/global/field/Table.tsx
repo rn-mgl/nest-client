@@ -64,7 +64,7 @@ const Table: React.FC<TableInterface> = (props) => {
           {mappedRows}
         </div>
       ) : (
-        <div className="p-4 border-b-1 border-l-1 border-r-1 w-full rounded-b-md text-center text-neutral-400 italic select-none">
+        <div className="min-w-(--breakpoint-t) p-4 border-b-1 border-l-1 border-r-1 w-full rounded-b-md text-center text-neutral-400 italic select-none">
           <p>No records found</p>
         </div>
       )}
