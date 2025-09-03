@@ -5,6 +5,7 @@ import Input from "@/src/components/form/Input";
 import Select from "@/src/components/form/Select";
 import Toasts from "@/src/components/global/popup/Toasts";
 import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import { AttendanceInterface } from "@/src/interface/AttendanceInterface";
 import axios from "axios";
 
@@ -21,6 +22,7 @@ const Attendance = () => {
   const [activeDate, setActiveDate] = React.useState(new Date().getDate());
   const [activeYear, setActiveYear] = React.useState(new Date().getFullYear());
   const [activeSelect, setActiveSelect] = React.useState(false);
+
   const [attendance, setAttendance] = React.useState<AttendanceInterface>({
     absent: false,
     late: false,
@@ -29,23 +31,25 @@ const Attendance = () => {
   });
 
   const { toasts, clearToast } = useToasts();
+  const { isLoading, handleIsLoading } = useIsLoading(true);
 
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
   const currentDate = new Date().getDate();
 
-  const activeEqualToCurrentDate =
+  const activeDateEqualToCurrentDate =
     currentDate === activeDate &&
     currentMonth === activeMonth.value &&
     currentYear === activeYear;
 
-  const activeGreaterThanCurrentDate =
-    currentDate < activeDate ||
-    currentMonth < activeMonth.value ||
-    currentYear < activeYear;
+  const activeDateGreaterThanCurrentDate =
+    (activeDate > currentDate &&
+      (activeMonth.value >= currentMonth || activeYear >= currentYear)) ||
+    activeMonth.value > currentMonth ||
+    activeYear > currentYear;
 
-  const { data } = useSession({ required: true });
-  const user = data?.user;
+  const { data: session } = useSession({ required: true });
+  const user = session?.user;
   const url = process.env.URL;
 
   const daysOfTheWeek = ["S", "M", "T", "W", "T", "F", "S"];
@@ -157,13 +161,15 @@ const Attendance = () => {
   });
 
   const getAttendance = React.useCallback(async () => {
-    if (activeGreaterThanCurrentDate) return;
+    if (activeDateGreaterThanCurrentDate) return;
+
+    handleIsLoading(true);
 
     try {
       const stringDate = `${activeYear}-${activeMonth.value + 1}-${activeDate}`;
 
       if (user?.token) {
-        const { data: attendance } = await axios.get(
+        const { data: responseData } = await axios.get(
           `${url}/employee/attendance/${stringDate}`,
           {
             headers: {
@@ -173,12 +179,14 @@ const Attendance = () => {
           }
         );
 
-        if (attendance.attendance) {
-          setAttendance(attendance.attendance);
+        if (responseData.attendance) {
+          setAttendance(responseData.attendance);
         }
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      handleIsLoading(false);
     }
   }, [
     url,
@@ -186,7 +194,8 @@ const Attendance = () => {
     activeYear,
     activeMonth,
     activeDate,
-    activeGreaterThanCurrentDate,
+    activeDateGreaterThanCurrentDate,
+    handleIsLoading,
   ]);
 
   React.useEffect(() => {
@@ -240,7 +249,8 @@ const Attendance = () => {
             />
           </div>
 
-          {activeEqualToCurrentDate &&
+          {activeDateEqualToCurrentDate &&
+            !isLoading &&
             (!attendance.login_time ? (
               <button
                 onClick={handleCanLog}
