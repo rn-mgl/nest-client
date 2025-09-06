@@ -4,11 +4,11 @@ import Table from "@/src/components/global/field/Table";
 import Filter from "@/src/components/global/filter/Filter";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import Alert from "@/src/components/global/popup/Alert";
-import Toasts from "@/src/components/global/popup/Toasts";
 import Tabs from "@/src/components/global/Tabs";
 import EmployeeCard from "@/src/components/hr/employee/EmployeeCard";
 import ShowEmployee from "@/src/components/hr/employee/ShowEmployee";
 import { useToasts } from "@/src/context/ToastContext";
+import useAlert from "@/src/hooks/useAlert";
 import useCategory from "@/src/hooks/useCategory";
 import useIsLoading from "@/src/hooks/useIsLoading";
 
@@ -80,13 +80,6 @@ const HREmployee = () => {
   const [activeUserMenu, setActiveUserMenu] = React.useState(0);
   const [activeEmployeeSeeMore, setActiveEmployeeSeeMore] = React.useState(0);
   const [activeTab, setActiveTab] = React.useState("employees");
-  const [respondToLeaveRequest, setRespondToLeaveRequest] = React.useState<{
-    id: number;
-    approved: boolean;
-  }>({
-    id: 0,
-    approved: false,
-  });
 
   const searchFilters = {
     employees: HR_EMPLOYEE_SEARCH,
@@ -115,6 +108,10 @@ const HREmployee = () => {
   const { isLoading, handleIsLoading } = useIsLoading(true);
 
   const { addToast } = useToasts();
+
+  const { confirmAction, handleConfirmAction } = useAlert<
+    "approve" | "reject"
+  >();
 
   const {
     canSeeSearchDropDown,
@@ -153,10 +150,6 @@ const HREmployee = () => {
 
   const handleActiveEmployeeSeeMore = (id: number) => {
     setActiveEmployeeSeeMore((prev) => (prev === id ? 0 : id));
-  };
-
-  const handleRespondToLeaveRequest = (id: number, approved: boolean) => {
-    setRespondToLeaveRequest({ id, approved });
   };
 
   const sendMail = (email: string) => {
@@ -214,13 +207,16 @@ const HREmployee = () => {
     [url, user?.token, handleIsLoading, addToast]
   );
 
-  const handleLeaveRequestStatus = async (approved: boolean) => {
+  const handleLeaveRequestStatus = async (
+    leaveRequestId: number,
+    approved: boolean
+  ) => {
     try {
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
         const { data: responseData } = await axios.patch(
-          `${url}/hr/employee_leave_request/${respondToLeaveRequest.id}`,
+          `${url}/hr/employee_leave_request/${leaveRequestId}`,
           { approved },
           {
             headers: {
@@ -232,7 +228,6 @@ const HREmployee = () => {
         );
 
         if (responseData.success) {
-          handleRespondToLeaveRequest(0, false);
           await getEmployeeData("leaves");
         }
       }
@@ -357,7 +352,7 @@ const HREmployee = () => {
         <div className="w-full flex flex-row flex-wrap items-center justify-start gap-2">
           <button
             onClick={() =>
-              handleRespondToLeaveRequest(leave.leave_request_id ?? 0, true)
+              handleConfirmAction(leave.leave_request_id ?? 0, "approve")
             }
             className="bg-accent-blue p-2 rounded-md text-accent-yellow font-bold w-full flex items-center justify-center l-l:w-fit"
           >
@@ -367,7 +362,7 @@ const HREmployee = () => {
           </button>
           <button
             onClick={() =>
-              handleRespondToLeaveRequest(leave.leave_request_id ?? 0, false)
+              handleConfirmAction(leave.leave_request_id ?? 0, "reject")
             }
             className="bg-red-600 p-2 rounded-md text-neutral-100 font-bold w-full flex items-center justify-center l-l:w-fit"
           >
@@ -482,18 +477,17 @@ const HREmployee = () => {
         />
       ) : null}
 
-      {respondToLeaveRequest.id ? (
+      {confirmAction.id ? (
         <Alert
-          title={`${
-            respondToLeaveRequest.approved ? "Approve" : "Reject"
-          } Leave?`}
-          body={`Are you sure you want to ${
-            respondToLeaveRequest.approved ? "approve" : "reject"
-          } this leave request?`}
-          confirmAlert={() =>
-            handleLeaveRequestStatus(respondToLeaveRequest.approved)
+          title={`${confirmAction.action} Leave?`}
+          body={`Are you sure you want to ${confirmAction.action} this leave request?`}
+          approveAlert={() =>
+            handleLeaveRequestStatus(
+              confirmAction.id,
+              confirmAction.action === "approve"
+            )
           }
-          toggleAlert={() => handleRespondToLeaveRequest(0, false)}
+          cancelAlert={() => handleConfirmAction(0)}
           icon={<IoWarning />}
         />
       ) : null}

@@ -15,20 +15,23 @@ const Alert: React.FC<AlertInterface> = (props) => {
                 {props.icon}
               </div>
             ) : null}
-            <p className="font-bold text-xl">{props.title}</p>
+            <p className="font-bold text-xl capitalize">{props.title}</p>
             <p className="text-sm">{props.body}</p>
           </div>
 
           <div className="w-full flex flex-row items-center justify-center gap-2 mt-2">
             <button
-              onClick={props.toggleAlert}
+              onClick={props.cancelAlert}
               className="w-full max-w-40 p-2 rounded-md bg-red-600 font-bold text-neutral-100"
             >
               No
             </button>
 
             <button
-              onClick={props.confirmAlert}
+              onClick={() => {
+                props.approveAlert();
+                props.cancelAlert();
+              }}
               className="w-full max-w-40 p-2 rounded-md bg-accent-blue font-bold text-neutral-100"
             >
               Yes

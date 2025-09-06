@@ -4,6 +4,7 @@ import CreateHR from "@/src/components/admin/hr/CreateHR";
 import Filter from "@/src/components/global/filter/Filter";
 import Alert from "@/src/components/global/popup/Alert";
 import { useToasts } from "@/src/context/ToastContext";
+import useAlert from "@/src/hooks/useAlert";
 import useCategory from "@/src/hooks/useCategory";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
@@ -30,13 +31,8 @@ const AdminHR = () => {
   const [hrs, setHrs] = React.useState<UserInterface[]>([]);
   const [canCreateHR, setCanCreateHR] = React.useState(false);
   const [activeMenu, setActiveMenu] = React.useState(0);
-  const [respondToVerification, setRespondToVerification] = React.useState<{
-    id: number;
-    verified: boolean;
-  }>({ id: 0, verified: false });
 
   const {
-    search,
     canSeeSearchDropDown,
     debounceSearch,
     handleSearch,
@@ -60,6 +56,9 @@ const AdminHR = () => {
   } = useCategory("verified", "all");
 
   const { addToast } = useToasts();
+  const { confirmAction, handleConfirmAction } = useAlert<
+    "verify" | "deactivate"
+  >();
 
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -71,14 +70,6 @@ const AdminHR = () => {
 
   const handleActiveMenu = (id: number) => {
     setActiveMenu((prev) => (prev === id ? 0 : id));
-  };
-
-  const handleRespondToVerification = (
-    id: number,
-    action: "verify" | "deactivate"
-  ) => {
-    console.log(action);
-    setRespondToVerification({ id, verified: action === "verify" });
   };
 
   const sendMail = (email: string) => {
@@ -122,11 +113,12 @@ const AdminHR = () => {
         );
 
         if (responseData.success) {
-          addToast(
-            `HR ${toggle ? "Verified" : "Deactivated"}`,
-            `Successfully ${toggle ? "verified" : "deactivated"} HR`,
-            "success"
-          );
+          const subject = `HR ${toggle ? "Verified" : "Deactivated"}`;
+          const body = `Successfully ${toggle ? "verified" : "deactivated"} HR`;
+          const toastType = "success";
+
+          addToast(subject, body, toastType);
+
           await getAllHRs();
         }
       }
@@ -185,7 +177,7 @@ const AdminHR = () => {
 
             <button
               onClick={() =>
-                handleRespondToVerification(
+                handleConfirmAction(
                   hr.id,
                   hr.email_verified_at ? "deactivate" : "verify"
                 )
@@ -218,22 +210,17 @@ const AdminHR = () => {
         <CreateHR toggleModal={handleCanCreateHR} refetchIndex={getAllHRs} />
       ) : null}
 
-      {activeMenu && respondToVerification.id ? (
+      {activeMenu && confirmAction.id ? (
         <Alert
-          title={`${
-            respondToVerification.verified ? "Verify" : "Deactivate"
-          } HR?`}
-          body={`Are you sure you want to ${
-            respondToVerification.verified ? "verify" : "deactivate"
-          } this HR?`}
-          confirmAlert={() => {
+          title={`${confirmAction.action} HR?`}
+          body={`Are you sure you want to ${confirmAction.action} this HR?`}
+          approveAlert={() => {
             toggleVerification(
-              respondToVerification.id,
-              respondToVerification.verified
+              confirmAction.id,
+              confirmAction.action === "verify"
             );
-            handleRespondToVerification(0, "deactivate");
           }}
-          toggleAlert={() => handleRespondToVerification(0, "deactivate")}
+          cancelAlert={() => handleConfirmAction(0)}
         />
       ) : null}
 
