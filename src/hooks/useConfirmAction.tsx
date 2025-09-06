@@ -10,5 +10,9 @@ export default function useConfirmAction<T>() {
     setConfirmAction({ id, action });
   };
 
-  return { confirmAction, handleConfirmAction };
+  const cancelAction = () => {
+    setConfirmAction({ id: 0 });
+  };
+
+  return { confirmAction, handleConfirmAction, cancelAction };
 }

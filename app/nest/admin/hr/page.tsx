@@ -56,7 +56,7 @@ const AdminHR = () => {
   } = useCategory("verified", "all");
 
   const { addToast } = useToasts();
-  const { confirmAction, handleConfirmAction } = useConfirmAction<
+  const { confirmAction, handleConfirmAction, cancelAction } = useConfirmAction<
     "verify" | "deactivate"
   >();
 
@@ -220,7 +220,7 @@ const AdminHR = () => {
               confirmAction.action === "verify"
             );
           }}
-          cancelAlert={() => handleConfirmAction(0)}
+          cancelAlert={cancelAction}
         />
       ) : null}
 

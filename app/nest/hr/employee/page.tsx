@@ -109,7 +109,7 @@ const HREmployee = () => {
 
   const { addToast } = useToasts();
 
-  const { confirmAction, handleConfirmAction } = useConfirmAction<
+  const { confirmAction, handleConfirmAction, cancelAction } = useConfirmAction<
     "approve" | "reject"
   >();
 
@@ -234,12 +234,10 @@ const HREmployee = () => {
     } catch (error) {
       console.log(error);
 
-      let message =
-        "An error occurred when try to respond to the leave request";
-
-      if (error instanceof AxiosError) {
-        message = error.response?.data.message ?? error.message;
-      }
+      const message =
+        error instanceof AxiosError
+          ? error.response?.data.message ?? error.message
+          : "An error occurred";
 
       addToast("Something went wrong", message, "error");
     }
@@ -487,7 +485,7 @@ const HREmployee = () => {
               confirmAction.action === "approve"
             )
           }
-          cancelAlert={() => handleConfirmAction(0)}
+          cancelAlert={cancelAction}
           icon={<IoWarning />}
         />
       ) : null}
