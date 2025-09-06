@@ -158,14 +158,17 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
     e.preventDefault();
 
     const formData = new FormData();
+    
     const certificate =
       training.certificate && typeof training.certificate === "object"
         ? training.certificate.rawFile
         : "";
-    formData.append("title", training.title);
-    formData.append("description", training.description);
-    formData.append("deadline_days", training.deadline_days.toString());
-    formData.append("certificate", certificate);
+
+    formData.set("title", training.title);
+    formData.set("description", training.description);
+    formData.set("deadline_days", training.deadline_days.toString());
+    formData.set("certificate", certificate);
+
     fields.forEach((content, index) => {
       // ensure training content is using string value for content kvp
       const trainingContent = {
@@ -181,8 +184,9 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
           : "";
 
       formData.append(`contents[${index}]`, JSON.stringify(trainingContent));
-      formData.append(`contentFile[${index}]`, trainingFile);
+      formData.append(`content_file[${index}]`, trainingFile);
     });
+
     reviews.forEach((review, index) => {
       formData.append(`reviews[${index}]`, JSON.stringify(review));
     });

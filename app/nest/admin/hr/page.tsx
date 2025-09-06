@@ -1,8 +1,10 @@
 "use client";
+
 import CreateHR from "@/src/components/admin/hr/CreateHR";
 import Filter from "@/src/components/global/filter/Filter";
+import Alert from "@/src/components/global/popup/Alert";
+import { useToasts } from "@/src/context/ToastContext";
 import useCategory from "@/src/hooks/useCategory";
-
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { UserInterface } from "@/src/interface/UserInterface";
@@ -13,7 +15,6 @@ import {
 } from "@/src/utils/filters";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-
 import { useSession } from "next-auth/react";
 import React from "react";
 import {
@@ -26,9 +27,13 @@ import {
 } from "react-icons/io5";
 
 const AdminHR = () => {
-  const [hrs, setHrs] = React.useState<Array<UserInterface>>();
+  const [hrs, setHrs] = React.useState<UserInterface[]>([]);
   const [canCreateHR, setCanCreateHR] = React.useState(false);
-  const [activeHRMenu, setActiveHRMenu] = React.useState(0);
+  const [activeMenu, setActiveMenu] = React.useState(0);
+  const [respondToVerification, setRespondToVerification] = React.useState<{
+    id: number;
+    verified: boolean;
+  }>({ id: 0, verified: false });
 
   const {
     search,
@@ -38,6 +43,7 @@ const AdminHR = () => {
     handleCanSeeSearchDropDown,
     handleSelectSearch,
   } = useSearch("first_name", "First Name");
+
   const {
     canSeeSortDropDown,
     sort,
@@ -45,12 +51,15 @@ const AdminHR = () => {
     handleSelectSort,
     handleToggleAsc,
   } = useSort("first_name", "First Name");
+
   const {
     canSeeCategoryDropDown,
     category,
     handleCanSeeCategoryDropDown,
     handleSelectCategory,
   } = useCategory("verified", "all");
+
+  const { addToast } = useToasts();
 
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -60,8 +69,16 @@ const AdminHR = () => {
     setCanCreateHR((prev) => !prev);
   };
 
-  const handleActiveHRMenu = (id: number) => {
-    setActiveHRMenu((prev) => (prev === id ? 0 : id));
+  const handleActiveMenu = (id: number) => {
+    setActiveMenu((prev) => (prev === id ? 0 : id));
+  };
+
+  const handleRespondToVerification = (
+    id: number,
+    action: "verify" | "deactivate"
+  ) => {
+    console.log(action);
+    setRespondToVerification({ id, verified: action === "verify" });
   };
 
   const sendMail = (email: string) => {
@@ -77,11 +94,6 @@ const AdminHR = () => {
           headers: {
             Authorization: `Bearer ${user?.token}`,
           },
-          params: {
-            ...category,
-            ...sort,
-            ...search,
-          },
           withCredentials: true,
         });
 
@@ -90,27 +102,32 @@ const AdminHR = () => {
     } catch (error) {
       console.log(error);
     }
-  }, [url, user?.token, category, sort, search]);
+  }, [url, user?.token]);
 
-  const verifyHR = async (id: number) => {
+  const toggleVerification = async (id: number, toggle: boolean) => {
     try {
       const { token } = await getCSRFToken();
 
-      if (token) {
-        const { data: verified } = await axios.patch(
+      if (token && user?.token) {
+        const { data: responseData } = await axios.patch<{ success: boolean }>(
           `${url}/admin/hr/${id}`,
-          { type: "verify" },
+          { toggle },
           {
             headers: {
+              Authorization: `Bearer ${user.token}`,
               "X-CSRF-TOKEN": token,
-              Authorization: `Bearer ${user?.token}`,
             },
             withCredentials: true,
           }
         );
 
-        if (verified.success) {
-          getAllHRs();
+        if (responseData.success) {
+          addToast(
+            `HR ${toggle ? "Verified" : "Deactivated"}`,
+            `Successfully ${toggle ? "verified" : "deactivated"} HR`,
+            "success"
+          );
+          await getAllHRs();
         }
       }
     } catch (error) {
@@ -118,39 +135,14 @@ const AdminHR = () => {
     }
   };
 
-  const deactivateHR = async (id: number) => {
-    try {
-      const { token } = await getCSRFToken();
-
-      if (token) {
-        const { data: deactivated } = await axios.patch(
-          `${url}/admin/hr/${id}`,
-          { type: "deactivate" },
-          {
-            headers: {
-              "X-CSRF-TOKEN": token,
-              Authorization: `Bearer ${user?.token}`,
-            },
-            withCredentials: true,
-          }
-        );
-
-        if (deactivated.success) {
-          getAllHRs();
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const mappedHRs = hrs?.map((hr) => {
+  const mappedHRs = hrs.map((hr) => {
     return (
       <div
-        key={hr.user_id}
+        key={hr.id}
         className="w-full p-4 rounded-md bg-neutral-100 flex flex-row items-start justify-start gap-4 relative"
       >
         <div className="w-12 h-12 min-w-12 min-h-12 bg-linear-to-b from-accent-yellow to-accent-blue rounded-full"></div>
+
         <div className="flex flex-col items-start justify-center gap-1 w-full overflow-hidden">
           <p
             title={`${hr.first_name} ${hr.last_name} `}
@@ -158,6 +150,7 @@ const AdminHR = () => {
           >
             {hr.first_name} {hr.last_name}
           </p>
+
           <p className="text-xs flex flex-row items-center justify-center gap-1">
             {hr.email_verified_at ? (
               <IoShieldCheckmark
@@ -168,20 +161,19 @@ const AdminHR = () => {
             {hr.email}
           </p>
         </div>
+
         <button
-          onClick={() => handleActiveHRMenu(hr.user_id)}
+          onClick={() => handleActiveMenu(hr.id)}
           className="p-2 text-xs hover:bg-neutral-200 rounded-full transition-all"
         >
           <IoEllipsisVertical
             className={`${
-              activeHRMenu === hr.user_id
-                ? "text-accent-blue"
-                : "text-neutral-900"
+              activeMenu === hr.id ? "text-accent-blue" : "text-neutral-900"
             }`}
           />
         </button>
 
-        {activeHRMenu === hr.user_id ? (
+        {activeMenu === hr.id ? (
           <div className="w-32 p-2 rounded-md top-12 right-6 shadow-md bg-neutral-200 absolute animate-fade z-20">
             <button
               onClick={() => sendMail(hr.email)}
@@ -190,23 +182,26 @@ const AdminHR = () => {
               <IoMail className="text-accent-blue" />
               Mail
             </button>
-            {hr.email_verified_at ? (
-              <button
-                onClick={() => deactivateHR(hr.user_id)}
-                className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
-              >
-                <IoBan className="text-red-600" />
-                Deactivate
-              </button>
-            ) : (
-              <button
-                onClick={() => verifyHR(hr.user_id)}
-                className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
-              >
-                <IoShieldCheckmarkSharp className="text-green-600" />
-                Verify
-              </button>
-            )}
+
+            <button
+              onClick={() =>
+                handleRespondToVerification(
+                  hr.id,
+                  hr.email_verified_at ? "deactivate" : "verify"
+                )
+              }
+              className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
+            >
+              {hr.email_verified_at ? (
+                <>
+                  <IoBan className="text-red-600" /> Deactivate
+                </>
+              ) : (
+                <>
+                  <IoShieldCheckmarkSharp className="text-green-600" /> Verify
+                </>
+              )}
+            </button>
           </div>
         ) : null}
       </div>
@@ -222,6 +217,26 @@ const AdminHR = () => {
       {canCreateHR ? (
         <CreateHR toggleModal={handleCanCreateHR} refetchIndex={getAllHRs} />
       ) : null}
+
+      {activeMenu && respondToVerification.id ? (
+        <Alert
+          title={`${
+            respondToVerification.verified ? "Verify" : "Deactivate"
+          } HR?`}
+          body={`Are you sure you want to ${
+            respondToVerification.verified ? "verify" : "deactivate"
+          } this HR?`}
+          confirmAlert={() => {
+            toggleVerification(
+              respondToVerification.id,
+              respondToVerification.verified
+            );
+            handleRespondToVerification(0, "deactivate");
+          }}
+          toggleAlert={() => handleRespondToVerification(0, "deactivate")}
+        />
+      ) : null}
+
       <div
         className="w-full h-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2
                   t:items-start t:p-4 gap-4 t:gap-8"

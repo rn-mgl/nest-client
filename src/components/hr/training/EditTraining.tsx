@@ -187,9 +187,9 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
 
     try {
       const formData = new FormData();
-      formData.append("title", training.title);
-      formData.append("description", training.description);
-      formData.append(
+      formData.set("title", training.title);
+      formData.set("description", training.description);
+      formData.set(
         "certificate",
         training.certificate && typeof training.certificate === "object"
           ? training.certificate?.rawFile
@@ -197,7 +197,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
           ? training.certificate
           : ""
       );
-      formData.append("deadline_days", training.deadline_days.toString());
+      formData.set("deadline_days", training.deadline_days.toString());
       fields.forEach((content, index) => {
         const trainingContent = { ...content };
         trainingContent.content =
@@ -208,16 +208,16 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
           typeof content.content === "object" ? content.content.rawFile : "";
 
         formData.append(`contents[${index}]`, JSON.stringify(trainingContent));
-        formData.append(`contentFile[${index}]`, trainingFile);
+        formData.append(`content_file[${index}]`, trainingFile);
       });
       contentsToDelete.forEach((toDelete, index) => {
-        formData.append(`contentsToDelete[${index}]`, toDelete.toString());
+        formData.append(`contents_to_delete[${index}]`, toDelete.toString());
       });
       reviews.forEach((review, index) => {
         formData.append(`reviews[${index}]`, JSON.stringify(review));
       });
       reviewsToDelete.forEach((review, index) => {
-        formData.append(`reviewsToDelete[${index}]`, review.toString());
+        formData.append(`reviews_to_delete[${index}]`, review.toString());
       });
       formData.append("_method", "PATCH");
 
