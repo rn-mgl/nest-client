@@ -4,7 +4,7 @@ import CreateHR from "@/src/components/admin/hr/CreateHR";
 import Filter from "@/src/components/global/filter/Filter";
 import Alert from "@/src/components/global/popup/Alert";
 import { useToasts } from "@/src/context/ToastContext";
-import useAlert from "@/src/hooks/useAlert";
+import useConfirmAction from "@/src/hooks/useConfirmAction";
 import useCategory from "@/src/hooks/useCategory";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
@@ -56,7 +56,7 @@ const AdminHR = () => {
   } = useCategory("verified", "all");
 
   const { addToast } = useToasts();
-  const { confirmAction, handleConfirmAction } = useAlert<
+  const { confirmAction, handleConfirmAction } = useConfirmAction<
     "verify" | "deactivate"
   >();
 

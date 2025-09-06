@@ -8,7 +8,7 @@ import Tabs from "@/src/components/global/Tabs";
 import EmployeeCard from "@/src/components/hr/employee/EmployeeCard";
 import ShowEmployee from "@/src/components/hr/employee/ShowEmployee";
 import { useToasts } from "@/src/context/ToastContext";
-import useAlert from "@/src/hooks/useAlert";
+import useConfirmAction from "@/src/hooks/useConfirmAction";
 import useCategory from "@/src/hooks/useCategory";
 import useIsLoading from "@/src/hooks/useIsLoading";
 
@@ -109,7 +109,7 @@ const HREmployee = () => {
 
   const { addToast } = useToasts();
 
-  const { confirmAction, handleConfirmAction } = useAlert<
+  const { confirmAction, handleConfirmAction } = useConfirmAction<
     "approve" | "reject"
   >();
 

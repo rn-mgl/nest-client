@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function useAlert<T>() {
+export default function useConfirmAction<T>() {
   const [confirmAction, setConfirmAction] = React.useState<{
     id: number;
     action?: T;
