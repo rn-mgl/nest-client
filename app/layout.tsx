@@ -4,6 +4,7 @@ import { ToastProvider } from "@/src/context/ToastContext";
 import { SessionProvider } from "next-auth/react";
 import { Figtree } from "next/font/google";
 import "./globals.css";
+import Toasts from "@/src/components/global/popup/Toasts";
 
 const figtree = Figtree({
   weight: ["300", "400", "500", "600", "700", "800", "900"],
@@ -24,6 +25,7 @@ export default function RootLayout({
           <body
             className={`${figtree.className} w-full min-h-screen h-screen overflow-y-auto font-figtree antialiased text-neutral-900 primary-scrollbar`}
           >
+            <Toasts />
             {children}
           </body>
         </html>

@@ -114,7 +114,7 @@ const HREmployee = () => {
 
   const { isLoading, handleIsLoading } = useIsLoading(true);
 
-  const { toasts, addToast, clearToast } = useToasts();
+  const { addToast } = useToasts();
 
   const {
     canSeeSearchDropDown,
@@ -253,14 +253,14 @@ const HREmployee = () => {
   console.log(employees);
 
   const mappedEmployees = employees?.map((employee, index) => {
-    const activeMenu = activeUserMenu === employee.user_id;
+    const activeMenu = activeUserMenu === employee.id;
     return (
       <EmployeeCard
         key={index}
         role={user?.role ?? ""}
         createdBy={false}
         //
-        user_id={employee.user_id}
+        id={employee.id}
         first_name={employee.first_name}
         last_name={employee.last_name}
         email_verified_at={employee.email_verified_at}
@@ -269,10 +269,8 @@ const HREmployee = () => {
         sendMail={() => sendMail(employee.email)}
         //
         activeMenu={activeMenu}
-        handleActiveMenu={() => handleActiveEmployeeMenu(employee.user_id)}
-        handleActiveSeeMore={() =>
-          handleActiveEmployeeSeeMore(employee.user_id)
-        }
+        handleActiveMenu={() => handleActiveEmployeeMenu(employee.id)}
+        handleActiveSeeMore={() => handleActiveEmployeeSeeMore(employee.id)}
       />
     );
   });
@@ -477,10 +475,6 @@ const HREmployee = () => {
 
   return (
     <div className="w-full min-h-full h-auto flex flex-col items-center justify-start">
-      {toasts.length ? (
-        <Toasts toasts={toasts} clearToast={clearToast} />
-      ) : null}
-
       {activeEmployeeSeeMore ? (
         <ShowEmployee
           toggleModal={() => handleActiveEmployeeSeeMore(activeEmployeeSeeMore)}

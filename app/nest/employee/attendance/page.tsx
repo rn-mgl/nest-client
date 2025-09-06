@@ -30,7 +30,6 @@ const Attendance = () => {
     logout_time: "-",
   });
 
-  const { toasts, clearToast } = useToasts();
   const { isLoading, handleIsLoading } = useIsLoading(true);
 
   const currentYear = new Date().getFullYear();
@@ -204,10 +203,6 @@ const Attendance = () => {
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
-      {toasts.length ? (
-        <Toasts toasts={toasts} clearToast={clearToast} />
-      ) : null}
-
       {canLog ? (
         <Log
           id={attendance.attendance_id ?? 0}

@@ -16,8 +16,6 @@ import axios from "axios";
 
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
-import Toasts from "@/src/components/global/popup/Toasts";
-import { useToasts } from "@/src/context/ToastContext";
 import useIsLoading from "@/src/hooks/useIsLoading";
 import { useSession } from "next-auth/react";
 import React from "react";
@@ -50,8 +48,6 @@ const HROnboarding = () => {
     handleSelectSort,
     handleToggleAsc,
   } = useSort("title", "Title");
-
-  const { toasts, clearToast } = useToasts();
 
   const { isLoading, handleIsLoading } = useIsLoading(true);
 
@@ -126,7 +122,7 @@ const HROnboarding = () => {
         email={onboarding.email}
         first_name={onboarding.first_name}
         last_name={onboarding.last_name}
-        user_id={onboarding.user_id}
+        id={onboarding.id}
         // actions
         handleActiveMenu={() => handleActiveOnboardingMenu(onboardingId)}
         handleActiveSeeMore={() => handleActiveOnboardingSeeMore(onboardingId)}
@@ -180,10 +176,6 @@ const HROnboarding = () => {
           id={activeOnboardingMenu}
           toggleModal={handleCanAssignOnboarding}
         />
-      ) : null}
-
-      {toasts.length ? (
-        <Toasts toasts={toasts} clearToast={clearToast} />
       ) : null}
 
       <div

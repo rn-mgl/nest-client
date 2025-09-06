@@ -1,6 +1,6 @@
 "use client";
 
-import { ToastInterface } from "@/src/interface/ToastInterface";
+import { useToasts } from "@/src/context/ToastContext";
 import React from "react";
 import {
   IoAlert,
@@ -10,10 +10,9 @@ import {
   IoWarning,
 } from "react-icons/io5";
 
-const Toasts: React.FC<{
-  toasts: ToastInterface[];
-  clearToast: (id: string) => void;
-}> = (props) => {
+const Toasts = () => {
+  const { toasts, clearToast } = useToasts();
+
   const TOAST_TYPE_STYLE = {
     info: {
       border: "#0084d1",
@@ -37,7 +36,7 @@ const Toasts: React.FC<{
     },
   };
 
-  const mappedToasts = props.toasts.map((toast, index) => {
+  const mappedToasts = toasts.map((toast, index) => {
     return (
       <div
         key={index}
@@ -61,7 +60,7 @@ const Toasts: React.FC<{
           </div>
         </div>
 
-        <button onClick={() => props.clearToast(toast.id)} type="button">
+        <button onClick={() => clearToast(toast.id)} type="button">
           <IoClose className="text-sm text-neutral-400 " />
         </button>
 
