@@ -3,12 +3,11 @@
 import Table from "@/src/components/global/field/Table";
 import Filter from "@/src/components/global/filter/Filter";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
-import Alert from "@/src/components/global/popup/Alert";
 import Tabs from "@/src/components/global/Tabs";
 import EmployeeCard from "@/src/components/hr/employee/EmployeeCard";
 import ShowEmployee from "@/src/components/hr/employee/ShowEmployee";
+import { useAlert } from "@/src/context/AlertContext";
 import { useToasts } from "@/src/context/ToastContext";
-import useConfirmAction from "@/src/hooks/useConfirmAction";
 import useCategory from "@/src/hooks/useCategory";
 import useIsLoading from "@/src/hooks/useIsLoading";
 
@@ -56,7 +55,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
 import React from "react";
-import { IoCheckmark, IoClose, IoWarning } from "react-icons/io5";
+import { IoCheckmark, IoClose } from "react-icons/io5";
 
 const HREmployee = () => {
   const [employees, setEmployees] = React.useState<Array<UserInterface>>();
@@ -109,9 +108,7 @@ const HREmployee = () => {
 
   const { addToast } = useToasts();
 
-  const { confirmAction, handleConfirmAction, cancelAction } = useConfirmAction<
-    "approve" | "reject"
-  >();
+  const { showAlert } = useAlert();
 
   const {
     canSeeSearchDropDown,
@@ -350,7 +347,12 @@ const HREmployee = () => {
         <div className="w-full flex flex-row flex-wrap items-center justify-start gap-2">
           <button
             onClick={() =>
-              handleConfirmAction(leave.leave_request_id ?? 0, "approve")
+              showAlert({
+                title: "Approve Leave Request?",
+                body: `Are you sure you want to approve the request from ${leave.first_name} ${leave.last_name}?`,
+                confirmAlert: () =>
+                  handleLeaveRequestStatus(leave.leave_request_id ?? 0, true),
+              })
             }
             className="bg-accent-blue p-2 rounded-md text-accent-yellow font-bold w-full flex items-center justify-center l-l:w-fit"
           >
@@ -360,7 +362,12 @@ const HREmployee = () => {
           </button>
           <button
             onClick={() =>
-              handleConfirmAction(leave.leave_request_id ?? 0, "reject")
+              showAlert({
+                title: "Reject Leave Request?",
+                body: `Are you sure you want to reject the request from ${leave.first_name} ${leave.last_name}?`,
+                confirmAlert: () =>
+                  handleLeaveRequestStatus(leave.leave_request_id ?? 0, false),
+              })
             }
             className="bg-red-600 p-2 rounded-md text-neutral-100 font-bold w-full flex items-center justify-center l-l:w-fit"
           >
@@ -472,21 +479,6 @@ const HREmployee = () => {
         <ShowEmployee
           toggleModal={() => handleActiveEmployeeSeeMore(activeEmployeeSeeMore)}
           id={activeEmployeeSeeMore}
-        />
-      ) : null}
-
-      {confirmAction.id ? (
-        <Alert
-          title={`${confirmAction.action} Leave?`}
-          body={`Are you sure you want to ${confirmAction.action} this leave request?`}
-          approveAlert={() =>
-            handleLeaveRequestStatus(
-              confirmAction.id,
-              confirmAction.action === "approve"
-            )
-          }
-          cancelAlert={cancelAction}
-          icon={<IoWarning />}
         />
       ) : null}
 

@@ -80,6 +80,8 @@ const Toasts = () => {
     );
   });
 
+  if (!toasts.length) return null;
+
   return (
     <div
       className="fixed top-0 z-70 flex flex-col items-center justify-center w-full p-2 t:p-4 t:max-w-(--breakpoint-m-l) 

@@ -6,3 +6,10 @@ export interface ToastInterface {
   percentage: number;
   duration: number;
 }
+
+export interface AlertInterface {
+  title: string;
+  body: string;
+  icon?: React.ReactNode;
+  confirmAlert: () => Promise<void>;
+}

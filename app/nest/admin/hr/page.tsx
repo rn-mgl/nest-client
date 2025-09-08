@@ -2,9 +2,8 @@
 
 import CreateHR from "@/src/components/admin/hr/CreateHR";
 import Filter from "@/src/components/global/filter/Filter";
-import Alert from "@/src/components/global/popup/Alert";
+import { useAlert } from "@/src/context/AlertContext";
 import { useToasts } from "@/src/context/ToastContext";
-import useConfirmAction from "@/src/hooks/useConfirmAction";
 import useCategory from "@/src/hooks/useCategory";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
@@ -56,9 +55,8 @@ const AdminHR = () => {
   } = useCategory("verified", "all");
 
   const { addToast } = useToasts();
-  const { confirmAction, handleConfirmAction, cancelAction } = useConfirmAction<
-    "verify" | "deactivate"
-  >();
+
+  const { showAlert } = useAlert();
 
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -95,13 +93,13 @@ const AdminHR = () => {
     }
   }, [url, user?.token]);
 
-  const toggleVerification = async (id: number, toggle: boolean) => {
+  const toggleVerification = async (hrId: number, toggle: boolean) => {
     try {
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
         const { data: responseData } = await axios.patch<{ success: boolean }>(
-          `${url}/admin/hr/${id}`,
+          `${url}/admin/hr/${hrId}`,
           { toggle },
           {
             headers: {
@@ -128,6 +126,8 @@ const AdminHR = () => {
   };
 
   const mappedHRs = hrs.map((hr) => {
+    const isVerifed = hr.email_verified_at !== null;
+
     return (
       <div
         key={hr.id}
@@ -144,10 +144,10 @@ const AdminHR = () => {
           </p>
 
           <p className="text-xs flex flex-row items-center justify-center gap-1">
-            {hr.email_verified_at ? (
+            {isVerifed ? (
               <IoShieldCheckmark
                 className="text-accent-blue"
-                title={`Verified at: ${hr.email_verified_at}`}
+                title={`Verified at: ${isVerifed}`}
               />
             ) : null}
             {hr.email}
@@ -177,14 +177,18 @@ const AdminHR = () => {
 
             <button
               onClick={() =>
-                handleConfirmAction(
-                  hr.id,
-                  hr.email_verified_at ? "deactivate" : "verify"
-                )
+                showAlert({
+                  title: `${isVerifed ? "Deactivate" : "Verify"} HR?`,
+                  body: `Are you sure you want to ${
+                    isVerifed ? "deactivate" : "verify"
+                  } ${hr.first_name} ${hr.last_name}?`,
+                  confirmAlert: () =>
+                    toggleVerification(hr.id, !hr.email_verified_at),
+                })
               }
               className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
             >
-              {hr.email_verified_at ? (
+              {isVerifed ? (
                 <>
                   <IoBan className="text-red-600" /> Deactivate
                 </>
@@ -208,20 +212,6 @@ const AdminHR = () => {
     <div className="w-full h-full flex flex-col items-center justify-start">
       {canCreateHR ? (
         <CreateHR toggleModal={handleCanCreateHR} refetchIndex={getAllHRs} />
-      ) : null}
-
-      {activeMenu && confirmAction.id ? (
-        <Alert
-          title={`${confirmAction.action} HR?`}
-          body={`Are you sure you want to ${confirmAction.action} this HR?`}
-          approveAlert={() => {
-            toggleVerification(
-              confirmAction.id,
-              confirmAction.action === "verify"
-            );
-          }}
-          cancelAlert={cancelAction}
-        />
       ) : null}
 
       <div

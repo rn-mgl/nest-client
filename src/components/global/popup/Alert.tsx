@@ -1,7 +1,10 @@
-import { AlertInterface } from "@/src/interface/AlertInterface";
-import React from "react";
+import { useAlert } from "@/src/context/AlertContext";
 
-const Alert: React.FC<AlertInterface> = (props) => {
+const Alert = () => {
+  const { alert, hideAlert } = useAlert();
+
+  if (!alert) return null;
+
   return (
     <div
       className="w-full h-full fixed top-0 left-0 z-60 bg-gradient-to-br from-accent-blue/30 to-accent-green/30 backdrop-blur-md
@@ -10,18 +13,18 @@ const Alert: React.FC<AlertInterface> = (props) => {
       <div className="w-full flex flex-col items-center justify-center shadow-md max-w-(--breakpoint-m-l)">
         <div className="bg-white p-4 w-full rounded-lg flex flex-col items-center justify-center gap-4 text-center">
           <div className="w-full flex flex-col items-center justify-center text-center gap-2">
-            {props.icon ? (
+            {alert.icon ? (
               <div className="text-5xl text-accent-blue/30 drop-shadow-sm">
-                {props.icon}
+                {alert.icon}
               </div>
             ) : null}
-            <p className="font-bold text-xl capitalize">{props.title}</p>
-            <p className="text-sm">{props.body}</p>
+            <p className="font-bold text-xl capitalize">{alert.title}</p>
+            <p className="text-sm">{alert.body}</p>
           </div>
 
           <div className="w-full flex flex-row items-center justify-center gap-2 mt-2">
             <button
-              onClick={props.cancelAlert}
+              onClick={hideAlert}
               className="w-full max-w-40 p-2 rounded-md bg-red-600 font-bold text-neutral-100"
             >
               No
@@ -29,8 +32,8 @@ const Alert: React.FC<AlertInterface> = (props) => {
 
             <button
               onClick={() => {
-                props.approveAlert();
-                props.cancelAlert();
+                alert.confirmAlert();
+                hideAlert();
               }}
               className="w-full max-w-40 p-2 rounded-md bg-accent-blue font-bold text-neutral-100"
             >
