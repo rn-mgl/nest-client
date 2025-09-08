@@ -27,7 +27,6 @@ const Training = () => {
 
   const {
     canSeeSearchDropDown,
-    debounceSearch,
     search,
     handleCanSeeSearchDropDown,
     handleSearch,
@@ -93,7 +92,7 @@ const Training = () => {
         deadline={training.deadline}
         created_by={training.created_by}
         //
-        user_id={training.user_id}
+        id={training.id}
         email={training.email}
         email_verified_at={training.email_verified_at}
         first_name={training.first_name}
@@ -123,33 +122,35 @@ const Training = () => {
                     t:items-start gap-4 t:p-4 t:gap-8"
       >
         <Filter
-          useCategoryFilter={true}
-          useSortFilter={true}
-          useSearchFilter={true}
-          //
-          searchKey={debounceSearch.searchKey}
-          searchValue={debounceSearch.searchValue}
-          searchLabel={debounceSearch.searchLabel}
-          canSeeSearchDropDown={canSeeSearchDropDown}
-          toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
-          onChange={handleSearch}
-          selectSearch={handleSelectSearch}
           searchKeyLabelPairs={EMPLOYEE_TRAINING_SEARCH}
+          search={{
+            searchKey: search.searchKey,
+            searchValue: search.searchValue,
+            searchLabel: search.searchLabel,
+            canSeeSearchDropDown: canSeeSearchDropDown,
+            toggleCanSeeSearchDropDown: handleCanSeeSearchDropDown,
+            onChange: handleSearch,
+            selectSearch: handleSelectSearch,
+          }}
           //
-          categoryValue={category.categoryValue}
-          canSeeCategoryDropDown={canSeeCategoryDropDown}
-          toggleCanSeeCategoryDropDown={handleCanSeeCategoryDropDown}
-          selectCategory={handleSelectCategory}
-          sortKeyLabelPairs={EMPLOYEE_TRAINING_SORT}
-          //
-          sortKey={sort.sortKey}
-          sortLabel={sort.sortLabel}
-          isAsc={sort.isAsc}
-          canSeeSortDropDown={canSeeSortDropDown}
-          toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
-          toggleAsc={handleToggleAsc}
-          selectSort={handleSelectSort}
           categoryKeyValuePairs={EMPLOYEE_TRAINING_CATEGORY}
+          category={{
+            categoryValue: category.categoryValue,
+            canSeeCategoryDropDown: canSeeCategoryDropDown,
+            toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
+            selectCategory: handleSelectCategory,
+          }}
+          //
+          sortKeyLabelPairs={EMPLOYEE_TRAINING_SORT}
+          sort={{
+            sortKey: sort.sortKey,
+            sortLabel: sort.sortLabel,
+            isAsc: sort.isAsc,
+            canSeeSortDropDown: canSeeSortDropDown,
+            toggleCanSeeSortDropDown: handleCanSeeSortDropDown,
+            toggleAsc: handleToggleAsc,
+            selectSort: handleSelectSort,
+          }}
         />
         <div className="w-full grid grid-cols-1 t:grid-cols-2 l-l:grid-cols-3 gap-4">
           {mappedTrainings}

@@ -56,7 +56,6 @@ const HRDocument = () => {
 
   const {
     canSeeSearchDropDown,
-    debounceSearch,
     search,
     handleCanSeeSearchDropDown,
     handleSearch,
@@ -302,35 +301,40 @@ const HRDocument = () => {
           t:items-start t:p-4 gap-4 t:gap-8"
       >
         <Filter
-          useSearchFilter={true}
-          useSortFilter={true}
-          useCategoryFilter={true}
-          searchKey={debounceSearch.searchKey}
-          searchLabel={debounceSearch.searchLabel}
-          searchValue={debounceSearch.searchValue}
           searchKeyLabelPairs={
             category.categoryValue === "all" ||
             category.categoryValue === "documents"
               ? HR_DOCUMENTS_SEARCH
               : HR_FOLDERS_SEARCH
           }
-          canSeeSearchDropDown={canSeeSearchDropDown}
-          selectSearch={handleSelectSearch}
-          toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
-          onChange={handleSearch}
-          categoryValue={category.categoryValue}
-          canSeeCategoryDropDown={canSeeCategoryDropDown}
+          search={{
+            searchKey: search.searchKey,
+            searchLabel: search.searchLabel,
+            searchValue: search.searchValue,
+            canSeeSearchDropDown: canSeeSearchDropDown,
+            selectSearch: handleSelectSearch,
+            toggleCanSeeSearchDropDown: handleCanSeeSearchDropDown,
+            onChange: handleSearch,
+          }}
+          //
           categoryKeyValuePairs={HR_DOCUMENTS_CATEGORY}
-          toggleCanSeeCategoryDropDown={handleCanSeeCategoryDropDown}
-          selectCategory={handleSelectCategory}
-          sortKey={sort.sortKey}
-          sortLabel={sort.sortLabel}
-          isAsc={sort.isAsc}
-          canSeeSortDropDown={canSeeSortDropDown}
+          category={{
+            categoryValue: category.categoryValue,
+            canSeeCategoryDropDown: canSeeCategoryDropDown,
+            toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
+            selectCategory: handleSelectCategory,
+          }}
+          //
           sortKeyLabelPairs={HR_DOCUMENTS_SORT}
-          toggleAsc={handleToggleAsc}
-          selectSort={handleSelectSort}
-          toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
+          sort={{
+            sortKey: sort.sortKey,
+            sortLabel: sort.sortLabel,
+            isAsc: sort.isAsc,
+            canSeeSortDropDown: canSeeSortDropDown,
+            toggleAsc: handleToggleAsc,
+            selectSort: handleSelectSort,
+            toggleCanSeeSortDropDown: handleCanSeeSortDropDown,
+          }}
         />
 
         <div className="w-full flex flex-col items-center justify-start gap-2 t:flex-row">

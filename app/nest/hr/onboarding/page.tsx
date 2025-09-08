@@ -34,9 +34,8 @@ const HROnboarding = () => {
     React.useState(0);
 
   const {
-    search,
     canSeeSearchDropDown,
-    debounceSearch,
+    search,
     handleSearch,
     handleCanSeeSearchDropDown,
     handleSelectSearch,
@@ -183,25 +182,27 @@ const HROnboarding = () => {
           t:items-start t:p-4 gap-4 t:gap-8"
       >
         <Filter
-          useSearchFilter={true}
-          useSortFilter={true}
-          useCategoryFilter={false}
-          searchKey={debounceSearch.searchKey}
-          searchLabel={debounceSearch.searchLabel}
-          searchValue={debounceSearch.searchValue}
           searchKeyLabelPairs={HR_ONBOARDING_SEARCH}
-          canSeeSearchDropDown={canSeeSearchDropDown}
-          selectSearch={handleSelectSearch}
-          toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
-          onChange={handleSearch}
-          sortKey={sort.sortKey}
-          sortLabel={sort.sortLabel}
-          isAsc={sort.isAsc}
-          canSeeSortDropDown={canSeeSortDropDown}
+          search={{
+            searchKey: search.searchKey,
+            searchLabel: search.searchLabel,
+            searchValue: search.searchValue,
+            canSeeSearchDropDown: canSeeSearchDropDown,
+            selectSearch: handleSelectSearch,
+            toggleCanSeeSearchDropDown: handleCanSeeSearchDropDown,
+            onChange: handleSearch,
+          }}
+          //
           sortKeyLabelPairs={HR_ONBOARDING_SORT}
-          toggleAsc={handleToggleAsc}
-          selectSort={handleSelectSort}
-          toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
+          sort={{
+            sortKey: sort.sortKey,
+            sortLabel: sort.sortLabel,
+            isAsc: sort.isAsc,
+            canSeeSortDropDown: canSeeSortDropDown,
+            toggleAsc: handleToggleAsc,
+            selectSort: handleSelectSort,
+            toggleCanSeeSortDropDown: handleCanSeeSortDropDown,
+          }}
         />
         <button
           onClick={handleCanCreateOnboarding}

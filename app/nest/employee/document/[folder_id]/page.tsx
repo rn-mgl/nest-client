@@ -44,7 +44,6 @@ const Document = () => {
 
   const {
     search,
-    debounceSearch,
     canSeeSearchDropDown,
     handleCanSeeSearchDropDown,
     handleSearch,
@@ -132,7 +131,7 @@ const Document = () => {
         last_name={document.last_name}
         email={document.email}
         email_verified_at={document.email_verified_at}
-        user_id={document.user_id}
+        id={document.id}
         //
         handleActiveSeeMore={() =>
           handleActiveDocumentSeeMore(document.id ?? 0)
@@ -150,7 +149,7 @@ const Document = () => {
         last_name={document.last_name}
         email={document.email}
         email_verified_at={document.email_verified_at}
-        user_id={document.user_id}
+        id={document.id}
       />
     );
   });
@@ -176,33 +175,36 @@ const Document = () => {
                     t:items-start t:p-4 gap-4 t:gap-8"
       >
         <Filter
-          useCategoryFilter={true}
-          useSearchFilter={true}
-          useSortFilter={true}
           //
-          searchKey={debounceSearch.searchKey}
-          searchValue={debounceSearch.searchValue}
-          searchLabel={debounceSearch.searchLabel}
-          canSeeSearchDropDown={canSeeSearchDropDown}
-          toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
-          onChange={handleSearch}
-          selectSearch={handleSelectSearch}
           searchKeyLabelPairs={EMPLOYEE_DOCUMENTS_SEARCH}
+          search={{
+            searchKey: search.searchKey,
+            searchValue: search.searchValue,
+            searchLabel: search.searchLabel,
+            canSeeSearchDropDown: canSeeSearchDropDown,
+            toggleCanSeeSearchDropDown: handleCanSeeSearchDropDown,
+            onChange: handleSearch,
+            selectSearch: handleSelectSearch,
+          }}
           //
-          categoryValue={category.categoryValue}
-          canSeeCategoryDropDown={canSeeCategoryDropDown}
-          toggleCanSeeCategoryDropDown={handleCanSeeCategoryDropDown}
-          selectCategory={handleSelectCategory}
           categoryKeyValuePairs={EMPLOYEE_DOCUMENTS_CATEGORY}
+          category={{
+            categoryValue: category.categoryValue,
+            canSeeCategoryDropDown: canSeeCategoryDropDown,
+            toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
+            selectCategory: handleSelectCategory,
+          }}
           //
-          sortKey={sort.sortKey}
-          sortLabel={sort.sortLabel}
-          isAsc={sort.isAsc}
-          canSeeSortDropDown={canSeeSortDropDown}
-          toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
-          toggleAsc={handleToggleAsc}
-          selectSort={handleSelectSort}
           sortKeyLabelPairs={EMPLOYEE_DOCUMENTS_SORT}
+          sort={{
+            sortKey: sort.sortKey,
+            sortLabel: sort.sortLabel,
+            isAsc: sort.isAsc,
+            canSeeSortDropDown: canSeeSortDropDown,
+            toggleCanSeeSortDropDown: handleCanSeeSortDropDown,
+            toggleAsc: handleToggleAsc,
+            selectSort: handleSelectSort,
+          }}
         />
 
         {folderId ? (

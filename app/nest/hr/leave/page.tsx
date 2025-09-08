@@ -58,9 +58,8 @@ const HRLeave = () => {
   >([]);
 
   const {
-    search,
     canSeeSearchDropDown,
-    debounceSearch,
+    search,
     handleSearch,
     handleCanSeeSearchDropDown,
     handleSelectSearch,
@@ -237,7 +236,7 @@ const HRLeave = () => {
         last_name={leave.last_name}
         email={leave.email}
         email_verified_at={leave.email_verified_at}
-        user_id={leave.user_id}
+        id={leave.id}
         //
         handleActiveMenu={() => handleActiveLeaveTypeMenu(leaveId)}
         handleCanAssign={handleCanAssignLeaveType}
@@ -389,33 +388,35 @@ const HRLeave = () => {
         />
 
         <Filter
-          useSearchFilter={true}
-          useSortFilter={true}
-          useCategoryFilter={activeTab === "requests"}
-          //
-          searchKey={debounceSearch.searchKey}
-          searchLabel={debounceSearch.searchLabel}
-          searchValue={debounceSearch.searchValue}
           searchKeyLabelPairs={searchFilters[activeTab as keyof object]}
-          canSeeSearchDropDown={canSeeSearchDropDown}
-          selectSearch={handleSelectSearch}
-          toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
-          onChange={handleSearch}
+          search={{
+            searchKey: search.searchKey,
+            searchLabel: search.searchLabel,
+            searchValue: search.searchValue,
+            canSeeSearchDropDown: canSeeSearchDropDown,
+            selectSearch: handleSelectSearch,
+            toggleCanSeeSearchDropDown: handleCanSeeSearchDropDown,
+            onChange: handleSearch,
+          }}
           //
-          sortKey={sort.sortKey}
-          sortLabel={sort.sortLabel}
-          isAsc={sort.isAsc}
-          canSeeSortDropDown={canSeeSortDropDown}
           sortKeyLabelPairs={sortFilters[activeTab as keyof object]}
-          toggleAsc={handleToggleAsc}
-          selectSort={handleSelectSort}
-          toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
+          sort={{
+            sortKey: sort.sortKey,
+            sortLabel: sort.sortLabel,
+            isAsc: sort.isAsc,
+            canSeeSortDropDown: canSeeSortDropDown,
+            toggleAsc: handleToggleAsc,
+            selectSort: handleSelectSort,
+            toggleCanSeeSortDropDown: handleCanSeeSortDropDown,
+          }}
           //
-          categoryValue={category.categoryValue}
-          canSeeCategoryDropDown={canSeeCategoryDropDown}
           categoryKeyValuePairs={categoryFilters[activeTab as keyof object]}
-          selectCategory={handleSelectCategory}
-          toggleCanSeeCategoryDropDown={handleCanSeeCategoryDropDown}
+          category={{
+            categoryValue: category.categoryValue,
+            canSeeCategoryDropDown: canSeeCategoryDropDown,
+            selectCategory: handleSelectCategory,
+            toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
+          }}
         />
 
         {activeTab === "types" ? (

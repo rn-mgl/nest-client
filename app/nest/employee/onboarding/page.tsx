@@ -33,7 +33,6 @@ const Onboarding = () => {
 
   const {
     search,
-    debounceSearch,
     canSeeSearchDropDown,
     handleCanSeeSearchDropDown,
     handleSearch,
@@ -94,7 +93,7 @@ const Onboarding = () => {
         email={onboarding.email}
         first_name={onboarding.first_name}
         last_name={onboarding.last_name}
-        user_id={onboarding.user_id}
+        id={onboarding.id}
         // actions
         handleActiveSeeMore={() =>
           handleActiveOnboardingSeeMore(onboarding.user_onboarding_id ?? 0)
@@ -120,34 +119,35 @@ const Onboarding = () => {
       t:items-start t:p-4 gap-4 t:gap-8"
       >
         <Filter
-          //
-          useSearchFilter={true}
-          useSortFilter={true}
-          useCategoryFilter={true}
-          //
           categoryKeyValuePairs={EMPLOYEE_ONBOARDING_CATEGORY}
-          categoryValue={category.categoryValue}
-          canSeeCategoryDropDown={canSeeCategoryDropDown}
-          selectCategory={handleSelectCategory}
-          toggleCanSeeCategoryDropDown={handleCanSeeCategoryDropDown}
+          category={{
+            categoryValue: category.categoryValue,
+            canSeeCategoryDropDown: canSeeCategoryDropDown,
+            selectCategory: handleSelectCategory,
+            toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
+          }}
           //
           sortKeyLabelPairs={EMPLOYEE_ONBOARDING_SORT}
-          sortKey={sort.sortKey}
-          sortLabel={sort.sortLabel}
-          selectSort={handleSelectSort}
-          toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
-          isAsc={sort.isAsc}
-          toggleAsc={handleToggleAsc}
-          canSeeSortDropDown={canSeeSortDropDown}
+          sort={{
+            sortKey: sort.sortKey,
+            sortLabel: sort.sortLabel,
+            selectSort: handleSelectSort,
+            toggleCanSeeSortDropDown: handleCanSeeSortDropDown,
+            isAsc: sort.isAsc,
+            toggleAsc: handleToggleAsc,
+            canSeeSortDropDown: canSeeSortDropDown,
+          }}
           //
-          onChange={handleSearch}
-          searchKey={debounceSearch.searchKey}
-          searchLabel={debounceSearch.searchLabel}
-          searchValue={debounceSearch.searchValue}
           searchKeyLabelPairs={EMPLOYEE_ONBOARDING_SEARCH}
-          selectSearch={handleSelectSearch}
-          toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
-          canSeeSearchDropDown={canSeeSearchDropDown}
+          search={{
+            onChange: handleSearch,
+            searchKey: search.searchKey,
+            searchLabel: search.searchLabel,
+            searchValue: search.searchValue,
+            selectSearch: handleSelectSearch,
+            toggleCanSeeSearchDropDown: handleCanSeeSearchDropDown,
+            canSeeSearchDropDown: canSeeSearchDropDown,
+          }}
         />
         <div className="grid grid-cols-1 w-full gap-4 t:grid-cols-2 l-l:grid-cols-3">
           {mappedOnboardings}

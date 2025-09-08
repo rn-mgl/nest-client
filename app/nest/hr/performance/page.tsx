@@ -40,9 +40,8 @@ const PerformanceReview = () => {
     React.useState(false);
 
   const {
-    search,
     canSeeSearchDropDown,
-    debounceSearch,
+    search,
     handleSearch,
     handleCanSeeSearchDropDown,
     handleSelectSearch,
@@ -120,7 +119,7 @@ const PerformanceReview = () => {
         title={performance.title}
         description={performance.description}
         //
-        user_id={performance.user_id}
+        id={performance.id}
         email={performance.email}
         email_verified_at={performance.email_verified_at}
         first_name={performance.first_name}
@@ -189,25 +188,27 @@ const PerformanceReview = () => {
           t:items-start t:p-4 gap-4 t:gap-8"
       >
         <Filter
-          useSearchFilter={true}
-          useSortFilter={true}
-          useCategoryFilter={false}
-          searchKey={debounceSearch.searchKey}
-          searchLabel={debounceSearch.searchLabel}
-          searchValue={debounceSearch.searchValue}
           searchKeyLabelPairs={HR_PERFORMANCE_SEARCH}
-          canSeeSearchDropDown={canSeeSearchDropDown}
-          selectSearch={handleSelectSearch}
-          toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
-          onChange={handleSearch}
-          sortKey={sort.sortKey}
-          sortLabel={sort.sortLabel}
-          isAsc={sort.isAsc}
-          canSeeSortDropDown={canSeeSortDropDown}
+          search={{
+            searchKey: search.searchKey,
+            searchLabel: search.searchLabel,
+            searchValue: search.searchValue,
+            canSeeSearchDropDown: canSeeSearchDropDown,
+            selectSearch: handleSelectSearch,
+            toggleCanSeeSearchDropDown: handleCanSeeSearchDropDown,
+            onChange: handleSearch,
+          }}
+          //
           sortKeyLabelPairs={HR_PERFORMANCE_SORT}
-          toggleAsc={handleToggleAsc}
-          selectSort={handleSelectSort}
-          toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
+          sort={{
+            sortKey: sort.sortKey,
+            sortLabel: sort.sortLabel,
+            isAsc: sort.isAsc,
+            canSeeSortDropDown: canSeeSortDropDown,
+            toggleAsc: handleToggleAsc,
+            selectSort: handleSelectSort,
+            toggleCanSeeSortDropDown: handleCanSeeSortDropDown,
+          }}
         />
 
         <button

@@ -32,7 +32,6 @@ const Performance = () => {
 
   const {
     search,
-    debounceSearch,
     canSeeSearchDropDown,
     handleCanSeeSearchDropDown,
     handleSearch,
@@ -86,7 +85,7 @@ const Performance = () => {
           description={performance.description}
           status={performance.status}
           //
-          user_id={performance.user_id}
+          id={performance.id}
           email={performance.email}
           email_verified_at={performance.email_verified_at}
           first_name={performance.first_name}
@@ -119,27 +118,27 @@ const Performance = () => {
       t:items-start t:p-4 gap-4 t:gap-8"
       >
         <Filter
-          useCategoryFilter={false}
-          useSearchFilter={true}
-          useSortFilter={true}
-          //
-          searchKey={debounceSearch.searchKey}
-          searchLabel={debounceSearch.searchLabel}
-          searchValue={debounceSearch.searchValue}
-          canSeeSearchDropDown={canSeeSearchDropDown}
           searchKeyLabelPairs={EMPLOYEE_PERFORMANCE_REVIEW_SEARCH}
-          selectSearch={handleSelectSearch}
-          onChange={handleSearch}
-          toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
+          search={{
+            searchKey: search.searchKey,
+            searchLabel: search.searchLabel,
+            searchValue: search.searchValue,
+            canSeeSearchDropDown: canSeeSearchDropDown,
+            selectSearch: handleSelectSearch,
+            onChange: handleSearch,
+            toggleCanSeeSearchDropDown: handleCanSeeSearchDropDown,
+          }}
           //
-          sortKey={sort.sortKey}
-          isAsc={sort.isAsc}
-          sortLabel={sort.sortLabel}
-          canSeeSortDropDown={canSeeSortDropDown}
           sortKeyLabelPairs={EMPLOYEE_PERFORMANCE_REVIEW_SORT}
-          toggleAsc={handleToggleAsc}
-          toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
-          selectSort={handleSelectSort}
+          sort={{
+            sortKey: sort.sortKey,
+            isAsc: sort.isAsc,
+            sortLabel: sort.sortLabel,
+            canSeeSortDropDown: canSeeSortDropDown,
+            toggleAsc: handleToggleAsc,
+            toggleCanSeeSortDropDown: handleCanSeeSortDropDown,
+            selectSort: handleSelectSort,
+          }}
         />
         <div className="w-full grid grid-cols-1 t:grid-cols-2 l-l:grid-cols-3 gap-4">
           {mappedPerformanceReviews}

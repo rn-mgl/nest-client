@@ -5,11 +5,6 @@ export default function useSearch(
   initialSearchLabel: string
 ) {
   const [canSeeSearchDropDown, setCanShowSearch] = React.useState(false);
-  const [debounceSearch, setDebounceSearch] = React.useState({
-    searchKey: initialSearchKey,
-    searchLabel: initialSearchLabel,
-    searchValue: "",
-  });
   const [search, setSearch] = React.useState({
     searchKey: initialSearchKey,
     searchLabel: initialSearchLabel,
@@ -21,7 +16,7 @@ export default function useSearch(
   }, []);
 
   const handleSelectSearch = (key: string, label: string) => {
-    setDebounceSearch((prev) => {
+    setSearch((prev) => {
       return {
         ...prev,
         searchKey: key,
@@ -34,7 +29,7 @@ export default function useSearch(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target;
 
-      setDebounceSearch((prev) => {
+      setSearch((prev) => {
         return {
           ...prev,
           searchValue: value,
@@ -44,28 +39,9 @@ export default function useSearch(
     []
   );
 
-  React.useEffect(() => {
-    const debounce = setTimeout(() => {
-      setSearch((prev) => {
-        if (
-          prev.searchValue !== debounceSearch.searchValue ||
-          (prev.searchKey !== debounceSearch.searchKey &&
-            debounceSearch.searchValue !== "")
-        ) {
-          return debounceSearch;
-        }
-
-        return prev;
-      });
-    }, 200);
-
-    return () => clearTimeout(debounce);
-  }, [debounceSearch]);
-
   return {
     search,
     canSeeSearchDropDown,
-    debounceSearch,
     handleSearch,
     handleCanSeeSearchDropDown,
     handleSelectSearch,

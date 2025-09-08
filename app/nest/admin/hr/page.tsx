@@ -33,7 +33,7 @@ const AdminHR = () => {
 
   const {
     canSeeSearchDropDown,
-    debounceSearch,
+    search,
     handleSearch,
     handleCanSeeSearchDropDown,
     handleSelectSearch,
@@ -219,30 +219,36 @@ const AdminHR = () => {
                   t:items-start t:p-4 gap-4 t:gap-8"
       >
         <Filter
-          useSearchFilter={true}
-          useSortFilter={true}
-          useCategoryFilter={true}
-          searchKey={debounceSearch.searchKey}
-          searchLabel={debounceSearch.searchLabel}
-          searchValue={debounceSearch.searchValue}
+          //
           searchKeyLabelPairs={ADMIN_HR_SEARCH}
-          canSeeSearchDropDown={canSeeSearchDropDown}
-          selectSearch={handleSelectSearch}
-          toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
-          onChange={handleSearch}
-          categoryValue={category.categoryValue}
-          canSeeCategoryDropDown={canSeeCategoryDropDown}
-          categoryKeyValuePairs={ADMIN_HR_CATEGORY}
-          toggleCanSeeCategoryDropDown={handleCanSeeCategoryDropDown}
-          selectCategory={handleSelectCategory}
-          sortKey={sort.sortKey}
-          sortLabel={sort.sortLabel}
-          isAsc={sort.isAsc}
-          canSeeSortDropDown={canSeeSortDropDown}
+          search={{
+            searchKey: search.searchKey,
+            searchLabel: search.searchLabel,
+            searchValue: search.searchValue,
+            canSeeSearchDropDown: canSeeSearchDropDown,
+            selectSearch: handleSelectSearch,
+            toggleCanSeeSearchDropDown: handleCanSeeSearchDropDown,
+            onChange: handleSearch,
+          }}
+          //
           sortKeyLabelPairs={ADMIN_HR_SORT}
-          toggleAsc={handleToggleAsc}
-          selectSort={handleSelectSort}
-          toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
+          sort={{
+            sortKey: sort.sortKey,
+            sortLabel: sort.sortLabel,
+            isAsc: sort.isAsc,
+            canSeeSortDropDown: canSeeSortDropDown,
+            toggleAsc: handleToggleAsc,
+            selectSort: handleSelectSort,
+            toggleCanSeeSortDropDown: handleCanSeeSortDropDown,
+          }}
+          //
+          categoryKeyValuePairs={ADMIN_HR_CATEGORY}
+          category={{
+            categoryValue: category.categoryValue,
+            canSeeCategoryDropDown: canSeeCategoryDropDown,
+            toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
+            selectCategory: handleSelectCategory,
+          }}
         />
 
         <button
@@ -253,7 +259,6 @@ const AdminHR = () => {
           Create HR
           <IoAdd className="text-lg" />
         </button>
-
         <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">
           {mappedHRs}
         </div>

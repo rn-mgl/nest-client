@@ -112,7 +112,7 @@ const HREmployee = () => {
 
   const {
     canSeeSearchDropDown,
-    debounceSearch,
+    search,
     handleSearch,
     handleCanSeeSearchDropDown,
     handleSelectSearch,
@@ -497,32 +497,35 @@ const HREmployee = () => {
 
         <div className="w-full flex flex-col items-center justify-start gap-4 t:gap-8">
           <Filter
-            useSearchFilter={true}
-            useSortFilter={true}
-            useCategoryFilter={true}
-            searchKey={debounceSearch.searchKey}
-            searchLabel={debounceSearch.searchLabel}
-            searchValue={debounceSearch.searchValue}
             searchKeyLabelPairs={searchFilters[activeTab as keyof object]}
-            canSeeSearchDropDown={canSeeSearchDropDown}
-            selectSearch={handleSelectSearch}
-            toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
-            onChange={handleSearch}
+            search={{
+              searchKey: search.searchKey,
+              searchLabel: search.searchLabel,
+              searchValue: search.searchValue,
+              canSeeSearchDropDown: canSeeSearchDropDown,
+              selectSearch: handleSelectSearch,
+              toggleCanSeeSearchDropDown: handleCanSeeSearchDropDown,
+              onChange: handleSearch,
+            }}
             //
-            categoryValue={category.categoryValue}
-            canSeeCategoryDropDown={canSeeCategoryDropDown}
             categoryKeyValuePairs={categoryFilters[activeTab as keyof object]}
-            toggleCanSeeCategoryDropDown={handleCanSeeCategoryDropDown}
-            selectCategory={handleSelectCategory}
+            category={{
+              categoryValue: category.categoryValue,
+              canSeeCategoryDropDown: canSeeCategoryDropDown,
+              toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
+              selectCategory: handleSelectCategory,
+            }}
             //
-            sortKey={sort.sortKey}
-            sortLabel={sort.sortLabel}
-            isAsc={sort.isAsc}
-            canSeeSortDropDown={canSeeSortDropDown}
             sortKeyLabelPairs={sortFilters[activeTab as keyof object]}
-            toggleAsc={handleToggleAsc}
-            selectSort={handleSelectSort}
-            toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
+            sort={{
+              sortKey: sort.sortKey,
+              sortLabel: sort.sortLabel,
+              isAsc: sort.isAsc,
+              canSeeSortDropDown: canSeeSortDropDown,
+              toggleAsc: handleToggleAsc,
+              selectSort: handleSelectSort,
+              toggleCanSeeSortDropDown: handleCanSeeSortDropDown,
+            }}
           />
 
           {isLoading ? (

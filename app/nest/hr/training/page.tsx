@@ -35,7 +35,6 @@ const HRTraining = () => {
   const {
     search,
     canSeeSearchDropDown,
-    debounceSearch,
     handleSearch,
     handleCanSeeSearchDropDown,
     handleSelectSearch,
@@ -118,7 +117,7 @@ const HRTraining = () => {
         deadline_days={training.deadline_days}
         certificate={training.certificate}
         //
-        user_id={training.user_id}
+        id={training.id}
         email={training.email}
         email_verified_at={training.email_verified_at}
         first_name={training.first_name}
@@ -187,25 +186,27 @@ const HRTraining = () => {
           t:items-start t:p-4 gap-4 t:gap-8"
       >
         <Filter
-          useSearchFilter={true}
-          useSortFilter={true}
-          useCategoryFilter={false}
-          searchKey={debounceSearch.searchKey}
-          searchLabel={debounceSearch.searchLabel}
-          searchValue={debounceSearch.searchValue}
           searchKeyLabelPairs={HR_TRAINING_SEARCH}
-          canSeeSearchDropDown={canSeeSearchDropDown}
-          selectSearch={handleSelectSearch}
-          toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
-          onChange={handleSearch}
-          sortKey={sort.sortKey}
-          sortLabel={sort.sortLabel}
-          isAsc={sort.isAsc}
-          canSeeSortDropDown={canSeeSortDropDown}
+          search={{
+            searchKey: search.searchKey,
+            searchLabel: search.searchLabel,
+            searchValue: search.searchValue,
+            canSeeSearchDropDown: canSeeSearchDropDown,
+            selectSearch: handleSelectSearch,
+            toggleCanSeeSearchDropDown: handleCanSeeSearchDropDown,
+            onChange: handleSearch,
+          }}
+          //
           sortKeyLabelPairs={HR_TRAINING_SORT}
-          toggleAsc={handleToggleAsc}
-          selectSort={handleSelectSort}
-          toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
+          sort={{
+            sortKey: sort.sortKey,
+            sortLabel: sort.sortLabel,
+            isAsc: sort.isAsc,
+            canSeeSortDropDown: canSeeSortDropDown,
+            toggleAsc: handleToggleAsc,
+            selectSort: handleSelectSort,
+            toggleCanSeeSortDropDown: handleCanSeeSortDropDown,
+          }}
         />
 
         <button

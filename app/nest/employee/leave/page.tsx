@@ -59,7 +59,6 @@ const Leave = () => {
 
   const {
     search,
-    debounceSearch,
     canSeeSearchDropDown,
     handleCanSeeSearchDropDown,
     handleSearch,
@@ -265,33 +264,36 @@ const Leave = () => {
 
         <div className="w-full flex flex-col items-center justify-center gap-4 t:gap-8 ">
           <Filter
-            useCategoryFilter={activeTab === "requests"}
-            useSearchFilter={true}
-            useSortFilter={true}
             //
-            canSeeSearchDropDown={canSeeSearchDropDown}
-            searchKey={debounceSearch.searchKey}
-            searchLabel={debounceSearch.searchLabel}
-            searchValue={debounceSearch.searchValue}
             searchKeyLabelPairs={EMPLOYEE_LEAVE_BALANCE_SEARCH}
-            toggleCanSeeSearchDropDown={handleCanSeeSearchDropDown}
-            selectSearch={handleSelectSearch}
-            onChange={handleSearch}
+            search={{
+              canSeeSearchDropDown: canSeeSearchDropDown,
+              searchKey: search.searchKey,
+              searchLabel: search.searchLabel,
+              searchValue: search.searchValue,
+              toggleCanSeeSearchDropDown: handleCanSeeSearchDropDown,
+              selectSearch: handleSelectSearch,
+              onChange: handleSearch,
+            }}
             //
-            isAsc={sort.isAsc}
-            sortKey={sort.sortKey}
-            sortLabel={sort.sortLabel}
-            canSeeSortDropDown={canSeeSortDropDown}
             sortKeyLabelPairs={sortFilter[activeTab as keyof object]}
-            selectSort={handleSelectSort}
-            toggleAsc={handleToggleAsc}
-            toggleCanSeeSortDropDown={handleCanSeeSortDropDown}
+            sort={{
+              isAsc: sort.isAsc,
+              sortKey: sort.sortKey,
+              sortLabel: sort.sortLabel,
+              canSeeSortDropDown: canSeeSortDropDown,
+              selectSort: handleSelectSort,
+              toggleAsc: handleToggleAsc,
+              toggleCanSeeSortDropDown: handleCanSeeSortDropDown,
+            }}
             //
-            categoryValue={category.categoryValue}
             categoryKeyValuePairs={categoryFilter[activeTab as keyof object]}
-            canSeeCategoryDropDown={canSeeCategoryDropDown}
-            selectCategory={handleSelectCategory}
-            toggleCanSeeCategoryDropDown={handleCanSeeCategoryDropDown}
+            category={{
+              categoryValue: category.categoryValue,
+              canSeeCategoryDropDown: canSeeCategoryDropDown,
+              selectCategory: handleSelectCategory,
+              toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
+            }}
           />
 
           {activeTab === "balances" ? (
