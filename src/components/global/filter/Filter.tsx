@@ -49,14 +49,14 @@ const Filter: React.FC<FilterInterface> = ({
   const mappedCategories =
     category &&
     props?.categoryKeyValuePairs?.flatMap((cat) => {
-      return cat.values.map((value) => {
-        const formattedValue = value.replaceAll("_", " ");
-
+      return cat.labelValues.map((value) => {
         return (
           <Option
             key={`${cat.key}-${value}`}
-            onClick={() => category.selectCategory(cat.key, value)}
-            label={formattedValue}
+            onClick={() =>
+              category.selectCategory(cat.key, value.value, value.label)
+            }
+            label={value.label}
           />
         );
       });

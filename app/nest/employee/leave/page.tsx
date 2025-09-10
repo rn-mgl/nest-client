@@ -78,7 +78,7 @@ const Leave = () => {
     canSeeCategoryDropDown,
     handleCanSeeCategoryDropDown,
     handleSelectCategory,
-  } = useCategory("status", "all");
+  } = useCategory("status", "all", "All");
 
   const getLeaveBalances = React.useCallback(async () => {
     try {

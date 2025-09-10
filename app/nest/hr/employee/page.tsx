@@ -131,7 +131,7 @@ const HREmployee = () => {
     category,
     handleCanSeeCategoryDropDown,
     handleSelectCategory,
-  } = useCategory("verified", "all");
+  } = useCategory("verified", "all", "All");
 
   const url = process.env.URL;
   const { data } = useSession({ required: true });
