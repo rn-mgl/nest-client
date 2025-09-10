@@ -19,15 +19,20 @@ export default function useSort(
     return setCanShowSort((prev) => !prev);
   }, []);
 
-  const handleSelectSort = React.useCallback((key: string, label: string) => {
-    setSort((prev) => {
-      return {
-        ...prev,
-        sortKey: key,
-        sortLabel: label,
-      };
-    });
-  }, []);
+  const handleSelectSort = React.useCallback(
+    (key: string, label: string) => {
+      if (key === sort.sortKey) return;
+
+      setSort((prev) => {
+        return {
+          ...prev,
+          sortKey: key,
+          sortLabel: label,
+        };
+      });
+    },
+    [sort.sortKey]
+  );
 
   const handleToggleAsc = React.useCallback(() => {
     setSort((prev) => {

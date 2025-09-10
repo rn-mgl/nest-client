@@ -122,6 +122,7 @@ const Onboarding = () => {
           categoryKeyValuePairs={EMPLOYEE_ONBOARDING_CATEGORY}
           category={{
             categoryValue: category.categoryValue,
+            categoryLabel: category.categoryLabel,
             canSeeCategoryDropDown: canSeeCategoryDropDown,
             selectCategory: handleSelectCategory,
             toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,

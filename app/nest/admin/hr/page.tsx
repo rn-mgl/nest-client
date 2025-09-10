@@ -5,6 +5,7 @@ import Filter from "@/src/components/global/filter/Filter";
 import { useAlert } from "@/src/context/AlertContext";
 import { useToasts } from "@/src/context/ToastContext";
 import useCategory from "@/src/hooks/useCategory";
+import useFilterAndSort from "@/src/hooks/useFilterAndSort";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { UserInterface } from "@/src/interface/UserInterface";
@@ -52,7 +53,7 @@ const AdminHR = () => {
     category,
     handleCanSeeCategoryDropDown,
     handleSelectCategory,
-  } = useCategory("verified", "all");
+  } = useCategory("email_verified_at", "all", "All");
 
   const { addToast } = useToasts();
 
@@ -125,126 +126,86 @@ const AdminHR = () => {
     }
   };
 
-  const mappedHRs = hrs
-    .filter((hr) => {
-      const matchedSearch = hr[search.searchKey as keyof UserInterface]
-        ?.toString()
-        .toLowerCase()
-        .includes(search.searchValue);
+  const mappedHRs = useFilterAndSort(hrs, search, sort, category).map((hr) => {
+    const isVerifed = hr.email_verified_at !== null;
 
-      let matchedCategory = category.categoryValue === "all" ? true : false;
+    return (
+      <div
+        key={hr.id}
+        className="w-full p-4 rounded-md bg-neutral-100 flex flex-row items-start justify-start gap-4 relative"
+      >
+        <div className="w-12 h-12 min-w-12 min-h-12 bg-linear-to-b from-accent-yellow to-accent-blue rounded-full"></div>
 
-      if (category.categoryValue === "verified" && hr.email_verified_at) {
-        matchedCategory = true;
-      } else if (
-        category.categoryValue === "deactivated" &&
-        !hr.email_verified_at
-      ) {
-        matchedCategory = true;
-      }
-
-      return matchedSearch && matchedCategory;
-    })
-    .sort((a, b) => {
-      const leftHand = a[sort.sortKey as keyof UserInterface] as
-        | string
-        | number;
-      const rightHand = b[sort.sortKey as keyof UserInterface] as
-        | string
-        | number;
-
-      // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#syntax
-      // if -1, a before b
-      // if 1, b before a
-      // if 0, equal
-      const order = sort.isAsc ? 1 : -1;
-
-      if (leftHand < rightHand) {
-        return -1 * order;
-      } else if (leftHand > rightHand) {
-        return 1 * order;
-      } else {
-        return 0;
-      }
-    })
-    .map((hr) => {
-      const isVerifed = hr.email_verified_at !== null;
-
-      return (
-        <div
-          key={hr.id}
-          className="w-full p-4 rounded-md bg-neutral-100 flex flex-row items-start justify-start gap-4 relative"
-        >
-          <div className="w-12 h-12 min-w-12 min-h-12 bg-linear-to-b from-accent-yellow to-accent-blue rounded-full"></div>
-
-          <div className="flex flex-col items-start justify-center gap-1 w-full overflow-hidden">
-            <p
-              title={`${hr.first_name} ${hr.last_name} `}
-              className="font-bold truncate w-full"
-            >
-              {hr.first_name} {hr.last_name}
-            </p>
-
-            <p className="text-xs flex flex-row items-center justify-center gap-1">
-              {isVerifed ? (
-                <IoShieldCheckmark
-                  className="text-accent-blue"
-                  title={`Verified at: ${isVerifed}`}
-                />
-              ) : null}
-              {hr.email}
-            </p>
-          </div>
-
-          <button
-            onClick={() => handleActiveMenu(hr.id)}
-            className="p-2 text-xs hover:bg-neutral-200 rounded-full transition-all"
+        <div className="flex flex-col items-start justify-center gap-1 w-full overflow-hidden">
+          <p
+            title={`${hr.first_name} ${hr.last_name} `}
+            className="font-bold truncate w-full"
           >
-            <IoEllipsisVertical
-              className={`${
-                activeMenu === hr.id ? "text-accent-blue" : "text-neutral-900"
-              }`}
-            />
-          </button>
+            {hr.first_name} {hr.last_name}
+          </p>
 
-          {activeMenu === hr.id ? (
-            <div className="w-32 p-2 rounded-md top-12 right-6 shadow-md bg-neutral-200 absolute animate-fade z-20">
-              <button
-                onClick={() => sendMail(hr.email)}
-                className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
-              >
-                <IoMail className="text-accent-blue" />
-                Mail
-              </button>
-
-              <button
-                onClick={() =>
-                  showAlert({
-                    title: `${isVerifed ? "Deactivate" : "Verify"} HR?`,
-                    body: `Are you sure you want to ${
-                      isVerifed ? "deactivate" : "verify"
-                    } ${hr.first_name} ${hr.last_name}?`,
-                    confirmAlert: () =>
-                      toggleVerification(hr.id, !hr.email_verified_at),
-                  })
-                }
-                className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
-              >
-                {isVerifed ? (
-                  <>
-                    <IoBan className="text-red-600" /> Deactivate
-                  </>
-                ) : (
-                  <>
-                    <IoShieldCheckmarkSharp className="text-green-600" /> Verify
-                  </>
-                )}
-              </button>
-            </div>
-          ) : null}
+          <p className="text-xs flex flex-row items-center justify-center gap-1">
+            {isVerifed ? (
+              <IoShieldCheckmark
+                className="text-accent-blue"
+                title={`Verified at: ${isVerifed}`}
+              />
+            ) : null}
+            {hr.email}
+          </p>
         </div>
-      );
-    });
+
+        <button
+          onClick={() => handleActiveMenu(hr.id)}
+          className="p-2 text-xs hover:bg-neutral-200 rounded-full transition-all"
+        >
+          <IoEllipsisVertical
+            className={`${
+              activeMenu === hr.id ? "text-accent-blue" : "text-neutral-900"
+            }`}
+          />
+        </button>
+
+        {activeMenu === hr.id ? (
+          <div className="w-32 p-2 rounded-md top-12 right-6 shadow-md bg-neutral-200 absolute animate-fade z-20">
+            <button
+              onClick={() => sendMail(hr.email)}
+              className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
+            >
+              <IoMail className="text-accent-blue" />
+              Mail
+            </button>
+
+            <button
+              onClick={() =>
+                showAlert({
+                  title: `${isVerifed ? "Deactivate" : "Verify"} HR?`,
+                  body: `Are you sure you want to ${
+                    isVerifed ? "deactivate" : "verify"
+                  } ${hr.first_name} ${hr.last_name}?`,
+                  confirmAlert: () =>
+                    toggleVerification(hr.id, !hr.email_verified_at),
+                })
+              }
+              className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
+            >
+              {isVerifed ? (
+                <>
+                  <IoBan className="text-red-600" /> Deactivate
+                </>
+              ) : (
+                <>
+                  <IoShieldCheckmarkSharp className="text-green-600" /> Verify
+                </>
+              )}
+            </button>
+          </div>
+        ) : null}
+      </div>
+    );
+  });
+
+  console.log(category);
 
   React.useEffect(() => {
     getAllHRs();
@@ -287,6 +248,7 @@ const AdminHR = () => {
           categoryKeyValuePairs={ADMIN_HR_CATEGORY}
           category={{
             categoryValue: category.categoryValue,
+            categoryLabel: category.categoryLabel,
             canSeeCategoryDropDown: canSeeCategoryDropDown,
             toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
             selectCategory: handleSelectCategory,

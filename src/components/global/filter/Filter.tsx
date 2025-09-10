@@ -52,7 +52,7 @@ const Filter: React.FC<FilterInterface> = ({
       return cat.labelValues.map((value) => {
         return (
           <Option
-            key={`${cat.key}-${value}`}
+            key={`${cat.key}-${value.value}-${value.label}`}
             onClick={() =>
               category.selectCategory(cat.key, value.value, value.label)
             }
@@ -120,6 +120,7 @@ const Filter: React.FC<FilterInterface> = ({
         {category ? (
           <Category
             categoryValue={category.categoryValue}
+            categoryLabel={category.categoryLabel}
             toggleCanSeeCategoryDropDown={category.toggleCanSeeCategoryDropDown}
             selectCategory={category.selectCategory}
             canSeeCategoryDropDown={category.canSeeCategoryDropDown}

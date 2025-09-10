@@ -290,6 +290,7 @@ const Leave = () => {
             categoryKeyValuePairs={categoryFilter[activeTab as keyof object]}
             category={{
               categoryValue: category.categoryValue,
+              categoryLabel: category.categoryLabel,
               canSeeCategoryDropDown: canSeeCategoryDropDown,
               selectCategory: handleSelectCategory,
               toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,

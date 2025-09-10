@@ -49,12 +49,14 @@ const Document = () => {
     handleSearch,
     handleSelectSearch,
   } = useSearch("name", "Name");
+
   const {
     category,
     canSeeCategoryDropDown,
     handleCanSeeCategoryDropDown,
     handleSelectCategory,
   } = useCategory("", "all", "All");
+
   const {
     sort,
     canSeeSortDropDown,
@@ -190,6 +192,7 @@ const Document = () => {
           categoryKeyValuePairs={EMPLOYEE_DOCUMENTS_CATEGORY}
           category={{
             categoryValue: category.categoryValue,
+            categoryLabel: category.categoryLabel,
             canSeeCategoryDropDown: canSeeCategoryDropDown,
             toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
             selectCategory: handleSelectCategory,

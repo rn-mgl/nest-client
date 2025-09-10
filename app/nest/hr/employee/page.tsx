@@ -511,6 +511,7 @@ const HREmployee = () => {
             categoryKeyValuePairs={categoryFilters[activeTab as keyof object]}
             category={{
               categoryValue: category.categoryValue,
+              categoryLabel: category.categoryLabel,
               canSeeCategoryDropDown: canSeeCategoryDropDown,
               toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
               selectCategory: handleSelectCategory,

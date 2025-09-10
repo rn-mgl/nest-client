@@ -22,13 +22,15 @@ export default function useCategory(
 
   const handleSelectCategory = React.useCallback(
     (key: string, value: string | number | boolean | null, label: string) => {
+      if (value === category.categoryValue) return;
+
       setCategory({
         categoryKey: key,
         categoryValue: value,
         categoryLabel: label,
       });
     },
-    []
+    [category.categoryValue]
   );
 
   return {

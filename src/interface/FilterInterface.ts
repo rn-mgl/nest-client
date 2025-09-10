@@ -1,4 +1,4 @@
-interface SearchInterface {
+export interface SearchInterface {
   searchKey: string;
   searchValue: string;
   searchLabel: string;
@@ -8,8 +8,9 @@ interface SearchInterface {
   selectSearch: (key: string, label: string) => void;
 }
 
-interface CategoryInterface {
+export interface CategoryInterface {
   categoryValue: string | number | boolean | null;
+  categoryLabel: string;
   canSeeCategoryDropDown: boolean;
   toggleCanSeeCategoryDropDown: () => void;
   selectCategory: (
@@ -19,7 +20,7 @@ interface CategoryInterface {
   ) => void;
 }
 
-interface SortInterface {
+export interface SortInterface {
   sortKey: string;
   sortLabel: string;
   isAsc: boolean;

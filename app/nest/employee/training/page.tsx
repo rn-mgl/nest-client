@@ -136,6 +136,7 @@ const Training = () => {
           categoryKeyValuePairs={EMPLOYEE_TRAINING_CATEGORY}
           category={{
             categoryValue: category.categoryValue,
+            categoryLabel: category.categoryLabel,
             canSeeCategoryDropDown: canSeeCategoryDropDown,
             toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
             selectCategory: handleSelectCategory,

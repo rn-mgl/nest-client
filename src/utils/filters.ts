@@ -16,11 +16,11 @@ interface SearchPairsInterface {
 // for admin to filter HR
 export const ADMIN_HR_CATEGORY: CategoryPairsInterface[] = [
   {
-    key: "verified",
+    key: "email_verified_at",
     labelValues: [
       {
         label: "All",
-        value: null,
+        value: "all",
       },
       {
         label: "Verified",
@@ -28,7 +28,7 @@ export const ADMIN_HR_CATEGORY: CategoryPairsInterface[] = [
       },
       {
         label: "Deactivated",
-        value: false,
+        value: null,
       },
     ],
   },
@@ -71,7 +71,7 @@ export const HR_EMPLOYEE_CATEGORY: CategoryPairsInterface[] = [
     labelValues: [
       {
         label: "All",
-        value: null,
+        value: "all",
       },
       {
         label: "Verified",
@@ -122,7 +122,7 @@ export const HR_EMPLOYEE_ONBOARDING_CATEGORY: CategoryPairsInterface[] = [
     labelValues: [
       {
         label: "All",
-        value: null,
+        value: "all",
       },
       {
         label: "Pending",
@@ -219,7 +219,7 @@ export const HR_EMPLOYEE_LEAVE_CATEGORY: CategoryPairsInterface[] = [
     labelValues: [
       {
         label: "All",
-        value: null,
+        value: "all",
       },
       {
         label: "Pending",
@@ -294,7 +294,7 @@ export const HR_EMPLOYEE_PERFORMANCE_CATEGORY: CategoryPairsInterface[] = [
     labelValues: [
       {
         label: "All",
-        value: null,
+        value: "all",
       },
       {
         label: "Pending",
@@ -353,7 +353,7 @@ export const HR_EMPLOYEE_TRAINING_CATEGORY: CategoryPairsInterface[] = [
     labelValues: [
       {
         label: "All",
-        value: null,
+        value: "all",
       },
       {
         label: "Pending",
@@ -440,7 +440,7 @@ export const HR_LEAVE_REQUEST_CATEGORY: CategoryPairsInterface[] = [
     labelValues: [
       {
         label: "All",
-        value: null,
+        value: "all",
       },
       {
         label: "Pending",
@@ -545,7 +545,7 @@ export const HR_DOCUMENTS_CATEGORY: CategoryPairsInterface[] = [
     labelValues: [
       {
         label: "All",
-        value: null,
+        value: "all",
       },
       {
         label: "Documents",
@@ -618,7 +618,7 @@ export const EMPLOYEE_ONBOARDING_CATEGORY: CategoryPairsInterface[] = [
     labelValues: [
       {
         label: "All",
-        value: null,
+        value: "all",
       },
       {
         label: "Pending",
@@ -679,7 +679,7 @@ export const EMPLOYEE_LEAVE_REQUEST_CATEGORY: CategoryPairsInterface[] = [
     labelValues: [
       {
         label: "All",
-        value: null,
+        value: "all",
       },
       {
         label: "Pending",
@@ -747,7 +747,7 @@ export const EMPLOYEE_TRAINING_CATEGORY: CategoryPairsInterface[] = [
     labelValues: [
       {
         label: "All",
-        value: null,
+        value: "all",
       },
       {
         label: "Pending",
@@ -773,7 +773,7 @@ export const EMPLOYEE_DOCUMENTS_CATEGORY: CategoryPairsInterface[] = [
     labelValues: [
       {
         label: "All",
-        value: null,
+        value: "all",
       },
       {
         label: "Documents",
