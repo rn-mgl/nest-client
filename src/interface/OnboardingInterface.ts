@@ -1,5 +1,7 @@
+import { UserInterface } from "./UserInterface";
+
 export interface OnboardingInterface {
-  onboarding_id?: number;
+  id?: number;
   title: string;
   description: string;
   created_by?: number;
@@ -31,4 +33,15 @@ export interface EmployeeOnboardingInterface {
   user_onboarding_id?: number;
   status: string;
   created_at?: string;
+}
+
+export interface UserOnboardingInterface {
+  id?: number;
+  onboarding_id: number;
+  status: string;
+  created_at: string;
+  updated_at: string;
+  assigned_to: number | UserInterface;
+  assigned_by: number | UserInterface;
+  onboarding: OnboardingInterface;
 }

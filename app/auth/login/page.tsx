@@ -1,11 +1,14 @@
 "use client";
 
 import Input from "@/src/components/form/Input";
+import IconLoader from "@/src/components/global/loader/IconLoader";
 import Logo from "@/src/components/global/Logo";
+import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import useShowPassword from "@/src/hooks/useShowPassword";
 import { LoginInterface } from "@/src/interface/AuthInterface";
 import { getCSRFToken } from "@/src/utils/token";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -19,6 +22,8 @@ const Login = () => {
   });
 
   const { showPassword, handleShowPassword } = useShowPassword();
+  const { isLoading, handleIsLoading } = useIsLoading(false);
+  const { addToast } = useToasts();
 
   const url = process.env.URL;
 
@@ -37,7 +42,7 @@ const Login = () => {
 
   const submitLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    handleIsLoading(true);
     try {
       const { token } = await getCSRFToken();
 
@@ -71,11 +76,26 @@ const Login = () => {
       }
     } catch (error) {
       console.log(error);
+
+      let message = "An errorr occurred during log in";
+
+      if (error instanceof AxiosError) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      const subject = "Log In Error";
+      const type = "error";
+
+      addToast(subject, message, type);
+    } finally {
+      handleIsLoading(false);
     }
   };
 
   return (
     <div className="w-full flex flex-col items-center justify-start h-screen bg-neutral-100 t:bg-neutral-200 p-4 l-s:p-8">
+      {isLoading ? <IconLoader /> : null}
+
       <div
         className="w-full flex flex-col items-start justify-start h-full gap-8 l-s:items-start l-s:flex-row 
             max-w-(--breakpoint-l-l) rounded-lg t:shadow-lg t:p-4 t:bg-neutral-50"

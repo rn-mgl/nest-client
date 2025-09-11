@@ -1,22 +1,28 @@
+import { UserInterface } from "./UserInterface";
+
 export interface LeaveTypeInterface {
-  leave_type_id?: number;
+  id?: number;
   type: string;
   description: string;
-  created_by?: number;
+  created_by: number | UserInterface;
 }
 
 export interface LeaveBalanceInterface {
-  leave_balance_id?: number | null;
-  balance: number | string | null;
+  id?: number;
+  balance: number;
+  assigned_to: number | UserInterface;
+  provided_by: number | UserInterface;
 }
 
 export interface LeaveRequestInterface {
-  leave_request_id?: number;
-  user_id: number;
+  id?: number;
+  requested_by: number | UserInterface;
+  actioned_by: number | UserInterface;
+  leave: number | LeaveTypeInterface;
+  balance: number | LeaveBalanceInterface;
   start_date: string;
   end_date: string;
-  reason: string;
   status: string;
-  requested_at?: string;
-  approved_by?: number;
+  reason: string;
+  created_at: string;
 }
