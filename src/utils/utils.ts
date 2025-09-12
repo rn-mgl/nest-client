@@ -2,9 +2,11 @@ import {
   LeaveBalanceInterface,
   LeaveRequestInterface,
   LeaveTypeInterface,
-} from "../interface/LeaveInterface";
-import { OnboardingInterface } from "../interface/OnboardingInterface";
-import { UserInterface } from "../interface/UserInterface";
+} from "@/interface/LeaveInterface";
+import { OnboardingInterface } from "@/interface/OnboardingInterface";
+import { PerformanceReviewInterface } from "@/interface/PerformanceReviewInterface";
+import { UserInterface } from "@/interface/UserInterface";
+import { TrainingInterface } from "../interface/TrainingInterface";
 
 export const isUserSummary = (
   value: number | UserInterface
@@ -33,7 +35,19 @@ export const isLeaveBalanceSummary = (
 export const isLeaveRequestInterface = (
   value: number | LeaveRequestInterface
 ): value is LeaveRequestInterface => {
-  return typeof value === "string" && value !== null;
+  return typeof value === "object" && value !== null;
+};
+
+export const isPerformanceReviewSummary = (
+  value: number | PerformanceReviewInterface
+): value is PerformanceReviewInterface => {
+  return typeof value === "object" && value !== null;
+};
+
+export const isTrainingSummary = (
+  value: number | TrainingInterface
+): value is TrainingInterface => {
+  return typeof value === "object" && value !== null;
 };
 
 export const normalizeDate = (

@@ -111,7 +111,7 @@ export const HR_EMPLOYEE_ONBOARDING_SORT: SortPairsInterface[] = [
     label: "Email",
   },
   {
-    key: "created_at",
+    key: "assigned_on",
     label: "Assigned On",
   },
 ];
@@ -223,7 +223,7 @@ export const HR_EMPLOYEE_PERFORMANCE_SORT: SortPairsInterface[] = [
     label: "Title",
   },
   {
-    key: "created_at",
+    key: "assigned_on",
     label: "Assigned On",
   },
 ];

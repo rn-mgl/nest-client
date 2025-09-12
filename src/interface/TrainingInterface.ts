@@ -1,10 +1,12 @@
+import { UserInterface } from "./UserInterface";
+
 export interface TrainingInterface {
-  training_id?: number;
+  id?: number;
   title: string;
   deadline_days: number;
   description: string;
   certificate: { rawFile: File; fileURL: string } | string | null;
-  created_by?: number;
+  created_by: number | UserInterface;
 }
 
 export interface TrainingContentInterface {
@@ -38,4 +40,16 @@ export interface EmployeeTrainingReviewResponseInterface {
   user_training_review_response_id?: number;
   user_answer: number;
   is_correct: boolean;
+}
+
+export interface UserTrainingInterface {
+  id?: number;
+  assigned_to: number | UserInterface;
+  assigned_by: number | UserInterface;
+  training_id: number;
+  status: string;
+  score: number | null;
+  deadline: string | null;
+  created_at: string;
+  training: TrainingInterface;
 }

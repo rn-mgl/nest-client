@@ -18,8 +18,9 @@ export interface LeaveRequestInterface {
   id?: number;
   requested_by: number | UserInterface;
   actioned_by: number | UserInterface;
-  leave: number | LeaveTypeInterface;
   balance: number | LeaveBalanceInterface;
+  leave_type_id: number;
+  leave: LeaveTypeInterface;
   start_date: string;
   end_date: string;
   status: string;

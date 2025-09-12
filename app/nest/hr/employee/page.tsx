@@ -9,27 +9,15 @@ import ShowEmployee from "@/src/components/hr/employee/ShowEmployee";
 import { useAlert } from "@/src/context/AlertContext";
 import { useToasts } from "@/src/context/ToastContext";
 import useCategory from "@/src/hooks/useCategory";
+import useFilterAndSort from "@/src/hooks/useFilterAndSort";
 import useIsLoading from "@/src/hooks/useIsLoading";
 
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
-import {
-  LeaveBalanceInterface,
-  LeaveRequestInterface,
-  LeaveTypeInterface,
-} from "@/src/interface/LeaveInterface";
-import {
-  EmployeeOnboardingInterface,
-  OnboardingInterface,
-} from "@/src/interface/OnboardingInterface";
-import {
-  EmployeePerformanceReviewInterface,
-  PerformanceReviewInterface,
-} from "@/src/interface/PerformanceReviewInterface";
-import {
-  EmployeeTrainingInterface,
-  TrainingInterface,
-} from "@/src/interface/TrainingInterface";
+import { LeaveRequestInterface } from "@/src/interface/LeaveInterface";
+import { UserOnboardingInterface } from "@/src/interface/OnboardingInterface";
+import { UserPerformanceReviewInterface } from "@/src/interface/PerformanceReviewInterface";
+import { UserTrainingInterface } from "@/src/interface/TrainingInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import {
   HR_EMPLOYEE_CATEGORY,
@@ -49,6 +37,16 @@ import {
   HR_EMPLOYEE_TRAINING_SORT,
 } from "@/src/utils/filters";
 import { getCSRFToken } from "@/src/utils/token";
+import {
+  isLeaveBalanceSummary,
+  isLeaveTypeSummary,
+  isOnboardingSummary,
+  isPerformanceReviewSummary,
+  isTrainingSummary,
+  isUserSummary,
+  normalizeDate,
+  normalizeString,
+} from "@/src/utils/utils";
 import axios, { AxiosError } from "axios";
 
 import { useSession } from "next-auth/react";
@@ -58,24 +56,15 @@ import React from "react";
 import { IoCheckmark, IoClose } from "react-icons/io5";
 
 const HREmployee = () => {
-  const [employees, setEmployees] = React.useState<Array<UserInterface>>();
+  const [employees, setEmployees] = React.useState<UserInterface[]>([]);
   const [onboardings, setOnboardings] = React.useState<
-    (UserInterface & OnboardingInterface & EmployeeOnboardingInterface)[]
+    UserOnboardingInterface[]
   >([]);
-  const [leaves, setLeaves] = React.useState<
-    (UserInterface &
-      LeaveTypeInterface &
-      LeaveBalanceInterface &
-      LeaveRequestInterface)[]
-  >([]);
+  const [leaves, setLeaves] = React.useState<LeaveRequestInterface[]>([]);
   const [performances, setPerformances] = React.useState<
-    (UserInterface &
-      PerformanceReviewInterface &
-      EmployeePerformanceReviewInterface)[]
+    UserPerformanceReviewInterface[]
   >([]);
-  const [trainings, setTrainings] = React.useState<
-    (TrainingInterface & EmployeeTrainingInterface & UserInterface)[]
-  >([]);
+  const [trainings, setTrainings] = React.useState<UserTrainingInterface[]>([]);
   const [activeUserMenu, setActiveUserMenu] = React.useState(0);
   const [activeEmployeeSeeMore, setActiveEmployeeSeeMore] = React.useState(0);
   const [activeTab, setActiveTab] = React.useState("employees");
@@ -131,7 +120,7 @@ const HREmployee = () => {
     category,
     handleCanSeeCategoryDropDown,
     handleSelectCategory,
-  } = useCategory("verified", "all", "All");
+  } = useCategory("verification_status", "All");
 
   const url = process.env.URL;
   const { data } = useSession({ required: true });
@@ -170,19 +159,19 @@ const HREmployee = () => {
           if (responseData[tab]) {
             switch (tab) {
               case "employees":
-                setEmployees(responseData[tab]);
+                setEmployees(responseData.employees);
                 break;
               case "onboardings":
-                setOnboardings(responseData[tab]);
+                setOnboardings(responseData.onboardings);
                 break;
               case "leaves":
-                setLeaves(responseData[tab]);
+                setLeaves(responseData.leaves);
                 break;
               case "performances":
-                setPerformances(responseData[tab]);
+                setPerformances(responseData.performances);
                 break;
               case "trainings":
-                setTrainings(responseData[tab]);
+                setTrainings(responseData.trainings);
                 break;
             }
           }
@@ -240,9 +229,12 @@ const HREmployee = () => {
     }
   };
 
-  console.log(employees);
-
-  const mappedEmployees = employees?.map((employee, index) => {
+  const mappedEmployees = useFilterAndSort(
+    employees,
+    search,
+    sort,
+    category
+  ).map((employee, index) => {
     const activeMenu = activeUserMenu === employee.id;
     return (
       <EmployeeCard
@@ -265,27 +257,30 @@ const HREmployee = () => {
     );
   });
 
-  const mappedOnboardings = onboardings.map((onboarding) => {
-    const assignedDate = onboarding.created_at
-      ? new Date(onboarding.created_at).toLocaleDateString()
-      : "-";
-    const assignedTime = onboarding.created_at
-      ? new Date(onboarding.created_at).toLocaleTimeString()
-      : "-";
+  const onboardingRows = onboardings.map((onboarding) => {
+    const assignedOn = normalizeDate(onboarding.created_at);
 
-    const hasImage =
-      typeof onboarding.image === "string" && onboarding.image !== "";
+    const assignedTo = isUserSummary(onboarding.assigned_to)
+      ? onboarding.assigned_to
+      : null;
+
+    const assignedToImage =
+      typeof assignedTo?.image === "string" ? assignedTo?.image : null;
+
+    const onboardingDetails = isOnboardingSummary(onboarding.onboarding)
+      ? onboarding.onboarding
+      : null;
 
     return {
       image: (
         <div
           className={`flex flex-col items-center justify-center rounded-full overflow-clip relative max-w-10 aspect-square ${
-            hasImage ? "bg-accent-blue/30" : "bg-accent-blue"
+            assignedToImage ? "bg-accent-blue/30" : "bg-accent-blue"
           }`}
         >
-          {hasImage ? (
+          {assignedToImage ? (
             <Image
-              src={(onboarding.image as string) ?? ""}
+              src={assignedToImage}
               width={300}
               height={300}
               alt="profile"
@@ -294,36 +289,46 @@ const HREmployee = () => {
           ) : null}
         </div>
       ),
-      first_name: onboarding.first_name,
-      last_name: onboarding.last_name,
-      email: onboarding.email,
-      title: onboarding.title,
-      status: (
-        <span className="capitalize">
-          {onboarding.status.replaceAll("_", " ")}
-        </span>
-      ),
-      assigned_on: `${assignedDate} ${assignedTime}`,
+      first_name: assignedTo?.first_name ?? "-",
+      last_name: assignedTo?.last_name ?? "-",
+      email: assignedTo?.email ?? "-",
+      title: onboardingDetails?.title ?? "-",
+      status: normalizeString(onboarding.status),
+      assigned_on: assignedOn,
     };
   });
 
-  const mappedLeaves = leaves.map((leave) => {
-    const hasImage = typeof leave.image === "string" && leave.image !== "";
-    const startDate = new Date(leave.start_date).toLocaleDateString();
-    const startTime = new Date(startDate).toLocaleTimeString();
-    const endDate = new Date(leave.end_date).toLocaleDateString();
-    const endTime = new Date(leave.end_date).toLocaleTimeString();
+  const mappedOnboardings = useFilterAndSort(
+    onboardingRows,
+    search,
+    sort,
+    category
+  );
+
+  const leaveRows = leaves.map((leave) => {
+    const requestedBy = isUserSummary(leave.requested_by)
+      ? leave.requested_by
+      : null;
+    const leaveType = isLeaveTypeSummary(leave.leave) ? leave.leave : null;
+    const leaveBalance = isLeaveBalanceSummary(leave.balance)
+      ? leave.balance
+      : null;
+
+    const requestedByImage =
+      typeof requestedBy?.image === "string" ? requestedBy.image : null;
+    const startOn = normalizeDate(leave.start_date);
+    const endOn = normalizeDate(leave.end_date);
 
     return {
       image: (
         <div
           className={`flex flex-col items-center justify-center rounded-full overflow-clip relative max-w-10 aspect-square ${
-            hasImage ? "bg-accent-blue/30" : "bg-accent-blue"
+            requestedByImage ? "bg-accent-blue/30" : "bg-accent-blue"
           }`}
         >
-          {hasImage ? (
+          {requestedByImage ? (
             <Image
-              src={(leave.image as string) ?? ""}
+              src={requestedByImage}
               width={300}
               height={300}
               alt="profile"
@@ -332,26 +337,24 @@ const HREmployee = () => {
           ) : null}
         </div>
       ),
-      first_name: leave.first_name,
-      last_name: leave.last_name,
-      email: leave.email,
-      type: leave.type,
-      start_date: `${startDate} ${startTime}`,
-      end_date: `${endDate} ${endTime}`,
-      status: (
-        <span className="capitalize">{leave.status.replaceAll("_", " ")}</span>
-      ),
+      first_name: requestedBy?.first_name ?? "-",
+      last_name: requestedBy?.last_name ?? "-",
+      email: requestedBy?.email ?? "-",
+      type: leaveType?.type ?? "-",
+      start_date: startOn,
+      end_date: endOn,
+      status: normalizeString(leave.status),
       reason: leave.reason,
-      balance: leave.balance,
+      balance: leaveBalance?.balance ?? 0,
       action: (
         <div className="w-full flex flex-row flex-wrap items-center justify-start gap-2">
           <button
             onClick={() =>
               showAlert({
                 title: "Approve Leave Request?",
-                body: `Are you sure you want to approve the request from ${leave.first_name} ${leave.last_name}?`,
+                body: `Are you sure you want to approve the request from ${requestedBy?.first_name} ${requestedBy?.last_name}?`,
                 confirmAlert: () =>
-                  handleLeaveRequestStatus(leave.leave_request_id ?? 0, true),
+                  handleLeaveRequestStatus(leave.id ?? 0, true),
               })
             }
             className="bg-accent-blue p-2 rounded-md text-accent-yellow font-bold w-full flex items-center justify-center l-l:w-fit"
@@ -364,9 +367,9 @@ const HREmployee = () => {
             onClick={() =>
               showAlert({
                 title: "Reject Leave Request?",
-                body: `Are you sure you want to reject the request from ${leave.first_name} ${leave.last_name}?`,
+                body: `Are you sure you want to reject the request from ${requestedBy?.first_name} ${requestedBy?.last_name}?`,
                 confirmAlert: () =>
-                  handleLeaveRequestStatus(leave.leave_request_id ?? 0, false),
+                  handleLeaveRequestStatus(leave.id ?? 0, false),
               })
             }
             className="bg-red-600 p-2 rounded-md text-neutral-100 font-bold w-full flex items-center justify-center l-l:w-fit"
@@ -380,26 +383,32 @@ const HREmployee = () => {
     };
   });
 
-  const mappedPerformances = performances.map((performance) => {
-    const hasImage =
-      typeof performance.image === "string" && performance.image !== "";
+  const mappedLeaves = useFilterAndSort(leaveRows, search, sort, category);
 
-    const assignedDate = performance.created_at
-      ? new Date(performance.created_at).toLocaleDateString()
-      : "-";
-    const assignedTime = performance.created_at
-      ? new Date(performance.created_at).toLocaleTimeString()
-      : "-";
+  const performanceRows = performances.map((performance) => {
+    const assignedTo = isUserSummary(performance.assigned_to)
+      ? performance.assigned_to
+      : null;
+    const assignedToImage =
+      typeof assignedTo?.image === "string" ? assignedTo.image : null;
+    const assignedOn = normalizeDate(performance.created_at);
+    const performanceReview = isPerformanceReviewSummary(
+      performance.performance_review
+    )
+      ? performance.performance_review
+      : null;
 
     return {
       image: (
         <div
           className={`max-w-10 flex flex-col items-center justify-center relative aspect-square rounded-full overflow-clip 
-                      ${hasImage ? "bg-accent-blue/30" : "bg-accent-blue"}`}
+                      ${
+                        assignedToImage ? "bg-accent-blue/30" : "bg-accent-blue"
+                      }`}
         >
-          {hasImage ? (
+          {assignedToImage ? (
             <Image
-              src={(performance.image as string) ?? ""}
+              src={assignedToImage}
               alt="profile"
               width={300}
               height={300}
@@ -408,40 +417,49 @@ const HREmployee = () => {
           ) : null}
         </div>
       ),
-      first_name: performance.first_name,
-      last_name: performance.last_name,
-      email: performance.email,
-      title: performance.title,
-      status: (
-        <span className="capitalize">
-          {performance.status.replaceAll("_", " ")}
-        </span>
-      ),
-      assigned_on: `${assignedDate} ${assignedTime}`,
+      first_name: assignedTo?.first_name ?? "-",
+      last_name: assignedTo?.last_name ?? "-",
+      email: assignedTo?.email ?? "-",
+      title: performanceReview ? performanceReview.title : "-",
+      status: normalizeString(performance.status),
+      assigned_on: assignedOn,
     };
   });
 
-  const mappedTrainings = trainings.map((training) => {
-    const hasImage =
-      typeof training.image === "string" && training.image !== "";
-    const deadlineDate = new Date(training.deadline).toLocaleDateString();
-    const deadlineTime = new Date(training.deadline).toLocaleTimeString();
-    const assignedDate = training.created_at
-      ? new Date(training.created_at).toLocaleDateString()
-      : "-";
-    const assignedTime = training.created_at
-      ? new Date(training.created_at).toLocaleTimeString()
-      : "-";
+  const mappedPerformances = useFilterAndSort(
+    performanceRows,
+    search,
+    sort,
+    category
+  );
+
+  const trainingRows = trainings.map((training) => {
+    const assignedTo = isUserSummary(training.assigned_to)
+      ? training.assigned_to
+      : null;
+
+    const assignedToImage =
+      typeof assignedTo?.image === "string" ? assignedTo.image : null;
+    const trainingDetails = isTrainingSummary(training.training)
+      ? training.training
+      : null;
+    const deadline =
+      typeof training.deadline === "string"
+        ? normalizeDate(training.deadline)
+        : "-";
+    const assignedOn = normalizeDate(training.created_at);
 
     return {
       image: (
         <div
           className={`max-w-10 flex flex-col items-center justify-center relative aspect-square rounded-full overflow-clip 
-                      ${hasImage ? "bg-accent-blue/30" : "bg-accent-blue"}`}
+                      ${
+                        assignedToImage ? "bg-accent-blue/30" : "bg-accent-blue"
+                      }`}
         >
-          {hasImage ? (
+          {assignedToImage ? (
             <Image
-              src={(training.image as string) ?? ""}
+              src={assignedToImage}
               alt="profile"
               width={300}
               height={300}
@@ -450,20 +468,23 @@ const HREmployee = () => {
           ) : null}
         </div>
       ),
-      first_name: training.first_name,
-      last_name: training.last_name,
-      email: training.email,
-      title: training.title,
-      deadline: `${deadlineDate} ${deadlineTime}`,
-      status: (
-        <span className="capitalize">
-          {training.status.replaceAll("_", " ")}
-        </span>
-      ),
+      first_name: assignedTo?.first_name ?? "-",
+      last_name: assignedTo?.last_name ?? "-",
+      email: assignedTo?.email ?? "-",
+      title: trainingDetails?.title ?? "-",
+      deadline: deadline,
+      status: normalizeString(training.status),
       score: training.score ?? "-",
-      assigned_on: `${assignedDate} ${assignedTime}`,
+      assigned_on: assignedOn,
     };
   });
+
+  const mappedTrainings = useFilterAndSort(
+    trainingRows,
+    search,
+    sort,
+    category
+  );
 
   React.useEffect(() => {
     getEmployeeData(activeTab);
@@ -511,7 +532,6 @@ const HREmployee = () => {
             categoryKeyValuePairs={categoryFilters[activeTab as keyof object]}
             category={{
               categoryValue: category.categoryValue,
-              categoryLabel: category.categoryLabel,
               canSeeCategoryDropDown: canSeeCategoryDropDown,
               toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
               selectCategory: handleSelectCategory,
