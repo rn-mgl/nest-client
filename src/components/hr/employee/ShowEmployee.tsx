@@ -1,31 +1,22 @@
 "use client";
 
-import OnboardingCard from "@/global/onboarding/OnboardingCard";
 import PerformanceReviewCard from "@/global/performance/PerformanceReviewCard";
 import TrainingCard from "@/global/training/TrainingCard";
-import ShowOnboarding from "@/hr/onboarding/ShowOnboarding";
-import ShowPerformanceReview from "@/hr/performance/ShowPerformanceReview";
-import ShowTraining from "@/hr/training/ShowTraining";
 import Table from "@/src/components/global/field/Table";
 import {
   LeaveBalanceInterface,
   LeaveRequestInterface,
-  LeaveTypeInterface,
 } from "@/src/interface/LeaveInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
-import {
-  EmployeeOnboardingInterface,
-  OnboardingInterface,
-} from "@/src/interface/OnboardingInterface";
-import {
-  EmployeePerformanceReviewInterface,
-  PerformanceReviewInterface,
-} from "@/src/interface/PerformanceReviewInterface";
-import {
-  EmployeeTrainingInterface,
-  TrainingInterface,
-} from "@/src/interface/TrainingInterface";
+import { UserOnboardingInterface } from "@/src/interface/OnboardingInterface";
+import { UserPerformanceReviewInterface } from "@/src/interface/PerformanceReviewInterface";
+import { UserTrainingInterface } from "@/src/interface/TrainingInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
+import {
+  isUserSummary,
+  normalizeDate,
+  normalizeString,
+} from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -35,35 +26,26 @@ import { IoClose, IoMail } from "react-icons/io5";
 const ShowEmployee: React.FC<ModalInterface> = (props) => {
   const [employee, setEmployee] = React.useState<UserInterface>({
     email: "",
+    verification_status: "Deactivated",
     email_verified_at: "",
     first_name: "",
     last_name: "",
-    user_id: 0,
+    id: 0,
     image: "",
   });
   const [onboardings, setOnboardings] = React.useState<
-    (EmployeeOnboardingInterface & OnboardingInterface & UserInterface)[]
+    UserOnboardingInterface[]
   >([]);
   const [leaveBalances, setLeaveBalances] = React.useState<
-    (LeaveBalanceInterface & LeaveTypeInterface & UserInterface)[]
+    LeaveBalanceInterface[]
   >([]);
   const [leaveRequests, setLeaveRequests] = React.useState<
-    (LeaveRequestInterface & LeaveTypeInterface)[]
+    LeaveRequestInterface[]
   >([]);
   const [performanceReviews, setPerformanceReviews] = React.useState<
-    (EmployeePerformanceReviewInterface &
-      PerformanceReviewInterface &
-      UserInterface)[]
+    UserPerformanceReviewInterface[]
   >([]);
-  const [trainings, setTrainings] = React.useState<
-    (EmployeeTrainingInterface & TrainingInterface & UserInterface)[]
-  >([]);
-
-  const [activeOnboardingSeeMore, setActiveOnboardingSeeMore] =
-    React.useState(0);
-  const [activePerformanceReviewSeeMore, setActivePerformanceReviewSeeMore] =
-    React.useState(0);
-  const [activeTrainingSeeMore, setActiveTrainingSeeMore] = React.useState(0);
+  const [trainings, setTrainings] = React.useState<UserTrainingInterface[]>([]);
 
   const { data: session } = useSession({ required: true });
   const user = session?.user;
@@ -100,128 +82,84 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
     location.href = `mailto:${employee.email}`;
   };
 
-  const handleActiveOnboardingSeeMore = (id: number) => {
-    setActiveOnboardingSeeMore((prev) => (prev === id ? 0 : id));
-  };
+  const mappedOnboardings = onboardings.map((onboarding) => {
+    const assignedBy = isUserSummary(onboarding.assigned_by)
+      ? onboarding.assigned_by
+      : null;
+    const assignedOn = normalizeDate(onboarding.created_at);
 
-  const handleActivePerformanceReviewSeeMore = (id: number) => {
-    setActivePerformanceReviewSeeMore((prev) => (prev === id ? 0 : id));
-  };
-
-  const handleActiveTrainingSeeMore = (id: number) => {
-    setActiveTrainingSeeMore((prev) => (prev === id ? 0 : id));
-  };
-
-  const mappedOnboardings = onboardings.map((onboarding, index) => {
-    const createdBy = onboarding.created_by === user?.current;
-
-    return (
-      <OnboardingCard
-        key={index}
-        createdBy={createdBy}
-        role="employee" // set role as employee for the card view
-        // onboarding
-        title={onboarding.title}
-        description={onboarding.description}
-        status={onboarding.status.replaceAll("_", " ")}
-        // user
-        email={onboarding.email}
-        first_name={onboarding.first_name}
-        last_name={onboarding.last_name}
-        user_id={onboarding.user_id}
-        //
-        handleActiveSeeMore={() =>
-          handleActiveOnboardingSeeMore(onboarding.onboarding_id ?? 0)
-        }
-      />
-    );
+    return {
+      title: onboarding.onboarding.title,
+      description: onboarding.onboarding.description,
+      status: normalizeString(onboarding.status),
+      assigned_on: assignedOn,
+      assigned_by: `${assignedBy?.first_name} ${assignedBy?.last_name}`,
+    };
   });
 
   const mappedLeaveBalances = leaveBalances.map((leave) => {
+    const providedBy = isUserSummary(leave.provided_by)
+      ? leave.provided_by
+      : null;
+    const providedOn = normalizeDate(leave.created_at);
+
     return {
-      leave_type: leave.type,
-      description: leave.description,
+      leave_type: leave.leave.type,
+      description: leave.leave.description,
       balance: leave.balance,
+      provided_on: providedOn,
+      provided_by: `${providedBy?.first_name} ${providedBy?.last_name}`,
     };
   });
 
   const mappedLeaveRequests = leaveRequests.map((leave) => {
-    const startDate = new Date(leave.start_date).toLocaleDateString();
-    const startTime = new Date(leave.start_date).toLocaleTimeString();
-    const endDate = new Date(leave.end_date).toLocaleDateString();
-    const endTime = new Date(leave.end_date).toLocaleTimeString();
+    const startOn = normalizeDate(leave.start_date);
+    const endOn = normalizeDate(leave.end_date);
+    const requestedOn = normalizeDate(leave.created_at);
 
     return {
-      type: leave.type,
+      type: leave.leave.type,
       reason: leave.reason,
-      status: (
-        <span className="capitalize">{leave.status.replaceAll("_", " ")}</span>
-      ),
-      start_date: `${startDate} ${startTime}`,
-      end_date: `${endDate} ${endTime}`,
+      status: normalizeString(leave.status),
+      requested_on: requestedOn,
+      start_date: startOn,
+      end_date: endOn,
     };
   });
 
-  const mappedPerformanceReviews = performanceReviews.map(
-    (performance, index) => {
-      const createdBy = performance.created_by === user?.current;
+  const mappedPerformanceReviews = performanceReviews.map((performance) => {
+    const assignedBy = isUserSummary(performance.assigned_by)
+      ? performance.assigned_by
+      : null;
+    const assignedOn = normalizeDate(performance.created_at);
 
-      return (
-        <PerformanceReviewCard
-          key={index}
-          createdBy={createdBy}
-          role="employee"
-          //
-          title={performance.title}
-          description={performance.description}
-          status={performance.status.replaceAll("_", " ")}
-          //
-          email={performance.email}
-          first_name={performance.first_name}
-          last_name={performance.last_name}
-          user_id={performance.user_id}
-          //
-          handleActiveSeeMore={() =>
-            handleActivePerformanceReviewSeeMore(
-              performance.performance_review_id ?? 0
-            )
-          }
-        />
-      );
-    }
-  );
+    return {
+      title: performance.performance_review.title,
+      description: performance.performance_review.description,
+      status: normalizeString(performance.status),
+      assigned_on: assignedOn,
+      assigned_by: `${assignedBy?.first_name} ${assignedBy?.last_name}`,
+    };
+  });
 
-  const mappedTrainings = trainings.map((training, index) => {
-    const createdBy = training.created_by === user?.current;
-    const deadlineDate = new Date(training.deadline).toLocaleDateString();
-    const deadlineTime = new Date(training.deadline).toLocaleTimeString();
-    const deadline = `${deadlineDate} ${deadlineTime}`;
+  const mappedTrainings = trainings.map((training) => {
+    const assignedBy = isUserSummary(training.assigned_by)
+      ? training.assigned_by
+      : null;
+    const deadlineDate =
+      typeof training.deadline === "string"
+        ? normalizeDate(training.deadline)
+        : "-";
+    const assignedOn = normalizeDate(training.created_at);
 
-    return (
-      <TrainingCard
-        key={index}
-        createdBy={createdBy}
-        role="employee"
-        //
-        title={training.title}
-        description={training.description}
-        certificate={training.certificate}
-        deadline_days={training.deadline_days}
-        deadline={deadline}
-        created_by={training.created_by}
-        status={training.status.replaceAll("_", " ")}
-        score={training.score}
-        //
-        email={training.email}
-        first_name={training.first_name}
-        last_name={training.last_name}
-        user_id={training.user_id}
-        //
-        handleActiveSeeMore={() =>
-          handleActiveTrainingSeeMore(training.training_id ?? 0)
-        }
-      />
-    );
+    return {
+      title: training.training.title,
+      description: training.training.description,
+      status: normalizeString(training.status),
+      deadline: deadlineDate,
+      assigned_on: assignedOn,
+      assigned_by: `${assignedBy?.first_name} ${assignedBy?.last_name}`,
+    };
   });
 
   React.useEffect(() => {
@@ -233,31 +171,6 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
       p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-hidden"
     >
-      {activeOnboardingSeeMore ? (
-        <ShowOnboarding
-          toggleModal={() =>
-            handleActiveOnboardingSeeMore(activeOnboardingSeeMore)
-          }
-          id={activeOnboardingSeeMore}
-        />
-      ) : null}
-
-      {activePerformanceReviewSeeMore ? (
-        <ShowPerformanceReview
-          toggleModal={() =>
-            handleActivePerformanceReviewSeeMore(activePerformanceReviewSeeMore)
-          }
-          id={activePerformanceReviewSeeMore}
-        />
-      ) : null}
-
-      {activeTrainingSeeMore ? (
-        <ShowTraining
-          toggleModal={() => handleActiveTrainingSeeMore(activeTrainingSeeMore)}
-          id={activeTrainingSeeMore}
-        />
-      ) : null}
-
       <div className="w-full my-auto h-full max-w-(--breakpoint-l-l) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-purple rounded-t-lg font-bold text-neutral-100">
           {props.label ?? "Employee Details"}
@@ -315,8 +228,18 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
               Onboardings
             </div>
             {onboardings.length ? (
-              <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2">
-                {mappedOnboardings}
+              <div className="w-full">
+                <Table
+                  color="neutral"
+                  contents={mappedOnboardings}
+                  headers={[
+                    "Title",
+                    "Description",
+                    "Status",
+                    "Assigned On",
+                    "Assigned By",
+                  ]}
+                />
               </div>
             ) : (
               <div>No Onboardings Found</div>
@@ -333,7 +256,13 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
                 <Table
                   color="neutral"
                   contents={mappedLeaveBalances}
-                  headers={["Leave Type", "Description", "Balance"]}
+                  headers={[
+                    "Leave Type",
+                    "Description",
+                    "Balance",
+                    "Provided On",
+                    "Provided By",
+                  ]}
                 />
               </div>
             ) : (
@@ -350,7 +279,14 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
             {leaveRequests.length ? (
               <div className="w-full overflow-x-auto flex flex-col items-start justify-start">
                 <Table
-                  headers={["Leave Type", "Reason", "Status", "Start", "End"]}
+                  headers={[
+                    "Leave Type",
+                    "Reason",
+                    "Status",
+                    "Requested On",
+                    "Start",
+                    "End",
+                  ]}
                   contents={mappedLeaveRequests}
                   color="neutral"
                 />
@@ -367,8 +303,18 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
             </div>
 
             {performanceReviews.length ? (
-              <div className="w-full grid grid-cols-1 t:grid-cols-2 gap-4">
-                {mappedPerformanceReviews}
+              <div className="w-full">
+                <Table
+                  color="neutral"
+                  contents={mappedPerformanceReviews}
+                  headers={[
+                    "Title",
+                    "Description",
+                    "Status",
+                    "Assigned On",
+                    "Assigned By",
+                  ]}
+                />
               </div>
             ) : (
               <div>No Performance Reviews Found</div>
@@ -381,8 +327,19 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
               Trainings
             </div>
             {trainings.length ? (
-              <div className="w-full grid grid-cols-1 t:grid-cols-2 gap-4">
-                {mappedTrainings}
+              <div className="w-full">
+                <Table
+                  color="neutral"
+                  contents={mappedTrainings}
+                  headers={[
+                    "Title",
+                    "Description",
+                    "Status",
+                    "Deadline",
+                    "Assigned On",
+                    "Assigned By",
+                  ]}
+                />
               </div>
             ) : (
               <div>No Trainings Found</div>

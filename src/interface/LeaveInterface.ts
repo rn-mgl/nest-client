@@ -9,9 +9,11 @@ export interface LeaveTypeInterface {
 
 export interface LeaveBalanceInterface {
   id?: number;
+  leave: LeaveTypeInterface;
   balance: number;
   assigned_to: number | UserInterface;
   provided_by: number | UserInterface;
+  created_at: string;
 }
 
 export interface LeaveRequestInterface {
