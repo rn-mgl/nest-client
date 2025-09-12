@@ -221,13 +221,13 @@ const HRLeave = () => {
   const mappedLeaves = leaveTypes.map((leave, index) => {
     const leaveId = leave.leave_type_id as number; // leave ids in this page have leaveids (from db)
     const activeMenu = activeLeaveTypeMenu === leaveId;
-    const createdBy = leave.created_by === user?.current;
+    const createdByCurrentUser = leave.created_by === user?.current;
     return (
       <LeaveCard
         role={user?.role ?? ""}
         key={index}
         activeMenu={activeMenu}
-        createdBy={createdBy}
+        createdByCurrentUser={createdByCurrentUser}
         //
         type={leave.type}
         description={leave.description}

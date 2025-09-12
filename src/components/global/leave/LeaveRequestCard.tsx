@@ -17,7 +17,7 @@ const LeaveRequestCard: React.FC<
           <p className="text-xs">{props.requested_at}</p>
         </div>
 
-        {props.createdBy ? (
+        {props.createdByCurrentUser ? (
           <button
             onClick={props.handleActiveMenu}
             className="p-2 rounded-full bg-neutral-100 transition-all"
@@ -41,7 +41,7 @@ const LeaveRequestCard: React.FC<
             Edit
           </button>
 
-          {props.createdBy ? (
+          {props.createdByCurrentUser ? (
             <button
               onClick={props.handleCanDelete}
               className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"

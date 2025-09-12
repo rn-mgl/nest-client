@@ -79,7 +79,7 @@ const Performance = () => {
         <PerformanceReviewCard
           key={index}
           role={user?.role ?? ""}
-          createdBy={false}
+          createdByCurrentUser={false}
           //
           title={performance.title}
           description={performance.description}

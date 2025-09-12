@@ -83,7 +83,7 @@ const Onboarding = () => {
     return (
       <OnboardingCard
         key={index}
-        createdBy={false}
+        createdByCurrentUser={false}
         role={user?.role ?? ""}
         // onboarding
         title={onboarding.title}

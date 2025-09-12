@@ -168,7 +168,7 @@ const HRDocument = () => {
   const mappedDocuments = documents.map((document, index) => {
     const type = "type" in document ? document.type : "folder";
     const isDocument = type !== "folder";
-    const createdBy = document.created_by === user?.current;
+    const createdByCurrentUser = document.created_by === user?.current;
     const activeMenu =
       type === activeDocumentMenu.type && document.id === activeDocumentMenu.id;
 
@@ -177,7 +177,7 @@ const HRDocument = () => {
         role={user?.role as string}
         key={index}
         activeMenu={activeMenu}
-        createdBy={createdBy}
+        createdByCurrentUser={createdByCurrentUser}
         //
         id={document.id}
         name={document.name}
@@ -207,7 +207,7 @@ const HRDocument = () => {
         role={user?.role as string}
         key={index}
         activeMenu={activeMenu}
-        createdBy={createdBy}
+        createdByCurrentUser={createdByCurrentUser}
         //
         id={document.id}
         name={document.name}

@@ -121,7 +121,7 @@ const Document = () => {
     return isDocument ? (
       <DocumentCard
         role={user?.role ?? ""}
-        createdBy={false}
+        createdByCurrentUser={false}
         key={index}
         id={document.id}
         name={document.name}
@@ -143,7 +143,7 @@ const Document = () => {
       <FolderCard
         key={index}
         role={user?.role ?? ""}
-        createdBy={false}
+        createdByCurrentUser={false}
         id={document.id}
         name={document.name}
         //

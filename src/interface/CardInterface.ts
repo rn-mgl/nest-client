@@ -1,6 +1,6 @@
 export interface CardInterface {
   activeMenu?: boolean;
-  createdBy: boolean;
+  createdByCurrentUser: boolean;
   role: string;
   handleCanEdit?: () => void;
   handleCanAssign?: () => void;

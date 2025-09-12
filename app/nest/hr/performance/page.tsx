@@ -108,13 +108,13 @@ const PerformanceReview = () => {
   const mappedPerformanceReviews = performances.map((performance, index) => {
     const performanceReviewId = performance.performance_review_id as number;
     const activeMenu = activePerformanceReviewMenu === performanceReviewId;
-    const createdBy = performance.created_by === user?.current;
+    const createdByCurrentUser = performance.created_by === user?.current;
     return (
       <PerformanceReviewCard
         role={user?.role as string}
         key={index}
         activeMenu={activeMenu}
-        createdBy={createdBy}
+        createdByCurrentUser={createdByCurrentUser}
         //
         title={performance.title}
         description={performance.description}

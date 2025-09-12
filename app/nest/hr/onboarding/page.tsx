@@ -106,14 +106,14 @@ const HROnboarding = () => {
   const mappedOnboardings = onboardings?.map((onboarding, index) => {
     const onboardingId = onboarding.onboarding_id ?? 0;
     const activeMenu = activeOnboardingMenu === onboardingId;
-    const createdBy = user?.current === onboarding.created_by;
+    const createdByCurrentUser = user?.current === onboarding.created_by;
 
     return (
       <OnboardingCard
         key={index}
         role={user?.role ?? ""}
         activeMenu={activeMenu}
-        createdBy={createdBy}
+        createdByCurrentUser={createdByCurrentUser}
         // onboarding
         title={onboarding.title}
         description={onboarding.description}

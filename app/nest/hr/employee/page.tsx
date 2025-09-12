@@ -240,7 +240,7 @@ const HREmployee = () => {
       <EmployeeCard
         key={index}
         role={user?.role ?? ""}
-        createdBy={false}
+        createdByCurrentUser={false}
         //
         id={employee.id}
         first_name={employee.first_name}

@@ -82,7 +82,7 @@ const Training = () => {
       <TrainingCard
         role={user?.role ?? ""}
         key={index}
-        createdBy={false}
+        createdByCurrentUser={false}
         //
         title={training.title}
         description={training.description}

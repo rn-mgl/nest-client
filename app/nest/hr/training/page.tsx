@@ -103,14 +103,14 @@ const HRTraining = () => {
 
   const mappedTrainings = trainings.map((training, index) => {
     const trainingId = training.training_id as number;
-    const createdBy = training.created_by === user?.current;
+    const createdByCurrentUser = training.created_by === user?.current;
     const activeMenu = activeTrainingMenu === trainingId;
     return (
       <TrainingCard
         role={user?.role ?? ""}
         key={index}
         activeMenu={activeMenu}
-        createdBy={createdBy}
+        createdByCurrentUser={createdByCurrentUser}
         //
         title={training.title}
         description={training.description}

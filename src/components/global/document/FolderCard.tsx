@@ -22,7 +22,8 @@ const FolderCard: React.FC<CardInterface & FolderInterface & UserInterface> = (
             {props.name}
           </Link>
           <p className="text-xs">
-            created by {props.createdBy ? "you" : `${props.first_name}`}
+            created by{" "}
+            {props.createdByCurrentUser ? "you" : `${props.first_name}`}
           </p>
         </div>
 
@@ -49,7 +50,7 @@ const FolderCard: React.FC<CardInterface & FolderInterface & UserInterface> = (
               Edit
             </button>
 
-            {props.createdBy ? (
+            {props.createdByCurrentUser ? (
               <button
                 onClick={props.handleCanDelete}
                 className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
