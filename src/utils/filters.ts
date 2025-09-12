@@ -1,6 +1,6 @@
 interface CategoryPairsInterface {
   key: string;
-  labelValues: { label: string; value: string | number | boolean | null }[];
+  values: string[];
 }
 
 interface SortPairsInterface {
@@ -16,21 +16,8 @@ interface SearchPairsInterface {
 // for admin to filter HR
 export const ADMIN_HR_CATEGORY: CategoryPairsInterface[] = [
   {
-    key: "email_verified_at",
-    labelValues: [
-      {
-        label: "All",
-        value: "all",
-      },
-      {
-        label: "Verified",
-        value: true,
-      },
-      {
-        label: "Deactivated",
-        value: null,
-      },
-    ],
+    key: "verification_status",
+    values: ["All", "Verified", "Deactivated"],
   },
 ];
 
@@ -67,21 +54,8 @@ export const ADMIN_HR_SEARCH: SearchPairsInterface[] = [
 // for hr to filter employee
 export const HR_EMPLOYEE_CATEGORY: CategoryPairsInterface[] = [
   {
-    key: "verified",
-    labelValues: [
-      {
-        label: "All",
-        value: "all",
-      },
-      {
-        label: "Verified",
-        value: true,
-      },
-      {
-        label: "Deactivated",
-        value: false,
-      },
-    ],
+    key: "verification_status",
+    values: ["All", "Verified", "Deactivated"],
   },
 ];
 
@@ -119,24 +93,7 @@ export const HR_EMPLOYEE_SEARCH: SearchPairsInterface[] = [
 export const HR_EMPLOYEE_ONBOARDING_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "status",
-    labelValues: [
-      {
-        label: "All",
-        value: "all",
-      },
-      {
-        label: "Pending",
-        value: "pending",
-      },
-      {
-        label: "In Progress",
-        value: "in_progress",
-      },
-      {
-        label: "Done",
-        value: "done",
-      },
-    ],
+    values: ["All", "Pending", "In Progress", "Done"],
   },
 ];
 
@@ -216,43 +173,26 @@ export const HR_EMPLOYEE_LEAVE_TYPE_SORT: SortPairsInterface[] = [
 export const HR_EMPLOYEE_LEAVE_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "status",
-    labelValues: [
-      {
-        label: "All",
-        value: "all",
-      },
-      {
-        label: "Pending",
-        value: "pending",
-      },
-      {
-        label: "In Progress",
-        value: "in_progress",
-      },
-      {
-        label: "Done",
-        value: "done",
-      },
-    ],
+    values: ["All", "Pending", "In Progress", "Done"],
   },
   {
     key: "type",
-    labelValues: [
-      { label: "Work From Home Leave", value: "Work From Home Leave" },
-      { label: "Unpaid Leave", value: "Unpaid Leave" },
-      { label: "Study Leave", value: "Study Leave" },
-      { label: "Sick Leave", value: "Sick Leave" },
-      { label: "Short-Term Leave", value: "Short-Term Leave" },
-      { label: "Sabbatical Leave", value: "Sabbatical Leave" },
-      { label: "Quarantine Leave", value: "Quarantine Leave" },
-      { label: "Paternity Leave", value: "Paternity Leave" },
-      { label: "Maternity Leave", value: "Maternity Leave" },
-      { label: "Marriage Leave", value: "Marriage Leave" },
-      { label: "Emergency Leave", value: "Emergency Leave" },
-      { label: "Compensatory Leave", value: "Compensatory Leave" },
-      { label: "Casual Leave", value: "Casual Leave" },
-      { label: "Bereavement Leave", value: "Bereavement Leave" },
-      { label: "Annual Leave", value: "Annual Leave" },
+    values: [
+      "Work From Home Leave",
+      "Unpaid Leave",
+      "Study Leave",
+      "Sick Leave",
+      "Short-Term Leave",
+      "Sabbatical Leave",
+      "Quarantine Leave",
+      "Paternity Leave",
+      "Maternity Leave",
+      "Marriage Leave",
+      "Emergency Leave",
+      "Compensatory Leave",
+      "Casual Leave",
+      "Bereavement Leave",
+      "Annual Leave",
     ],
   },
 ];
@@ -291,24 +231,7 @@ export const HR_EMPLOYEE_PERFORMANCE_SORT: SortPairsInterface[] = [
 export const HR_EMPLOYEE_PERFORMANCE_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "status",
-    labelValues: [
-      {
-        label: "All",
-        value: "all",
-      },
-      {
-        label: "Pending",
-        value: "pending",
-      },
-      {
-        label: "In Progress",
-        value: "in_progress",
-      },
-      {
-        label: "Done",
-        value: "done",
-      },
-    ],
+    values: ["All", "Pending", "In Progress", "Done"],
   },
 ];
 
@@ -350,24 +273,7 @@ export const HR_EMPLOYEE_TRAINING_SORT: SortPairsInterface[] = [
 export const HR_EMPLOYEE_TRAINING_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "status",
-    labelValues: [
-      {
-        label: "All",
-        value: "all",
-      },
-      {
-        label: "Pending",
-        value: "pending",
-      },
-      {
-        label: "In Progress",
-        value: "in_progress",
-      },
-      {
-        label: "Done",
-        value: "done",
-      },
-    ],
+    values: ["All", "Pending", "In Progress", "Done"],
   },
 ];
 
@@ -437,32 +343,7 @@ export const HR_LEAVE_REQUEST_SORT: SortPairsInterface[] = [
 export const HR_LEAVE_REQUEST_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "status",
-    labelValues: [
-      {
-        label: "All",
-        value: "all",
-      },
-      {
-        label: "Pending",
-        value: "pending",
-      },
-      {
-        label: "In Progress",
-        value: "in_progress",
-      },
-      {
-        label: "Done",
-        value: "done",
-      },
-      {
-        label: "Approved",
-        value: "approved",
-      },
-      {
-        label: "Rejected",
-        value: "rejected",
-      },
-    ],
+    values: ["All", "Pending", "In Progress", "Done", "Approved", "Rejected"],
   },
 ];
 
@@ -542,20 +423,7 @@ export const HR_TRAINING_SEARCH: SearchPairsInterface[] = [
 export const HR_DOCUMENTS_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "type",
-    labelValues: [
-      {
-        label: "All",
-        value: "all",
-      },
-      {
-        label: "Documents",
-        value: "documents",
-      },
-      {
-        label: "Folders",
-        value: "folders",
-      },
-    ],
+    values: ["All", "Documents", "Folders"],
   },
 ];
 
@@ -615,24 +483,7 @@ export const EMPLOYEE_ONBOARDING_SORT: SortPairsInterface[] = [
 export const EMPLOYEE_ONBOARDING_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "status",
-    labelValues: [
-      {
-        label: "All",
-        value: "all",
-      },
-      {
-        label: "Pending",
-        value: "pending",
-      },
-      {
-        label: "In Progress",
-        value: "in_progress",
-      },
-      {
-        label: "Done",
-        value: "done",
-      },
-    ],
+    values: ["All", "Pending", "In Progress", "Done"],
   },
 ];
 
@@ -676,32 +527,7 @@ export const EMPLOYEE_LEAVE_REQUEST_SORT: SortPairsInterface[] = [
 export const EMPLOYEE_LEAVE_REQUEST_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "status",
-    labelValues: [
-      {
-        label: "All",
-        value: "all",
-      },
-      {
-        label: "Pending",
-        value: "pending",
-      },
-      {
-        label: "In Progress",
-        value: "in_progress",
-      },
-      {
-        label: "Done",
-        value: "done",
-      },
-      {
-        label: "Approved",
-        value: "approved",
-      },
-      {
-        label: "Rejected",
-        value: "rejected",
-      },
-    ],
+    values: ["All", "Pending", "In Progress", "Done", "Approved", "Rejected"],
   },
 ];
 
@@ -744,24 +570,7 @@ export const EMPLOYEE_TRAINING_SORT: SortPairsInterface[] = [
 export const EMPLOYEE_TRAINING_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "status",
-    labelValues: [
-      {
-        label: "All",
-        value: "all",
-      },
-      {
-        label: "Pending",
-        value: "pending",
-      },
-      {
-        label: "In Progress",
-        value: "in_progress",
-      },
-      {
-        label: "Done",
-        value: "done",
-      },
-    ],
+    values: ["All", "Pending", "In Progress", "Done"],
   },
 ];
 
@@ -770,20 +579,7 @@ export const EMPLOYEE_TRAINING_CATEGORY: CategoryPairsInterface[] = [
 export const EMPLOYEE_DOCUMENTS_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "type",
-    labelValues: [
-      {
-        label: "All",
-        value: "all",
-      },
-      {
-        label: "Documents",
-        value: "documents",
-      },
-      {
-        label: "Folders",
-        value: "folders",
-      },
-    ],
+    values: ["All", "Documents", "Folders"],
   },
 ];
 

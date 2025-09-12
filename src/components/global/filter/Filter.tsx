@@ -49,14 +49,12 @@ const Filter: React.FC<FilterInterface> = ({
   const mappedCategories =
     category &&
     props?.categoryKeyValuePairs?.flatMap((cat) => {
-      return cat.labelValues.map((value) => {
+      return cat.values.map((value) => {
         return (
           <Option
-            key={`${cat.key}-${value.value}-${value.label}`}
-            onClick={() =>
-              category.selectCategory(cat.key, value.value, value.label)
-            }
-            label={value.label}
+            key={`${cat.key}-${value}`}
+            onClick={() => category.selectCategory(cat.key, value)}
+            label={value}
           />
         );
       });
@@ -120,7 +118,6 @@ const Filter: React.FC<FilterInterface> = ({
         {category ? (
           <Category
             categoryValue={category.categoryValue}
-            categoryLabel={category.categoryLabel}
             toggleCanSeeCategoryDropDown={category.toggleCanSeeCategoryDropDown}
             selectCategory={category.selectCategory}
             canSeeCategoryDropDown={category.canSeeCategoryDropDown}

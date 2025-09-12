@@ -55,7 +55,7 @@ const Document = () => {
     canSeeCategoryDropDown,
     handleCanSeeCategoryDropDown,
     handleSelectCategory,
-  } = useCategory("", "all", "All");
+  } = useCategory("", "All");
 
   const {
     sort,
@@ -192,7 +192,6 @@ const Document = () => {
           categoryKeyValuePairs={EMPLOYEE_DOCUMENTS_CATEGORY}
           category={{
             categoryValue: category.categoryValue,
-            categoryLabel: category.categoryLabel,
             canSeeCategoryDropDown: canSeeCategoryDropDown,
             toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
             selectCategory: handleSelectCategory,

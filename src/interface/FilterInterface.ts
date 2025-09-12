@@ -9,15 +9,10 @@ export interface SearchInterface {
 }
 
 export interface CategoryInterface {
-  categoryValue: string | number | boolean | null;
-  categoryLabel: string;
+  categoryValue: string;
   canSeeCategoryDropDown: boolean;
   toggleCanSeeCategoryDropDown: () => void;
-  selectCategory: (
-    key: string,
-    value: string | number | boolean | null,
-    label: string
-  ) => void;
+  selectCategory: (key: string, value: string) => void;
 }
 
 export interface SortInterface {
@@ -40,7 +35,7 @@ export interface FilterInterface {
   }>;
   categoryKeyValuePairs?: Array<{
     key: string;
-    labelValues: { label: string; value: string | number | boolean | null }[];
+    values: string[];
   }>;
   sortKeyLabelPairs?: Array<{
     key: string;

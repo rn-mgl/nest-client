@@ -78,7 +78,7 @@ const HRLeave = () => {
     canSeeCategoryDropDown,
     handleCanSeeCategoryDropDown,
     handleSelectCategory,
-  } = useCategory("status", "all", "All");
+  } = useCategory("status", "All");
 
   const searchFilters = {
     types: HR_LEAVE_TYPE_SEARCH,
@@ -413,7 +413,6 @@ const HRLeave = () => {
           categoryKeyValuePairs={categoryFilters[activeTab as keyof object]}
           category={{
             categoryValue: category.categoryValue,
-            categoryLabel: category.categoryLabel,
             canSeeCategoryDropDown: canSeeCategoryDropDown,
             selectCategory: handleSelectCategory,
             toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,

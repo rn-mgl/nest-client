@@ -14,8 +14,7 @@ export default function useFilterAndSort<T>(
   },
   category: {
     categoryKey: string;
-    categoryLabel: string;
-    categoryValue: string | number | boolean | null;
+    categoryValue: string;
   }
 ) {
   const sortAndFilter = React.useMemo(() => {
@@ -32,21 +31,21 @@ export default function useFilterAndSort<T>(
         // for "All" category
         let matchedCategory = true;
 
+        console.log(category.categoryKey);
+
         // if not set
         if (typeof category.categoryValue === "undefined") {
           matchedCategory = true;
         }
         // if matched by value, or
-        // by truthy and falsy
         else if (
-          d[category.categoryKey as keyof T] === category.categoryValue ||
-          Boolean(d[category.categoryKey as keyof T]) === category.categoryValue
+          d[category.categoryKey as keyof T] === category.categoryValue
         ) {
           matchedCategory = true;
         }
         // fallback to true if value is all, else did not match
         else {
-          matchedCategory = category.categoryValue === "all" ? true : false;
+          matchedCategory = category.categoryValue === "All" ? true : false;
         }
 
         return matchedSearch && matchedCategory;

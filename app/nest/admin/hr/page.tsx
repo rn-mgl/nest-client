@@ -53,7 +53,7 @@ const AdminHR = () => {
     category,
     handleCanSeeCategoryDropDown,
     handleSelectCategory,
-  } = useCategory("email_verified_at", "all", "All");
+  } = useCategory("email_verified_at", "All");
 
   const { addToast } = useToasts();
 
@@ -248,7 +248,6 @@ const AdminHR = () => {
           categoryKeyValuePairs={ADMIN_HR_CATEGORY}
           category={{
             categoryValue: category.categoryValue,
-            categoryLabel: category.categoryLabel,
             canSeeCategoryDropDown: canSeeCategoryDropDown,
             toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
             selectCategory: handleSelectCategory,
