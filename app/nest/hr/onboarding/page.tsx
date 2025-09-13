@@ -10,7 +10,6 @@ import ShowOnboarding from "@/src/components/hr/onboarding/ShowOnboarding";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { OnboardingInterface } from "@/src/interface/OnboardingInterface";
-import { UserInterface } from "@/src/interface/UserInterface";
 import { HR_ONBOARDING_SEARCH, HR_ONBOARDING_SORT } from "@/src/utils/filters";
 import axios from "axios";
 
@@ -20,16 +19,18 @@ import useIsLoading from "@/src/hooks/useIsLoading";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd } from "react-icons/io5";
+import { isUserSummary } from "@/src/utils/utils";
+import HRActions from "@/src/components/hr/global/HRActions";
+import useFilterAndSort from "@/src/hooks/useFilterAndSort";
 
 const HROnboarding = () => {
-  const [onboardings, setOnboardings] = React.useState<
-    Array<OnboardingInterface & UserInterface>
-  >([]);
+  const [onboardings, setOnboardings] = React.useState<OnboardingInterface[]>(
+    []
+  );
   const [canCreateOnboarding, setCanCreateOnboarding] = React.useState(false);
-  const [canEditOnboarding, setCanEditOnboarding] = React.useState(false);
-  const [canDeleteOnboarding, setCanDeleteOnboarding] = React.useState(false);
-  const [canAssignOnboarding, setCanAssignOnboarding] = React.useState(false);
-  const [activeOnboardingMenu, setActiveOnboardingMenu] = React.useState(0);
+  const [activeEditOnboarding, setActiveEditOnboarding] = React.useState(0);
+  const [activeDeleteOnboarding, setActiveDeleteOnboarding] = React.useState(0);
+  const [activeAssignOnboarding, setActiveAssignOnboarding] = React.useState(0);
   const [activeOnboardingSeeMore, setActiveOnboardingSeeMore] =
     React.useState(0);
 
@@ -58,24 +59,20 @@ const HROnboarding = () => {
     setCanCreateOnboarding((prev) => !prev);
   };
 
-  const handleActiveOnboardingMenu = (id: number) => {
-    setActiveOnboardingMenu((prev) => (id === prev ? 0 : id));
-  };
-
   const handleActiveOnboardingSeeMore = (id: number) => {
     setActiveOnboardingSeeMore((prev) => (id === prev ? 0 : id));
   };
 
-  const handleCanEditOnboarding = () => {
-    setCanEditOnboarding((prev) => !prev);
+  const handleCanEditOnboarding = (id: number) => {
+    setActiveEditOnboarding((prev) => (id === prev ? 0 : id));
   };
 
-  const handleCanDeleteOnboarding = () => {
-    setCanDeleteOnboarding((prev) => !prev);
+  const handleCanDeleteOnboarding = (id: number) => {
+    setActiveDeleteOnboarding((prev) => (id === prev ? 0 : id));
   };
 
-  const handleCanAssignOnboarding = () => {
-    setCanAssignOnboarding((prev) => !prev);
+  const handleCanAssignOnboarding = (id: number) => {
+    setActiveAssignOnboarding((prev) => (id === prev ? 0 : id));
   };
 
   const getOnboardings = React.useCallback(async () => {
@@ -89,7 +86,6 @@ const HROnboarding = () => {
               Authorization: `Bearer ${user?.token}`,
             },
             withCredentials: true,
-            params: { ...search, ...sort },
           }
         );
 
@@ -99,38 +95,40 @@ const HROnboarding = () => {
       }
     } catch (error) {
       console.log(error);
+    } finally {
       handleIsLoading(false);
     }
-  }, [url, user?.token, search, sort, handleIsLoading]);
+  }, [url, user?.token, handleIsLoading]);
 
-  const mappedOnboardings = onboardings?.map((onboarding, index) => {
-    const onboardingId = onboarding.onboarding_id ?? 0;
-    const activeMenu = activeOnboardingMenu === onboardingId;
-    const createdByCurrentUser = user?.current === onboarding.created_by;
+  const mappedOnboardings = useFilterAndSort(onboardings, search, sort).map(
+    (onboarding) => {
+      const onboardingId = onboarding.id ?? 0;
+      const createdBy = isUserSummary(onboarding.created_by)
+        ? onboarding.created_by
+        : null;
 
-    return (
-      <OnboardingCard
-        key={index}
-        role={user?.role ?? ""}
-        activeMenu={activeMenu}
-        createdByCurrentUser={createdByCurrentUser}
-        // onboarding
-        title={onboarding.title}
-        description={onboarding.description}
-        // user
-        email={onboarding.email}
-        first_name={onboarding.first_name}
-        last_name={onboarding.last_name}
-        id={onboarding.id}
-        // actions
-        handleActiveMenu={() => handleActiveOnboardingMenu(onboardingId)}
-        handleActiveSeeMore={() => handleActiveOnboardingSeeMore(onboardingId)}
-        handleCanAssign={handleCanAssignOnboarding}
-        handleCanDelete={handleCanDeleteOnboarding}
-        handleCanEdit={handleCanEditOnboarding}
-      />
-    );
-  });
+      return (
+        <OnboardingCard
+          key={`${onboarding.title}-${onboardingId}`}
+          createdBy={
+            createdBy?.id === user?.current
+              ? "you"
+              : `${createdBy?.first_name} ${createdBy?.last_name}`
+          }
+          onboarding={{ ...onboarding }}
+        >
+          <HRActions
+            handleActiveSeeMore={() =>
+              handleActiveOnboardingSeeMore(onboardingId)
+            }
+            handleCanEdit={() => handleCanEditOnboarding(onboardingId)}
+            handleCanDelete={() => handleCanDeleteOnboarding(onboardingId)}
+            handleCanAssign={() => handleCanAssignOnboarding(onboardingId)}
+          />
+        </OnboardingCard>
+      );
+    }
+  );
 
   React.useEffect(() => {
     getOnboardings();
@@ -145,20 +143,20 @@ const HROnboarding = () => {
         />
       ) : null}
 
-      {canEditOnboarding ? (
+      {activeEditOnboarding ? (
         <EditOnboarding
-          id={activeOnboardingMenu}
+          id={activeEditOnboarding}
           refetchIndex={getOnboardings}
-          toggleModal={handleCanEditOnboarding}
+          toggleModal={() => handleCanEditOnboarding(activeEditOnboarding)}
         />
       ) : null}
 
-      {canDeleteOnboarding ? (
+      {activeDeleteOnboarding ? (
         <DeleteEntity
           route="onboarding"
           label="Onboarding"
-          id={activeOnboardingMenu}
-          toggleModal={handleCanDeleteOnboarding}
+          id={activeDeleteOnboarding}
+          toggleModal={() => handleCanDeleteOnboarding(activeDeleteOnboarding)}
           refetchIndex={getOnboardings}
         />
       ) : null}
@@ -166,14 +164,16 @@ const HROnboarding = () => {
       {activeOnboardingSeeMore ? (
         <ShowOnboarding
           id={activeOnboardingSeeMore}
-          toggleModal={() => handleActiveOnboardingSeeMore(0)}
+          toggleModal={() =>
+            handleActiveOnboardingSeeMore(activeOnboardingSeeMore)
+          }
         />
       ) : null}
 
-      {canAssignOnboarding ? (
+      {activeAssignOnboarding ? (
         <AssignOnboarding
-          id={activeOnboardingMenu}
-          toggleModal={handleCanAssignOnboarding}
+          id={activeAssignOnboarding}
+          toggleModal={() => handleCanAssignOnboarding(activeAssignOnboarding)}
         />
       ) : null}
 
