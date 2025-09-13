@@ -13,15 +13,15 @@ import { OnboardingInterface } from "@/src/interface/OnboardingInterface";
 import { HR_ONBOARDING_SEARCH, HR_ONBOARDING_SORT } from "@/src/utils/filters";
 import axios from "axios";
 
+import BaseActions from "@/src/components/global/BaseActions";
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
+import HRActions from "@/src/components/hr/global/HRActions";
+import useFilterAndSort from "@/src/hooks/useFilterAndSort";
 import useIsLoading from "@/src/hooks/useIsLoading";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd } from "react-icons/io5";
-import { isUserSummary } from "@/src/utils/utils";
-import HRActions from "@/src/components/hr/global/HRActions";
-import useFilterAndSort from "@/src/hooks/useFilterAndSort";
 
 const HROnboarding = () => {
   const [onboardings, setOnboardings] = React.useState<OnboardingInterface[]>(
@@ -63,15 +63,15 @@ const HROnboarding = () => {
     setActiveOnboardingSeeMore((prev) => (id === prev ? 0 : id));
   };
 
-  const handleCanEditOnboarding = (id: number) => {
+  const handleActiveEditOnboarding = (id: number) => {
     setActiveEditOnboarding((prev) => (id === prev ? 0 : id));
   };
 
-  const handleCanDeleteOnboarding = (id: number) => {
+  const handleActiveDeleteOnboarding = (id: number) => {
     setActiveDeleteOnboarding((prev) => (id === prev ? 0 : id));
   };
 
-  const handleCanAssignOnboarding = (id: number) => {
+  const handleActiveAssignOnboarding = (id: number) => {
     setActiveAssignOnboarding((prev) => (id === prev ? 0 : id));
   };
 
@@ -103,27 +103,21 @@ const HROnboarding = () => {
   const mappedOnboardings = useFilterAndSort(onboardings, search, sort).map(
     (onboarding) => {
       const onboardingId = onboarding.id ?? 0;
-      const createdBy = isUserSummary(onboarding.created_by)
-        ? onboarding.created_by
-        : null;
 
       return (
         <OnboardingCard
           key={`${onboarding.title}-${onboardingId}`}
-          createdBy={
-            createdBy?.id === user?.current
-              ? "you"
-              : `${createdBy?.first_name} ${createdBy?.last_name}`
-          }
           onboarding={{ ...onboarding }}
         >
-          <HRActions
+          <BaseActions
             handleActiveSeeMore={() =>
               handleActiveOnboardingSeeMore(onboardingId)
             }
-            handleCanEdit={() => handleCanEditOnboarding(onboardingId)}
-            handleCanDelete={() => handleCanDeleteOnboarding(onboardingId)}
-            handleCanAssign={() => handleCanAssignOnboarding(onboardingId)}
+          />
+          <HRActions
+            handleCanEdit={() => handleActiveEditOnboarding(onboardingId)}
+            handleCanDelete={() => handleActiveDeleteOnboarding(onboardingId)}
+            handleCanAssign={() => handleActiveAssignOnboarding(onboardingId)}
           />
         </OnboardingCard>
       );
@@ -147,7 +141,7 @@ const HROnboarding = () => {
         <EditOnboarding
           id={activeEditOnboarding}
           refetchIndex={getOnboardings}
-          toggleModal={() => handleCanEditOnboarding(activeEditOnboarding)}
+          toggleModal={() => handleActiveEditOnboarding(activeEditOnboarding)}
         />
       ) : null}
 
@@ -156,7 +150,9 @@ const HROnboarding = () => {
           route="onboarding"
           label="Onboarding"
           id={activeDeleteOnboarding}
-          toggleModal={() => handleCanDeleteOnboarding(activeDeleteOnboarding)}
+          toggleModal={() =>
+            handleActiveDeleteOnboarding(activeDeleteOnboarding)
+          }
           refetchIndex={getOnboardings}
         />
       ) : null}
@@ -173,7 +169,9 @@ const HROnboarding = () => {
       {activeAssignOnboarding ? (
         <AssignOnboarding
           id={activeAssignOnboarding}
-          toggleModal={() => handleCanAssignOnboarding(activeAssignOnboarding)}
+          toggleModal={() =>
+            handleActiveAssignOnboarding(activeAssignOnboarding)
+          }
         />
       ) : null}
 

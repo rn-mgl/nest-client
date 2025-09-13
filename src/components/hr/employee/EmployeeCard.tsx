@@ -1,17 +1,11 @@
-import { CardInterface } from "@/src/interface/CardInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import Image from "next/image";
 import React from "react";
-import {
-  IoArrowForward,
-  IoEllipsisVertical,
-  IoMail,
-  IoShieldCheckmark,
-} from "react-icons/io5";
+import { IoShieldCheckmark } from "react-icons/io5";
 
 const EmployeeCard: React.FC<
-  CardInterface & UserInterface & { sendMail: () => void }
-> = (props) => {
+  UserInterface & { children: React.ReactNode } & { sendMail: () => void }
+> = ({ children, ...props }) => {
   const hasProfilePicture =
     typeof props.image === "string" && props.image !== "";
 
@@ -54,39 +48,9 @@ const EmployeeCard: React.FC<
             {props.email}
           </p>
         </div>
-
-        <button
-          onClick={props.handleActiveMenu}
-          className="p-2 text-xs hover:bg-neutral-200 rounded-full transition-all"
-        >
-          <IoEllipsisVertical
-            className={`${
-              props.activeMenu ? "text-accent-blue" : "text-neutral-900"
-            }`}
-          />
-        </button>
-
-        {props.activeMenu && (
-          <div className="w-32 p-2 rounded-md top-0 right-6 shadow-md bg-neutral-200 absolute animate-fade z-20">
-            <button
-              onClick={props.sendMail}
-              className="w-full p-1 rounded-xs text-sm bg-neutral-200 transition-all flex flex-row gap-2 items-center justify-start"
-            >
-              <IoMail className="text-accent-blue" />
-              Mail
-            </button>
-          </div>
-        )}
       </div>
 
-      <button
-        onClick={props.handleActiveSeeMore}
-        className="w-full p-2 rounded-md bg-accent-blue text-neutral-100 text-xs 
-              flex flex-row items-center justify-center gap-2"
-      >
-        <span>See More</span>
-        <IoArrowForward />
-      </button>
+      {children}
     </div>
   );
 };
