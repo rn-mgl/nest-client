@@ -302,6 +302,21 @@ export const HR_LEAVE_TYPE_SEARCH: SearchPairsInterface[] = [
 ];
 
 // for hr to filter leave balance
+export const HR_LEAVE_BALANCE_SEARCH: SortPairsInterface[] = [
+  {
+    key: "balance",
+    label: "Balance",
+  },
+  {
+    key: "leave.type",
+    label: "Leave Type",
+  },
+  {
+    key: "leave.description",
+    label: "Description",
+  },
+];
+
 export const HR_LEAVE_BALANCE_SORT: SortPairsInterface[] = [
   {
     key: "balance",
@@ -335,7 +350,7 @@ export const HR_LEAVE_REQUEST_SORT: SortPairsInterface[] = [
     label: "End Date",
   },
   {
-    key: "created_at",
+    key: "requested_at",
     label: "Requested At",
   },
 ];

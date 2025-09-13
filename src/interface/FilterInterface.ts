@@ -9,6 +9,7 @@ export interface SearchInterface {
 }
 
 export interface CategoryInterface {
+  categoryKey: string;
   categoryValue: string;
   canSeeCategoryDropDown: boolean;
   toggleCanSeeCategoryDropDown: () => void;

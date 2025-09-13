@@ -17,6 +17,26 @@ export default function useFilterAndSort<T>(
     categoryValue: string;
   }
 ) {
+  const drillPathValue = React.useCallback((data: T, path: string) => {
+    if (!path.includes(".")) return null;
+
+    let value = data;
+
+    const paths = path.split(".");
+
+    for (let i = 0; i < paths.length; i++) {
+      const currentPath = paths[i];
+
+      value = value[currentPath as keyof object] ?? null;
+
+      if (value === null) {
+        return null;
+      }
+    }
+
+    return value;
+  }, []);
+
   const sortAndFilter = React.useMemo(() => {
     return data
       .filter((d) => {
@@ -26,7 +46,11 @@ export default function useFilterAndSort<T>(
           if (search.searchKey === null || search.searchValue === null)
             return true;
 
-          matchedSearch = !!d[search.searchKey as keyof T]
+          const value =
+            drillPathValue(d, search.searchKey) ??
+            d[search.searchKey as keyof T];
+
+          matchedSearch = !!value
             ?.toString()
             .toLowerCase()
             .includes(search.searchValue.toLowerCase());
@@ -71,7 +95,7 @@ export default function useFilterAndSort<T>(
           return 0;
         }
       });
-  }, [category, search, sort, data]);
+  }, [category, search, sort, data, drillPathValue]);
 
   return sortAndFilter;
 }

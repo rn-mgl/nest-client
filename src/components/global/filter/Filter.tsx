@@ -75,7 +75,9 @@ const Filter: React.FC<FilterInterface> = ({
         <div
           className={`w-full max-h-90 min-w-72 absolute top-2 right-0 flex flex-col items-center justify-start translate-y-14 z-20
                     rounded-md gap-2 animate-fade bg-neutral-100 p-2 shadow-md t:w-44 t:max-w-44 t:min-w-44 
-                    ${category ? "t:right-49" : "t:right-1"}`}
+                    ${
+                      props.categoryKeyValuePairs ? "t:right-49" : "t:right-1"
+                    }`}
         >
           {mappedSorting}
         </div>
@@ -115,8 +117,9 @@ const Filter: React.FC<FilterInterface> = ({
           />
         ) : null}
 
-        {category ? (
+        {category && props.categoryKeyValuePairs ? (
           <Category
+            categoryKey={category?.categoryKey}
             categoryValue={category.categoryValue}
             toggleCanSeeCategoryDropDown={category.toggleCanSeeCategoryDropDown}
             selectCategory={category.selectCategory}

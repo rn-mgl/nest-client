@@ -15,20 +15,15 @@ export default function useSearch(
     setCanShowSearch((prev) => !prev);
   }, []);
 
-  const handleSelectSearch = React.useCallback(
-    (key: string, label: string) => {
-      if (key === search.searchKey) return;
-
-      setSearch((prev) => {
-        return {
-          ...prev,
-          searchKey: key,
-          searchLabel: label,
-        };
-      });
-    },
-    [search.searchKey]
-  );
+  const handleSelectSearch = React.useCallback((key: string, label: string) => {
+    setSearch((prev) => {
+      return {
+        ...prev,
+        searchKey: key,
+        searchLabel: label,
+      };
+    });
+  }, []);
 
   const handleSearch = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {

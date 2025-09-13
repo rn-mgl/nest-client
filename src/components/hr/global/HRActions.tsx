@@ -10,13 +10,16 @@ const HRActions: React.FC<BaseActionsInterface & HRActionsInterface> = (
 ) => {
   return (
     <div className="flex flex-row items-center justify-between gap-2 w-full">
-      <button
-        onClick={props.handleActiveSeeMore}
-        title="See More"
-        className="w-full flex flex-col items-center p-2 rounded-sm font-semibold text-sm bg-accent-blue text-neutral-100"
-      >
-        <IoEye />
-      </button>
+      {props.handleActiveSeeMore ? (
+        <button
+          onClick={props.handleActiveSeeMore}
+          title="See More"
+          className="w-full flex flex-col items-center p-2 rounded-sm font-semibold text-sm bg-accent-blue text-neutral-100"
+        >
+          <IoEye />
+        </button>
+      ) : null}
+
       <button
         onClick={props.handleCanEdit}
         title="Edit"

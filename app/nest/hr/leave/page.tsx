@@ -14,8 +14,8 @@ import {
   LeaveRequestInterface,
   LeaveTypeInterface,
 } from "@/src/interface/LeaveInterface";
-import { UserInterface } from "@/src/interface/UserInterface";
 import {
+  HR_LEAVE_BALANCE_SEARCH,
   HR_LEAVE_BALANCE_SORT,
   HR_LEAVE_REQUEST_CATEGORY,
   HR_LEAVE_REQUEST_SEARCH,
@@ -34,27 +34,28 @@ import Table from "@/src/components/global/field/Table";
 import EditLeaveRequest from "@/src/components/global/leave/EditLeaveRequest";
 import LeaveBalanceCard from "@/src/components/global/leave/LeaveBalanceCard";
 import LeaveRequestForm from "@/src/components/global/leave/LeaveRequestForm";
+import HRActions from "@/src/components/hr/global/HRActions";
 import useCategory from "@/src/hooks/useCategory";
+import useFilterAndSort from "@/src/hooks/useFilterAndSort";
+import { normalizeDate, normalizeString } from "@/src/utils/utils";
 import { usePathname, useSearchParams } from "next/navigation";
 
 const HRLeave = () => {
   const [canCreateLeaveType, setCanCreateLeaveType] = React.useState(false);
-  const [canEditLeaveType, setCanEditLeaveType] = React.useState(false);
-  const [canDeleteLeaveType, setCanDeleteLeaveType] = React.useState(false);
-  const [canAssignLeaveType, setCanAssignLeaveType] = React.useState(false);
-  const [activeLeaveTypeMenu, setActiveLeaveTypeMenu] = React.useState(0);
+  const [activeEditLeaveType, setActiveEditLeaveType] = React.useState(0);
+  const [activeDeleteLeaveType, setActiveDeleteLeaveType] = React.useState(0);
+  const [activeAssignLeaveType, setActiveAssignLeaveType] = React.useState(0);
   const [activeTab, setActiveTab] = React.useState("types");
   const [selectedLeaveRequest, setSelectedLeaveRequest] = React.useState(0);
-  const [canEditLeaveRequest, setCanEditLeaveRequest] = React.useState(0);
-  const [canDeleteLeaveRequest, setCanDeleteLeaveRequest] = React.useState(0);
-  const [leaveTypes, setLeaveTypes] = React.useState<
-    Array<LeaveTypeInterface & UserInterface>
-  >([]);
+  const [activeEditLeaveRequest, setActiveEditLeaveRequest] = React.useState(0);
+  const [activeDeleteLeaveRequest, setActiveDeleteLeaveRequest] =
+    React.useState(0);
+  const [leaveTypes, setLeaveTypes] = React.useState<LeaveTypeInterface[]>([]);
   const [leaveBalances, setLeaveBalances] = React.useState<
-    (LeaveTypeInterface & LeaveBalanceInterface)[]
+    LeaveBalanceInterface[]
   >([]);
   const [leaveRequests, setLeaveRequest] = React.useState<
-    (LeaveTypeInterface & LeaveRequestInterface)[]
+    LeaveRequestInterface[]
   >([]);
 
   const {
@@ -78,10 +79,11 @@ const HRLeave = () => {
     canSeeCategoryDropDown,
     handleCanSeeCategoryDropDown,
     handleSelectCategory,
-  } = useCategory("status", "All");
+  } = useCategory("", "");
 
   const searchFilters = {
     types: HR_LEAVE_TYPE_SEARCH,
+    balances: HR_LEAVE_BALANCE_SEARCH,
     requests: HR_LEAVE_REQUEST_SEARCH,
   };
 
@@ -103,28 +105,24 @@ const HRLeave = () => {
   const params = useSearchParams();
   const tab = params?.get("tab");
 
-  const handleActiveLeaveTypeMenu = (id: number) => {
-    setActiveLeaveTypeMenu((prev) => (prev === id ? 0 : id));
+  const handleActiveEditLeaveType = (id: number) => {
+    setActiveEditLeaveType((prev) => (id === prev ? 0 : id));
   };
 
-  const handleCanEditLeaveType = () => {
-    setCanEditLeaveType((prev) => !prev);
+  const handleActiveDeleteLeaveType = (id: number) => {
+    setActiveDeleteLeaveType((prev) => (id === prev ? 0 : id));
   };
 
-  const handleCanDeleteLeaveType = () => {
-    setCanDeleteLeaveType((prev) => !prev);
+  const handleActiveAssignLeaveType = (id: number) => {
+    setActiveAssignLeaveType((prev) => (id === prev ? 0 : id));
   };
 
-  const handleCanAssignLeaveType = () => {
-    setCanAssignLeaveType((prev) => !prev);
+  const handleActiveEditLeaveRequest = (id: number) => {
+    setActiveEditLeaveRequest((prev) => (prev === id ? 0 : id));
   };
 
-  const handleCanEditLeaveRequest = (id: number) => {
-    setCanEditLeaveRequest((prev) => (prev === id ? 0 : id));
-  };
-
-  const handleCanDeleteLeaveRequest = (id: number) => {
-    setCanDeleteLeaveRequest((prev) => (prev === id ? 0 : id));
+  const handleActiveDeleteLeaveRequest = (id: number) => {
+    setActiveDeleteLeaveRequest((prev) => (prev === id ? 0 : id));
   };
 
   const handleCanCreateLeaveType = () => {
@@ -143,7 +141,6 @@ const HRLeave = () => {
             Authorization: `Bearer ${user?.token}`,
           },
           withCredentials: true,
-          params: { ...search, ...sort },
         });
 
         if (responseData.leaves) {
@@ -153,7 +150,7 @@ const HRLeave = () => {
     } catch (error) {
       console.log(error);
     }
-  }, [url, user?.token, search, sort]);
+  }, [url, user?.token]);
 
   const getLeaveBalances = React.useCallback(async () => {
     try {
@@ -165,7 +162,6 @@ const HRLeave = () => {
               Authorization: `Bearer ${user.token}`,
             },
             withCredentials: true,
-            params: { ...search, ...sort },
           }
         );
 
@@ -176,7 +172,7 @@ const HRLeave = () => {
     } catch (error) {
       console.log(error);
     }
-  }, [url, user?.token, search, sort]);
+  }, [url, user?.token]);
 
   const getLeaveRequest = React.useCallback(async () => {
     try {
@@ -188,7 +184,6 @@ const HRLeave = () => {
               Authorization: `Bearer ${user.token}`,
             },
             withCredentials: true,
-            params: { ...search, ...sort, ...category },
           }
         );
 
@@ -199,108 +194,106 @@ const HRLeave = () => {
     } catch (error) {
       console.log(error);
     }
-  }, [url, user?.token, search, sort, category]);
+  }, [url, user?.token]);
+
+  const handleFilters = React.useCallback(
+    (tab: string) => {
+      console.log(tab);
+      switch (tab) {
+        case "types":
+          handleSelectSearch("type", "Leave Type");
+          handleSelectSort("created_at", "Created At");
+          handleSelectCategory("", "");
+          break;
+        case "balances":
+          handleSelectSearch("leave.type", "Leave Type");
+          handleSelectSort("created_at", "Created At");
+          handleSelectCategory("", "");
+          break;
+        case "requests":
+          handleSelectSearch("type", "Leave Type");
+          handleSelectSort("requested_at", "Requested At");
+          handleSelectCategory("status", "All");
+          break;
+      }
+    },
+    [handleSelectSearch, handleSelectSort, handleSelectCategory]
+  );
 
   const getPageData = React.useCallback(
     async (tab: string) => {
       switch (tab) {
         case "types":
-          getLeaveTypes();
+          await getLeaveTypes();
           break;
         case "balances":
-          getLeaveBalances();
+          await getLeaveBalances();
           break;
         case "requests":
-          getLeaveRequest();
+          await getLeaveRequest();
           break;
       }
     },
     [getLeaveTypes, getLeaveBalances, getLeaveRequest]
   );
 
-  const mappedLeaves = leaveTypes.map((leave, index) => {
-    const leaveId = leave.leave_type_id as number; // leave ids in this page have leaveids (from db)
-    const activeMenu = activeLeaveTypeMenu === leaveId;
-    const createdByCurrentUser = leave.created_by === user?.current;
-    return (
-      <LeaveCard
-        role={user?.role ?? ""}
-        key={index}
-        activeMenu={activeMenu}
-        createdByCurrentUser={createdByCurrentUser}
-        //
-        type={leave.type}
-        description={leave.description}
-        //
-        first_name={leave.first_name}
-        last_name={leave.last_name}
-        email={leave.email}
-        email_verified_at={leave.email_verified_at}
-        id={leave.id}
-        //
-        handleActiveMenu={() => handleActiveLeaveTypeMenu(leaveId)}
-        handleCanAssign={handleCanAssignLeaveType}
-        handleCanDelete={handleCanDeleteLeaveType}
-        handleCanEdit={handleCanEditLeaveType}
-      />
-    );
-  });
+  const mappedLeaves = useFilterAndSort(leaveTypes, search, sort).map(
+    (leave, index) => {
+      const leaveId = leave.id ?? 0; // leave ids in this page have leaveids (from db)
+      return (
+        <LeaveCard key={index} leave={{ ...leave }}>
+          <HRActions
+            handleCanAssign={() => handleActiveAssignLeaveType(leaveId)}
+            handleCanEdit={() => handleActiveEditLeaveType(leaveId)}
+            handleCanDelete={() => handleActiveDeleteLeaveType(leaveId)}
+          />
+        </LeaveCard>
+      );
+    }
+  );
 
-  const mappedLeaveBalances = leaveBalances.map((balance, index) => {
-    return (
-      <LeaveBalanceCard
-        key={index}
-        //
-        type={balance.type}
-        description={balance.description}
-        balance={balance.balance}
-        //
-        toggleSelectedLeaveRequest={() =>
-          handleSelectedLeaveRequest(balance.leave_type_id ?? 0)
-        }
-      />
-    );
-  });
+  const mappedLeaveBalances = useFilterAndSort(leaveBalances, search, sort).map(
+    (balance, index) => {
+      return (
+        <LeaveBalanceCard
+          key={index}
+          //
+          assigned_to={balance.assigned_to}
+          created_at={balance.created_at}
+          leave={balance.leave}
+          provided_by={balance.provided_by}
+          balance={balance.balance}
+          //
+          toggleSelectedLeaveRequest={() =>
+            handleSelectedLeaveRequest(balance.id ?? 0)
+          }
+        ></LeaveBalanceCard>
+      );
+    }
+  );
 
-  const mappedLeaveRequests = leaveRequests.map((request) => {
-    const requestedAtDate = request.requested_at
-      ? new Date(request.requested_at).toLocaleDateString()
-      : "";
-    const requestedAtTime = request.requested_at
-      ? new Date(request.requested_at).toLocaleTimeString()
-      : "";
-
-    const startDate = new Date(request.start_date).toLocaleDateString();
-    const startTime = new Date(request.start_date).toLocaleTimeString();
-
-    const endDate = new Date(request.end_date).toLocaleDateString();
-    const endTime = new Date(request.end_date).toLocaleTimeString();
+  const leaveRequestRows = leaveRequests.map((request) => {
+    const requestedOn = normalizeDate(request.created_at);
+    const startDate = normalizeDate(request.start_date);
+    const endDate = normalizeDate(request.end_date);
 
     return {
-      type: request.type,
-      status: (
-        <span className="capitalize">
-          {request.status.replaceAll("_", " ")}
-        </span>
-      ),
-      requested_at: `${requestedAtDate} ${requestedAtTime}`,
-      start_date: `${startDate} ${startTime}`,
-      end_date: `${endDate} ${endTime}`,
+      type: request.leave.type,
+      status: normalizeString(request.status),
+      requested_at: requestedOn,
+      start_date: startDate,
+      end_date: endDate,
       reason: request.reason,
       action: (
         <div className="w-full flex flex-row items-center justify-start gap-2">
           <button
-            onClick={() =>
-              handleCanEditLeaveRequest(request.leave_request_id ?? 0)
-            }
+            onClick={() => handleActiveEditLeaveRequest(request.id ?? 0)}
             className="p-2 rounded-md bg-accent-blue text-neutral-100"
           >
             <IoPencil />
           </button>
           <button
-            onClick={() =>
-              handleCanDeleteLeaveRequest(request.leave_request_id ?? 0)
-            }
+            onClick={() => handleActiveDeleteLeaveRequest(request.id ?? 0)}
             className="p-2 rounded-md bg-red-600 text-neutral-100"
           >
             <IoTrash />
@@ -310,13 +303,24 @@ const HRLeave = () => {
     };
   });
 
+  const mappedLeaveRequests = useFilterAndSort(
+    leaveRequestRows,
+    search,
+    sort,
+    category
+  );
+
+  React.useEffect(() => {
+    setActiveTab(tab ?? "types");
+  }, [setActiveTab, tab]);
+
   React.useEffect(() => {
     getPageData(activeTab);
   }, [getPageData, activeTab]);
 
   React.useEffect(() => {
-    setActiveTab(tab ?? "types");
-  }, [setActiveTab, tab]);
+    handleFilters(activeTab);
+  }, [activeTab, handleFilters]);
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
@@ -327,21 +331,21 @@ const HRLeave = () => {
         />
       ) : null}
 
-      {canEditLeaveType ? (
+      {activeEditLeaveType ? (
         <EditLeaveType
-          id={activeLeaveTypeMenu}
+          id={activeEditLeaveType}
           refetchIndex={getLeaveTypes}
-          toggleModal={handleCanEditLeaveType}
+          toggleModal={() => handleActiveEditLeaveType(activeEditLeaveType)}
         />
       ) : null}
 
-      {canDeleteLeaveType ? (
+      {activeDeleteLeaveType ? (
         <DeleteEntity
           route="leave_type"
           label="Leave"
-          id={activeLeaveTypeMenu}
+          id={activeDeleteLeaveType}
           refetchIndex={getLeaveTypes}
-          toggleModal={handleCanDeleteLeaveType}
+          toggleModal={() => handleActiveDeleteLeaveType(activeDeleteLeaveType)}
         />
       ) : null}
 
@@ -352,26 +356,30 @@ const HRLeave = () => {
         />
       ) : null}
 
-      {canAssignLeaveType ? (
+      {activeAssignLeaveType ? (
         <AssignLeaveType
-          id={activeLeaveTypeMenu}
-          toggleModal={handleCanAssignLeaveType}
+          id={activeAssignLeaveType}
+          toggleModal={() => handleActiveAssignLeaveType(activeAssignLeaveType)}
         />
       ) : null}
 
-      {canEditLeaveRequest ? (
+      {activeEditLeaveRequest ? (
         <EditLeaveRequest
-          toggleModal={() => handleCanEditLeaveRequest(0)}
-          id={canEditLeaveRequest}
+          toggleModal={() =>
+            handleActiveEditLeaveRequest(activeEditLeaveRequest)
+          }
+          id={activeEditLeaveRequest}
           refetchIndex={getLeaveRequest}
         />
       ) : null}
 
-      {canDeleteLeaveRequest ? (
+      {activeDeleteLeaveRequest ? (
         <DeleteEntity
           route="leave_request"
-          toggleModal={() => handleCanDeleteLeaveRequest(0)}
-          id={canDeleteLeaveRequest}
+          toggleModal={() =>
+            handleActiveDeleteLeaveRequest(activeDeleteLeaveRequest)
+          }
+          id={activeDeleteLeaveRequest}
           label="Leave Request"
           refetchIndex={getLeaveRequest}
         />
@@ -412,6 +420,7 @@ const HRLeave = () => {
           //
           categoryKeyValuePairs={categoryFilters[activeTab as keyof object]}
           category={{
+            categoryKey: category.categoryKey,
             categoryValue: category.categoryValue,
             canSeeCategoryDropDown: canSeeCategoryDropDown,
             selectCategory: handleSelectCategory,
