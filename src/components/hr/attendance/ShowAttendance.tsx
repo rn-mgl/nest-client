@@ -3,6 +3,7 @@
 import { AttendanceInterface } from "@/src/interface/AttendanceInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
+import { normalizeDate } from "@/src/utils/utils";
 import axios from "axios";
 
 import { useSession } from "next-auth/react";
@@ -16,62 +17,61 @@ interface AttendanceDate {
 }
 
 const ShowAttendance: React.FC<ModalInterface & AttendanceDate> = (props) => {
-  const [attendanceDetails, setAttendanceDetails] = React.useState<
-    Array<AttendanceInterface & UserInterface>
+  const [userAttendances, setUserAttendances] = React.useState<
+    (UserInterface & { attendance: AttendanceInterface })[]
   >([]);
 
   const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
 
-  const getAttendanceDetails = React.useCallback(async () => {
-    try {
-      if (user?.token) {
-        const stringDate = `${props.year}-${props.month + 1}-${props.date}`;
-        const { data: details } = await axios.get(
-          `${url}/hr/attendance/${stringDate}`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-            withCredentials: true,
+  const getAttendanceDetails = React.useCallback(
+    async (abort: AbortController) => {
+      try {
+        if (user?.token) {
+          const stringDate = `${props.year}-${props.month + 1}-${props.date}`;
+          const { data: details } = await axios.get(
+            `${url}/hr/attendance/${stringDate}`,
+            {
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+              withCredentials: true,
+              signal: abort.signal,
+            }
+          );
+
+          if (details) {
+            setUserAttendances(details.attendances);
           }
-        );
-
-        if (details) {
-          setAttendanceDetails(details.attendances);
         }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [url, user?.token, props.year, props.month, props.date]);
+    },
+    [url, user?.token, props.year, props.month, props.date]
+  );
 
-  const mappedAttendanceDetails = attendanceDetails.map(
-    (attendanceDetails, index) => {
-      const login = attendanceDetails.login_time
-        ? `${new Date(
-            attendanceDetails.login_time
-          ).toLocaleDateString()}\n${new Date(
-            attendanceDetails.login_time
-          ).toLocaleTimeString()}`
-        : "-";
+  const mappedAttendanceDetails = userAttendances.map(
+    (userAttendance, index) => {
+      const login =
+        typeof userAttendance.attendance.login_time === "string"
+          ? normalizeDate(userAttendance.attendance.login_time)
+          : "-";
 
-      const logout = attendanceDetails.logout_time
-        ? `${new Date(
-            attendanceDetails.logout_time
-          ).toLocaleDateString()}\n${new Date(
-            attendanceDetails.logout_time
-          ).toLocaleTimeString()}`
-        : "-";
+      const logout =
+        typeof userAttendance.attendance.logout_time === "string"
+          ? normalizeDate(userAttendance.attendance.logout_time)
+          : "-";
 
       const late =
-        attendanceDetails.late === null
+        userAttendance.attendance.late === null
           ? "-"
-          : attendanceDetails.late
+          : userAttendance.attendance.late
           ? "Yes"
           : "No";
-      const absent = attendanceDetails.absent ? "Yes" : "No";
+
+      const absent = userAttendance.attendance.absent ? "Yes" : "No";
 
       return (
         <div
@@ -81,11 +81,11 @@ const ShowAttendance: React.FC<ModalInterface & AttendanceDate> = (props) => {
           <div className="col-span-2  gap-2 flex flex-row items-center justify-start">
             <div className="w-10 h-10 min-w-10 min-h-10 rounded-full bg-accent-purple" />
             <p className=" truncate">
-              {attendanceDetails.first_name} {attendanceDetails.last_name}
+              {userAttendance.first_name} {userAttendance.last_name}
             </p>
           </div>
-          <p className="whitespace-pre">{login}</p>
-          <p className="whitespace-pre">{logout}</p>
+          <p className="break-words">{login}</p>
+          <p className="break-words">{logout}</p>
           <p>{late}</p>
           <p>{absent}</p>
         </div>
@@ -94,7 +94,13 @@ const ShowAttendance: React.FC<ModalInterface & AttendanceDate> = (props) => {
   );
 
   React.useEffect(() => {
-    getAttendanceDetails();
+    const abort = new AbortController();
+
+    getAttendanceDetails(abort);
+
+    return () => {
+      abort.abort();
+    };
   }, [getAttendanceDetails]);
 
   return (
@@ -102,7 +108,7 @@ const ShowAttendance: React.FC<ModalInterface & AttendanceDate> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
       p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
-      <div className="w-full my-auto h-auto max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
+      <div className="w-full my-auto h-auto max-w-(--breakpoint-l-l) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-purple rounded-t-lg font-bold text-neutral-100">
           {props.label ?? "Attendance Details"}
           <button

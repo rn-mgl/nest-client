@@ -8,7 +8,7 @@ import axios from "axios";
 
 import { useSession } from "next-auth/react";
 import React from "react";
-import { IoArrowForward, IoCalendar } from "react-icons/io5";
+import { IoArrowForward, IoCalendar, IoCalendarNumber } from "react-icons/io5";
 
 const HRAttendance = () => {
   const [attendanceStatistics, setAttendanceStatistics] =
@@ -78,29 +78,34 @@ const HRAttendance = () => {
     setActiveSeeMore((prev) => (date === prev ? 0 : date));
   };
 
-  const getAttendanceStatistics = React.useCallback(async () => {
-    try {
-      if (user?.token) {
-        const { data: statistics } = await axios.get(`${url}/hr/attendance`, {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-          withCredentials: true,
-          params: {
-            currentDate,
-            currentMonth: currentMonth.value + 1,
-            currentYear: Number(currentYear),
-          },
-        });
+  const getAttendanceStatistics = React.useCallback(
+    async (abort: AbortController) => {
+      try {
+        if (user?.token) {
+          const { data: statistics } = await axios.get(`${url}/hr/attendance`, {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+            withCredentials: true,
+            params: {
+              currentDate,
+              currentMonth: currentMonth.value + 1,
+              currentYear: Number(currentYear),
+            },
+            signal: abort.signal,
+          });
 
-        if (statistics) {
-          setAttendanceStatistics(statistics.attendances);
+          if (statistics) {
+            setAttendanceStatistics(statistics.attendances);
+          }
         }
+      } catch (error) {
+        console.log(axios.isCancel(error));
+        console.log(axios.isAxiosError);
       }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [url, user?.token, currentDate, currentMonth, currentYear]);
+    },
+    [url, user?.token, currentDate, currentMonth, currentYear]
+  );
 
   const startDay = getStartDayOfMonth(Number(currentYear), currentMonth.value);
   const daysInMonth = getDaysInMonth(Number(currentYear), currentMonth.value);
@@ -165,7 +170,13 @@ const HRAttendance = () => {
   });
 
   React.useEffect(() => {
-    getAttendanceStatistics();
+    const abort = new AbortController();
+
+    getAttendanceStatistics(abort);
+
+    return () => {
+      abort.abort();
+    };
   }, [getAttendanceStatistics]);
 
   return (
@@ -210,7 +221,7 @@ const HRAttendance = () => {
               type="number"
               value={currentYear}
               onChange={handleCurrentYear}
-              icon={<IoCalendar />}
+              icon={<IoCalendarNumber />}
               min={2000}
             />
           </div>

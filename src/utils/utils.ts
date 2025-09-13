@@ -50,10 +50,7 @@ export const isTrainingSummary = (
   return typeof value === "object" && value !== null;
 };
 
-export const normalizeDate = (
-  date: string,
-  type?: "date" | "time"
-): Date | string => {
+export const normalizeDate = (date: string, type?: "date" | "time"): string => {
   const localDate = new Date(date).toLocaleDateString() ?? "-";
   const localTime = new Date(date).toLocaleTimeString() ?? "-";
 

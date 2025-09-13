@@ -1,7 +1,5 @@
 "use client";
 
-import PerformanceReviewCard from "@/global/performance/PerformanceReviewCard";
-import TrainingCard from "@/global/training/TrainingCard";
 import Table from "@/src/components/global/field/Table";
 import {
   LeaveBalanceInterface,
