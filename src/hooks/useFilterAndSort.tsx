@@ -2,17 +2,17 @@ import React from "react";
 
 export default function useFilterAndSort<T>(
   data: T[],
-  search: {
+  search?: {
     searchKey: string;
     searchLabel: string;
     searchValue: string;
   },
-  sort: {
+  sort?: {
     sortKey: string;
     sortLabel: string;
     isAsc: boolean;
   },
-  category: {
+  category?: {
     categoryKey: string;
     categoryValue: string;
   }
@@ -20,37 +20,36 @@ export default function useFilterAndSort<T>(
   const sortAndFilter = React.useMemo(() => {
     return data
       .filter((d) => {
-        if (search.searchKey === null || search.searchValue === null)
-          return true;
+        let matchedSearch = true;
 
-        const matchedSearch = d[search.searchKey as keyof T]
-          ?.toString()
-          .toLowerCase()
-          .includes(search.searchValue.toLowerCase());
+        if (search) {
+          if (search.searchKey === null || search.searchValue === null)
+            return true;
 
-        // for "All" category
+          matchedSearch = !!d[search.searchKey as keyof T]
+            ?.toString()
+            .toLowerCase()
+            .includes(search.searchValue.toLowerCase());
+        }
+
         let matchedCategory = true;
 
-        console.log(category.categoryKey);
-
-        // if not set
-        if (typeof category.categoryValue === "undefined") {
-          matchedCategory = true;
-        }
-        // if matched by value, or
-        else if (
-          d[category.categoryKey as keyof T] === category.categoryValue
-        ) {
-          matchedCategory = true;
-        }
-        // fallback to true if value is all, else did not match
-        else {
-          matchedCategory = category.categoryValue === "All" ? true : false;
+        if (category) {
+          // if matched by value, or
+          if (d[category.categoryKey as keyof T] === category.categoryValue) {
+            matchedCategory = true;
+          }
+          // fallback to true if value is all, else did not match
+          else {
+            matchedCategory = category.categoryValue === "All" ? true : false;
+          }
         }
 
         return matchedSearch && matchedCategory;
       })
       .toSorted((a, b) => {
+        if (!sort) return 0;
+
         if (!sort.sortKey) return 0;
 
         const left = a[sort.sortKey as keyof T] as string | number | null;

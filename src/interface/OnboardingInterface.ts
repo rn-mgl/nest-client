@@ -4,7 +4,7 @@ export interface OnboardingInterface {
   id?: number;
   title: string;
   description: string;
-  created_by?: number;
+  created_by: number | UserInterface;
 }
 
 export interface OnboardingRequiredDocumentsInterface {

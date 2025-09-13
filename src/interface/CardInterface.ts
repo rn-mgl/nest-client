@@ -1,10 +1,13 @@
 export interface CardInterface {
-  activeMenu?: boolean;
-  createdByCurrentUser: boolean;
-  role: string;
-  handleCanEdit?: () => void;
-  handleCanAssign?: () => void;
-  handleCanDelete?: () => void;
-  handleActiveMenu?: () => void;
-  handleActiveSeeMore?: () => void;
+  createdBy: string;
+}
+
+export interface BaseActionsInterface {
+  handleActiveSeeMore: () => void;
+}
+
+export interface HRActionsInterface {
+  handleCanEdit: () => void;
+  handleCanAssign: () => void;
+  handleCanDelete: () => void;
 }
