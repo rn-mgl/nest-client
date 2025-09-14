@@ -1,8 +1,10 @@
 "use client";
 
+import BaseActions from "@/src/components/global/BaseActions";
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import Filter from "@/src/components/global/filter/Filter";
 import PerformanceReviewCard from "@/src/components/global/performance/PerformanceReviewCard";
+import HRActions from "@/src/components/hr/global/HRActions";
 import AssignPerformanceReview from "@/src/components/hr/performance/AssignPerformanceReview";
 import CreatePerformanceReview from "@/src/components/hr/performance/CreatePerformanceReview";
 import EditPerformanceReview from "@/src/components/hr/performance/EditPerformanceReview";
@@ -11,7 +13,6 @@ import ShowPerformanceReview from "@/src/components/hr/performance/ShowPerforman
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { PerformanceReviewInterface } from "@/src/interface/PerformanceReviewInterface";
-import { UserInterface } from "@/src/interface/UserInterface";
 import {
   HR_PERFORMANCE_SEARCH,
   HR_PERFORMANCE_SORT,
@@ -24,20 +25,19 @@ import { IoAdd } from "react-icons/io5";
 
 const PerformanceReview = () => {
   const [performances, setPerformanceReviews] = React.useState<
-    Array<PerformanceReviewInterface & UserInterface>
+    PerformanceReviewInterface[]
   >([]);
   const [canCreatePerformanceReview, setCanCreatePerformanceReview] =
     React.useState(false);
-  const [activePerformanceReviewMenu, setActivePerformanceReviewMenu] =
-    React.useState(0);
+
   const [activePerformanceReviewSeeMore, setActivePerformanceReviewSeeMore] =
     React.useState(0);
-  const [canEditPerformanceReview, setCanEditPerformanceReview] =
-    React.useState(false);
-  const [canDeletePerformanceReview, setCanDeletePerformanceReview] =
-    React.useState(false);
-  const [canAssignPerformanceReview, setCanAssignPerformanceReview] =
-    React.useState(false);
+  const [activeEditPerformanceReview, setActiveEditPerformanceReview] =
+    React.useState(0);
+  const [activeDeletePerformanceReview, setActiveDeletePerformanceReview] =
+    React.useState(0);
+  const [activeAssignPerformanceReview, setActiveAssignPerformanceReview] =
+    React.useState(0);
 
   const {
     canSeeSearchDropDown,
@@ -62,24 +62,20 @@ const PerformanceReview = () => {
     setCanCreatePerformanceReview((prev) => !prev);
   };
 
-  const handleActivePerformanceReviewMenu = (id: number) => {
-    setActivePerformanceReviewMenu((prev) => (prev === id ? 0 : id));
-  };
-
   const handleActivePerformanceReviewSeeMore = (id: number) => {
     setActivePerformanceReviewSeeMore((prev) => (prev === id ? 0 : id));
   };
 
-  const handleCanEditPerformanceReview = () => {
-    setCanEditPerformanceReview((prev) => !prev);
+  const handleActiveEditPerformanceReview = (id: number) => {
+    setActiveEditPerformanceReview((prev) => (prev === id ? 0 : id));
   };
 
-  const handleCanDeletePerformanceReview = () => {
-    setCanDeletePerformanceReview((prev) => !prev);
+  const handleActiveDeletePerformanceReview = (id: number) => {
+    setActiveDeletePerformanceReview((prev) => (prev === id ? 0 : id));
   };
 
-  const handleCanAssignPerformanceReview = () => {
-    setCanAssignPerformanceReview((prev) => !prev);
+  const handleActiveAssignPerformanceReview = (id: number) => {
+    setActiveAssignPerformanceReview((prev) => (prev === id ? 0 : id));
   };
 
   const getPerformanceReviews = React.useCallback(async () => {
@@ -105,36 +101,32 @@ const PerformanceReview = () => {
     }
   }, [url, user?.token, search, sort]);
 
-  const mappedPerformanceReviews = performances.map((performance, index) => {
-    const performanceReviewId = performance.performance_review_id as number;
-    const activeMenu = activePerformanceReviewMenu === performanceReviewId;
-    const createdByCurrentUser = performance.created_by === user?.current;
+  const mappedPerformanceReviews = performances.map((performance) => {
+    const performanceReviewId = performance.id ?? 0;
+
     return (
       <PerformanceReviewCard
-        role={user?.role as string}
-        key={index}
-        activeMenu={activeMenu}
-        createdByCurrentUser={createdByCurrentUser}
+        key={`${performance.title}-${performance.id}`}
         //
-        title={performance.title}
-        description={performance.description}
-        //
-        id={performance.id}
-        email={performance.email}
-        email_verified_at={performance.email_verified_at}
-        first_name={performance.first_name}
-        last_name={performance.last_name}
-        //
-        handleActiveMenu={() =>
-          handleActivePerformanceReviewMenu(performanceReviewId)
-        }
-        handleActiveSeeMore={() =>
-          handleActivePerformanceReviewSeeMore(performanceReviewId)
-        }
-        handleCanAssign={handleCanAssignPerformanceReview}
-        handleCanDelete={handleCanDeletePerformanceReview}
-        handleCanEdit={handleCanEditPerformanceReview}
-      />
+        performance={{ ...performance }}
+      >
+        <BaseActions
+          handleActiveSeeMore={() =>
+            handleActivePerformanceReviewSeeMore(performanceReviewId)
+          }
+        />
+        <HRActions
+          handleCanAssign={() =>
+            handleActiveAssignPerformanceReview(performanceReviewId)
+          }
+          handleCanDelete={() =>
+            handleActiveDeletePerformanceReview(performanceReviewId)
+          }
+          handleCanEdit={() =>
+            handleActiveEditPerformanceReview(performanceReviewId)
+          }
+        />
+      </PerformanceReviewCard>
     );
   });
 
@@ -151,35 +143,43 @@ const PerformanceReview = () => {
         />
       ) : null}
 
-      {canEditPerformanceReview ? (
+      {activeEditPerformanceReview ? (
         <EditPerformanceReview
-          id={activePerformanceReviewMenu}
+          id={activeEditPerformanceReview}
           refetchIndex={getPerformanceReviews}
-          toggleModal={handleCanEditPerformanceReview}
+          toggleModal={() =>
+            handleActiveEditPerformanceReview(activeEditPerformanceReview)
+          }
         />
       ) : null}
 
-      {canDeletePerformanceReview ? (
+      {activeDeletePerformanceReview ? (
         <DeleteEntity
           route="performance_review"
           label="Performance Review"
-          id={activePerformanceReviewMenu}
-          toggleModal={handleCanDeletePerformanceReview}
+          id={activeDeletePerformanceReview}
+          toggleModal={() =>
+            handleActiveDeletePerformanceReview(activeDeletePerformanceReview)
+          }
           refetchIndex={getPerformanceReviews}
         />
       ) : null}
 
-      {canAssignPerformanceReview ? (
+      {activeAssignPerformanceReview ? (
         <AssignPerformanceReview
-          id={activePerformanceReviewMenu}
-          toggleModal={handleCanAssignPerformanceReview}
+          id={activeAssignPerformanceReview}
+          toggleModal={() =>
+            handleActiveAssignPerformanceReview(activeAssignPerformanceReview)
+          }
         />
       ) : null}
 
       {activePerformanceReviewSeeMore ? (
         <ShowPerformanceReview
           id={activePerformanceReviewSeeMore}
-          toggleModal={() => handleActivePerformanceReviewSeeMore(0)}
+          toggleModal={() =>
+            handleActivePerformanceReviewSeeMore(activePerformanceReviewSeeMore)
+          }
         />
       ) : null}
 
