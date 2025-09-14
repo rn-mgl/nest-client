@@ -2,7 +2,7 @@
 
 import Input from "@/src/components/form/Input";
 import IconLoader from "@/src/components/global/loader/IconLoader";
-import Logo from "@/components/global/navigation/Logo";
+import Logo from "@/global/navigation/Logo";
 import { useToasts } from "@/src/context/ToastContext";
 import useIsLoading from "@/src/hooks/useIsLoading";
 import useShowPassword from "@/src/hooks/useShowPassword";

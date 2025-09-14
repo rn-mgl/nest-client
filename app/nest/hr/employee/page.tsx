@@ -4,7 +4,7 @@ import BaseActions from "@/src/components/global/base/BaseActions";
 import Table from "@/src/components/global/field/Table";
 import Filter from "@/src/components/global/filter/Filter";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
-import Tabs from "@/components/global/navigation/Tabs";
+import Tabs from "@/global/navigation/Tabs";
 import EmployeeCard from "@/src/components/hr/employee/EmployeeCard";
 import ShowEmployee from "@/src/components/hr/employee/ShowEmployee";
 import { useAlert } from "@/src/context/AlertContext";

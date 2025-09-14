@@ -1,7 +1,7 @@
 "use client";
 
 import sending from "@/public/global/sending.svg";
-import Logo from "@/components/global/navigation/Logo";
+import Logo from "@/global/navigation/Logo";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 

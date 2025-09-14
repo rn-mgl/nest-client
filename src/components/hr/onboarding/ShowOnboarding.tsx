@@ -9,7 +9,7 @@ import {
 } from "@/src/interface/OnboardingInterface";
 import axios from "axios";
 
-import ModalNav from "@/components/global/navigation/ModalNav";
+import ModalNav from "@/global/navigation/ModalNav";
 import TextBlock from "@/global/field/TextBlock";
 import TextField from "@/global/field/TextField";
 import { useSession } from "next-auth/react";

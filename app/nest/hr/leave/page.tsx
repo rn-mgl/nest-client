@@ -2,7 +2,6 @@
 
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import Filter from "@/src/components/global/filter/Filter";
-import LeaveCard from "@/src/components/global/leave/LeaveCard";
 import AssignLeaveType from "@/src/components/hr/leave/AssignLeaveType";
 import CreateLeaveType from "@/src/components/hr/leave/CreateLeaveType";
 import EditLeaveType from "@/src/components/hr/leave/EditLeaveType";
@@ -29,7 +28,8 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd, IoPencil, IoTrash } from "react-icons/io5";
 
-import Tabs from "@/components/global/navigation/Tabs";
+import Tabs from "@/global/navigation/Tabs";
+import BaseCard from "@/src/components/global/base/BaseCard";
 import Table from "@/src/components/global/field/Table";
 import EditLeaveRequest from "@/src/components/global/leave/EditLeaveRequest";
 import LeaveBalanceCard from "@/src/components/global/leave/LeaveBalanceCard";
@@ -37,7 +37,11 @@ import LeaveRequestForm from "@/src/components/global/leave/LeaveRequestForm";
 import HRActions from "@/src/components/hr/global/HRActions";
 import useCategory from "@/src/hooks/useCategory";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
-import { normalizeDate, normalizeString } from "@/src/utils/utils";
+import {
+  isUserSummary,
+  normalizeDate,
+  normalizeString,
+} from "@/src/utils/utils";
 import { usePathname, useSearchParams } from "next/navigation";
 
 const HRLeave = () => {
@@ -240,14 +244,22 @@ const HRLeave = () => {
   const mappedLeaves = useFilterAndSort(leaveTypes, search, sort).map(
     (leave, index) => {
       const leaveId = leave.id ?? 0; // leave ids in this page have leaveids (from db)
+      const createdBy = isUserSummary(leave.created_by)
+        ? leave.created_by.first_name
+        : null;
       return (
-        <LeaveCard key={index} leave={{ ...leave }}>
+        <BaseCard
+          key={index}
+          title={leave.type}
+          description={leave.description}
+          createdBy={createdBy}
+        >
           <HRActions
             handleCanAssign={() => handleActiveAssignLeaveType(leaveId)}
             handleCanEdit={() => handleActiveEditLeaveType(leaveId)}
             handleCanDelete={() => handleActiveDeleteLeaveType(leaveId)}
           />
-        </LeaveCard>
+        </BaseCard>
       );
     }
   );

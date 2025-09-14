@@ -1,9 +1,9 @@
 "use client";
 
 import BaseActions from "@/src/components/global/base/BaseActions";
+import BaseCard from "@/src/components/global/base/BaseCard";
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import Filter from "@/src/components/global/filter/Filter";
-import PerformanceReviewCard from "@/src/components/global/performance/PerformanceReviewCard";
 import HRActions from "@/src/components/hr/global/HRActions";
 import AssignPerformanceReview from "@/src/components/hr/performance/AssignPerformanceReview";
 import CreatePerformanceReview from "@/src/components/hr/performance/CreatePerformanceReview";
@@ -17,6 +17,7 @@ import {
   HR_PERFORMANCE_SEARCH,
   HR_PERFORMANCE_SORT,
 } from "@/src/utils/filters";
+import { isUserSummary } from "@/src/utils/utils";
 import axios from "axios";
 
 import { useSession } from "next-auth/react";
@@ -103,12 +104,17 @@ const PerformanceReview = () => {
 
   const mappedPerformanceReviews = performances.map((performance) => {
     const performanceReviewId = performance.id ?? 0;
+    const createdBy = isUserSummary(performance.created_by)
+      ? performance.created_by.first_name
+      : null;
 
     return (
-      <PerformanceReviewCard
+      <BaseCard
         key={`${performance.title}-${performance.id}`}
         //
-        performance={{ ...performance }}
+        title={performance.title}
+        description={performance.description}
+        createdBy={createdBy}
       >
         <BaseActions
           handleActiveSeeMore={() =>
@@ -126,7 +132,7 @@ const PerformanceReview = () => {
             handleActiveEditPerformanceReview(performanceReviewId)
           }
         />
-      </PerformanceReviewCard>
+      </BaseCard>
     );
   });
 

@@ -1,4 +1,4 @@
-import Nav from "@/components/global/navigation/Nav";
+import Nav from "@/global/navigation/Nav";
 import { Metadata } from "next";
 import { IoApps, IoPeople } from "react-icons/io5";
 

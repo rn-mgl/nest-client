@@ -11,7 +11,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose } from "react-icons/io5";
-import ModalNav from "@/components/global/navigation/ModalNav";
+import ModalNav from "@/global/navigation/ModalNav";
 import TextBlock from "@/global/field/TextBlock";
 import TextField from "@/global/field/TextField";
 

@@ -1,7 +1,6 @@
 "use client";
 
 import Filter from "@/src/components/global/filter/Filter";
-import OnboardingCard from "@/src/components/global/onboarding/OnboardingCard";
 import AssignOnboarding from "@/src/components/hr/onboarding/AssignOnboarding";
 import CreateOnboarding from "@/src/components/hr/onboarding/CreateOnboarding";
 import EditOnboarding from "@/src/components/hr/onboarding/EditOnboarding";
@@ -14,11 +13,13 @@ import { HR_ONBOARDING_SEARCH, HR_ONBOARDING_SORT } from "@/src/utils/filters";
 import axios from "axios";
 
 import BaseActions from "@/src/components/global/base/BaseActions";
+import BaseCard from "@/src/components/global/base/BaseCard";
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import HRActions from "@/src/components/hr/global/HRActions";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
 import useIsLoading from "@/src/hooks/useIsLoading";
+import { isUserSummary } from "@/src/utils/utils";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd } from "react-icons/io5";
@@ -103,11 +104,16 @@ const HROnboarding = () => {
   const mappedOnboardings = useFilterAndSort(onboardings, search, sort).map(
     (onboarding) => {
       const onboardingId = onboarding.id ?? 0;
+      const createdBy = isUserSummary(onboarding.created_by)
+        ? onboarding.created_by.first_name
+        : null;
 
       return (
-        <OnboardingCard
+        <BaseCard
           key={`${onboarding.title}-${onboardingId}`}
-          onboarding={{ ...onboarding }}
+          title={onboarding.title}
+          description={onboarding.description}
+          createdBy={createdBy}
         >
           <BaseActions
             handleActiveSeeMore={() =>
@@ -119,7 +125,7 @@ const HROnboarding = () => {
             handleCanDelete={() => handleActiveDeleteOnboarding(onboardingId)}
             handleCanAssign={() => handleActiveAssignOnboarding(onboardingId)}
           />
-        </OnboardingCard>
+        </BaseCard>
       );
     }
   );

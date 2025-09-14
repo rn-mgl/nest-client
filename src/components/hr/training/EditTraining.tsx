@@ -1,7 +1,7 @@
 import Input from "@/components/form/Input";
 import Radio from "@/components/form/Radio";
 import TextArea from "@/components/form/TextArea";
-import ModalNav from "@/components/global/ModalNav";
+import ModalNav from "@/global/navigation/ModalNav";
 import useDynamicFields from "@/src/hooks/useDynamicFields";
 import useModalNav from "@/src/hooks/useModalNav";
 import { ModalInterface } from "@/src/interface/ModalInterface";
