@@ -1,6 +1,6 @@
 import Input from "@/components/form/Input";
 import TextArea from "@/components/form/TextArea";
-import ModalNav from "@/global/ModalNav";
+import ModalNav from "@/global/navigation/ModalNav";
 import useDynamicFields from "@/src/hooks/useDynamicFields";
 import useModalNav from "@/src/hooks/useModalNav";
 import { ModalInterface } from "@/src/interface/ModalInterface";

@@ -255,9 +255,9 @@ const HRLeave = () => {
           createdBy={createdBy}
         >
           <HRActions
-            handleCanAssign={() => handleActiveAssignLeaveType(leaveId)}
-            handleCanEdit={() => handleActiveEditLeaveType(leaveId)}
-            handleCanDelete={() => handleActiveDeleteLeaveType(leaveId)}
+            handleActiveAssign={() => handleActiveAssignLeaveType(leaveId)}
+            handleActiveEdit={() => handleActiveEditLeaveType(leaveId)}
+            handleActiveDelete={() => handleActiveDeleteLeaveType(leaveId)}
           />
         </BaseCard>
       );

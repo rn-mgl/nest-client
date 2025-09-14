@@ -122,13 +122,13 @@ const PerformanceReview = () => {
           }
         />
         <HRActions
-          handleCanAssign={() =>
+          handleActiveAssign={() =>
             handleActiveAssignPerformanceReview(performanceReviewId)
           }
-          handleCanDelete={() =>
+          handleActiveDelete={() =>
             handleActiveDeletePerformanceReview(performanceReviewId)
           }
-          handleCanEdit={() =>
+          handleActiveEdit={() =>
             handleActiveEditPerformanceReview(performanceReviewId)
           }
         />

@@ -121,9 +121,13 @@ const HROnboarding = () => {
             }
           />
           <HRActions
-            handleCanEdit={() => handleActiveEditOnboarding(onboardingId)}
-            handleCanDelete={() => handleActiveDeleteOnboarding(onboardingId)}
-            handleCanAssign={() => handleActiveAssignOnboarding(onboardingId)}
+            handleActiveEdit={() => handleActiveEditOnboarding(onboardingId)}
+            handleActiveDelete={() =>
+              handleActiveDeleteOnboarding(onboardingId)
+            }
+            handleActiveAssign={() =>
+              handleActiveAssignOnboarding(onboardingId)
+            }
           />
         </BaseCard>
       );

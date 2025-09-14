@@ -5,9 +5,9 @@ import { IoPencil, IoPersonAdd, IoTrash } from "react-icons/io5";
 const HRActions: React.FC<HRActionsInterface> = (props) => {
   return (
     <div className="flex flex-row items-center justify-between gap-2 w-full">
-      {props.handleCanEdit ? (
+      {props.handleActiveEdit ? (
         <button
-          onClick={props.handleCanEdit}
+          onClick={props.handleActiveEdit}
           title="Edit"
           className="w-full flex flex-col items-center p-2 rounded-sm font-semibold text-sm bg-accent-yellow text-accent-blue"
         >
@@ -15,9 +15,9 @@ const HRActions: React.FC<HRActionsInterface> = (props) => {
         </button>
       ) : null}
 
-      {props.handleCanAssign ? (
+      {props.handleActiveAssign ? (
         <button
-          onClick={props.handleCanAssign}
+          onClick={props.handleActiveAssign}
           title="Assign"
           className="w-full flex flex-col items-center p-2 rounded-sm font-semibold text-sm bg-accent-purple text-neutral-100"
         >
@@ -25,9 +25,9 @@ const HRActions: React.FC<HRActionsInterface> = (props) => {
         </button>
       ) : null}
 
-      {props.handleCanDelete ? (
+      {props.handleActiveDelete ? (
         <button
-          onClick={props.handleCanDelete}
+          onClick={props.handleActiveDelete}
           title="Delete"
           className="w-full flex flex-col items-center p-2 rounded-sm font-semibold text-sm bg-red-600 text-white"
         >

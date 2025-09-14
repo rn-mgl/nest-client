@@ -10,7 +10,7 @@ export interface BaseActionsInterface {
 }
 
 export interface HRActionsInterface {
-  handleCanEdit: () => void;
-  handleCanAssign: () => void;
-  handleCanDelete: () => void;
+  handleActiveEdit: () => void;
+  handleActiveAssign: () => void;
+  handleActiveDelete: () => void;
 }
