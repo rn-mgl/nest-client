@@ -20,7 +20,7 @@ import { IoCheckmarkCircle, IoClose, IoCloseCircle } from "react-icons/io5";
 import Radio from "@/form/Radio";
 import TextBlock from "@/global/field/TextBlock";
 import TextField from "@/global/field/TextField";
-import ModalNav from "@/global/ModalNav";
+import ModalNav from "@/components/global/navigation/ModalNav";
 
 const ShowTraining: React.FC<ModalInterface> = (props) => {
   const [training, setTraining] = React.useState<

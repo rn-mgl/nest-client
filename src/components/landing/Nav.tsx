@@ -1,5 +1,5 @@
 import React from "react";
-import Logo from "@/components/global/Logo";
+import Logo from "@/components/global/navigation/Logo";
 import Link from "next/link";
 
 const Nav = () => {

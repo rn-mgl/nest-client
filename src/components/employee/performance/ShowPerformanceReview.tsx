@@ -13,7 +13,7 @@ import React from "react";
 import { IoClose } from "react-icons/io5";
 import TextBlock from "@/global/field/TextBlock";
 import useModalNav from "@/src/hooks/useModalNav";
-import ModalNav from "@/global/ModalNav";
+import ModalNav from "@/components/global/navigation/ModalNav";
 import TextField from "@/global/field/TextField";
 import TextArea from "@/form/TextArea";
 

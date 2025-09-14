@@ -29,7 +29,7 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd, IoPencil, IoTrash } from "react-icons/io5";
 
-import Tabs from "@/src/components/global/Tabs";
+import Tabs from "@/components/global/navigation/Tabs";
 import Table from "@/src/components/global/field/Table";
 import EditLeaveRequest from "@/src/components/global/leave/EditLeaveRequest";
 import LeaveBalanceCard from "@/src/components/global/leave/LeaveBalanceCard";

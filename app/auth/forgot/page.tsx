@@ -1,7 +1,7 @@
 "use client";
 
 import Input from "@/src/components/form/Input";
-import Logo from "@/src/components/global/Logo";
+import Logo from "@/components/global/navigation/Logo";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import React from "react";

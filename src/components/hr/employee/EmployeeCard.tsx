@@ -38,7 +38,11 @@ const EmployeeCard: React.FC<
           >
             {props.first_name} {props.last_name}
           </p>
-          <p className="text-xs flex flex-row items-center justify-center gap-1">
+          <button
+            onClick={props.sendMail}
+            title="Send Mail"
+            className="text-xs flex flex-row items-center justify-center gap-1 hover:text-accent-blue hover:underline underline-offset-2 transition-all"
+          >
             {props.email_verified_at && (
               <IoShieldCheckmark
                 className="text-accent-blue"
@@ -46,7 +50,7 @@ const EmployeeCard: React.FC<
               />
             )}
             {props.email}
-          </p>
+          </button>
         </div>
       </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import BaseActions from "@/src/components/global/BaseActions";
+import BaseActions from "@/src/components/global/base/BaseActions";
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import Filter from "@/src/components/global/filter/Filter";
 import PerformanceReviewCard from "@/src/components/global/performance/PerformanceReviewCard";

@@ -13,7 +13,7 @@ import { OnboardingInterface } from "@/src/interface/OnboardingInterface";
 import { HR_ONBOARDING_SEARCH, HR_ONBOARDING_SORT } from "@/src/utils/filters";
 import axios from "axios";
 
-import BaseActions from "@/src/components/global/BaseActions";
+import BaseActions from "@/src/components/global/base/BaseActions";
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import HRActions from "@/src/components/hr/global/HRActions";

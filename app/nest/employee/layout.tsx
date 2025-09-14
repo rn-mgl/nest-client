@@ -1,4 +1,4 @@
-import Nav from "@/src/components/global/Nav";
+import Nav from "@/components/global/navigation/Nav";
 import { Metadata } from "next";
 import {
   IoApps,

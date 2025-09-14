@@ -3,7 +3,7 @@
 import approved from "@/public/auth/approved.svg";
 import error from "@/public/auth/error.svg";
 import processing from "@/public/auth/processing.svg";
-import Logo from "@/src/components/global/Logo";
+import Logo from "@/components/global/navigation/Logo";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 

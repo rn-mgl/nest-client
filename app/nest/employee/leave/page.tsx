@@ -6,7 +6,7 @@ import Filter from "@/src/components/global/filter/Filter";
 import EditLeaveRequest from "@/src/components/global/leave/EditLeaveRequest";
 import LeaveBalanceCard from "@/src/components/global/leave/LeaveBalanceCard";
 import LeaveRequestForm from "@/src/components/global/leave/LeaveRequestForm";
-import Tabs from "@/src/components/global/Tabs";
+import Tabs from "@/components/global/navigation/Tabs";
 import useCategory from "@/src/hooks/useCategory";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";

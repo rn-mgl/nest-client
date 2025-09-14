@@ -1,9 +1,10 @@
 "use client";
 
+import BaseActions from "@/src/components/global/base/BaseActions";
 import Table from "@/src/components/global/field/Table";
 import Filter from "@/src/components/global/filter/Filter";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
-import Tabs from "@/src/components/global/Tabs";
+import Tabs from "@/components/global/navigation/Tabs";
 import EmployeeCard from "@/src/components/hr/employee/EmployeeCard";
 import ShowEmployee from "@/src/components/hr/employee/ShowEmployee";
 import { useAlert } from "@/src/context/AlertContext";
@@ -65,7 +66,6 @@ const HREmployee = () => {
     UserPerformanceReviewInterface[]
   >([]);
   const [trainings, setTrainings] = React.useState<UserTrainingInterface[]>([]);
-  const [activeUserMenu, setActiveUserMenu] = React.useState(0);
   const [activeEmployeeSeeMore, setActiveEmployeeSeeMore] = React.useState(0);
   const [activeTab, setActiveTab] = React.useState("employees");
 
@@ -129,10 +129,6 @@ const HREmployee = () => {
   const params = useSearchParams();
   const currentPath = usePathname();
   const tab = params?.get("tab");
-
-  const handleActiveEmployeeMenu = (id: number) => {
-    return setActiveUserMenu((prev) => (prev === id ? 0 : id));
-  };
 
   const handleActiveEmployeeSeeMore = (id: number) => {
     setActiveEmployeeSeeMore((prev) => (prev === id ? 0 : id));
@@ -235,25 +231,23 @@ const HREmployee = () => {
     sort,
     category
   ).map((employee, index) => {
-    const activeMenu = activeUserMenu === employee.id;
     return (
       <EmployeeCard
         key={index}
-        role={user?.role ?? ""}
-        createdByCurrentUser={false}
         //
         id={employee.id}
         first_name={employee.first_name}
         last_name={employee.last_name}
         email_verified_at={employee.email_verified_at}
+        verification_status={employee.verification_status}
         email={employee.email}
         image={employee.image}
         sendMail={() => sendMail(employee.email)}
-        //
-        activeMenu={activeMenu}
-        handleActiveMenu={() => handleActiveEmployeeMenu(employee.id)}
-        handleActiveSeeMore={() => handleActiveEmployeeSeeMore(employee.id)}
-      />
+      >
+        <BaseActions
+          handleActiveSeeMore={() => handleActiveEmployeeSeeMore(employee.id)}
+        />
+      </EmployeeCard>
     );
   });
 
@@ -531,6 +525,7 @@ const HREmployee = () => {
             //
             categoryKeyValuePairs={categoryFilters[activeTab as keyof object]}
             category={{
+              categoryKey: category.categoryKey,
               categoryValue: category.categoryValue,
               canSeeCategoryDropDown: canSeeCategoryDropDown,
               toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
