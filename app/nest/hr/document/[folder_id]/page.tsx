@@ -1,6 +1,5 @@
 "use client";
 
-import DocumentCard from "@/src/components/global/document/DocumentCard";
 import FolderCard from "@/src/components/global/document/FolderCard";
 import ShowDocument from "@/src/components/global/document/ShowDocument";
 import Filter from "@/src/components/global/filter/Filter";
@@ -13,10 +12,9 @@ import useCategory from "@/src/hooks/useCategory";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import {
-  FolderInterface,
   DocumentInterface,
+  FolderInterface,
 } from "@/src/interface/DocumentInterface";
-import { UserInterface } from "@/src/interface/UserInterface";
 import {
   HR_DOCUMENTS_CATEGORY,
   HR_DOCUMENTS_SEARCH,
@@ -25,33 +23,41 @@ import {
 } from "@/src/utils/filters";
 import axios from "axios";
 
+import BaseActions from "@/src/components/global/base/BaseActions";
+import BaseCard from "@/src/components/global/base/BaseCard";
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
+import {
+  isDocumentSummary,
+  isFolderSummary,
+  isUserSummary,
+} from "@/src/utils/utils";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import React from "react";
-import { IoAdd, IoArrowBack } from "react-icons/io5";
+import { IoAdd, IoArrowBack, IoPencil, IoTrash } from "react-icons/io5";
+import HRActions from "@/src/components/hr/global/HRActions";
+import useFilterAndSort from "@/src/hooks/useFilterAndSort";
 
 const HRDocument = () => {
   const [canCreateDocument, setCanCreateDocument] = React.useState(false);
   const [folder, setFolder] = React.useState<FolderInterface>({
-    name: "",
+    title: "",
     path: { label: "Home", value: 0 },
+    created_by: 0,
   });
   const [canCreateFolder, setCanCreateFolder] = React.useState(false);
-  const [activeDocumentMenu, setActiveDocumentMenu] = React.useState<{
-    type: string;
-    id: number;
-  }>({ type: "", id: 0 });
+
   const [documents, setDocuments] = React.useState<
-    Array<
-      (DocumentInterface & UserInterface) | (FolderInterface & UserInterface)
-    >
+    (
+      | (DocumentInterface & { type: "Document" })
+      | (FolderInterface & { type: "Folder" })
+    )[]
   >([]);
-  const [canEditDocument, setCanEditDocument] = React.useState(false);
-  const [canDeleteDocument, setCanDeleteDocument] = React.useState(false);
-  const [canEditFolder, setCanEditFolder] = React.useState(false);
-  const [canDeleteFolder, setCanDeleteFolder] = React.useState(false);
+  const [activeEditDocument, setActiveEditDocument] = React.useState(0);
+  const [activeDeleteDocument, setActiveDeleteDocument] = React.useState(0);
+  const [activeEditFolder, setActiveEditFolder] = React.useState(0);
+  const [activeDeleteFolder, setActiveDeleteFolder] = React.useState(0);
   const [activeDocumentSeeMore, setActiveDocumentSeeMore] = React.useState(0);
 
   const {
@@ -60,21 +66,21 @@ const HRDocument = () => {
     handleCanSeeSearchDropDown,
     handleSearch,
     handleSelectSearch,
-  } = useSearch("name", "Name");
+  } = useSearch("title", "Title");
 
   const {
     category,
     canSeeCategoryDropDown,
     handleCanSeeCategoryDropDown,
     handleSelectCategory,
-  } = useCategory("", "All");
+  } = useCategory("type", "All");
   const {
     sort,
     canSeeSortDropDown,
     handleCanSeeSortDropDown,
     handleSelectSort,
     handleToggleAsc,
-  } = useSort("name", "Name");
+  } = useSort("created_at", "Created At");
 
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -91,34 +97,24 @@ const HRDocument = () => {
     setCanCreateFolder((prev) => !prev);
   };
 
-  const handleCanEditDocument = () => {
-    setCanEditDocument((prev) => !prev);
+  const handleActiveEditDocument = (id: number) => {
+    setActiveEditDocument((prev) => (prev === id ? 0 : id));
   };
 
-  const handleCanEditFolder = () => {
-    setCanEditFolder((prev) => !prev);
+  const handleActiveEditFolder = (id: number) => {
+    setActiveEditFolder((prev) => (prev === id ? 0 : id));
   };
 
-  const handleCanDeleteFolder = () => {
-    setCanDeleteFolder((prev) => !prev);
+  const handleActiveDeleteFolder = (id: number) => {
+    setActiveDeleteFolder((prev) => (prev === id ? 0 : id));
   };
 
-  const handleCanDeleteDocument = () => {
-    setCanDeleteDocument((prev) => !prev);
+  const handleActiveDeleteDocument = (id: number) => {
+    setActiveDeleteDocument((prev) => (prev === id ? 0 : id));
   };
 
   const handleActiveDocumentSeeMore = (id: number) => {
     setActiveDocumentSeeMore((prev) => (prev === id ? 0 : id));
-  };
-
-  const handleActiveDocumentMenu = (type: string, id: number) => {
-    setActiveDocumentMenu((prev) => {
-      const defaultSet = { type: "", id: 0 };
-      const newSet =
-        prev.type === type && prev.id === id ? defaultSet : { type, id };
-
-      return newSet;
-    });
   };
 
   const getDocuments = React.useCallback(async () => {
@@ -131,7 +127,7 @@ const HRDocument = () => {
             Authorization: `Bearer ${user.token}`,
           },
           withCredentials: true,
-          params: { path: folderId, ...search, ...sort, ...category },
+          params: { path: folderId },
         });
 
         if (documents) {
@@ -141,7 +137,7 @@ const HRDocument = () => {
     } catch (error) {
       console.log(error);
     }
-  }, [url, user?.token, folderId, search, sort, category]);
+  }, [url, user?.token, folderId]);
 
   const getFolder = React.useCallback(async () => {
     try {
@@ -165,68 +161,55 @@ const HRDocument = () => {
     }
   }, [user?.token, folderId, url]);
 
-  const mappedDocuments = documents.map((document, index) => {
-    const type = "type" in document ? document.type : "folder";
-    const isDocument = type !== "folder";
-    const createdByCurrentUser = document.created_by === user?.current;
-    const activeMenu =
-      type === activeDocumentMenu.type && document.id === activeDocumentMenu.id;
+  const mappedDocuments = useFilterAndSort(
+    documents,
+    search,
+    sort,
+    category
+  ).map((document) => {
+    const isDocument = isDocumentSummary(document);
+    const isFolder = isFolderSummary(document);
+    const createdBy = isUserSummary(document.created_by)
+      ? document.created_by.first_name
+      : null;
 
     return isDocument ? (
-      <DocumentCard
-        role={user?.role as string}
-        key={index}
-        activeMenu={activeMenu}
-        createdByCurrentUser={createdByCurrentUser}
-        //
-        id={document.id}
-        name={document.name}
-        created_by={document.created_by}
-        path={document.path}
-        description={"description" in document ? document.description : ""}
-        document={"document" in document ? document.document : ""}
-        type={type}
-        //
-        first_name={document.first_name}
-        last_name={document.last_name}
-        email={document.email}
-        email_verified_at={document.email_verified_at}
-        user_id={document.user_id}
-        //
-        handleActiveMenu={() =>
-          document.id && handleActiveDocumentMenu(type, document.id)
-        }
-        handleCanDelete={handleCanDeleteDocument}
-        handleCanEdit={handleCanEditDocument}
-        handleActiveSeeMore={() =>
-          document.id && handleActiveDocumentSeeMore(document.id)
-        }
-      />
-    ) : (
+      <BaseCard
+        key={`${document.title}-${document.id}-document`}
+        title={document.title}
+        description={document.description}
+        createdBy={createdBy}
+      >
+        <BaseActions
+          handleActiveSeeMore={() =>
+            handleActiveDocumentSeeMore(document.id ?? 0)
+          }
+        />
+        <HRActions
+          handleActiveEdit={() => handleActiveEditDocument(document.id ?? 0)}
+          handleActiveDelete={() =>
+            handleActiveDeleteDocument(document.id ?? 0)
+          }
+        />
+      </BaseCard>
+    ) : isFolder ? (
       <FolderCard
-        role={user?.role as string}
-        key={index}
-        activeMenu={activeMenu}
-        createdByCurrentUser={createdByCurrentUser}
-        //
-        id={document.id}
-        name={document.name}
-        created_by={document.created_by}
-        path={document.path}
-        //
-        first_name={document.first_name}
-        last_name={document.last_name}
-        email={document.email}
-        email_verified_at={document.email_verified_at}
-        user_id={document.user_id}
-        //
-        handleActiveMenu={() =>
-          document.id && handleActiveDocumentMenu(type, document.id)
-        }
-        handleCanDelete={handleCanDeleteFolder}
-        handleCanEdit={handleCanEditFolder}
-      />
-    );
+        key={`${document.title}-${document.id}-folder`}
+        link={`/nest/${user?.role}/document/${document.id}`}
+        createdBy={createdBy}
+        folder={{ ...document }}
+      >
+        <div className="w-full flex flex-row items-center justify-end gap-4">
+          <button onClick={() => handleActiveEditDocument(document.id ?? 0)}>
+            <IoPencil />
+          </button>
+
+          <button onClick={() => handleActiveDeleteDocument(document.id ?? 0)}>
+            <IoTrash />
+          </button>
+        </div>
+      </FolderCard>
+    ) : null;
   });
 
   React.useEffect(() => {
@@ -253,38 +236,38 @@ const HRDocument = () => {
         />
       ) : null}
 
-      {canEditDocument ? (
+      {activeEditDocument ? (
         <EditDocument
-          id={activeDocumentMenu.id}
-          toggleModal={handleCanEditDocument}
+          id={activeEditDocument}
+          toggleModal={() => handleActiveEditDocument(activeEditDocument)}
           refetchIndex={getDocuments}
         />
       ) : null}
 
-      {canEditFolder ? (
+      {activeEditFolder ? (
         <EditFolder
-          id={activeDocumentMenu.id}
-          toggleModal={handleCanEditFolder}
+          id={activeEditFolder}
+          toggleModal={() => handleActiveEditFolder(activeEditFolder)}
           refetchIndex={getDocuments}
         />
       ) : null}
 
-      {canDeleteDocument ? (
+      {activeDeleteDocument ? (
         <DeleteEntity
           route="document"
           label="Document"
-          id={activeDocumentMenu.id}
-          toggleModal={handleCanDeleteDocument}
+          id={activeDeleteDocument}
+          toggleModal={() => handleActiveDeleteDocument(activeDeleteDocument)}
           refetchIndex={getDocuments}
         />
       ) : null}
 
-      {canDeleteFolder ? (
+      {activeDeleteFolder ? (
         <DeleteEntity
           route="folder"
           label="Folder"
-          id={activeDocumentMenu.id}
-          toggleModal={handleCanDeleteFolder}
+          id={activeDeleteFolder}
+          toggleModal={() => handleActiveDeleteFolder(activeDeleteFolder)}
           refetchIndex={getDocuments}
         />
       ) : null}
@@ -292,7 +275,7 @@ const HRDocument = () => {
       {activeDocumentSeeMore ? (
         <ShowDocument
           id={activeDocumentSeeMore}
-          toggleModal={() => handleActiveDocumentSeeMore(0)}
+          toggleModal={() => handleActiveDocumentSeeMore(activeDocumentSeeMore)}
         />
       ) : null}
 
@@ -302,8 +285,8 @@ const HRDocument = () => {
       >
         <Filter
           searchKeyLabelPairs={
-            category.categoryValue === "all" ||
-            category.categoryValue === "documents"
+            category.categoryValue === "All" ||
+            category.categoryValue === "Documents"
               ? HR_DOCUMENTS_SEARCH
               : HR_FOLDERS_SEARCH
           }
@@ -319,6 +302,7 @@ const HRDocument = () => {
           //
           categoryKeyValuePairs={HR_DOCUMENTS_CATEGORY}
           category={{
+            categoryKey: category.categoryKey,
             categoryValue: category.categoryValue,
             canSeeCategoryDropDown: canSeeCategoryDropDown,
             toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
@@ -368,7 +352,7 @@ const HRDocument = () => {
               <IoArrowBack />
             </Link>
 
-            <p className="font-bold text-accent-blue">{folder.name}</p>
+            <p className="font-bold text-accent-blue">{folder.title}</p>
           </div>
         ) : null}
 

@@ -7,47 +7,65 @@ import { OnboardingInterface } from "@/interface/OnboardingInterface";
 import { PerformanceReviewInterface } from "@/interface/PerformanceReviewInterface";
 import { UserInterface } from "@/interface/UserInterface";
 import { TrainingInterface } from "../interface/TrainingInterface";
+import {
+  DocumentInterface,
+  FolderInterface,
+} from "../interface/DocumentInterface";
 
 export const isUserSummary = (
-  value: number | UserInterface
+  value: number | object
 ): value is UserInterface => {
   return typeof value === "object" && value !== null;
 };
 
 export const isOnboardingSummary = (
-  value: number | OnboardingInterface
+  value: number | object
 ): value is OnboardingInterface => {
   return typeof value === "object" && value !== null;
 };
 
 export const isLeaveTypeSummary = (
-  value: number | LeaveTypeInterface
+  value: number | object
 ): value is LeaveTypeInterface => {
   return typeof value === "object" && value !== null;
 };
 
 export const isLeaveBalanceSummary = (
-  value: number | LeaveBalanceInterface
+  value: number | object
 ): value is LeaveBalanceInterface => {
   return typeof value === "object" && value !== null;
 };
 
 export const isLeaveRequestInterface = (
-  value: number | LeaveRequestInterface
+  value: number | object
 ): value is LeaveRequestInterface => {
   return typeof value === "object" && value !== null;
 };
 
 export const isPerformanceReviewSummary = (
-  value: number | PerformanceReviewInterface
+  value: number | object
 ): value is PerformanceReviewInterface => {
   return typeof value === "object" && value !== null;
 };
 
 export const isTrainingSummary = (
-  value: number | TrainingInterface
+  value: number | object
 ): value is TrainingInterface => {
   return typeof value === "object" && value !== null;
+};
+
+export const isDocumentSummary = (
+  value: object
+): value is DocumentInterface => {
+  return (
+    typeof value === "object" &&
+    "description" in value &&
+    typeof value.description === "string"
+  );
+};
+
+export const isFolderSummary = (value: object): value is FolderInterface => {
+  return typeof value === "object" && "description"! in value;
 };
 
 export const normalizeDate = (date: string, type?: "date" | "time"): string => {

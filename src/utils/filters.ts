@@ -438,14 +438,14 @@ export const HR_TRAINING_SEARCH: SearchPairsInterface[] = [
 export const HR_DOCUMENTS_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "type",
-    values: ["All", "Documents", "Folders"],
+    values: ["All", "Document", "Folder"],
   },
 ];
 
 export const HR_DOCUMENTS_SORT: SortPairsInterface[] = [
   {
-    key: "name",
-    label: "Name",
+    key: "title",
+    label: "Title",
   },
   {
     key: "created_at",
@@ -455,8 +455,8 @@ export const HR_DOCUMENTS_SORT: SortPairsInterface[] = [
 
 export const HR_DOCUMENTS_SEARCH: SearchPairsInterface[] = [
   {
-    key: "name",
-    label: "Name",
+    key: "title",
+    label: "Title",
   },
   {
     key: "description",
@@ -466,8 +466,8 @@ export const HR_DOCUMENTS_SEARCH: SearchPairsInterface[] = [
 
 export const HR_FOLDERS_SEARCH: SearchPairsInterface[] = [
   {
-    key: "name",
-    label: "Name",
+    key: "title",
+    label: "Title",
   },
 ];
 
