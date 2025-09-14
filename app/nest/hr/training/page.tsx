@@ -4,33 +4,32 @@ import CreateTraining from "@/src/components/hr/training/CreateTraining";
 import EditTraining from "@/src/components/hr/training/EditTraining";
 import ShowTraining from "@/src/components/hr/training/ShowTraining";
 import { TrainingInterface } from "@/src/interface/TrainingInterface";
-import { UserInterface } from "@/src/interface/UserInterface";
 import axios from "axios";
 
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import Filter from "@/src/components/global/filter/Filter";
-import TrainingCard from "@/src/components/global/training/TrainingCard";
 import AssignTraining from "@/src/components/hr/training/AssignTraining";
 
+import BaseActions from "@/src/components/global/base/BaseActions";
+import BaseCard from "@/src/components/global/base/BaseCard";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
+import HRActions from "@/src/components/hr/global/HRActions";
 import useIsLoading from "@/src/hooks/useIsLoading";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
+import { isUserSummary } from "@/src/utils/utils";
 import { HR_TRAINING_SEARCH, HR_TRAINING_SORT } from "@/utils/filters";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd } from "react-icons/io5";
 
 const HRTraining = () => {
-  const [trainings, setTrainings] = React.useState<
-    Array<TrainingInterface & UserInterface>
-  >([]);
-  const [activeTrainingMenu, setActiveTrainingMenu] = React.useState(0);
+  const [trainings, setTrainings] = React.useState<TrainingInterface[]>([]);
   const [activeTrainingSeeMore, setActiveTrainingSeeMore] = React.useState(0);
-  const [canEditTraining, setCanEditTraining] = React.useState(false);
-  const [canDeleteTraining, setCanDeleteTraining] = React.useState(false);
+  const [activeEditTraining, setActiveEditTraining] = React.useState(0);
+  const [activeDeleteTraining, setActiveDeleteTraining] = React.useState(0);
   const [canCreateTraining, setCanCreateTraining] = React.useState(false);
-  const [canAssignTraining, setCanAssignTraining] = React.useState(false);
+  const [activeAssignTraining, setActiveAssignTraining] = React.useState(0);
 
   const {
     search,
@@ -57,24 +56,20 @@ const HRTraining = () => {
     setCanCreateTraining((prev) => !prev);
   };
 
-  const handleActiveTrainingMenu = (id: number) => {
-    setActiveTrainingMenu((prev) => (prev === id ? 0 : id));
-  };
-
   const handleActiveTrainingSeeMore = (id: number) => {
     setActiveTrainingSeeMore((prev) => (prev === id ? 0 : id));
   };
 
-  const handleCanEditTraining = () => {
-    setCanEditTraining((prev) => !prev);
+  const handleActiveEditTraining = (id: number) => {
+    setActiveEditTraining((prev) => (prev === id ? 0 : id));
   };
 
-  const handleCanDeleteTraining = () => {
-    setCanDeleteTraining((prev) => !prev);
+  const handleActiveDeleteTraining = (id: number) => {
+    setActiveDeleteTraining((prev) => (prev === id ? 0 : id));
   };
 
-  const handleCanAssignTraining = () => {
-    setCanAssignTraining((prev) => !prev);
+  const handleActiveAssignTraining = (id: number) => {
+    setActiveAssignTraining((prev) => (prev === id ? 0 : id));
   };
 
   const getTrainings = React.useCallback(async () => {
@@ -101,34 +96,27 @@ const HRTraining = () => {
     }
   }, [user?.token, url, search, sort, handleIsLoading]);
 
-  const mappedTrainings = trainings.map((training, index) => {
-    const trainingId = training.training_id as number;
-    const createdByCurrentUser = training.created_by === user?.current;
-    const activeMenu = activeTrainingMenu === trainingId;
+  const mappedTrainings = trainings.map((training) => {
+    const trainingId = training.id ?? 0;
+    const createdBy = isUserSummary(training.created_by)
+      ? training.created_by.first_name
+      : null;
     return (
-      <TrainingCard
-        role={user?.role ?? ""}
-        key={index}
-        activeMenu={activeMenu}
-        createdByCurrentUser={createdByCurrentUser}
-        //
+      <BaseCard
+        key={`${training.title}-${trainingId}`}
         title={training.title}
         description={training.description}
-        deadline_days={training.deadline_days}
-        certificate={training.certificate}
-        //
-        id={training.id}
-        email={training.email}
-        email_verified_at={training.email_verified_at}
-        first_name={training.first_name}
-        last_name={training.last_name}
-        //
-        handleActiveMenu={() => handleActiveTrainingMenu(trainingId)}
-        handleActiveSeeMore={() => handleActiveTrainingSeeMore(trainingId)}
-        handleCanDelete={handleCanDeleteTraining}
-        handleCanEdit={handleCanEditTraining}
-        handleCanAssign={handleCanAssignTraining}
-      />
+        createdBy={createdBy}
+      >
+        <BaseActions
+          handleActiveSeeMore={() => handleActiveTrainingSeeMore(trainingId)}
+        />
+        <HRActions
+          handleActiveAssign={() => handleActiveAssignTraining(trainingId)}
+          handleActiveDelete={() => handleActiveDeleteTraining(trainingId)}
+          handleActiveEdit={() => handleActiveEditTraining(trainingId)}
+        />
+      </BaseCard>
     );
   });
 
@@ -156,27 +144,27 @@ const HRTraining = () => {
         />
       ) : null}
 
-      {canEditTraining ? (
+      {activeEditTraining ? (
         <EditTraining
-          id={activeTrainingMenu}
-          toggleModal={handleCanEditTraining}
+          id={activeEditTraining}
+          toggleModal={() => handleActiveEditTraining(activeEditTraining)}
           refetchIndex={getTrainings}
         />
       ) : null}
 
-      {canAssignTraining ? (
+      {activeAssignTraining ? (
         <AssignTraining
-          id={activeTrainingMenu}
-          toggleModal={handleCanAssignTraining}
+          id={activeAssignTraining}
+          toggleModal={() => handleActiveAssignTraining(activeAssignTraining)}
         />
       ) : null}
 
-      {canDeleteTraining ? (
+      {activeDeleteTraining ? (
         <DeleteEntity
           route="training"
           label="Training"
-          id={activeTrainingMenu}
-          toggleModal={handleCanDeleteTraining}
+          id={activeDeleteTraining}
+          toggleModal={() => handleActiveDeleteTraining(activeDeleteTraining)}
           refetchIndex={getTrainings}
         />
       ) : null}
