@@ -19,7 +19,7 @@ export interface LeaveBalanceInterface {
 export interface LeaveRequestInterface {
   id?: number;
   requested_by: number | UserInterface;
-  actioned_by: number | UserInterface;
+  actioned_by: number | UserInterface | null;
   balance: number | LeaveBalanceInterface;
   leave_type_id: number;
   leave: LeaveTypeInterface;
