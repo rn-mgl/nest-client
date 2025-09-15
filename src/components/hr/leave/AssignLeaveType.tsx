@@ -84,7 +84,7 @@ const AssignLeaveType: React.FC<ModalInterface> = (props) => {
       if (user?.token) {
         const { data: responseData } = await axios.get<{
           users: (UserInterface & LeaveBalanceInterface)[];
-        }>(`${url}/hr/employee_leave_balance`, {
+        }>(`${url}/hr/user_leave_balance`, {
           headers: {
             Authorization: `Bearer ${user?.token}`,
           },
@@ -113,7 +113,7 @@ const AssignLeaveType: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: responseData } = await axios.post(
-          `${url}/hr/employee_leave_balance`,
+          `${url}/hr/user_leave_balance`,
           {
             user_leaves: employeeLeaves.map((leave) => ({
               ...leave,

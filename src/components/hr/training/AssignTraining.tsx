@@ -37,7 +37,7 @@ const AssignTraining: React.FC<ModalInterface> = (props) => {
       if (user?.token) {
         const { data: responseData } = await axios.get<{
           employees: (EmployeeTrainingInterface & UserInterface)[];
-        }>(`${url}/hr/employee_training`, {
+        }>(`${url}/hr/user_training`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
@@ -80,7 +80,7 @@ const AssignTraining: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: responseData } = await axios.post(
-          `${url}/hr/employee_training`,
+          `${url}/hr/user_training`,
           { user_ids: assignedEmployees, training_id: props.id },
           {
             headers: {

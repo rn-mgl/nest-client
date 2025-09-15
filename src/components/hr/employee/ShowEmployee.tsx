@@ -53,7 +53,7 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
     try {
       if (user?.token) {
         const { data: responseData } = await axios.get(
-          `${url}/hr/employee/${props.id}`,
+          `${url}/hr/user/${props.id}`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
