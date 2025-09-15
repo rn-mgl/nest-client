@@ -8,7 +8,13 @@ export interface OnboardingInterface {
 }
 
 export interface OnboardingRequiredDocumentsInterface {
-  onboarding_required_document_id?: number;
+  id?: number;
+  title: string;
+  description: string;
+}
+
+export interface OnboardingPolicyAcknowledgemenInterface {
+  id?: number;
   title: string;
   description: string;
 }
@@ -16,12 +22,6 @@ export interface OnboardingRequiredDocumentsInterface {
 export interface EmployeeOnboardingRequiredDocumentsInterface {
   user_onboarding_required_document_id?: number;
   document: { rawFile: File; fileURL: string } | string | null;
-}
-
-export interface OnboardingPolicyAcknowledgemenInterface {
-  onboarding_policy_acknowledgement_id?: number;
-  title: string;
-  description: string;
 }
 
 export interface EmployeeOnboardingPolicyAcknowledgementInterface {
@@ -33,6 +33,10 @@ export interface EmployeeOnboardingInterface {
   user_onboarding_id?: number;
   status: string;
   created_at?: string;
+}
+
+export interface AssignedOnboarding extends UserInterface {
+  assigned_onboarding: null | OnboardingInterface;
 }
 
 export interface UserOnboardingInterface {

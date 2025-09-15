@@ -21,6 +21,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
   const [onboarding, setOnboarding] = React.useState<OnboardingInterface>({
     title: "",
     description: "",
+    created_by: 0,
   });
 
   const {
@@ -65,32 +66,37 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
     return (
       <div
         key={index}
-        className="w-full flex flex-row gap-2 items-start justify-center"
+        className="w-full flex flex-col gap-2 items-end justify-center"
       >
         <div className="flex flex-col items-center justify-center gap-2 w-full">
-          <input
-            type="text"
+          <Input
+            id={`required_document_title-${index}`}
             name="required_document_title"
-            placeholder={`Required Document Title ${index + 1}`}
             onChange={(e) => handleDocumentField(e, "title", index)}
+            placeholder={`Required Document Title ${index + 1}`}
+            required={true}
+            type="text"
             value={req.title}
-            className="w-full p-2 px-4 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all bg-white"
+            icon={<IoText />}
+            label={true}
           />
 
-          <textarea
+          <TextArea
+            id={`required_document_description-${index}`}
             name="required_document_description"
-            placeholder={`Description ${index + 1}`}
-            onChange={(e) => handleDocumentField(e, "description", index)}
             value={req.description}
             rows={5}
-            className="w-full p-2 px-4 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all bg-white resize-none"
+            placeholder={`Description ${index + 1}`}
+            required={true}
+            onChange={(e) => handleDocumentField(e, "description", index)}
+            icon={<IoReader />}
           />
         </div>
 
         <button
           type="button"
           onClick={() => removeDocumentField(index)}
-          className="p-3 border-2 border-neutral-100 rounded-md bg-neutral-100"
+          className="p-2 border-2 border-neutral-100 rounded-md bg-neutral-100"
         >
           <IoTrash />
         </button>
@@ -103,25 +109,30 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
       return (
         <div
           key={index}
-          className="w-full flex flex-row gap-2 items-center justify-center"
+          className="w-full flex flex-col gap-2 items-end justify-center"
         >
           <div className="flex flex-col items-center justify-center gap-2 w-full">
-            <input
-              type="text"
+            <Input
+              id={`policy_acknowledgement_title-${index}`}
               name="policy_acknowledgement_title"
-              placeholder={`Policy Acknowledgement Title ${index + 1}`}
               onChange={(e) => handlePolicyField(e, "title", index)}
+              placeholder={`Required Document Title ${index + 1}`}
+              required={true}
+              type="text"
               value={ack.title}
-              className="w-full p-2 px-4 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all bg-white"
+              icon={<IoText />}
+              label={true}
             />
 
-            <textarea
-              name="policy_acknowledgement_title"
-              placeholder={`Description ${index + 1}`}
-              onChange={(e) => handlePolicyField(e, "description", index)}
+            <TextArea
+              id={`policy_acknowledgement_description-${index}`}
+              name="policy_acknowledgement_description"
               value={ack.description}
               rows={5}
-              className="w-full p-2 px-4 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all bg-white resize-none"
+              placeholder={`Description ${index + 1}`}
+              required={true}
+              onChange={(e) => handlePolicyField(e, "description", index)}
+              icon={<IoReader />}
             />
           </div>
 
@@ -194,6 +205,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
             <IoClose />
           </button>
         </div>
+
         <form
           onSubmit={(e) => submitCreateOnboarding(e)}
           className="w-full h-full p-2 flex flex-col items-center justify-center gap-4 overflow-hidden t:p-4"
@@ -234,8 +246,6 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
             <div className="w-full h-full flex flex-col items-center justify-start gap-4 l-s:items-start l-s:justify-center overflow-y-hidden t:flex-row">
               <div className="w-full flex flex-col items-center justify-start h-full gap-2 overflow-hidden">
                 <div className="w-full flex flex-row items-center justify-between">
-                  <label className="text-xs">Required Documents</label>
-
                   <button
                     type="button"
                     title="Add Required Documents Field"
@@ -257,8 +267,6 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
             <div className="w-full h-full flex flex-col items-center justify-start gap-4 l-s:items-start l-s:justify-center overflow-y-hidden t:flex-row">
               <div className="w-full flex flex-col items-center justify-start h-full gap-2 overflow-hidden">
                 <div className="w-full flex flex-row items-center justify-between">
-                  <label className="text-xs">Policy Acknowledgements</label>
-
                   <button
                     type="button"
                     title="Add Required Documents Field"

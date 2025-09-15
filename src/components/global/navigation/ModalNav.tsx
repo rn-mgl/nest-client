@@ -6,7 +6,7 @@ const ModalNav: React.FC<ModalNavInterface> = (props) => {
     return (
       <button
         key={index}
-        className={`w-full p-2 t:px-4 text-sm transition-all capitalize ${
+        className={`min-w-full t:w-full t:min-w-fit p-2 t:px-4 text-sm transition-all capitalize ${
           props.activeFormPage === page
             ? " text-accent-blue font-bold border-b-2 border-accent-blue"
             : "border-b-2"

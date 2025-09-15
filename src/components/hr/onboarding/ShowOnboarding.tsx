@@ -17,17 +17,19 @@ import React from "react";
 import { IoClose } from "react-icons/io5";
 
 const ShowOnboarding: React.FC<ModalInterface> = (props) => {
-  const [onboarding, setOnboarding] = React.useState<
-    OnboardingInterface & {
-      required_documents: OnboardingRequiredDocumentsInterface[];
-      policy_acknowledgements: OnboardingPolicyAcknowledgemenInterface[];
-    }
-  >({
+  const [onboarding, setOnboarding] = React.useState<OnboardingInterface>({
     title: "",
     description: "",
-    required_documents: [],
-    policy_acknowledgements: [],
+    created_by: 0,
   });
+
+  const [requiredDocuments, setRequiredDocuments] = React.useState<
+    OnboardingRequiredDocumentsInterface[]
+  >([]);
+
+  const [policyAcknowledgements, setPolicyAcknowledgements] = React.useState<
+    OnboardingPolicyAcknowledgemenInterface[]
+  >([]);
 
   const { activeFormPage, handleActiveFormPage } = useModalNav("information");
 
@@ -38,7 +40,12 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
   const getOnboarding = React.useCallback(async () => {
     try {
       if (user?.token) {
-        const { data } = await axios.get(`${url}/hr/onboarding/${props.id}`, {
+        const { data } = await axios.get<{
+          onboarding: OnboardingInterface & {
+            required_documents: OnboardingRequiredDocumentsInterface[];
+            policy_acknowledgements: OnboardingPolicyAcknowledgemenInterface[];
+          };
+        }>(`${url}/hr/onboarding/${props.id}`, {
           headers: {
             Authorization: `Bearer ${user?.token}`,
           },
@@ -47,6 +54,8 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
 
         if (data) {
           setOnboarding(data.onboarding);
+          setRequiredDocuments(data.onboarding.required_documents);
+          setPolicyAcknowledgements(data.onboarding.policy_acknowledgements);
         }
       }
     } catch (error) {
@@ -54,28 +63,29 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
     }
   }, [url, user?.token, props.id]);
 
-  const mappedRequiredDocuments = onboarding.required_documents.map(
-    (req, index) => {
-      return (
-        <div
-          key={index}
-          className="w-full flex flex-col items-center justify-start rounded-md gap-2 "
-        >
-          <TextField label="" value={req.title} />
-          <TextBlock label="" value={req.description} />
-        </div>
-      );
-    }
-  );
+  const mappedRequiredDocuments = requiredDocuments.map((req, index) => {
+    return (
+      <div
+        key={index}
+        className="w-full flex flex-col items-center justify-start rounded-md gap-2"
+      >
+        <TextField label={`Required Document ${index + 1}`} value={req.title} />
+        <TextBlock label="" value={req.description} />
+      </div>
+    );
+  });
 
-  const mappedPolicyAcknowledgements = onboarding.policy_acknowledgements.map(
+  const mappedPolicyAcknowledgements = policyAcknowledgements.map(
     (ack, index) => {
       return (
         <div
           key={index}
           className="w-full flex flex-col items-center justify-start rounded-md gap-2 "
         >
-          <TextField label="" value={ack.title} />
+          <TextField
+            label={`Policy Acknowledgement ${index + 1}`}
+            value={ack.title}
+          />
           <TextBlock label="" value={ack.description} />
         </div>
       );
@@ -116,7 +126,6 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
           ) : activeFormPage === "documents" ? (
             <div className="w-full h-full flex flex-col items-start justify-start gap-4 overflow-hidden t:flex-row">
               <div className="w-full h-full flex flex-col items-start justify-start gap-2 rounded-md overflow-hidden">
-                <p className="text-xs">Required Documents</p>
                 <div className="w-full flex flex-col gap-2 items-center justify-start overflow-y-auto h-full">
                   {mappedRequiredDocuments}
                 </div>
@@ -125,7 +134,6 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
           ) : activeFormPage === "acknowledgements" ? (
             <div className="w-full h-full flex flex-col items-start justify-start gap-4 overflow-hidden t:flex-row">
               <div className="w-full h-full flex flex-col items-start justify-start gap-2 rounded-md overflow-hidden">
-                <p className="text-xs">Policy Acknowledgements</p>
                 <div className="w-full flex flex-col gap-2 items-center justify-start overflow-y-auto h-full">
                   {mappedPolicyAcknowledgements}
                 </div>

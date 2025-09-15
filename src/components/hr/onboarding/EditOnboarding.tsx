@@ -22,13 +22,12 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
   const [onboarding, setOnboarding] = React.useState<OnboardingInterface>({
     title: "",
     description: "",
+    created_by: 0,
   });
-  const [documentsToDelete, setDocumentsToDelete] = React.useState<
-    Array<number>
-  >([]);
-  const [policiesToDelete, setPoliciesToDelete] = React.useState<Array<number>>(
+  const [documentsToDelete, setDocumentsToDelete] = React.useState<number[]>(
     []
   );
+  const [policiesToDelete, setPoliciesToDelete] = React.useState<number[]>([]);
 
   const {
     fields: required_documents,
@@ -37,6 +36,7 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
     handleField: handleDocumentField,
     populateFields: populateDocumentFields,
   } = useDynamicFields<OnboardingRequiredDocumentsInterface>([]);
+
   const {
     fields: policy_acknowledgements,
     addField: addPolicyField,
@@ -124,8 +124,8 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
             ...onboarding,
             required_documents,
             policy_acknowledgements,
-            documentsToDelete,
-            policiesToDelete,
+            documents_to_delete: documentsToDelete,
+            policies_to_delete: policiesToDelete,
           },
           {
             headers: {
@@ -140,6 +140,7 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
           if (props.refetchIndex) {
             props.refetchIndex();
           }
+
           props.toggleModal();
         }
       }
@@ -152,25 +153,30 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
     return (
       <div
         key={index}
-        className="w-full flex flex-row gap-2 items-start justify-center"
+        className="w-full flex flex-col gap-2 items-end justify-center"
       >
         <div className="w-full flex flex-col items-center justify-center gap-2">
-          <input
-            type="text"
+          <Input
+            id={`required_document_title-${index}`}
             name="required_document_title"
-            placeholder={`Document Title ${index + 1}`}
             onChange={(e) => handleDocumentField(e, "title", index)}
+            placeholder={`Required Document Title ${index + 1}`}
+            required={true}
+            type="text"
             value={req.title}
-            className="w-full p-2 px-4 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all bg-white"
+            icon={<IoText />}
+            label={true}
           />
 
-          <textarea
+          <TextArea
+            id={`required_document_description-${index}`}
             name="required_document_description"
-            placeholder={`Description ${index + 1}`}
-            onChange={(e) => handleDocumentField(e, "description", index)}
             value={req.description}
             rows={5}
-            className="w-full p-2 px-4 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all bg-white resize-none"
+            placeholder={`Description ${index + 1}`}
+            required={true}
+            onChange={(e) => handleDocumentField(e, "description", index)}
+            icon={<IoReader />}
           />
         </div>
 
@@ -178,9 +184,9 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
           type="button"
           onClick={() => {
             removeDocumentField(index);
-            handleDocumentsToDelete(req.onboarding_required_document_id);
+            handleDocumentsToDelete(req.id);
           }}
-          className="p-3 border-2 border-neutral-100 rounded-md bg-neutral-100"
+          className="p-2 border-2 border-neutral-100 rounded-md bg-neutral-100"
         >
           <IoTrash />
         </button>
@@ -193,24 +199,30 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
       return (
         <div
           key={index}
-          className="w-full flex flex-row gap-2 items-start justify-center"
+          className="w-full flex flex-col gap-2 items-end justify-center"
         >
           <div className="w-full flex flex-col items-center justify-center gap-2">
-            <input
-              type="text"
+            <Input
+              id={`policy_acknowledgement_title-${index}`}
               name="policy_acknowledgement_title"
-              placeholder={`Policy Acknowledgement ${index + 1}`}
               onChange={(e) => handlePolicyField(e, "title", index)}
+              placeholder={`Required Document Title ${index + 1}`}
+              required={true}
+              type="text"
               value={ack.title}
-              className="w-full p-2 px-4 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all bg-white"
+              icon={<IoText />}
+              label={true}
             />
-            <textarea
+
+            <TextArea
+              id={`policy_acknowledgement_description-${index}`}
               name="policy_acknowledgement_description"
-              placeholder={`Description ${index + 1}`}
-              onChange={(e) => handlePolicyField(e, "description", index)}
               value={ack.description}
               rows={5}
-              className="w-full p-2 px-4 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all resize-none bg-white"
+              placeholder={`Description ${index + 1}`}
+              required={true}
+              onChange={(e) => handlePolicyField(e, "description", index)}
+              icon={<IoReader />}
             />
           </div>
 
@@ -218,9 +230,9 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
             type="button"
             onClick={() => {
               removePolicyField(index);
-              handlePoliciesToDelete(ack.onboarding_policy_acknowledgement_id);
+              handlePoliciesToDelete(ack.id);
             }}
-            className="p-3 border-2 border-neutral-100 rounded-md bg-neutral-100"
+            className="p-2 border-2 border-neutral-100 rounded-md bg-neutral-100"
           >
             <IoTrash />
           </button>
@@ -288,8 +300,6 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
             <div className="w-full h-full flex flex-col items-center justify-start gap-4 l-s:items-start l-s:justify-center t:flex-row overflow-hidden">
               <div className="w-full flex flex-col items-center justify-start gap-2 h-full overflow-hidden">
                 <div className="w-full flex flex-row items-center justify-between">
-                  <label className="text-xs">Required Documents</label>
-
                   <button
                     type="button"
                     title="Add Required Documents Field"
@@ -311,8 +321,6 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
             <div className="w-full h-full flex flex-col items-center justify-start gap-4 l-s:items-start l-s:justify-center t:flex-row overflow-hidden">
               <div className="w-full flex flex-col items-center justify-start gap-2 h-full overflow-hidden">
                 <div className="w-full flex flex-row items-center justify-between">
-                  <label className="text-xs">Policy Acknowledgements</label>
-
                   <button
                     type="button"
                     title="Add Required Documents Field"

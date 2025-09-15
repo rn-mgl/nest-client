@@ -1,28 +1,30 @@
+import CheckBox from "@/form/CheckBox";
+import Table from "@/global/field/Table";
 import { ModalInterface } from "@/src/interface/ModalInterface";
-import { EmployeeOnboardingInterface } from "@/src/interface/OnboardingInterface";
+import {
+  AssignedOnboarding,
+  OnboardingInterface,
+} from "@/src/interface/OnboardingInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose } from "react-icons/io5";
-import Assignee from "@/hr/global/Assignee";
 
 const AssignOnboarding: React.FC<ModalInterface> = (props) => {
-  const [employeeOnboardings, setEmployeeOnboardings] = React.useState<
-    (UserInterface & EmployeeOnboardingInterface)[]
+  const [userOnboardings, setUserOnboardings] = React.useState<
+    AssignedOnboarding[]
   >([]);
-  const [assignedEmployees, setAssignedEmployees] = React.useState<number[]>(
-    []
-  );
+
+  const [assignedUsers, setAssignedUsers] = React.useState<number[]>([]);
 
   const { data } = useSession({ required: true });
   const user = data?.user;
   const url = process.env.URL;
 
   const handleAssignedEmployees = (id: number) => {
-    setAssignedEmployees((prev) => {
+    setAssignedUsers((prev) => {
       if (prev.includes(id)) {
         const removedId = prev.filter((assigned) => assigned !== id);
         return removedId;
@@ -32,24 +34,26 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
     });
   };
 
-  const getEmployeeOnboardings = React.useCallback(async () => {
+  const getUserOnboardings = React.useCallback(async () => {
     try {
       if (user?.token) {
         const { data: responseData } = await axios.get<{
-          employees: (UserInterface & EmployeeOnboardingInterface)[];
-        }>(`${url}/hr/employee_onboarding`, {
+          users: (UserInterface & {
+            assigned_onboarding: null | OnboardingInterface;
+          })[];
+        }>(`${url}/hr/user_onboarding`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
           withCredentials: true,
           params: { onboarding_id: props.id },
         });
-        if (responseData.employees) {
-          setEmployeeOnboardings(responseData.employees);
-          setAssignedEmployees(
-            responseData.employees
-              .filter((e) => e.user_onboarding_id !== null)
-              .map((e) => e.user_id as number)
+        if (responseData.users) {
+          setUserOnboardings(responseData.users);
+          setAssignedUsers(
+            responseData.users
+              .filter((e) => e.assigned_onboarding !== null)
+              .map((e) => e.id)
           );
         }
       }
@@ -58,22 +62,23 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
     }
   }, [url, user?.token, props.id]);
 
-  const mappedEmployeeOnboardings = employeeOnboardings.map(
-    (employee, index) => {
-      const isChecked = assignedEmployees.includes(employee.user_id);
+  const mappedEmployeeOnboardings = userOnboardings.map((user) => {
+    const isChecked = assignedUsers.includes(user.id);
 
-      return (
-        <Assignee
-          key={index}
-          user={employee}
-          handleAssignedEmployees={() =>
-            handleAssignedEmployees(employee.user_id)
-          }
-          isChecked={isChecked}
-        />
-      );
-    }
-  );
+    return {
+      first_name: user.first_name,
+      last_name: user.last_name,
+      email: user.email,
+      assign: (
+        <div className="flex flex-col items-start justify-center">
+          <CheckBox
+            isChecked={isChecked}
+            onClick={() => handleAssignedEmployees(user.id)}
+          />
+        </div>
+      ),
+    };
+  });
 
   const submitAssignOnboarding = async (
     e: React.FormEvent<HTMLFormElement>
@@ -83,9 +88,11 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
+        // const userIds = userOnboardings.filter(user => user.)
+
         const { data: responseData } = await axios.post(
-          `${url}/hr/employee_onboarding`,
-          { user_ids: assignedEmployees, onboarding_id: props.id },
+          `${url}/hr/user_onboarding`,
+          { user_ids: assignedUsers, onboarding_id: props.id },
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
@@ -109,8 +116,8 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
   };
 
   React.useEffect(() => {
-    getEmployeeOnboardings();
-  }, [getEmployeeOnboardings]);
+    getUserOnboardings();
+  }, [getUserOnboardings]);
 
   return (
     <div
@@ -132,16 +139,11 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
           className="w-full h-full p-2 flex flex-col items-start justify-center gap-4 overflow-hidden t:p-4"
         >
           <div className="w-full h-full flex flex-col items-start justify-start border-[1px] rounded-md overflow-x-auto">
-            <div className="grid grid-cols-4 p-4 items-center font-bold gap-4 justify-start min-w-[768px] w-full bg-neutral-200">
-              <p>First Name</p>
-              <p>Last Name</p>
-              <p>Email</p>
-              <p className="text-center">Assign</p>
-            </div>
-
-            <div className="w-full min-w-[768px] max-h-full flex flex-col items-start justify-start overflow-y-auto overflow-x-hidden">
-              {mappedEmployeeOnboardings}
-            </div>
+            <Table
+              color="neutral"
+              contents={mappedEmployeeOnboardings}
+              headers={["First Name", "Last Name", "Email", "Assign"]}
+            />
           </div>
 
           <button className="w-full p-2 rounded-md bg-accent-green text-neutral-100 font-bold mt-2">
