@@ -297,6 +297,12 @@ const HREmployee = () => {
     const requestedBy = isUserSummary(leave.requested_by)
       ? leave.requested_by
       : null;
+
+    const actionedBy =
+      leave.actioned_by !== null && isUserSummary(leave.actioned_by)
+        ? `${leave.actioned_by.first_name} ${leave.actioned_by.last_name}`
+        : null;
+
     const leaveType = isLeaveTypeSummary(leave.leave) ? leave.leave : null;
     const leaveBalance = isLeaveBalanceSummary(leave.balance)
       ? leave.balance
@@ -334,7 +340,7 @@ const HREmployee = () => {
       status: normalizeString(leave.status),
       reason: leave.reason,
       balance: leaveBalance?.balance ?? 0,
-      action: (
+      action: actionedBy ?? (
         <div className="w-full flex flex-row flex-wrap items-center justify-start gap-2">
           <button
             onClick={() =>
