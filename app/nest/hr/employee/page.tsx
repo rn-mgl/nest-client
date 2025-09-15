@@ -144,7 +144,7 @@ const HREmployee = () => {
         handleIsLoading(true);
 
         if (user?.token) {
-          const { data: responseData } = await axios.get(`${url}/hr/employee`, {
+          const { data: responseData } = await axios.get(`${url}/hr/user`, {
             headers: {
               Authorization: `Bearer ${user.token}`,
             },
@@ -198,7 +198,7 @@ const HREmployee = () => {
 
       if (token && user?.token) {
         const { data: responseData } = await axios.patch(
-          `${url}/hr/employee_leave_request/${leaveRequestId}`,
+          `${url}/hr/user_leave_request/${leaveRequestId}`,
           { approved },
           {
             headers: {
