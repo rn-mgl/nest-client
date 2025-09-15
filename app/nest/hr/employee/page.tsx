@@ -235,13 +235,7 @@ const HREmployee = () => {
       <EmployeeCard
         key={index}
         //
-        id={employee.id}
-        first_name={employee.first_name}
-        last_name={employee.last_name}
-        email_verified_at={employee.email_verified_at}
-        verification_status={employee.verification_status}
-        email={employee.email}
-        image={employee.image}
+        user={{ ...employee }}
         sendMail={() => sendMail(employee.email)}
       >
         <BaseActions
