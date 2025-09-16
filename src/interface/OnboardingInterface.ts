@@ -36,7 +36,7 @@ export interface EmployeeOnboardingInterface {
 }
 
 export interface AssignedOnboarding extends UserInterface {
-  assigned_onboarding: null | OnboardingInterface;
+  assigned_onboarding: null | UserOnboardingInterface;
 }
 
 export interface UserOnboardingInterface {
@@ -48,4 +48,5 @@ export interface UserOnboardingInterface {
   assigned_to: number | UserInterface;
   assigned_by: number | UserInterface;
   onboarding: OnboardingInterface;
+  deleted_at: string | null;
 }

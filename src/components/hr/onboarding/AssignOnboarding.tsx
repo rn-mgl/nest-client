@@ -3,7 +3,7 @@ import Table from "@/global/field/Table";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
   AssignedOnboarding,
-  OnboardingInterface,
+  UserOnboardingInterface,
 } from "@/src/interface/OnboardingInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import { getCSRFToken } from "@/src/utils/token";
@@ -39,7 +39,7 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
       if (user?.token) {
         const { data: responseData } = await axios.get<{
           users: (UserInterface & {
-            assigned_onboarding: null | OnboardingInterface;
+            assigned_onboarding: null | UserOnboardingInterface;
           })[];
         }>(`${url}/hr/user_onboarding`, {
           headers: {
@@ -52,8 +52,12 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
           setUserOnboardings(responseData.users);
           setAssignedUsers(
             responseData.users
-              .filter((e) => e.assigned_onboarding !== null)
-              .map((e) => e.id)
+              .filter(
+                (user) =>
+                  user.assigned_onboarding !== null &&
+                  user.assigned_onboarding.deleted_at === null
+              )
+              .map((user) => user.id)
           );
         }
       }
