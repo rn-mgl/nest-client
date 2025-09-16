@@ -1,7 +1,4 @@
-import {
-  AssignedLeaveBalance,
-  LeaveBalanceInterface,
-} from "@/src/interface/LeaveInterface";
+import { AssignedLeaveBalance } from "@/src/interface/LeaveInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
