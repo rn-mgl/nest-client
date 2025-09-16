@@ -13,6 +13,7 @@ const EditLeaveType: React.FC<ModalInterface> = (props) => {
   const [leaveType, setLeaveType] = React.useState<LeaveTypeInterface>({
     type: "",
     description: "",
+    created_by: 0,
   });
   const url = process.env.URL;
   const { data } = useSession({ required: true });

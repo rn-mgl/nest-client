@@ -270,11 +270,13 @@ const HRLeave = () => {
         <LeaveBalanceCard
           key={index}
           //
+          leave_type_id={balance.leave_type_id}
           assigned_to={balance.assigned_to}
           created_at={balance.created_at}
           leave={balance.leave}
           provided_by={balance.provided_by}
           balance={balance.balance}
+          deleted_at={balance.deleted_at}
           //
           toggleSelectedLeaveRequest={() =>
             handleSelectedLeaveRequest(balance.id ?? 0)

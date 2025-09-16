@@ -304,8 +304,8 @@ const HREmployee = () => {
         : null;
 
     const leaveType = isLeaveTypeSummary(leave.leave) ? leave.leave : null;
-    const leaveBalance = isLeaveBalanceSummary(leave.balance)
-      ? leave.balance
+    const leaveBalance = isLeaveBalanceSummary(leave.leave_balance)
+      ? leave.leave_balance
       : null;
 
     const requestedByImage =

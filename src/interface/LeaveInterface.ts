@@ -9,18 +9,24 @@ export interface LeaveTypeInterface {
 
 export interface LeaveBalanceInterface {
   id?: number;
+  leave_type_id: number;
   leave: LeaveTypeInterface;
-  balance: number;
+  balance: string | number;
   assigned_to: number | UserInterface;
   provided_by: number | UserInterface;
   created_at: string;
+  deleted_at: string | null;
+}
+
+export interface AssignedLeaveBalance extends UserInterface {
+  assigned_leave_balance: null | LeaveBalanceInterface;
 }
 
 export interface LeaveRequestInterface {
   id?: number;
   requested_by: number | UserInterface;
   actioned_by: number | UserInterface | null;
-  balance: number | LeaveBalanceInterface;
+  leave_balance: number | LeaveBalanceInterface;
   leave_type_id: number;
   leave: LeaveTypeInterface;
   start_date: string;
