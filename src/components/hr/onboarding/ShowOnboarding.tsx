@@ -17,19 +17,18 @@ import React from "react";
 import { IoClose } from "react-icons/io5";
 
 const ShowOnboarding: React.FC<ModalInterface> = (props) => {
-  const [onboarding, setOnboarding] = React.useState<OnboardingInterface>({
+  const [onboarding, setOnboarding] = React.useState<
+    OnboardingInterface & {
+      required_documents: OnboardingRequiredDocumentsInterface[];
+      policy_acknowledgements: OnboardingPolicyAcknowledgemenInterface[];
+    }
+  >({
     title: "",
     description: "",
     created_by: 0,
+    required_documents: [],
+    policy_acknowledgements: [],
   });
-
-  const [requiredDocuments, setRequiredDocuments] = React.useState<
-    OnboardingRequiredDocumentsInterface[]
-  >([]);
-
-  const [policyAcknowledgements, setPolicyAcknowledgements] = React.useState<
-    OnboardingPolicyAcknowledgemenInterface[]
-  >([]);
 
   const { activeFormPage, handleActiveFormPage } = useModalNav("information");
 
@@ -54,8 +53,6 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
 
         if (data) {
           setOnboarding(data.onboarding);
-          setRequiredDocuments(data.onboarding.required_documents);
-          setPolicyAcknowledgements(data.onboarding.policy_acknowledgements);
         }
       }
     } catch (error) {
@@ -63,19 +60,24 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
     }
   }, [url, user?.token, props.id]);
 
-  const mappedRequiredDocuments = requiredDocuments.map((req, index) => {
-    return (
-      <div
-        key={index}
-        className="w-full flex flex-col items-center justify-start rounded-md gap-2"
-      >
-        <TextField label={`Required Document ${index + 1}`} value={req.title} />
-        <TextBlock label="" value={req.description} />
-      </div>
-    );
-  });
+  const mappedRequiredDocuments = onboarding.required_documents.map(
+    (req, index) => {
+      return (
+        <div
+          key={index}
+          className="w-full flex flex-col items-center justify-start rounded-md gap-2"
+        >
+          <TextField
+            label={`Required Document ${index + 1}`}
+            value={req.title}
+          />
+          <TextBlock label="" value={req.description} />
+        </div>
+      );
+    }
+  );
 
-  const mappedPolicyAcknowledgements = policyAcknowledgements.map(
+  const mappedPolicyAcknowledgements = onboarding.policy_acknowledgements.map(
     (ack, index) => {
       return (
         <div

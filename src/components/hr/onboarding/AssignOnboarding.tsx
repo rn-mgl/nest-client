@@ -23,7 +23,7 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
   const user = data?.user;
   const url = process.env.URL;
 
-  const handleAssignedEmployees = (id: number) => {
+  const handleAssignedUsers = (id: number) => {
     setAssignedUsers((prev) => {
       if (prev.includes(id)) {
         const removedId = prev.filter((assigned) => assigned !== id);
@@ -66,7 +66,7 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
     }
   }, [url, user?.token, props.id]);
 
-  const mappedEmployeeOnboardings = userOnboardings.map((user) => {
+  const mappedUserOnboardings = userOnboardings.map((user) => {
     const isChecked = assignedUsers.includes(user.id);
 
     return {
@@ -77,7 +77,7 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
         <div className="flex flex-col items-start justify-center">
           <CheckBox
             isChecked={isChecked}
-            onClick={() => handleAssignedEmployees(user.id)}
+            onClick={() => handleAssignedUsers(user.id)}
           />
         </div>
       ),
@@ -142,14 +142,11 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
           onSubmit={(e) => submitAssignOnboarding(e)}
           className="w-full h-full p-2 flex flex-col items-start justify-center gap-4 overflow-hidden t:p-4"
         >
-          <div className="w-full h-full flex flex-col items-start justify-start border-[1px] rounded-md overflow-x-auto">
-            <Table
-              color="neutral"
-              contents={mappedEmployeeOnboardings}
-              headers={["First Name", "Last Name", "Email", "Assign"]}
-            />
-          </div>
-
+          <Table
+            color="neutral"
+            contents={mappedUserOnboardings}
+            headers={["First Name", "Last Name", "Email", "Assign"]}
+          />
           <button className="w-full p-2 rounded-md bg-accent-green text-neutral-100 font-bold mt-2">
             Assign
           </button>

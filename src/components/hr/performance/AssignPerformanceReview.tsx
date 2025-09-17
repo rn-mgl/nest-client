@@ -1,26 +1,25 @@
+import CheckBox from "@/form/CheckBox";
+import Table from "@/global/field/Table";
 import { ModalInterface } from "@/src/interface/ModalInterface";
-import { EmployeePerformanceReviewInterface } from "@/src/interface/PerformanceReviewInterface";
-import { UserInterface } from "@/src/interface/UserInterface";
+import { AssignedPerformanceReviewInterface } from "@/src/interface/PerformanceReviewInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose } from "react-icons/io5";
-import Assignee from "@/hr/global/Assignee";
 
 const AssignPerformanceReview: React.FC<ModalInterface> = (props) => {
-  const [employeePerformanceReviews, setEmployeePerformanceReviews] =
-    React.useState<(EmployeePerformanceReviewInterface & UserInterface)[]>([]);
-  const [assignedEmployees, setAssignedEmployees] = React.useState<number[]>(
-    []
-  );
+  const [userPerformanceReviews, setUserPerformanceReviews] = React.useState<
+    AssignedPerformanceReviewInterface[]
+  >([]);
+  const [assignedUsers, setAssignedUsers] = React.useState<number[]>([]);
 
   const { data } = useSession({ required: true });
   const user = data?.user;
   const url = process.env.URL;
 
-  const handleAssignedEmployees = (id: number) => {
-    setAssignedEmployees((prev) => {
+  const handleAssignedUsers = (id: number) => {
+    setAssignedUsers((prev) => {
       if (prev.includes(id)) {
         const removedId = prev.filter((assigned) => assigned !== id);
         return removedId;
@@ -30,11 +29,11 @@ const AssignPerformanceReview: React.FC<ModalInterface> = (props) => {
     });
   };
 
-  const getEmployeePerformanceReviews = React.useCallback(async () => {
+  const getUserPerformanceReviews = React.useCallback(async () => {
     try {
       if (user?.token) {
         const { data: responseData } = await axios.get<{
-          employees: (EmployeePerformanceReviewInterface & UserInterface)[];
+          users: AssignedPerformanceReviewInterface[];
         }>(`${url}/hr/user_performance_review`, {
           headers: {
             Authorization: `Bearer ${user?.token}`,
@@ -43,14 +42,16 @@ const AssignPerformanceReview: React.FC<ModalInterface> = (props) => {
           params: { performance_review_id: props.id },
         });
 
-        if (responseData.employees) {
-          setEmployeePerformanceReviews(responseData.employees);
-          setAssignedEmployees(
-            responseData.employees
+        if (responseData.users) {
+          setUserPerformanceReviews(responseData.users);
+          setAssignedUsers(
+            responseData.users
               .filter(
-                (employee) => employee.user_performance_review_id !== null
+                (user) =>
+                  user.assigned_performance_review !== null &&
+                  user.assigned_performance_review.deleted_at === null
               )
-              .map((employee) => employee.user_id)
+              .map((user) => user.id)
           );
         }
       }
@@ -69,7 +70,7 @@ const AssignPerformanceReview: React.FC<ModalInterface> = (props) => {
       if (token && user?.token) {
         const { data: responseData } = await axios.post(
           `${url}/hr/user_performance_review`,
-          { user_ids: assignedEmployees, performance_review_id: props.id },
+          { user_ids: assignedUsers, performance_review_id: props.id },
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
@@ -92,25 +93,24 @@ const AssignPerformanceReview: React.FC<ModalInterface> = (props) => {
     }
   };
 
-  const mappedEmployeePerformanceReviews = employeePerformanceReviews.map(
-    (employee, index) => {
-      const isChecked = assignedEmployees.includes(employee.user_id);
-      return (
-        <Assignee
-          key={index}
-          user={employee}
-          handleAssignedEmployees={() =>
-            handleAssignedEmployees(employee.user_id)
-          }
+  const mappedUserPerformanceReviews = userPerformanceReviews.map((user) => {
+    const isChecked = assignedUsers.includes(user.id);
+    return {
+      first_name: user.first_name,
+      last_name: user.last_name,
+      email: user.email,
+      assign: (
+        <CheckBox
           isChecked={isChecked}
+          onClick={() => handleAssignedUsers(user.id)}
         />
-      );
-    }
-  );
+      ),
+    };
+  });
 
   React.useEffect(() => {
-    getEmployeePerformanceReviews();
-  }, [getEmployeePerformanceReviews]);
+    getUserPerformanceReviews();
+  }, [getUserPerformanceReviews]);
 
   return (
     <div
@@ -131,18 +131,11 @@ const AssignPerformanceReview: React.FC<ModalInterface> = (props) => {
           onSubmit={(e) => submitAssignPerformanceReview(e)}
           className="w-full h-full p-2 flex flex-col items-start justify-center gap-4 overflow-hidden t:p-4"
         >
-          <div className="w-full h-full flex flex-col items-start justify-start border-[1px] rounded-md overflow-x-auto">
-            <div className="grid grid-cols-4 p-4 items-center font-bold gap-4 justify-start min-w-[768px] w-full bg-neutral-200">
-              <p>First Name</p>
-              <p>Last Name</p>
-              <p>Email</p>
-              <p className="text-center">Assign</p>
-            </div>
-
-            <div className="w-full min-w-[768px] max-h-full flex flex-col items-start justify-start overflow-y-auto overflow-x-hidden">
-              {mappedEmployeePerformanceReviews}
-            </div>
-          </div>
+          <Table
+            color="neutral"
+            contents={mappedUserPerformanceReviews}
+            headers={["First Name", "Last Name", "Email", "Assign"]}
+          />
 
           <button className="w-full p-2 rounded-md bg-accent-green text-neutral-100 font-bold mt-2">
             Assign

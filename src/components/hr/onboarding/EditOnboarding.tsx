@@ -53,9 +53,7 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
   const getOnboarding = React.useCallback(async () => {
     try {
       if (user?.token) {
-        const {
-          data: { onboarding },
-        } = await axios.get<{
+        const { data: responseData } = await axios.get<{
           onboarding: OnboardingInterface & {
             required_documents: OnboardingRequiredDocumentsInterface[];
             policy_acknowledgements: OnboardingPolicyAcknowledgemenInterface[];
@@ -67,10 +65,12 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
           withCredentials: true,
         });
 
-        if (onboarding) {
+        if (responseData.onboarding) {
+          const { required_documents, policy_acknowledgements, ...onboarding } =
+            responseData.onboarding;
           setOnboarding(onboarding);
-          populateDocumentFields(onboarding.required_documents);
-          populatePolicyFields(onboarding.policy_acknowledgements);
+          populateDocumentFields(required_documents);
+          populatePolicyFields(policy_acknowledgements);
         }
       }
     } catch (error) {

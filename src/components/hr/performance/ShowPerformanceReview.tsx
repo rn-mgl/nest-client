@@ -23,6 +23,7 @@ const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
   >({
     title: "",
     description: "",
+    created_by: 0,
     contents: [],
   });
 
@@ -35,15 +36,16 @@ const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
   const getPerformanceReview = React.useCallback(async () => {
     try {
       if (user?.token) {
-        const { data: performanceDetails } = await axios.get(
-          `${url}/hr/performance_review/${props.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-            withCredentials: true,
-          }
-        );
+        const { data: performanceDetails } = await axios.get<{
+          performance: PerformanceReviewInterface & {
+            contents: PerformanceReviewSurveyInterface[];
+          };
+        }>(`${url}/hr/performance_review/${props.id}`, {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+          withCredentials: true,
+        });
 
         if (performanceDetails.performance) {
           setPerformanceReview(performanceDetails.performance);

@@ -9,6 +9,7 @@ import AssignPerformanceReview from "@/src/components/hr/performance/AssignPerfo
 import CreatePerformanceReview from "@/src/components/hr/performance/CreatePerformanceReview";
 import EditPerformanceReview from "@/src/components/hr/performance/EditPerformanceReview";
 import ShowPerformanceReview from "@/src/components/hr/performance/ShowPerformanceReview";
+import useFilterAndSort from "@/src/hooks/useFilterAndSort";
 
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
@@ -89,7 +90,6 @@ const PerformanceReview = () => {
               Authorization: `Bearer ${user?.token}`,
             },
             withCredentials: true,
-            params: { ...search, ...sort },
           }
         );
 
@@ -100,9 +100,13 @@ const PerformanceReview = () => {
     } catch (error) {
       console.log(error);
     }
-  }, [url, user?.token, search, sort]);
+  }, [url, user?.token]);
 
-  const mappedPerformanceReviews = performances.map((performance) => {
+  const mappedPerformanceReviews = useFilterAndSort(
+    performances,
+    search,
+    sort
+  ).map((performance) => {
     const performanceReviewId = performance.id ?? 0;
     const createdBy = isUserSummary(performance.created_by)
       ? performance.created_by.first_name

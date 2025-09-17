@@ -254,19 +254,11 @@ const AssignLeaveType: React.FC<ModalInterface> = (props) => {
           onSubmit={(e) => submitAssignLeaveType(e)}
           className="w-full flex flex-col items-center justify-start p-2 gap-4 t:p-4"
         >
-          <div className="w-full h-full flex flex-col items-start justify-center border-[1px] rounded-md overflow-x-auto">
-            <Table
-              color="neutral"
-              contents={mappedEmployees}
-              headers={[
-                "First Name",
-                "Last Name",
-                "Email",
-                "Balance",
-                "Assign",
-              ]}
-            />
-          </div>
+          <Table
+            color="neutral"
+            contents={mappedEmployees}
+            headers={["First Name", "Last Name", "Email", "Balance", "Assign"]}
+          />
 
           <button className="w-full p-2 rounded-md bg-accent-green text-neutral-100 mt-2 font-bold">
             Assign

@@ -8,7 +8,8 @@ export interface PerformanceReviewInterface {
 }
 
 export interface PerformanceReviewSurveyInterface {
-  performance_review_content_id?: number;
+  id?: number;
+  created_by: number | UserInterface;
   survey: string;
 }
 
@@ -23,6 +24,10 @@ export interface EmployeePerformanceReviewResponseInterface {
   response: string | null;
 }
 
+export interface AssignedPerformanceReviewInterface extends UserInterface {
+  assigned_performance_review: null | UserPerformanceReviewInterface;
+}
+
 export interface UserPerformanceReviewInterface {
   id?: number;
   performance_review_id: number;
@@ -31,4 +36,5 @@ export interface UserPerformanceReviewInterface {
   assigned_by: number | UserInterface;
   status: string;
   created_at: string;
+  deleted_at: null | string;
 }

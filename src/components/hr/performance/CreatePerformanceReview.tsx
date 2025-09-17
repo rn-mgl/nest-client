@@ -1,5 +1,6 @@
 import Input from "@/components/form/Input";
 import TextArea from "@/components/form/TextArea";
+import ModalNav from "@/global/navigation/ModalNav";
 import useDynamicFields from "@/src/hooks/useDynamicFields";
 import useModalNav from "@/src/hooks/useModalNav";
 import { ModalInterface } from "@/src/interface/ModalInterface";
@@ -7,27 +8,32 @@ import {
   PerformanceReviewInterface,
   PerformanceReviewSurveyInterface,
 } from "@/src/interface/PerformanceReviewInterface";
+import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
-
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd, IoClose, IoReader, IoText, IoTrash } from "react-icons/io5";
-import ModalNav from "@/global/navigation/ModalNav";
 
 const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
   const [performance, setPerformanceReview] =
     React.useState<PerformanceReviewInterface>({
       title: "",
       description: "",
+      created_by: 0,
     });
-
-  const { activeFormPage, handleActiveFormPage } = useModalNav("information");
-  const { addField, fields, handleField, removeField } =
-    useDynamicFields<PerformanceReviewSurveyInterface>([{ survey: "" }]);
 
   const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
+
+  const { addField, fields, handleField, removeField } =
+    useDynamicFields<PerformanceReviewSurveyInterface>([
+      { survey: "", created_by: user?.current ?? 0 },
+    ]);
+
+  const { activeFormPage, handleActiveFormPage } = useModalNav("information");
+
+  console.log(fields);
 
   const handlePerformanceReview = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -48,13 +54,18 @@ const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
     e.preventDefault();
 
     try {
-      if (user?.token) {
+      const { token } = await getCSRFToken();
+
+      console.log(token);
+
+      if (token && user?.token) {
         const { data: createdPerformanceReview } = await axios.post(
           `${url}/hr/performance_review`,
           { ...performance, surveys: fields },
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
+              "X-CSRF-TOKEN": token,
             },
             withCredentials: true,
           }
@@ -77,21 +88,24 @@ const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
     return (
       <div
         key={index}
-        className="w-full flex flex-row gap-2 items-start justify-center"
+        className="w-full flex flex-col gap-2 items-end justify-center"
       >
-        <textarea
+        <TextArea
+          id={`survey_${index}`}
           name="surveys"
           placeholder={`Survey ${index + 1}`}
           onChange={(e) => handleField(e, "survey", index)}
           value={survey.survey}
           rows={5}
-          className="w-full p-2 px-4 pr-8 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all resize-none bg-white"
+          required={true}
+          icon={<IoReader />}
+          label={true}
         />
 
         <button
           type="button"
           onClick={() => removeField(index)}
-          className="p-3 border-2 border-neutral-100 rounded-md bg-neutral-100"
+          className="p-2 border-2 border-neutral-100 rounded-md bg-neutral-100"
         >
           <IoTrash />
         </button>
@@ -114,9 +128,10 @@ const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
             <IoClose />
           </button>
         </div>
+
         <form
           onSubmit={(e) => submitCreatePerformanceReview(e)}
-          className="w-full h-full p-2 flex flex-col items-center justify-start gap-4 t:p-4"
+          className="w-full h-full p-2 flex flex-col items-center justify-start gap-4 t:p-4 overflow-hidden"
         >
           <ModalNav
             activeFormPage={activeFormPage}
@@ -153,13 +168,13 @@ const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
             <div className="w-full h-full flex flex-col items-center justify-start gap-4 l-s:flex-row l-s:items-start l-s:justify-center overflow-hidden">
               <div className="w-full flex flex-col items-center justify-start gap-2 h-full overflow-hidden">
                 <div className="w-full flex flex-row items-center justify-between">
-                  <label className="text-xs">Surveys</label>
-
                   <button
                     type="button"
                     title="Add Survey Field"
                     className="p-2 rounded-md bg-neutral-100"
-                    onClick={() => addField({ survey: "" })}
+                    onClick={() =>
+                      addField({ survey: "", created_by: user?.current ?? 0 })
+                    }
                   >
                     <IoAdd />
                   </button>

@@ -21,6 +21,7 @@ const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
     React.useState<PerformanceReviewInterface>({
       title: "",
       description: "",
+      created_by: 0,
     });
   const [surveyToDelete, setSurveyToDelete] = React.useState<Array<number>>([]);
 
@@ -53,9 +54,7 @@ const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
   const getPerformanceReview = React.useCallback(async () => {
     try {
       if (user?.token) {
-        const {
-          data: { performance },
-        } = await axios.get<{
+        const { data: responseData } = await axios.get<{
           performance: PerformanceReviewInterface & {
             contents: PerformanceReviewSurveyInterface[];
           };
@@ -66,8 +65,9 @@ const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
           withCredentials: true,
         });
 
-        if (performance) {
-          populateFields(performance.contents);
+        if (responseData.performance) {
+          const { contents, ...performance } = responseData.performance;
+          populateFields(contents);
           setPerformanceReview(performance);
         }
       }
@@ -80,24 +80,27 @@ const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
     return (
       <div
         key={index}
-        className="w-full flex flex-row gap-2 items-center justify-center"
+        className="w-full flex flex-col gap-2 items-end justify-center"
       >
-        <textarea
-          name="contents"
+        <TextArea
+          name="survey"
+          id={`survey_${index}`}
+          required={true}
+          label={true}
+          icon={<IoReader />}
           placeholder={`Survey ${index + 1}`}
           onChange={(e) => handleField(e, "survey", index)}
           value={content.survey}
-          rows={3}
-          className="w-full p-2 px-4 pr-8 rounded-md border-2 outline-hidden focus:border-neutral-900 transition-all resize-none"
+          rows={5}
         />
 
         <button
           type="button"
           onClick={() => {
             removeField(index);
-            handleSurveysToDelete(content.performance_review_content_id);
+            handleSurveysToDelete(content.id);
           }}
-          className="p-3 border-2 border-neutral-100 rounded-md bg-neutral-100"
+          className="p-2 border-2 border-neutral-100 rounded-md bg-neutral-100"
         >
           <IoTrash />
         </button>
@@ -197,13 +200,11 @@ const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
             <div className="w-full h-full flex flex-col items-center justify-start gap-4 l-s:items-start l-s:justify-center overflow-hidden">
               <div className="w-full h-full flex flex-col items-center justify-start gap-2 overflow-hidden">
                 <div className="w-full flex flex-row items-center justify-between">
-                  <label className="text-xs">Surveys</label>
-
                   <button
                     type="button"
                     title="Add Survey Field"
                     className="p-2 rounded-md bg-neutral-100"
-                    onClick={() => addField({ survey: "" })}
+                    onClick={() => addField({ survey: "", created_by: 0 })}
                   >
                     <IoAdd />
                   </button>
