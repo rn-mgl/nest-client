@@ -11,6 +11,10 @@ import {
   DocumentInterface,
   FolderInterface,
 } from "../interface/DocumentInterface";
+import {
+  CloudFileInterface,
+  RawFileInterface,
+} from "../interface/FileInterface";
 
 export const isUserSummary = (
   value: number | object
@@ -66,6 +70,22 @@ export const isDocumentSummary = (
 
 export const isFolderSummary = (value: object): value is FolderInterface => {
   return typeof value === "object" && "description"! in value;
+};
+
+export const isRawFileSummary = (value: object): value is RawFileInterface => {
+  return typeof value === "object" && "rawFile" in value && "fileURL" in value;
+};
+
+export const isCloudFileSummary = (
+  value: object
+): value is CloudFileInterface => {
+  return (
+    typeof value === "object" &&
+    "original_name" in value &&
+    "mime_type" in value &&
+    "size" in value &&
+    "url" in value
+  );
 };
 
 export const normalizeDate = (date: string, type?: "date" | "time"): string => {
