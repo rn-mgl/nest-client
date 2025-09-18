@@ -34,8 +34,32 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
     description: "",
     deadline_days: 30,
     certificate: null,
+    created_by: 0,
   });
-  const [reviews, setReviews] = React.useState<TrainingReviewInterface[]>([
+
+  const { activeFormPage, handleActiveFormPage } = useModalNav("information");
+
+  const {
+    fields: contents,
+    addField: addContentField,
+    removeField: removeContentField,
+    handleField: handleContentField,
+    removeTargetFieldValue: removeTargetContentFieldValue,
+  } = useDynamicFields<TrainingContentInterface>([
+    {
+      content: "",
+      title: "",
+      type: "text",
+      description: "",
+    },
+  ]);
+
+  const {
+    fields: reviews,
+    addField: addReviewField,
+    removeField: removeReviewField,
+    handleField: handleReviewField,
+  } = useDynamicFields<TrainingReviewInterface>([
     {
       answer: 0,
       choice_1: "",
@@ -45,18 +69,8 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
       question: "",
     },
   ]);
-  const { activeFormPage, handleActiveFormPage } = useModalNav("information");
-  const { fields, addField, removeField, handleField, removeTargetFieldValue } =
-    useDynamicFields<TrainingContentInterface>([
-      {
-        content: "",
-        title: "",
-        type: "text",
-        description: "",
-      },
-    ]);
 
-  const inputRefs = React.useRef<Array<HTMLInputElement | null>>([]);
+  const inputRefs = React.useRef<(HTMLInputElement | null)[]>([]);
   const certificateRef = React.useRef<HTMLInputElement | null>(null);
 
   const { data } = useSession({ required: true });
@@ -116,44 +130,6 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
     }
   };
 
-  const addReview = () => {
-    setReviews((prev) => {
-      const newField = {
-        answer: 0,
-        choice_1: "",
-        choice_2: "",
-        choice_3: "",
-        choice_4: "",
-        question: "",
-      };
-
-      return [...prev, newField];
-    });
-  };
-
-  const removeReview = (index: number) => {
-    setReviews((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const handleReview = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    field: string,
-    index: number
-  ) => {
-    const { value } = e.target;
-
-    setReviews((prev) => {
-      const updated = [...prev];
-
-      updated[index] = {
-        ...updated[index],
-        [field]: field === "answer" ? parseInt(value) : value,
-      };
-
-      return updated;
-    });
-  };
-
   const submitCreateTraining = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -169,7 +145,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
     formData.set("deadline_days", training.deadline_days.toString());
     formData.set("certificate", certificate);
 
-    fields.forEach((content, index) => {
+    contents.forEach((content, index) => {
       // ensure training content is using string value for content kvp
       const trainingContent = {
         title: content.title,
@@ -221,7 +197,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
     }
   };
 
-  const mappedContents = fields.map((content, index) => {
+  const mappedContents = contents.map((content, index) => {
     const contentFile = content.content as { rawFile: File; fileURL: string };
     const fileURL = contentFile.fileURL;
 
@@ -233,7 +209,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
           placeholder={`Content ${index + 1}`}
           value={content.content as string}
           rows={5}
-          onChange={(e) => handleField(e, "content", index)}
+          onChange={(e) => handleContentField(e, "content", index)}
           required={true}
         />
       ) : content.type === "image" ? (
@@ -249,10 +225,10 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
             inputRefs.current[index] = el;
           }}
           removeSelectedFile={() => {
-            removeTargetFieldValue("content", index);
+            removeTargetContentFieldValue("content", index);
             removeSelectedFile(index);
           }}
-          onChange={(e) => handleField(e, "content", index)}
+          onChange={(e) => handleContentField(e, "content", index)}
         />
       ) : content.type === "video" ? (
         <File
@@ -267,10 +243,10 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
             inputRefs.current[index] = el;
           }}
           removeSelectedFile={() => {
-            removeTargetFieldValue("content", index);
+            removeTargetContentFieldValue("content", index);
             removeSelectedFile(index);
           }}
-          onChange={(e) => handleField(e, "content", index)}
+          onChange={(e) => handleContentField(e, "content", index)}
         />
       ) : content.type === "file" ? (
         <File
@@ -285,17 +261,17 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
             inputRefs.current[index] = el;
           }}
           removeSelectedFile={() => {
-            removeTargetFieldValue("content", index);
+            removeTargetContentFieldValue("content", index);
             removeSelectedFile(index);
           }}
-          onChange={(e) => handleField(e, "content", index)}
+          onChange={(e) => handleContentField(e, "content", index)}
         />
       ) : null;
 
     return (
       <div
         key={index}
-        className="w-full flex flex-row gap-2 items-start justify-center"
+        className="w-full flex flex-col gap-2 items-end justify-center"
       >
         <div className="w-full flex flex-col gap-2 items-start justify-center">
           <div className="w-full border-b-2 border-accent-blue text-accent-blue">
@@ -309,7 +285,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
             placeholder={`Title ${index + 1}`}
             value={content.title}
             required={true}
-            onChange={(e) => handleField(e, "title", index)}
+            onChange={(e) => handleContentField(e, "title", index)}
           />
 
           <TextArea
@@ -317,7 +293,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
             name="contents"
             placeholder={`Description ${index + 1}`}
             required={true}
-            onChange={(e) => handleField(e, "description", index)}
+            onChange={(e) => handleContentField(e, "description", index)}
             value={content.description}
             rows={5}
           />
@@ -327,8 +303,8 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
 
         <button
           type="button"
-          onClick={() => removeField(index)}
-          className="p-3 border-2 border-neutral-100 rounded-md bg-neutral-100"
+          onClick={() => removeContentField(index)}
+          className="p-2 border-2 border-neutral-100 rounded-md bg-neutral-100"
         >
           <IoTrash />
         </button>
@@ -336,28 +312,32 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
     );
   });
 
-  const mappedReviews = reviews.map((review, index) => {
-    const mappedChoices = [1, 2, 3, 4].map((choice, index2) => {
+  console.log(reviews);
+
+  const mappedReviews = reviews.map((review, reviewIndex) => {
+    const mappedChoices = [1, 2, 3, 4].map((choice, choiceIndex) => {
+      const choiceKey = `choice_${choice}` as keyof TrainingReviewInterface;
+
       const currChoice =
-        review[`choice_${choice}` as keyof TrainingReviewInterface] ?? "";
+        review[choiceKey as keyof TrainingReviewInterface] ?? "";
 
       return (
         <div
-          key={index2}
+          key={choiceIndex}
           className="w-full flex flex-row items-center justify-between gap-2"
         >
           <Radio
-            name={`question_${index}_answer`}
-            onChange={(e) => handleReview(e, "answer", index)}
+            name={`question_${reviewIndex}_answer`}
+            onChange={(e) => handleReviewField(e, "answer", reviewIndex)}
             value={choice}
             isChecked={review.answer === choice}
           />
 
           <Input
-            id={`choice_${choice}`}
-            name={`choice_${choice}`}
-            onChange={(e) => handleReview(e, `choice_${choice}`, index)}
-            placeholder={`Choice ${index2 + 1}`}
+            id={choiceKey}
+            name={choiceKey}
+            onChange={(e) => handleReviewField(e, choiceKey, reviewIndex)}
+            placeholder={`Choice ${choiceIndex + 1}`}
             required={true}
             type="text"
             value={currChoice}
@@ -368,18 +348,18 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
 
     return (
       <div
-        key={index}
-        className="w-full flex flex-row items-start gap-2 justify-center"
+        key={reviewIndex}
+        className="w-full flex flex-col items-end gap-2 justify-center"
       >
         <div className="w-full flex flex-col items-center justify-center gap-2">
           <div className="w-full border-b-2 border-accent-blue text-accent-blue">
-            {index + 1}.
+            {reviewIndex + 1}.
           </div>
           <TextArea
-            id={`question_${index}`}
-            name={`question_${index}`}
-            onChange={(e) => handleReview(e, "question", index)}
-            placeholder={`Question ${index + 1}`}
+            id={`question_${reviewIndex}`}
+            name={`question_${reviewIndex}`}
+            onChange={(e) => handleReviewField(e, "question", reviewIndex)}
+            placeholder={`Question ${reviewIndex + 1}`}
             required={true}
             value={review.question}
           />
@@ -388,7 +368,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
           </div>
         </div>
         <button
-          onClick={() => removeReview(index)}
+          onClick={() => removeReviewField(reviewIndex)}
           type="button"
           className="p-2 rounded-md bg-neutral-100"
         >
@@ -399,10 +379,10 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
   });
 
   React.useEffect(() => {
-    inputRefs.current = fields.map((_, i) => {
+    inputRefs.current = contents.map((_, i) => {
       return inputRefs.current[i] || null;
     });
-  }, [fields]);
+  }, [contents]);
 
   return (
     <div
@@ -488,13 +468,13 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
               </div>
             ) : activeFormPage === "contents" ? (
               <div className="w-full h-full flex flex-col items-center justify-start t:items-start">
-                <div className="w-full flex flex-row items-center justify-between t:w-60">
+                <div className="w-full flex flex-row items-center justify-between t:w-60 overflow-hidden">
                   <button
                     type="button"
                     title="Add Required Documents Field"
                     className="p-2 rounded-md bg-neutral-100"
                     onClick={() =>
-                      addField({
+                      addContentField({
                         title: "",
                         description: "",
                         content: "",
@@ -510,7 +490,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
                     title="Add Required Documents Field"
                     className="p-2 rounded-md bg-neutral-100"
                     onClick={() =>
-                      addField({
+                      addContentField({
                         title: "",
                         description: "",
                         content: "",
@@ -526,7 +506,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
                     title="Add Required Documents Field"
                     className="p-2 rounded-md bg-neutral-100"
                     onClick={() =>
-                      addField({
+                      addContentField({
                         title: "",
                         description: "",
                         content: "",
@@ -542,7 +522,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
                     title="Add Required Documents Field"
                     className="p-2 rounded-md bg-neutral-100"
                     onClick={() =>
-                      addField({
+                      addContentField({
                         title: "",
                         description: "",
                         content: "",
@@ -554,15 +534,24 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
                   </button>
                 </div>
 
-                <div className="w-full h-full flex flex-col items-center justify-start gap-4 ">
+                <div className="w-full h-full flex flex-col items-center justify-start gap-4 overflow-auto">
                   {mappedContents}
                 </div>
               </div>
             ) : activeFormPage === "reviews" ? (
-              <div className="w-full flex flex-col items-center justify-start gap-2">
+              <div className="w-full flex flex-col items-center justify-start gap-2 overflow-hidden">
                 <div className="w-full">
                   <button
-                    onClick={addReview}
+                    onClick={() =>
+                      addReviewField({
+                        answer: 0,
+                        choice_1: "",
+                        choice_2: "",
+                        choice_3: "",
+                        choice_4: "",
+                        question: "",
+                      })
+                    }
                     type="button"
                     title="Add Questionnaire"
                     className="p-2 rounded-md bg-neutral-100"
@@ -570,7 +559,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
                     <IoAdd />
                   </button>
                 </div>
-                <div className="w-full flex flex-col items-center justify-start gap-4">
+                <div className="w-full flex flex-col items-center justify-start gap-4 overflow-auto">
                   {mappedReviews}
                 </div>
               </div>

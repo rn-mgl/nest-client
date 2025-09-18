@@ -23,7 +23,7 @@ export default function useDynamicFields<T>(initialState: T[]) {
 
   const handleField = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    fieldName: string,
+    fieldName: keyof T,
     index: number
   ) => {
     const { value, files } = e.target as HTMLInputElement;
@@ -37,11 +37,31 @@ export default function useDynamicFields<T>(initialState: T[]) {
         const fileSet = { rawFile: file, fileURL: url };
         updated[index] = { ...updated[index], [fieldName]: fileSet };
       } else {
-        updated[index] = { ...updated[index], [fieldName]: value };
+        updated[index] = {
+          ...updated[index],
+          [fieldName]: parseValue(fieldName, value),
+        };
       }
 
       return updated;
     });
+  };
+
+  const parseValue = (key: keyof T, value: string) => {
+    const initialValue = initialState[0][key];
+
+    if (initialValue === null) return value;
+
+    switch (typeof initialValue) {
+      case "undefined":
+        return value;
+      case "boolean":
+        return Boolean(value);
+      case "number":
+        return Number(value);
+      default:
+        return value;
+    }
   };
 
   const populateFields = React.useCallback((fields: T[]) => {
