@@ -25,7 +25,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
   });
 
   const {
-    fields: required_documents,
+    fields: requiredDocuments,
     addField: addDocumentField,
     handleField: handleDocumentField,
     removeField: removeDocumentField,
@@ -34,7 +34,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
   ]);
 
   const {
-    fields: policy_acknowledgements,
+    fields: policyAcknowledgements,
     addField: addPolicyField,
     handleField: handlePolicyField,
     removeField: removePolicyField,
@@ -62,7 +62,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
     });
   };
 
-  const mappedRequiredDocuments = required_documents.map((req, index) => {
+  const mappedRequiredDocuments = requiredDocuments.map((req, index) => {
     return (
       <div
         key={index}
@@ -104,7 +104,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
     );
   });
 
-  const mappedPolicyAcknowledgements = policy_acknowledgements.map(
+  const mappedPolicyAcknowledgements = policyAcknowledgements.map(
     (ack, index) => {
       return (
         <div
@@ -161,8 +161,8 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
           `${url}/hr/onboarding`,
           {
             ...onboarding,
-            required_documents,
-            policy_acknowledgements,
+            required_documents : requiredDocuments,
+            policy_acknowledgements : policyAcknowledgements,
           },
           {
             headers: {

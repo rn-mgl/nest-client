@@ -33,8 +33,6 @@ const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
 
   const { activeFormPage, handleActiveFormPage } = useModalNav("information");
 
-  console.log(fields);
-
   const handlePerformanceReview = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
