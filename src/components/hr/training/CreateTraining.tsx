@@ -27,6 +27,7 @@ import {
 } from "react-icons/io5";
 import File from "@/form/File";
 import Radio from "@/form/Radio";
+import { isRawFileSummary } from "@/src/utils/utils";
 
 const CreateTraining: React.FC<ModalInterface> = (props) => {
   const [training, setTraining] = React.useState<TrainingInterface>({
@@ -136,7 +137,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
     const formData = new FormData();
 
     const certificate =
-      training.certificate && typeof training.certificate === "object"
+      training.certificate && isRawFileSummary(training.certificate)
         ? training.certificate.rawFile
         : "";
 
@@ -155,7 +156,9 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
       };
       // ensure training file is using rawFile value if it is object
       const trainingFile =
-        typeof content.content === "object" && "rawFile" in content.content
+        content.content &&
+        typeof content.content === "object" &&
+        isRawFileSummary(content.content)
           ? content.content.rawFile
           : "";
 
@@ -198,16 +201,20 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
   };
 
   const mappedContents = contents.map((content, index) => {
-    const contentFile = content.content as { rawFile: File; fileURL: string };
-    const fileURL = contentFile.fileURL;
+    const contentFile =
+      content.content &&
+      typeof content.content === "object" &&
+      isRawFileSummary(content.content)
+        ? content.content
+        : null;
 
     const dynamicContent =
-      content.type === "text" ? (
+      content.type === "text" && typeof content.content === "string" ? (
         <TextArea
           id="contents"
           name="contents"
           placeholder={`Content ${index + 1}`}
-          value={content.content as string}
+          value={content.content ?? ""}
           rows={5}
           onChange={(e) => handleContentField(e, "content", index)}
           required={true}
@@ -219,8 +226,8 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
           label={`Image Content ${index + 1}`}
           accept="image/*"
           type="image"
-          file={contentFile.rawFile}
-          url={fileURL}
+          file={contentFile?.rawFile ?? null}
+          url={contentFile?.fileURL ?? null}
           ref={(el) => {
             inputRefs.current[index] = el;
           }}
@@ -237,8 +244,8 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
           label={`Video Content ${index + 1}`}
           accept="video/*"
           type="video"
-          file={contentFile.rawFile}
-          url={fileURL}
+          file={contentFile?.rawFile ?? null}
+          url={contentFile?.fileURL ?? null}
           ref={(el) => {
             inputRefs.current[index] = el;
           }}
@@ -248,15 +255,15 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
           }}
           onChange={(e) => handleContentField(e, "content", index)}
         />
-      ) : content.type === "file" ? (
+      ) : content.type === "application" ? (
         <File
           id={`fileContent_${index}`}
           name={`fileContent_${index}`}
           label={`File Content ${index + 1}`}
           accept="application/pdf"
-          type="file"
-          file={contentFile.rawFile}
-          url={fileURL}
+          type="application"
+          file={contentFile?.rawFile ?? null}
+          url={contentFile?.fileURL ?? null}
           ref={(el) => {
             inputRefs.current[index] = el;
           }}
@@ -270,7 +277,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
 
     return (
       <div
-        key={index}
+        key={`${content.type}-${index}`}
         className="w-full flex flex-col gap-2 items-end justify-center"
       >
         <div className="w-full flex flex-col gap-2 items-start justify-center">
@@ -312,14 +319,11 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
     );
   });
 
-  console.log(reviews);
-
   const mappedReviews = reviews.map((review, reviewIndex) => {
     const mappedChoices = [1, 2, 3, 4].map((choice, choiceIndex) => {
       const choiceKey = `choice_${choice}` as keyof TrainingReviewInterface;
 
-      const currChoice =
-        review[choiceKey as keyof TrainingReviewInterface] ?? "";
+      const currChoice = review[choiceKey] ?? "";
 
       return (
         <div
@@ -451,10 +455,10 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
 
                 <File
                   accept="application/pdf"
-                  type="file"
+                  type="application"
                   file={
                     training.certificate &&
-                    typeof training.certificate === "object"
+                    isRawFileSummary(training.certificate)
                       ? training.certificate.rawFile
                       : null
                   }
@@ -526,7 +530,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
                         title: "",
                         description: "",
                         content: "",
-                        type: "file",
+                        type: "application",
                       })
                     }
                   >

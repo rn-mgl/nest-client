@@ -65,7 +65,7 @@ export interface FileInterface {
   accept: string;
   file: File | null;
   url?: string | null;
-  type: "file" | "video" | "image" | "audio";
+  type: "application" | "video" | "image" | "audio";
   onChange: (
     e: React.ChangeEvent<HTMLInputElement>,
     field?: string,

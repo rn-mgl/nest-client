@@ -29,29 +29,59 @@ import {
   IoVideocam,
 } from "react-icons/io5";
 import File from "@/components/form/File";
+import { isCloudFileSummary, isRawFileSummary } from "@/src/utils/utils";
 
 const EditTraining: React.FC<ModalInterface> = (props) => {
   const [training, setTraining] = React.useState<TrainingInterface>({
     title: "",
     description: "",
-    certificate: "",
+    certificate: null,
     deadline_days: 30,
+    created_by: 0,
   });
-  const [reviews, setReviews] = React.useState<TrainingReviewInterface[]>([]);
   const [reviewsToDelete, setReviewsToDelete] = React.useState<number[]>([]);
   const [contentsToDelete, setContentsToDelete] = React.useState<number[]>([]);
+
+  console.log(contentsToDelete);
+  console.log(reviewsToDelete);
+
   const certificateRef = React.useRef<HTMLInputElement | null>(null);
-  const inputRefs = React.useRef<Array<HTMLInputElement | null>>([]);
+  const inputRefs = React.useRef<(HTMLInputElement | null)[]>([]);
 
   const { activeFormPage, handleActiveFormPage } = useModalNav("information");
+
   const {
-    fields,
-    addField,
-    handleField,
-    removeField,
-    removeTargetFieldValue,
-    populateFields,
-  } = useDynamicFields<TrainingContentInterface>([]);
+    fields: contents,
+    addField: addContentField,
+    handleField: handleContentField,
+    removeField: removeContentField,
+    removeTargetFieldValue: removeTargetContentFieldValue,
+    populateFields: populateContentFields,
+  } = useDynamicFields<TrainingContentInterface>([
+    {
+      content: "",
+      description: "",
+      title: "",
+      type: "text",
+    },
+  ]);
+
+  const {
+    fields: reviews,
+    addField: addReviewField,
+    handleField: handleReviewField,
+    removeField: removeReviewField,
+    populateFields: populateReviewFields,
+  } = useDynamicFields<TrainingReviewInterface>([
+    {
+      answer: 0,
+      choice_1: "",
+      choice_2: "",
+      choice_3: "",
+      choice_4: "",
+      question: "",
+    },
+  ]);
 
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -73,15 +103,40 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
         });
 
         if (responseData.training) {
-          setTraining(responseData.training);
-          setReviews(responseData.training.reviews);
-          populateFields(responseData.training.contents);
+          const { reviews, contents, ...training } = responseData.training;
+
+          setTraining(training);
+          populateReviewFields(reviews);
+          populateContentFields(
+            contents.map((content) => {
+              if (
+                content.content &&
+                typeof content.content === "object" &&
+                isCloudFileSummary(content.content)
+              ) {
+                const mimeType = content.content.mime_type.split("/")[0];
+
+                content.type = [
+                  "text",
+                  "image",
+                  "video",
+                  "application",
+                ].includes(mimeType)
+                  ? (mimeType as "text" | "image" | "video" | "application")
+                  : "text";
+              } else {
+                content.type = "text";
+              }
+
+              return content;
+            })
+          );
         }
       }
     } catch (error) {
       console.log(error);
     }
-  }, [user?.token, url, props.id, populateFields]);
+  }, [user?.token, url, props.id, populateReviewFields, populateContentFields]);
 
   const handleTraining = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -112,42 +167,6 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
         };
       });
     }
-  };
-
-  const handleReview = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    field: string,
-    index: number
-  ) => {
-    const { value } = e.target;
-
-    setReviews((prev) => {
-      const updated = [...prev];
-      updated[index] = {
-        ...updated[index],
-        [field]: field === "answer" ? parseInt(value) : value,
-      };
-
-      return updated;
-    });
-  };
-
-  const addReview = () => {
-    setReviews((prev) => {
-      const newField = {
-        answer: 0,
-        choice_1: "",
-        choice_2: "",
-        choice_3: "",
-        choice_4: "",
-        question: "",
-      };
-      return [...prev, newField];
-    });
-  };
-
-  const removeReview = (index: number) => {
-    setReviews((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleReviewsToDelete = (id: number | undefined) => {
@@ -182,43 +201,69 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
     setContentsToDelete((prev) => [...prev, id]);
   };
 
+  console.log(contents);
+
   const submitUpdateTraining = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
       const formData = new FormData();
       formData.set("title", training.title);
+
       formData.set("description", training.description);
+
       formData.set(
         "certificate",
-        training.certificate && typeof training.certificate === "object"
-          ? training.certificate?.rawFile
-          : typeof training.certificate === "string"
-          ? training.certificate
-          : ""
+        training.certificate && isRawFileSummary(training.certificate)
+          ? training.certificate.rawFile
+          : JSON.stringify(training.certificate)
       );
+
       formData.set("deadline_days", training.deadline_days.toString());
-      fields.forEach((content, index) => {
+
+      contents.forEach((content, index) => {
         const trainingContent = { ...content };
+
         trainingContent.content =
           typeof content.content === "string" ? content.content : "";
 
+        trainingContent.type = "text";
+
         // handle updated files and unupdated files
-        const trainingFile =
-          typeof content.content === "object" ? content.content.rawFile : "";
+        let trainingFile = null;
+
+        if (content.content && typeof content.content === "object") {
+          if (isRawFileSummary(content.content)) {
+            trainingFile = content.content.rawFile;
+            trainingContent.type = content.content.rawFile.type.split(
+              "/"
+            )[0] as "text" | "image" | "video" | "application";
+          } else if (isCloudFileSummary(content.content)) {
+            trainingFile = JSON.stringify(content.content);
+            trainingContent.type = content.content.mime_type.split("/")[0] as
+              | "text"
+              | "image"
+              | "video"
+              | "application";
+          }
+        }
 
         formData.append(`contents[${index}]`, JSON.stringify(trainingContent));
-        formData.append(`content_file[${index}]`, trainingFile);
+        formData.append(`content_file[${index}]`, trainingFile ?? "");
       });
+
       contentsToDelete.forEach((toDelete, index) => {
         formData.append(`contents_to_delete[${index}]`, toDelete.toString());
       });
+
       reviews.forEach((review, index) => {
         formData.append(`reviews[${index}]`, JSON.stringify(review));
       });
+
       reviewsToDelete.forEach((review, index) => {
         formData.append(`reviews_to_delete[${index}]`, review.toString());
       });
+
       formData.append("_method", "PATCH");
 
       const { token } = await getCSRFToken();
@@ -250,36 +295,42 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
     }
   };
 
-  const mappedContents = fields.map((content, index) => {
-    const contentFile = content.content;
-    const fileURL =
-      typeof contentFile === "object" // if object, local blob url
-        ? contentFile.fileURL
-        : typeof contentFile === "string" // if string, it is a cloudinary url
-        ? contentFile
-        : "";
+  const mappedContents = contents.map((content, index) => {
+    const cloudFileContent =
+      content.content &&
+      typeof content.content === "object" &&
+      isCloudFileSummary(content.content)
+        ? content.content
+        : null;
+
+    const rawFileContent =
+      content.content &&
+      typeof content.content === "object" &&
+      isRawFileSummary(content.content)
+        ? content.content
+        : null;
 
     const dynamicContent =
       content.type === "text" ? (
         <TextArea
           id="content"
           name="content"
-          onChange={(e) => handleField(e, "content", index)}
+          onChange={(e) => handleContentField(e, "content", index)}
           placeholder={`Content ${index + 1}`}
           required={true}
           value={content.content as string}
         />
       ) : content.type === "image" ? (
         <div className="w-full flex flex-col items-start justify-center gap-2">
-          {typeof contentFile === "string" && contentFile !== "" ? (
+          {cloudFileContent ? (
             <div className="relative flex flex-col items-center justify-center w-full bg-white rounded-md">
               <Link
                 target="_blank"
-                href={contentFile}
+                href={cloudFileContent.url}
                 className="w-full h-full"
               >
                 <Image
-                  src={fileURL}
+                  src={cloudFileContent.url}
                   alt="file"
                   width={1500}
                   height={1500}
@@ -290,10 +341,10 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
               <button
                 type="button"
                 onClick={() => {
-                  removeTargetFieldValue("content", index);
+                  removeTargetContentFieldValue("content", index);
                   removeSelectedFile(index);
                 }}
-                className="p-1 rounded-full bg-red-500 shadow-md absolute -top-1 -right-1"
+                className="p-1 rounded-full bg-red-500 shadow-md absolute top-1 right-1"
               >
                 <IoClose className="text-xs" />
               </button>
@@ -301,39 +352,41 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
           ) : (
             <File
               accept="image/*"
-              file={
-                typeof contentFile === "object" ? contentFile.rawFile : null
-              }
+              file={rawFileContent ? rawFileContent.rawFile : null}
               id={`trainingContent_${index}`}
               label={`Image Content ${index + 1}`}
               name="content"
-              onChange={(e) => handleField(e, "content", index)}
+              onChange={(e) => handleContentField(e, "content", index)}
               ref={(el) => {
                 inputRefs.current[index] = el;
               }}
               removeSelectedFile={() => {
                 removeSelectedFile(index);
-                removeTargetFieldValue("content", index);
+                removeTargetContentFieldValue("content", index);
               }}
               type="image"
-              url={typeof contentFile === "object" ? contentFile.fileURL : ""}
+              url={rawFileContent ? rawFileContent.fileURL : ""}
             />
           )}
         </div>
       ) : content.type === "video" ? (
         <div className="w-full flex flex-col items-start justify-center gap-2">
-          {typeof contentFile === "string" && contentFile !== "" ? (
+          {cloudFileContent ? (
             <div className="relative flex flex-col items-center justify-center">
-              <Link href={contentFile} target="_blank">
-                <video src={fileURL} controls className="rounded-md w-full" />
+              <Link href={cloudFileContent.url} target="_blank">
+                <video
+                  src={cloudFileContent.url}
+                  controls
+                  className="rounded-md w-full"
+                />
               </Link>
               <button
                 type="button"
                 onClick={() => {
-                  removeTargetFieldValue("content", index);
+                  removeTargetContentFieldValue("content", index);
                   removeSelectedFile(index);
                 }}
-                className="p-1 rounded-full bg-red-500 shadow-md absolute -top-1 -right-1"
+                className="p-1 rounded-full bg-red-500 shadow-md absolute top-1 right-1"
               >
                 <IoClose className="text-xs" />
               </button>
@@ -342,31 +395,29 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
             <File
               accept="video/*"
               type="video"
-              file={
-                typeof contentFile === "object" ? contentFile.rawFile : null
-              }
+              file={rawFileContent ? rawFileContent.rawFile : null}
               id={`trainingContent_${index}`}
               label={`Video Content ${index + 1}`}
               name="content"
-              onChange={(e) => handleField(e, "content", index)}
+              onChange={(e) => handleContentField(e, "content", index)}
               ref={(el) => {
                 inputRefs.current[index] = el;
               }}
               removeSelectedFile={() => {
                 removeSelectedFile(index);
-                removeTargetFieldValue("content", index);
+                removeTargetContentFieldValue("content", index);
               }}
-              url={typeof contentFile === "object" ? contentFile.fileURL : ""}
+              url={rawFileContent ? rawFileContent.fileURL : ""}
             />
           )}
         </div>
-      ) : content.type === "file" ? (
+      ) : content.type === "application" ? (
         <div className="w-full flex flex-col items-start justify-start gap-2">
-          {typeof contentFile === "string" && contentFile !== "" ? (
+          {cloudFileContent ? (
             <div className="p-2 w-full rounded-md border-2 bg-white flex flex-col items-start justify-start relative">
               <Link
                 target="_blank"
-                href={contentFile}
+                href={cloudFileContent.url}
                 className="w-full flex flex-row items-center justify-start gap-2 group"
               >
                 <div className="aspect-square p-2.5 rounded-xs bg-accent-blue/50">
@@ -380,10 +431,10 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
               <button
                 type="button"
                 onClick={() => {
-                  removeTargetFieldValue("content", index);
+                  removeTargetContentFieldValue("content", index);
                   removeSelectedFile(index);
                 }}
-                className="p-1 rounded-full bg-red-500 shadow-md absolute -top-1 -right-1"
+                className="p-1 rounded-full bg-red-500 shadow-md absolute top-1 right-1"
               >
                 <IoClose className="text-xs" />
               </button>
@@ -391,22 +442,20 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
           ) : (
             <File
               accept="application/pdf"
-              file={
-                typeof contentFile === "object" ? contentFile.rawFile : null
-              }
+              file={rawFileContent ? rawFileContent.rawFile : null}
               id={`trainingContent_${index}`}
               label={`File Content ${index + 1}`}
               name="content"
-              onChange={(e) => handleField(e, "content", index)}
+              onChange={(e) => handleContentField(e, "content", index)}
               ref={(el) => {
                 inputRefs.current[index] = el;
               }}
               removeSelectedFile={() => {
                 removeSelectedFile(index);
-                removeTargetFieldValue("content", index);
+                removeTargetContentFieldValue("content", index);
               }}
-              type="file"
-              url={typeof contentFile === "object" ? contentFile.fileURL : ""}
+              type="application"
+              url={rawFileContent ? rawFileContent.fileURL : ""}
             />
           )}
         </div>
@@ -415,13 +464,13 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
     return (
       <div
         key={index}
-        className="w-full flex flex-row gap-2 items-start justify-center"
+        className="w-full flex flex-col gap-2 items-end justify-center"
       >
         <div className="w-full flex flex-col gap-2 items-start justify-center">
           <Input
             id={`content_title_${index}`}
             name={`content_title_${index}`}
-            onChange={(e) => handleField(e, "title", index)}
+            onChange={(e) => handleContentField(e, "title", index)}
             placeholder={`Title ${index + 1}`}
             type="text"
             required={true}
@@ -431,7 +480,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
           <TextArea
             id={`content_content_${index}`}
             name={`content_content_${index}`}
-            onChange={(e) => handleField(e, "description", index)}
+            onChange={(e) => handleContentField(e, "description", index)}
             placeholder={`Description ${index + 1}`}
             value={content.description}
             required={true}
@@ -443,8 +492,8 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
         <button
           type="button"
           onClick={() => {
-            removeField(index);
-            handleContentsToDelete(content.training_content_id);
+            removeContentField(index);
+            handleContentsToDelete(content.id);
           }}
           className="p-3 border-2 border-neutral-100 rounded-md bg-neutral-100"
         >
@@ -456,8 +505,9 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
 
   const mappedReviews = reviews.map((review, index) => {
     const mappedChoices = [1, 2, 3, 4].map((choice, index2) => {
-      const currChoice =
-        review[`choice_${choice}` as keyof TrainingReviewInterface] ?? "";
+      const choiceKey = `choice_${choice}` as keyof TrainingReviewInterface;
+
+      const currChoice = review[choiceKey] ?? "";
 
       return (
         <div
@@ -466,15 +516,15 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
         >
           <Radio
             name={`question_${index}_answer`}
-            onChange={(e) => handleReview(e, "answer", index)}
+            onChange={(e) => handleReviewField(e, "answer", index)}
             value={choice}
             isChecked={review.answer === choice}
           />
 
           <Input
-            id={`choice_${choice}`}
-            name={`choice_${choice}`}
-            onChange={(e) => handleReview(e, `choice_${choice}`, index)}
+            id={choiceKey}
+            name={choiceKey}
+            onChange={(e) => handleReviewField(e, choiceKey, index)}
             placeholder={`Choice ${index2 + 1}`}
             required={true}
             type="text"
@@ -487,7 +537,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
     return (
       <div
         key={index}
-        className="w-full flex flex-row items-start gap-2 justify-center"
+        className="w-full flex flex-col items-end gap-2 justify-center"
       >
         <div className="w-full flex flex-col items-center justify-center gap-2">
           <div className="w-full border-b-2 border-accent-blue text-accent-blue">
@@ -496,7 +546,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
           <TextArea
             id={`question_${index}`}
             name={`question_${index}`}
-            onChange={(e) => handleReview(e, "question", index)}
+            onChange={(e) => handleReviewField(e, "question", index)}
             placeholder={`Question ${index + 1}`}
             required={true}
             value={review.question}
@@ -507,8 +557,8 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
         </div>
         <button
           onClick={() => {
-            removeReview(index);
-            handleReviewsToDelete(review.training_review_id);
+            removeReviewField(index);
+            handleReviewsToDelete(review.id);
           }}
           type="button"
           className="p-2 rounded-md bg-neutral-100"
@@ -524,10 +574,10 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
   }, [getTraining]);
 
   React.useEffect(() => {
-    inputRefs.current = fields.map((_, index) => {
+    inputRefs.current = contents.map((_, index) => {
       return inputRefs.current[index] || null;
     });
-  }, [fields]);
+  }, [contents]);
 
   return (
     <div
@@ -597,10 +647,10 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
 
                 {/* check if training.certificate instance is the uploaded */}
                 {training.certificate &&
-                typeof training.certificate === "string" ? (
+                isCloudFileSummary(training.certificate) ? (
                   <div className="w-full h-full p-2 rounded-md border-2 bg-white flex flex-row relative">
                     <Link
-                      href={training.certificate}
+                      href={training.certificate.url}
                       target="_blank"
                       className="flex flex-row items-center justify-center gap-2 group transition-all"
                     >
@@ -623,10 +673,10 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
                 ) : (
                   <File
                     accept="application/pdf"
-                    type="file"
+                    type="application"
                     file={
                       training.certificate &&
-                      typeof training.certificate === "object"
+                      isRawFileSummary(training.certificate)
                         ? training.certificate.rawFile
                         : null
                     }
@@ -641,7 +691,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
               </div>
             </div>
           ) : activeFormPage === "contents" ? (
-            <div className="w-full h-full flex flex-col items-center justify-start overflow-y-auto gap-4 p-2">
+            <div className="w-full h-full flex flex-col items-center justify-start overflow-hidden gap-4 p-2">
               <div className="w-full h-full flex flex-col items-center justify-start t:items-start">
                 <div className="w-full flex flex-row items-center justify-between t:w-60">
                   <button
@@ -649,7 +699,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
                     title="Add Required Documents Field"
                     className="p-2 rounded-md bg-neutral-100"
                     onClick={() =>
-                      addField({
+                      addContentField({
                         title: "",
                         content: "",
                         description: "",
@@ -665,7 +715,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
                     title="Add Required Documents Field"
                     className="p-2 rounded-md bg-neutral-100"
                     onClick={() =>
-                      addField({
+                      addContentField({
                         title: "",
                         content: "",
                         description: "",
@@ -681,7 +731,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
                     title="Add Required Documents Field"
                     className="p-2 rounded-md bg-neutral-100"
                     onClick={() =>
-                      addField({
+                      addContentField({
                         title: "",
                         content: "",
                         description: "",
@@ -697,11 +747,11 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
                     title="Add Required Documents Field"
                     className="p-2 rounded-md bg-neutral-100"
                     onClick={() =>
-                      addField({
+                      addContentField({
                         title: "",
                         content: "",
                         description: "",
-                        type: "file",
+                        type: "application",
                       })
                     }
                   >
@@ -709,7 +759,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
                   </button>
                 </div>
 
-                <div className="w-full h-full flex flex-col items-center justify-start gap-4">
+                <div className="w-full h-full flex flex-col items-center justify-start gap-4 overflow-y-auto">
                   {mappedContents}
                 </div>
               </div>
@@ -718,7 +768,16 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
             <div className="w-full h-full flex flex-col items-center justify-start gap-4 overflow-y-auto">
               <div className="w-full">
                 <button
-                  onClick={addReview}
+                  onClick={() =>
+                    addReviewField({
+                      answer: 0,
+                      choice_1: "",
+                      choice_2: "",
+                      choice_3: "",
+                      choice_4: "",
+                      question: "",
+                    })
+                  }
                   type="button"
                   title="Add Questionnaire"
                   className="p-2 rounded-md bg-neutral-100"

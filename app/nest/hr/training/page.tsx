@@ -22,6 +22,7 @@ import { HR_TRAINING_SEARCH, HR_TRAINING_SORT } from "@/utils/filters";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd } from "react-icons/io5";
+import useFilterAndSort from "@/src/hooks/useFilterAndSort";
 
 const HRTraining = () => {
   const [trainings, setTrainings] = React.useState<TrainingInterface[]>([]);
@@ -81,7 +82,6 @@ const HRTraining = () => {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
-          params: { ...search, ...sort },
           withCredentials: true,
         });
 
@@ -94,31 +94,33 @@ const HRTraining = () => {
     } finally {
       handleIsLoading(false);
     }
-  }, [user?.token, url, search, sort, handleIsLoading]);
+  }, [user?.token, url, handleIsLoading]);
 
-  const mappedTrainings = trainings.map((training) => {
-    const trainingId = training.id ?? 0;
-    const createdBy = isUserSummary(training.created_by)
-      ? training.created_by.first_name
-      : null;
-    return (
-      <BaseCard
-        key={`${training.title}-${trainingId}`}
-        title={training.title}
-        description={training.description}
-        createdBy={createdBy}
-      >
-        <BaseActions
-          handleActiveSeeMore={() => handleActiveTrainingSeeMore(trainingId)}
-        />
-        <HRActions
-          handleActiveAssign={() => handleActiveAssignTraining(trainingId)}
-          handleActiveDelete={() => handleActiveDeleteTraining(trainingId)}
-          handleActiveEdit={() => handleActiveEditTraining(trainingId)}
-        />
-      </BaseCard>
-    );
-  });
+  const mappedTrainings = useFilterAndSort(trainings, search, sort).map(
+    (training) => {
+      const trainingId = training.id ?? 0;
+      const createdBy = isUserSummary(training.created_by)
+        ? training.created_by.first_name
+        : null;
+      return (
+        <BaseCard
+          key={`${training.title}-${trainingId}`}
+          title={training.title}
+          description={training.description}
+          createdBy={createdBy}
+        >
+          <BaseActions
+            handleActiveSeeMore={() => handleActiveTrainingSeeMore(trainingId)}
+          />
+          <HRActions
+            handleActiveAssign={() => handleActiveAssignTraining(trainingId)}
+            handleActiveDelete={() => handleActiveDeleteTraining(trainingId)}
+            handleActiveEdit={() => handleActiveEditTraining(trainingId)}
+          />
+        </BaseCard>
+      );
+    }
+  );
 
   React.useEffect(() => {
     getTrainings();

@@ -7,7 +7,7 @@ const File: React.FC<FileInterface & { ref: React.Ref<HTMLInputElement> }> = (
   props
 ) => {
   const SELECTED_FILE_RENDER = {
-    file: (
+    application: (
       <div className="w-full p-2 flex flex-col items-center justify-center rounded-md border-2 bg-white relative">
         <div className="w-full flex flex-row items-center justify-start gap-2">
           <div className="p-2.5 rounded-sm bg-accent-blue/50 text-neutral-100">
@@ -52,7 +52,7 @@ const File: React.FC<FileInterface & { ref: React.Ref<HTMLInputElement> }> = (
           <button
             onClick={props.removeSelectedFile}
             type="button"
-            className="absolute top-0 right-0 p-1 bg-red-600 text-neutral-100 rounded-full z-50"
+            className="absolute top-1 right-1 p-1 bg-red-600 text-neutral-100 rounded-full z-50"
           >
             <IoClose />
           </button>

@@ -1,3 +1,4 @@
+import { CloudFileInterface, RawFileInterface } from "./FileInterface";
 import { UserInterface } from "./UserInterface";
 
 export interface TrainingInterface {
@@ -5,16 +6,16 @@ export interface TrainingInterface {
   title: string;
   deadline_days: number;
   description: string;
-  certificate: { rawFile: File; fileURL: string } | string | null;
+  certificate: RawFileInterface | CloudFileInterface | null;
   created_by: number | UserInterface;
 }
 
 export interface TrainingContentInterface {
-  training_content_id?: number;
+  id?: number;
   title: string;
   description: string;
-  content: { rawFile: File; fileURL: string } | string;
-  type: string;
+  content: RawFileInterface | CloudFileInterface | string | null;
+  type: "text" | "image" | "video" | "application";
 }
 
 export interface EmployeeTrainingInterface {
@@ -26,10 +27,9 @@ export interface EmployeeTrainingInterface {
 }
 
 export interface TrainingReviewInterface {
-  training_review_id?: number;
-  training_id?: number;
+  id?: number;
   question: string;
-  answer?: number;
+  answer: number;
   choice_1: string;
   choice_2: string;
   choice_3: string;
