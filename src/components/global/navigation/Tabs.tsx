@@ -11,7 +11,7 @@ const Tabs: React.FC<{
       <Link
         key={index}
         href={`${props.path}?tab=${tab}`}
-        className={`w-full p-2 border-b-2 capitalize text-sm text-center ${
+        className={`min-w-full t:min-w-fit t:w-full p-2 border-b-2 capitalize text-sm text-center ${
           props.activeTab === tab
             ? "text-accent-blue font-bold border-b-accent-blue"
             : ""

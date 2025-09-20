@@ -551,75 +551,67 @@ const HREmployee = () => {
               {mappedEmployees}
             </div>
           ) : activeTab === "onboardings" ? (
-            <div className="w-full flex flex-col items-start justify-start overflow-x-auto">
-              <Table
-                headers={[
-                  "Image",
-                  "First Name",
-                  "Last Name",
-                  "Email",
-                  "Title",
-                  "Status",
-                  "Assigned On",
-                ]}
-                contents={mappedOnboardings}
-                color="blue"
-              />
-            </div>
+            <Table
+              headers={[
+                "Image",
+                "First Name",
+                "Last Name",
+                "Email",
+                "Title",
+                "Status",
+                "Assigned On",
+              ]}
+              contents={mappedOnboardings}
+              color="blue"
+            />
           ) : activeTab === "leaves" ? (
-            <div className="w-full flex flex-col items-center justify-start overflow-x-auto">
-              <Table
-                headers={[
-                  "Image",
-                  "First Name",
-                  "Last Name",
-                  "Email",
-                  "Type",
-                  "Start",
-                  "End",
-                  "Status",
-                  "Reason",
-                  "Balance",
-                  "Action",
-                ]}
-                contents={mappedLeaves}
-                color="blue"
-              />
-            </div>
+            <Table
+              headers={[
+                "Image",
+                "First Name",
+                "Last Name",
+                "Email",
+                "Type",
+                "Start",
+                "End",
+                "Status",
+                "Reason",
+                "Balance",
+                "Action",
+              ]}
+              contents={mappedLeaves}
+              color="blue"
+            />
           ) : activeTab === "performances" ? (
-            <div className="w-full flex flex-col items-center justify-start overflow-x-auto">
-              <Table
-                headers={[
-                  "Image",
-                  "First Name",
-                  "Last Name",
-                  "Email",
-                  "Title",
-                  "Status",
-                  "Assigned On",
-                ]}
-                contents={mappedPerformances}
-                color="blue"
-              />
-            </div>
+            <Table
+              headers={[
+                "Image",
+                "First Name",
+                "Last Name",
+                "Email",
+                "Title",
+                "Status",
+                "Assigned On",
+              ]}
+              contents={mappedPerformances}
+              color="blue"
+            />
           ) : activeTab === "trainings" ? (
-            <div className="w-full flex flex-col items-center justify-start overflow-x-auto">
-              <Table
-                headers={[
-                  "Image",
-                  "First Name",
-                  "Last Name",
-                  "Email",
-                  "Title",
-                  "Deadline",
-                  "Status",
-                  "Score",
-                  "Assigned On",
-                ]}
-                contents={mappedTrainings}
-                color="blue"
-              />
-            </div>
+            <Table
+              headers={[
+                "Image",
+                "First Name",
+                "Last Name",
+                "Email",
+                "Title",
+                "Deadline",
+                "Status",
+                "Score",
+                "Assigned On",
+              ]}
+              contents={mappedTrainings}
+              color="blue"
+            />
           ) : null}
         </div>
       </div>
