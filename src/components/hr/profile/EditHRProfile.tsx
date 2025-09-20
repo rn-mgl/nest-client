@@ -1,28 +1,32 @@
 "use client";
 
+import Input from "@/form/Input";
 import { ModalInterface } from "@/src/interface/ModalInterface";
-import { ProfileInterface } from "@/src/interface/ProfileInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
+import { getCSRFToken } from "@/src/utils/token";
+import { isCloudFileSummary, isRawFileSummary } from "@/src/utils/utils";
+import axios from "axios";
+import { useSession } from "next-auth/react";
+import Image from "next/image";
 import React from "react";
 import { IoClose, IoImage, IoText, IoTrash } from "react-icons/io5";
-import Input from "@/form/Input";
-import Image from "next/image";
-import { getCSRFToken } from "@/src/utils/token";
-import { useSession } from "next-auth/react";
-import axios from "axios";
 
-const EditHRProfile: React.FC<
-  ModalInterface & { profile: UserInterface & ProfileInterface }
-> = (props) => {
-  const [profile, setProfile] = React.useState<
-    UserInterface & ProfileInterface
-  >(props.profile);
+const EditHRProfile: React.FC<ModalInterface> = (props) => {
+  const [profile, setProfile] = React.useState<UserInterface>({
+    email: "",
+    first_name: "",
+    id: 0,
+    last_name: "",
+    verification_status: "Deactivated",
+  });
 
   const imageRef = React.useRef<HTMLInputElement>(null);
 
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
   const user = session?.user;
+  const current = user?.current;
+  const token = user?.token;
 
   const handleProfile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, files, value } = e.target;
@@ -61,6 +65,26 @@ const EditHRProfile: React.FC<
     });
   };
 
+  const getUser = React.useCallback(async () => {
+    try {
+      if (token) {
+        const { data: responseData } = await axios.get(
+          `${url}/hr/profile/${current}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+            withCredentials: true,
+          }
+        );
+
+        if (responseData.profile) {
+          setProfile(responseData.profile);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, [token, url, current]);
+
   const submitUpdateProfile = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -69,17 +93,24 @@ const EditHRProfile: React.FC<
 
       if (token && user?.token) {
         const formData = new FormData();
-        formData.append("first_name", profile.first_name);
-        formData.append("last_name", profile.last_name);
-        formData.append(
-          "image",
-          profile.image && typeof profile.image === "object"
-            ? profile.image?.rawFile
-            : typeof profile.image === "string"
-            ? profile.image
-            : ""
-        );
-        formData.append("_method", "PATCH");
+
+        formData.set("first_name", profile.first_name);
+
+        formData.set("last_name", profile.last_name);
+
+        let image = null;
+
+        if (profile.image && typeof profile.image === "object") {
+          if (isRawFileSummary(profile.image)) {
+            image = profile.image.rawFile;
+          } else if (isCloudFileSummary(profile.image)) {
+            image = JSON.stringify(profile.image);
+          }
+        }
+
+        formData.set("image", image ?? "");
+
+        formData.set("_method", "PATCH");
 
         const { data: responseData } = await axios.post(
           `${url}/hr/profile/${user.current}`,
@@ -107,12 +138,16 @@ const EditHRProfile: React.FC<
     }
   };
 
+  React.useEffect(() => {
+    getUser();
+  }, [getUser]);
+
   return (
     <div
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex items-center justify-center 
                   p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade"
     >
-      <div className="w-full h-auto max-w-(--breakpoint-t) bg-neutral-100 shadow-md rounded-lg ">
+      <div className="w-full h-auto max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg ">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-yellow rounded-t-lg font-bold text-accent-blue">
           Edit Profile
           <button
@@ -126,24 +161,28 @@ const EditHRProfile: React.FC<
           onSubmit={(e) => submitUpdateProfile(e)}
           className="w-full p-2 rounded-b-md bg-neutral-100 flex flex-col items-center justify-start gap-4 t:p-4"
         >
-          <div className="w-40 aspect-square bg-accent-blue rounded-full border-8 border-accent-yellow flex flex-col items-center justify-center relative overflow-hidden">
-            {typeof profile.image === "object" && profile.image?.rawFile ? (
-              <Image
-                alt="Profile"
-                width={300}
-                height={300}
-                src={profile.image.fileURL}
-                className="absolute w-full"
-              />
-            ) : typeof profile.image === "string" && profile.image !== "" ? (
-              <Image
-                alt="Profile"
-                width={300}
-                height={300}
-                src={profile.image}
-                className="absolute w-full"
-              />
-            ) : null}
+          <div className="w-full p-4 rounded-md bg-accent-yellow/40 flex flex-col items-center justify-center">
+            <div className="w-40 aspect-square bg-accent-blue rounded-full border-8 border-accent-yellow flex flex-col items-center justify-center relative overflow-hidden">
+              {profile.image && typeof profile.image === "object" ? (
+                isRawFileSummary(profile.image) ? (
+                  <Image
+                    alt="Profile"
+                    width={300}
+                    height={300}
+                    src={profile.image.fileURL}
+                    className="absolute w-full"
+                  />
+                ) : isCloudFileSummary(profile.image) ? (
+                  <Image
+                    alt="Profile"
+                    width={300}
+                    height={300}
+                    src={profile.image.url}
+                    className="absolute w-full"
+                  />
+                ) : null
+              ) : null}
+            </div>
           </div>
 
           <div className="w-full flex flex-row items-center justify-between">
@@ -161,8 +200,10 @@ const EditHRProfile: React.FC<
               <IoImage />
             </label>
 
-            {typeof profile.image === "object" ||
-            typeof profile.image === "string" ? (
+            {profile.image &&
+            typeof profile.image === "object" &&
+            (isRawFileSummary(profile.image) ||
+              isCloudFileSummary(profile.image)) ? (
               <button
                 onClick={removeImage}
                 type="button"

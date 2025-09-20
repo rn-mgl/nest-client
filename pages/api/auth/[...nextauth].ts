@@ -11,6 +11,7 @@ export const authOptions: AuthOptions = {
         token: { label: "Token", type: "text" },
         role: { label: "Role", type: "text" },
         current: { label: "Current", type: "text" },
+        image: { label: "Image", type: "text" },
       },
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -19,33 +20,8 @@ export const authOptions: AuthOptions = {
           const user = {
             token: credentials?.token ?? "",
             role: credentials?.role ?? "",
-            current: credentials?.current ? parseInt(credentials?.current) : -1,
-          };
-          return user;
-        } catch (error) {
-          console.log(error);
-          return null;
-        }
-      },
-    }),
-
-    CredentialsProvider({
-      id: "admin-credentials",
-      name: "AdminCredentials",
-
-      credentials: {
-        token: { label: "Token", type: "text" },
-        role: { label: "Role", type: "text" },
-        current: { label: "Current", type: "number" },
-      },
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      async authorize(credentials): Promise<any> {
-        try {
-          const user = {
-            token: credentials?.token ?? "",
-            role: credentials?.role ?? "",
-            current: credentials?.current ? parseInt(credentials?.current) : -1,
+            current: credentials?.current ? parseInt(credentials?.current) : 0,
+            image: credentials?.image === "null" ? null : credentials?.image,
           };
           return user;
         } catch (error) {

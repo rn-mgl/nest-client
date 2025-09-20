@@ -178,7 +178,12 @@ const Nav: React.FC<SideNavInterface & { children: React.ReactNode }> = (
               "outline-3 -outline-offset-2 outline-accent-yellow"
             }`}
           >
-            <div className="w-8 h-8 min-w-8 min-h-8 bg-accent-purple rounded-full"></div>
+            <div
+              style={{
+                backgroundImage: user?.image ? `url(${user.image})` : "",
+              }}
+              className="w-8 h-8 min-w-8 min-h-8 bg-accent-purple rounded-full bg-center bg-cover"
+            ></div>
           </Link>
         </div>
 

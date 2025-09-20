@@ -1,3 +1,5 @@
+import { CloudFileInterface, RawFileInterface } from "./FileInterface";
+
 export interface UserInterface {
   id: number;
   first_name: string;
@@ -5,7 +7,7 @@ export interface UserInterface {
   email: string;
   verification_status: "Verified" | "Deactivated";
   email_verified_at?: string | null;
-  image?: { rawFile: File; fileURL: string } | string | null;
+  image?: RawFileInterface | CloudFileInterface | null;
   password?: string;
   created_at?: string;
 }

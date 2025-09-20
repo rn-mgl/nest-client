@@ -1,8 +1,8 @@
 "use client";
 import ChangePassword from "@/src/components/hr/profile/ChangePassword";
 import EditHRProfile from "@/src/components/hr/profile/EditHRProfile";
-import { ProfileInterface } from "@/src/interface/ProfileInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
+import { isCloudFileSummary } from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -10,19 +10,15 @@ import React from "react";
 import { IoLockClosed, IoMail, IoPencil } from "react-icons/io5";
 
 const Profile = () => {
-  const [profile, setProfile] = React.useState<
-    UserInterface & ProfileInterface
-  >({
+  const [profile, setProfile] = React.useState<UserInterface>({
     email: "",
     email_verified_at: "",
     first_name: "",
     last_name: "",
-    user_id: 0,
-    image: "",
-    department: "",
-    phone_number: "",
-    title: "",
+    id: 0,
+    image: null,
     password: "",
+    verification_status: "Deactivated",
   });
   const [canEditProfile, setCanEditProfile] = React.useState(false);
   const [canChangePassword, setCanChangePassword] = React.useState(false);
@@ -72,7 +68,6 @@ const Profile = () => {
         <EditHRProfile
           toggleModal={handleCanEditProfile}
           refetchIndex={getProfile}
-          profile={profile}
         />
       ) : null}
       {canChangePassword ? (
@@ -80,13 +75,15 @@ const Profile = () => {
       ) : null}
       <div className="w-full h-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2 t:p-4 t:items-start gap-4">
         {/* profile container */}
-        <div className="w-full grid grid-cols-1 t:grid-cols-2 l-l:grid-cols-3 gap-4">
+        <div className="w-full grid">
           <div className="w-full h-auto rounded-md bg-accent-blue p-4 flex flex-col items-center justify-start gap-2">
             {/* image */}
             <div className="w-24 h-24 rounded-full bg-accent-purple border-8 border-white flex flex-col items-center justify-center relative overflow-hidden">
-              {typeof profile.image === "string" && profile.image !== "" ? (
+              {profile.image &&
+              typeof profile.image === "object" &&
+              isCloudFileSummary(profile.image) ? (
                 <Image
-                  src={profile.image}
+                  src={profile.image.url}
                   alt="profile"
                   width={200}
                   height={200}
@@ -128,9 +125,6 @@ const Profile = () => {
               </div>
             </div>
           </div>
-
-          <div className="w-full p-2 rounded-md bg-accent-green"></div>
-          <div className="w-full p-2 rounded-md bg-accent-yellow"></div>
         </div>
       </div>
     </div>

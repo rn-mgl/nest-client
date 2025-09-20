@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Session, User } from "next-auth";
+import "next-auth";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { DefaultJWT } from "next-auth/jwt";
+import "next-auth/jwt";
 
 declare module "next-auth" {
   /**
@@ -12,6 +12,7 @@ declare module "next-auth" {
       token: string;
       role: "hr" | "employee" | "admin";
       current: number;
+      image: null | string;
     };
   }
 
@@ -19,6 +20,7 @@ declare module "next-auth" {
     token: string;
     role: "hr" | "employee" | "admin";
     current: number;
+    image: null | string;
   }
 }
 
@@ -29,6 +31,7 @@ declare module "next-auth/jwt" {
       token: string;
       role: "hr" | "employee" | "admin";
       current: number;
+      image: null | string;
     };
   }
 }

@@ -29,7 +29,7 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
     first_name: "",
     last_name: "",
     id: 0,
-    image: "",
+    image: null,
   });
   const [onboardings, setOnboardings] = React.useState<
     UserOnboardingInterface[]

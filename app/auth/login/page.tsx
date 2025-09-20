@@ -63,6 +63,7 @@ const Login = () => {
             token: login?.token,
             role: login.role,
             current: login?.current,
+            image: login?.image ?? null,
             redirect: false,
           });
 
