@@ -46,7 +46,7 @@ const Table: React.FC<TableInterface> = (props) => {
   });
 
   return (
-    <div className="w-full flex flex-col items-start justify-center overflow-x-auto">
+    <div className="w-full flex flex-col items-center justify-start overflow-x-auto">
       <div
         style={{
           gridTemplateColumns: `repeat(${props.headers.length}, minmax(0, 1fr))`,
@@ -64,7 +64,7 @@ const Table: React.FC<TableInterface> = (props) => {
           {mappedRows}
         </div>
       ) : (
-        <div className="min-w-(--breakpoint-t) p-4 border-b-1 border-l-1 border-r-1 w-full rounded-b-md text-center text-neutral-400 italic select-none">
+        <div className="min-w-(--breakpoint-t) h-full p-4 border-b-1 border-l-1 border-r-1 w-full rounded-b-md text-center text-neutral-400 italic select-none">
           <p>No records found</p>
         </div>
       )}

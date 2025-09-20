@@ -201,8 +201,6 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
     setContentsToDelete((prev) => [...prev, id]);
   };
 
-  console.log(contents);
-
   const submitUpdateTraining = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -227,11 +225,10 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
         trainingContent.content =
           typeof content.content === "string" ? content.content : "";
 
-        trainingContent.type = "text";
-
         // handle updated files and unupdated files
         let trainingFile = null;
 
+        // if the content type is an object, it's either a raw file or the cloud file
         if (content.content && typeof content.content === "object") {
           if (isRawFileSummary(content.content)) {
             trainingFile = content.content.rawFile;

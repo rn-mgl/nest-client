@@ -42,6 +42,10 @@ export interface EmployeeTrainingReviewResponseInterface {
   is_correct: boolean;
 }
 
+export interface AssignedTrainingInterface extends UserInterface {
+  assigned_training: null | UserTrainingInterface;
+}
+
 export interface UserTrainingInterface {
   id?: number;
   assigned_to: number | UserInterface;
@@ -52,4 +56,5 @@ export interface UserTrainingInterface {
   deadline: string | null;
   created_at: string;
   training: TrainingInterface;
+  deleted_at: string | null;
 }

@@ -1,29 +1,27 @@
+import CheckBox from "@/form/CheckBox";
+import Table from "@/global/field/Table";
 import { ModalInterface } from "@/src/interface/ModalInterface";
-import { EmployeeTrainingInterface } from "@/src/interface/TrainingInterface";
-import { UserInterface } from "@/src/interface/UserInterface";
+import { AssignedTrainingInterface } from "@/src/interface/TrainingInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose } from "react-icons/io5";
-import Assignee from "@/hr/global/Assignee";
 
 const AssignTraining: React.FC<ModalInterface> = (props) => {
-  const [employeeTrainings, setEmployeeTrainings] = React.useState<
-    (EmployeeTrainingInterface & UserInterface)[]
+  const [userTrainings, setUserTrainings] = React.useState<
+    AssignedTrainingInterface[]
   >([]);
-  const [assignedEmployees, setAssignedEmployees] = React.useState<number[]>(
-    []
-  );
+  const [assignedUsers, setAssignedUsers] = React.useState<number[]>([]);
 
   const { data } = useSession({ required: true });
   const user = data?.user;
   const url = process.env.URL;
 
-  const handleAssignedEmployees = (id: number) => {
-    setAssignedEmployees((prev) => {
+  const handleAssignedUsers = (id: number) => {
+    setAssignedUsers((prev) => {
       if (prev.includes(id)) {
-        const removedId = prev.filter((employee) => id !== employee);
+        const removedId = prev.filter((user) => id !== user);
 
         return removedId;
       } else {
@@ -32,11 +30,11 @@ const AssignTraining: React.FC<ModalInterface> = (props) => {
     });
   };
 
-  const getEmployeeTrainings = React.useCallback(async () => {
+  const getUserTrainings = React.useCallback(async () => {
     try {
       if (user?.token) {
         const { data: responseData } = await axios.get<{
-          employees: (EmployeeTrainingInterface & UserInterface)[];
+          users: AssignedTrainingInterface[];
         }>(`${url}/hr/user_training`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
@@ -45,12 +43,16 @@ const AssignTraining: React.FC<ModalInterface> = (props) => {
           params: { training_id: props.id },
         });
 
-        if (responseData.employees) {
-          setEmployeeTrainings(responseData.employees);
-          setAssignedEmployees(
-            responseData.employees
-              .filter((employee) => employee.user_training_id !== null)
-              .map((employee) => employee.user_id)
+        if (responseData.users) {
+          setUserTrainings(responseData.users);
+          setAssignedUsers(
+            responseData.users
+              .filter(
+                (user) =>
+                  user.assigned_training !== null &&
+                  user.assigned_training.deleted_at === null
+              )
+              .map((user) => user.id)
           );
         }
       }
@@ -59,18 +61,19 @@ const AssignTraining: React.FC<ModalInterface> = (props) => {
     }
   }, [url, user?.token, props.id]);
 
-  const mappedEmployees = employeeTrainings.map((employee, index) => {
-    const isChecked = assignedEmployees.includes(employee.user_id);
-    return (
-      <Assignee
-        key={index}
-        user={employee}
-        isChecked={isChecked}
-        handleAssignedEmployees={() =>
-          handleAssignedEmployees(employee.user_id)
-        }
-      />
-    );
+  const mappedUsers = userTrainings.map((user) => {
+    const isChecked = assignedUsers.includes(user.id);
+    return {
+      first_name: user.first_name,
+      last_name: user.last_name,
+      email: user.email,
+      assign: (
+        <CheckBox
+          isChecked={isChecked}
+          onClick={() => handleAssignedUsers(user.id)}
+        />
+      ),
+    };
   });
 
   const submitAssignTraining = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -81,7 +84,7 @@ const AssignTraining: React.FC<ModalInterface> = (props) => {
       if (token && user?.token) {
         const { data: responseData } = await axios.post(
           `${url}/hr/user_training`,
-          { user_ids: assignedEmployees, training_id: props.id },
+          { user_ids: assignedUsers, training_id: props.id },
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
@@ -105,8 +108,8 @@ const AssignTraining: React.FC<ModalInterface> = (props) => {
   };
 
   React.useEffect(() => {
-    getEmployeeTrainings();
-  }, [getEmployeeTrainings]);
+    getUserTrainings();
+  }, [getUserTrainings]);
 
   return (
     <div
@@ -126,20 +129,13 @@ const AssignTraining: React.FC<ModalInterface> = (props) => {
 
         <form
           onSubmit={(e) => submitAssignTraining(e)}
-          className="w-full flex flex-col items-center justify-start p-2 gap-4 t:p-4"
+          className="w-full flex h-full flex-col items-center justify-start p-2 gap-4 t:p-4"
         >
-          <div className="w-full h-full flex flex-col items-start justify-center border-[1px] rounded-md overflow-x-auto">
-            <div className="grid min-w-[768px] grid-cols-4 w-full gap-4 p-4 items-center justify-start bg-neutral-200 font-bold">
-              <p>First Name</p>
-              <p>Last Name</p>
-              <p>Email</p>
-              <p className="text-center">Assign</p>
-            </div>
-
-            <div className="w-full min-w-[768px] flex flex-col items-start justify-center overflow-y-auto overflow-x-hidden">
-              {mappedEmployees}
-            </div>
-          </div>
+          <Table
+            color="neutral"
+            contents={mappedUsers}
+            headers={["First Name", "Last Name", "Email", "Assign"]}
+          />
 
           <button className="w-full p-2 rounded-md bg-accent-green text-neutral-100 mt-2 font-bold">
             Assign
