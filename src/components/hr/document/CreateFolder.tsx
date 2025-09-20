@@ -11,7 +11,8 @@ import { useParams } from "next/navigation";
 
 const CreateFolder: React.FC<ModalInterface> = (props) => {
   const [folder, setFolder] = React.useState<FolderInterface>({
-    name: "",
+    title: "",
+    created_by: 0,
   });
 
   const { data } = useSession({ required: true });
@@ -85,13 +86,13 @@ const CreateFolder: React.FC<ModalInterface> = (props) => {
         >
           <Input
             label={true}
-            id="name"
-            name="name"
+            id="title"
+            name="title"
             onChange={handleFolder}
-            placeholder="Name"
+            placeholder="Title"
             required={true}
             type="text"
-            value={folder.name}
+            value={folder.title}
             icon={<IoText />}
           />
 

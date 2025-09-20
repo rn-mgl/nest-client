@@ -12,23 +12,24 @@ import Link from "next/link";
 import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
 import { IoClose } from "react-icons/io5";
+import { isCloudFileSummary } from "@/src/utils/utils";
 
 const ShowDocument: React.FC<ModalInterface> = (props) => {
   const [document, setDocument] = React.useState<
     DocumentInterface & { folder: FolderInterface | null }
   >({
-    name: "",
-    document: "",
+    title: "",
+    document: null,
     description: "",
-    type: "",
     path: 0,
+    created_by: 0,
     folder: null,
   });
 
   const { data } = useSession({ required: true });
   const user = data?.user;
   const url = process.env.URL;
-  const role = user?.role ?? "";
+  const role = user?.role;
 
   const getDocumentDetails = React.useCallback(async () => {
     try {
@@ -71,20 +72,26 @@ const ShowDocument: React.FC<ModalInterface> = (props) => {
           </button>
         </div>
         <div className="w-full h-full p-2 rounded-b-md flex flex-col items-center justify-start gap-4 t:p-4">
-          <TextField label="Name" value={document.name} />
+          <TextField label="Name" value={document.title} />
           <TextBlock label="Description" value={document.description} />
           <TextField
             label="Path"
             value={
-              document.folder && document.folder?.name
-                ? document.folder?.name
+              document.folder && document.folder?.title
+                ? document.folder?.title
                 : "Home"
             }
           />
 
           <div className="w-full p-2 rounded-md border-2 bg-white flex flex-row items-center justify-start">
             <Link
-              href={document.document as string}
+              href={
+                document.document &&
+                typeof document.document === "object" &&
+                isCloudFileSummary(document.document)
+                  ? document.document.url
+                  : ""
+              }
               target="_blank"
               className="flex flex-row items-center justify-center gap-2 group transition-all hover:underline underline-offset-2"
             >
@@ -92,7 +99,7 @@ const ShowDocument: React.FC<ModalInterface> = (props) => {
                 <AiFillFilePdf className="text-white" />
               </div>
               <span className="group-hover:underline underline-offset-2 transition-all text-sm">
-                View {document.name} Document
+                View {document.title} Document
               </span>
             </Link>
           </div>

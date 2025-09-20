@@ -12,19 +12,21 @@ import TextArea from "@/form/TextArea";
 import Link from "next/link";
 import useSelect from "@/src/hooks/useSelect";
 import Select from "@/form/Select";
+import { isCloudFileSummary, isRawFileSummary } from "@/src/utils/utils";
 
 const EditDocument: React.FC<ModalInterface> = (props) => {
   const [document, setDocument] = React.useState<DocumentInterface>({
-    name: "",
+    title: "",
     description: "",
     document: null,
     path: 0,
-    type: "",
+    created_by: 0,
   });
 
   const [paths, setPaths] = React.useState<{ label: string; value: number }[]>(
     []
   );
+
   const { activeSelect, toggleSelect } = useSelect();
   const documentRef = React.useRef<HTMLInputElement | null>(null);
 
@@ -81,7 +83,12 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
         if (responseData.document) {
           setDocument(responseData.document);
           // get all paths after successfully getting document info
-          await getAvailablePaths(0);
+          const path =
+            typeof responseData.document?.path === "number"
+              ? responseData.document.path
+              : 0;
+
+          await getAvailablePaths(path);
         }
       }
     } catch (error) {
@@ -99,24 +106,21 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
           ? document.path.value.toString()
           : "0";
 
-      const file =
-        typeof document.document === "string"
-          ? document.document
-          : document.document && typeof document.document === "object"
-          ? document.document?.rawFile
-          : "";
+      let file = null;
 
-      const type =
-        document.document && typeof document.document === "object"
-          ? document.document.rawFile.type
-          : document.type;
+      if (document.document && typeof document.document === "object") {
+        if (isRawFileSummary(document.document)) {
+          file = document.document.rawFile;
+        } else if (isCloudFileSummary(document.document)) {
+          file = JSON.stringify(document.document);
+        }
+      }
 
       const formData = new FormData();
-      formData.append("name", document.name);
+      formData.append("title", document.title);
       formData.append("description", document.description);
       formData.append("path", path);
-      formData.append("document", file);
-      formData.append("type", type);
+      formData.append("document", file ?? "");
       formData.append("_method", "PATCH");
 
       const { token } = await getCSRFToken();
@@ -209,7 +213,7 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex items-center justify-center 
               p-4 t:p-8 z-50 bg-linear-to-b from-accent-yellow/30 to-accent-purple/30 animate-fade"
     >
-      <div className="w-full h-auto max-w-(--breakpoint-t) bg-neutral-100 shadow-md rounded-lg ">
+      <div className="w-full h-full max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-yellow rounded-t-lg font-bold text-accent-blue">
           Update Document
           <button
@@ -225,13 +229,13 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
         >
           <Input
             label={true}
-            id="name"
-            name="name"
+            id="title"
+            name="title"
             onChange={handleDocument}
-            placeholder="Name"
+            placeholder="Title"
             required={true}
             type="text"
-            value={document.name}
+            value={document.title}
             icon={<IoText />}
           />
 
@@ -269,48 +273,48 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
           />
 
           <div className="w-full flex flex-col items-start justify-between gap-4">
-            {document.document &&
-            typeof document.document === "object" &&
-            document.document.rawFile ? (
-              <div className="p-2 w-full rounded-md border-2 bg-white flex flex-col items-center justify-center bg-center bg-cover relative">
-                <div className="w-full flex flex-row items-center justify-start gap-2">
-                  <div className="aspect-square p-2.5 rounded-xs bg-accent-blue/50">
-                    <AiFillFilePdf className="text-white text-2xl" />
-                  </div>
-                  <p className="truncate text-sm">
-                    {document.document?.rawFile.name}
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={removeSelectedDocument}
-                  className="absolute -top-1 -right-1 bg-red-500 p-1 rounded-full"
-                >
-                  <IoClose className="text-sm" />
-                </button>
-              </div>
-            ) : document.document && typeof document.document === "string" ? (
-              <div className="p-2 w-full rounded-md border-2 bg-white flex flex-col items-center justify-center bg-center bg-cover relative">
-                <div className="w-full flex flex-row items-center justify-start gap-2">
-                  <Link
-                    href={document.document}
-                    target="_blank"
-                    className="flex flex-row items-center justify-center gap-2 group transition-all hover:underline underline-offset-2"
-                  >
+            {document.document && typeof document.document === "object" ? (
+              isRawFileSummary(document.document) ? (
+                <div className="p-2 w-full rounded-md border-2 bg-white flex flex-col items-center justify-center bg-center bg-cover relative">
+                  <div className="w-full flex flex-row items-center justify-start gap-2">
                     <div className="aspect-square p-2.5 rounded-xs bg-accent-blue/50">
                       <AiFillFilePdf className="text-white text-2xl" />
                     </div>
-                    <span className="truncate text-sm">View Document?</span>
-                  </Link>
+                    <p className="truncate text-sm">
+                      {document.document.rawFile.name}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={removeSelectedDocument}
+                    className="absolute -top-1 -right-1 bg-red-500 p-1 rounded-full"
+                  >
+                    <IoClose className="text-sm" />
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={removeSelectedDocument}
-                  className="absolute -top-1 -right-1 bg-red-500 p-1 rounded-full"
-                >
-                  <IoClose className="text-sm" />
-                </button>
-              </div>
+              ) : isCloudFileSummary(document.document) ? (
+                <div className="p-2 w-full rounded-md border-2 bg-white flex flex-col items-center justify-center bg-center bg-cover relative">
+                  <div className="w-full flex flex-row items-center justify-start gap-2">
+                    <Link
+                      href={document.document.url}
+                      target="_blank"
+                      className="flex flex-row items-center justify-center gap-2 group transition-all hover:underline underline-offset-2"
+                    >
+                      <div className="aspect-square p-2.5 rounded-xs bg-accent-blue/50">
+                        <AiFillFilePdf className="text-white text-2xl" />
+                      </div>
+                      <span className="truncate text-sm">View Document?</span>
+                    </Link>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={removeSelectedDocument}
+                    className="absolute -top-1 -right-1 bg-red-500 p-1 rounded-full"
+                  >
+                    <IoClose className="text-sm" />
+                  </button>
+                </div>
+              ) : null
             ) : (
               <label
                 className="p-2 w-full h-16 rounded-md border-2  flex flex-row items-center 

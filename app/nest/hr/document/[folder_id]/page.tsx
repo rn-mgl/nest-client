@@ -200,11 +200,11 @@ const HRDocument = () => {
         folder={{ ...document }}
       >
         <div className="w-full flex flex-row items-center justify-end gap-4">
-          <button onClick={() => handleActiveEditDocument(document.id ?? 0)}>
+          <button onClick={() => handleActiveEditFolder(document.id ?? 0)}>
             <IoPencil />
           </button>
 
-          <button onClick={() => handleActiveDeleteDocument(document.id ?? 0)}>
+          <button onClick={() => handleActiveDeleteFolder(document.id ?? 0)}>
             <IoTrash />
           </button>
         </div>

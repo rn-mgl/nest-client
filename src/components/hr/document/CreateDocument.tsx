@@ -10,13 +10,14 @@ import { IoClose, IoText } from "react-icons/io5";
 import File from "@/form/File";
 import Input from "@/form/Input";
 import TextArea from "@/form/TextArea";
+import { isRawFileSummary } from "@/src/utils/utils";
 
 const CreateDocument: React.FC<ModalInterface> = (props) => {
   const [document, setDocument] = React.useState<DocumentInterface>({
-    name: "",
+    title: "",
     description: "",
-    type: "",
     document: null,
+    created_by: 0,
   });
 
   const url = process.env.URL;
@@ -70,13 +71,16 @@ const CreateDocument: React.FC<ModalInterface> = (props) => {
       const formData = new FormData();
 
       const attachment =
-        document.document && typeof document.document === "object"
+        document.document &&
+        typeof document.document === "object" &&
+        isRawFileSummary(document.document)
           ? document.document.rawFile
-          : "";
+          : null;
 
-      formData.append("name", document.name);
+      if (attachment === null) return;
+
+      formData.append("title", document.title);
       formData.append("description", document.description);
-      formData.append("type", document.type);
       formData.append("path", folderId.toString());
       formData.append("document", attachment);
 
@@ -141,13 +145,13 @@ const CreateDocument: React.FC<ModalInterface> = (props) => {
         >
           <Input
             label={true}
-            id="name"
-            name="name"
+            id="title"
+            name="title"
             onChange={handleDocument}
-            placeholder="Name"
+            placeholder="Title"
             required={true}
             type="text"
-            value={document.name}
+            value={document.title}
             icon={<IoText />}
           />
 
@@ -166,12 +170,14 @@ const CreateDocument: React.FC<ModalInterface> = (props) => {
             id="document"
             name="document"
             label="Document"
-            type="file"
+            type="application"
             onChange={handleDocument}
             removeSelectedFile={removeSelectedDocument}
             ref={documentRef}
             file={
-              document.document && typeof document.document === "object"
+              document.document &&
+              typeof document.document === "object" &&
+              isRawFileSummary(document.document)
                 ? document.document.rawFile
                 : null
             }

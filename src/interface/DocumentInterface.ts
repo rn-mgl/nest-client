@@ -1,3 +1,4 @@
+import { CloudFileInterface, RawFileInterface } from "./FileInterface";
 import { UserInterface } from "./UserInterface";
 
 export interface DocumentInterface {
@@ -5,7 +6,7 @@ export interface DocumentInterface {
   title: string;
   description: string;
   path?: { label: string; value: number } | number;
-  document: { rawFile: File; fileURL: string } | string | null;
+  document: RawFileInterface | CloudFileInterface | null;
   created_by: number | UserInterface;
 }
 

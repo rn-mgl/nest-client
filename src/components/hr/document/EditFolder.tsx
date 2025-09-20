@@ -12,8 +12,9 @@ import Select from "@/form/Select";
 
 const EditFolder: React.FC<ModalInterface> = (props) => {
   const [folder, setFolder] = React.useState<FolderInterface>({
-    name: "",
+    title: "",
     path: 0,
+    created_by: 0,
   });
   const [paths, setPaths] = React.useState<{ label: string; value: number }[]>(
     []
@@ -94,7 +95,13 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
 
         if (responseData.folder) {
           setFolder(responseData.folder);
-          await getAvailablePaths(responseData.folder.id as number);
+
+          const path =
+            typeof responseData.folder.id === "number"
+              ? responseData.folder.id
+              : 0;
+
+          await getAvailablePaths(path);
         }
       }
     } catch (error) {
@@ -116,7 +123,7 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
         const { data: updatedFolder } = await axios.patch(
           `${url}/hr/folder/${props.id}`,
           {
-            name: folder.name,
+            title: folder.title,
             path:
               typeof folder.path === "number"
                 ? folder.path
@@ -171,13 +178,13 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
         >
           <Input
             label={true}
-            id="name"
-            name="name"
+            id="title"
+            name="title"
             onChange={handleFolder}
-            placeholder="Name"
+            placeholder="Title"
             required={true}
             type="text"
-            value={folder.name}
+            value={folder.title}
             icon={<IoText />}
           />
 
