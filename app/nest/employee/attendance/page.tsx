@@ -3,12 +3,9 @@
 import Log from "@/src/components/employee/attendance/Log";
 import Input from "@/src/components/form/Input";
 import Select from "@/src/components/form/Select";
-import Toasts from "@/src/components/global/popup/Toasts";
-import { useToasts } from "@/src/context/ToastContext";
 import useIsLoading from "@/src/hooks/useIsLoading";
 import { AttendanceInterface } from "@/src/interface/AttendanceInterface";
 import axios from "axios";
-
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoCalendar } from "react-icons/io5";
@@ -20,60 +17,93 @@ const Attendance = () => {
     value: new Date().getMonth(),
   });
   const [activeDate, setActiveDate] = React.useState(new Date().getDate());
-  const [activeYear, setActiveYear] = React.useState(new Date().getFullYear());
+  const [activeYear, setActiveYear] = React.useState<number | string>(
+    new Date().getFullYear()
+  );
   const [activeSelect, setActiveSelect] = React.useState(false);
 
-  const [attendance, setAttendance] = React.useState<AttendanceInterface>({
-    absent: false,
-    late: false,
-    login_time: "-",
-    logout_time: "-",
-  });
+  const [attendance, setAttendance] =
+    React.useState<AttendanceInterface | null>(null);
 
   const { isLoading, handleIsLoading } = useIsLoading(true);
-
-  const currentYear = new Date().getFullYear();
-  const currentMonth = new Date().getMonth();
-  const currentDate = new Date().getDate();
-
-  const activeDateEqualToCurrentDate =
-    currentDate === activeDate &&
-    currentMonth === activeMonth.value &&
-    currentYear === activeYear;
-
-  const activeDateGreaterThanCurrentDate =
-    (activeDate > currentDate &&
-      (activeMonth.value >= currentMonth || activeYear >= currentYear)) ||
-    activeMonth.value > currentMonth ||
-    activeYear > currentYear;
 
   const { data: session } = useSession({ required: true });
   const user = session?.user;
   const url = process.env.URL;
 
-  const daysOfTheWeek = ["S", "M", "T", "W", "T", "F", "S"];
-  const monthOptions = [
-    { label: "January", value: 0 },
-    { label: "February", value: 1 },
-    { label: "March", value: 2 },
-    { label: "April", value: 3 },
-    { label: "May", value: 4 },
-    { label: "June", value: 5 },
-    { label: "July", value: 6 },
-    { label: "August", value: 7 },
-    { label: "September", value: 8 },
-    { label: "October", value: 9 },
-    { label: "November", value: 10 },
-    { label: "December", value: 11 },
-  ];
+  const today = React.useMemo(() => {
+    const d = new Date();
 
-  const getDaysInMonth = (year: number, month: number) => {
-    return new Date(year, month + 1, 0).getDate();
-  };
+    return {
+      date: d.getDate(),
+      month: d.getMonth(),
+      year: d.getFullYear(),
+    };
+  }, []);
 
-  const getStartDayOfMonth = (year: number, month: number) => {
-    return new Date(year, month, 1).getDay();
-  };
+  const activeDateEqualToCurrentDate = React.useMemo(() => {
+    return (
+      activeDate === today.date &&
+      activeMonth.value === today.month &&
+      activeYear === today.year
+    );
+  }, [
+    today.date,
+    today.month,
+    today.year,
+    activeDate,
+    activeMonth,
+    activeYear,
+  ]);
+
+  const activeDateGreaterThanCurrentDate = React.useMemo(() => {
+    return (
+      (activeDate > today.date &&
+        (activeMonth.value >= today.month ||
+          Number(activeYear) >= today.year)) ||
+      activeMonth.value > today.month ||
+      Number(activeYear) > today.year
+    );
+  }, [
+    today.date,
+    today.month,
+    today.year,
+    activeDate,
+    activeMonth,
+    activeYear,
+  ]);
+
+  const daysOfTheWeek = React.useMemo(
+    () => ["S", "M", "T", "W", "T", "F", "S"],
+    []
+  );
+  const monthOptions = React.useMemo(
+    () => [
+      { label: "January", value: 0 },
+      { label: "February", value: 1 },
+      { label: "March", value: 2 },
+      { label: "April", value: 3 },
+      { label: "May", value: 4 },
+      { label: "June", value: 5 },
+      { label: "July", value: 6 },
+      { label: "August", value: 7 },
+      { label: "September", value: 8 },
+      { label: "October", value: 9 },
+      { label: "November", value: 10 },
+      { label: "December", value: 11 },
+    ],
+    []
+  );
+
+  const daysInMonth = React.useMemo(
+    () => new Date(Number(activeYear), activeMonth.value + 1, 0).getDate(),
+    [activeYear, activeMonth.value]
+  );
+
+  const startDay = React.useMemo(
+    () => new Date(Number(activeYear), activeMonth.value, 1).getDay(),
+    [activeYear, activeMonth.value]
+  );
 
   const handleCanLog = () => {
     setCanLog((prev) => !prev);
@@ -85,7 +115,7 @@ const Attendance = () => {
 
   const handleActiveYear = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    setActiveYear(Number(value));
+    setActiveYear(value === "" ? "" : Number(value));
   };
 
   const handleActiveDate = (date: number) => {
@@ -96,13 +126,7 @@ const Attendance = () => {
     setActiveSelect((prev) => !prev);
   };
 
-  const daysInMonth = getDaysInMonth(activeYear, activeMonth.value);
-  const startDay = getStartDayOfMonth(activeYear, activeMonth.value);
-  const calendar = [];
-
-  for (let i = 0; i < startDay; i++) {
-    calendar[i] = null;
-  }
+  const calendar = Array(startDay).fill(null);
 
   for (let i = startDay, j = 1; j < daysInMonth; j++, i++) {
     calendar[i] = j;
@@ -147,9 +171,9 @@ const Attendance = () => {
         className={`w-full h-full aspect-square l-l:aspect-video flex flex-col 
         items-center justify-center rounded-sm t:rounded-md text-xs t:text-sm 
         border-2 animate-fade relative l-s:text-lg hover:bg-neutral-100 ${
-          date === currentDate &&
-          currentMonth === activeMonth.value &&
-          currentYear === activeYear
+          date === today.date &&
+          today.month === activeMonth.value &&
+          today.year === activeYear
             ? "border-accent-blue/50"
             : ""
         }`}
@@ -159,53 +183,66 @@ const Attendance = () => {
     );
   });
 
-  const getAttendance = React.useCallback(async () => {
-    if (activeDateGreaterThanCurrentDate) return;
+  const getAttendance = React.useCallback(
+    async (abort?: AbortController) => {
+      handleIsLoading(true);
 
-    handleIsLoading(true);
+      setAttendance(null);
 
-    try {
-      const stringDate = `${activeYear}-${activeMonth.value + 1}-${activeDate}`;
+      if (activeDateGreaterThanCurrentDate) {
+        return;
+      }
 
-      if (user?.token) {
-        const { data: responseData } = await axios.get(
-          `${url}/employee/attendance/${stringDate}`,
-          {
+      try {
+        const stringDate = `${activeYear}-${
+          activeMonth.value + 1
+        }-${activeDate}`;
+
+        if (user?.token) {
+          const { data: responseData } = await axios.get<{
+            attendance: AttendanceInterface;
+          }>(`${url}/employee/attendance/${stringDate}`, {
             headers: {
               Authorization: `Bearer ${user.token}`,
             },
+            signal: abort?.signal,
             withCredentials: true,
-          }
-        );
+          });
 
-        if (responseData.attendance) {
-          setAttendance(responseData.attendance);
+          if (responseData.attendance) {
+            setAttendance(responseData.attendance);
+          }
         }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        handleIsLoading(false);
       }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      handleIsLoading(false);
-    }
-  }, [
-    url,
-    user?.token,
-    activeYear,
-    activeMonth,
-    activeDate,
-    activeDateGreaterThanCurrentDate,
-    handleIsLoading,
-  ]);
+    },
+    [
+      url,
+      user?.token,
+      activeYear,
+      activeMonth,
+      activeDate,
+      activeDateGreaterThanCurrentDate,
+      handleIsLoading,
+    ]
+  );
 
   React.useEffect(() => {
-    getAttendance();
+    const controller = new AbortController();
+
+    getAttendance(controller);
+
+    return () => controller.abort();
   }, [getAttendance]);
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
       {canLog ? (
         <Log
-          id={attendance.attendance_id ?? 0}
+          id={attendance?.id ?? 0}
           toggleModal={handleCanLog}
           refetchIndex={getAttendance}
         />
@@ -244,9 +281,8 @@ const Attendance = () => {
             />
           </div>
 
-          {activeDateEqualToCurrentDate &&
-            !isLoading &&
-            (!attendance.login_time ? (
+          {!isLoading && attendance && activeDateEqualToCurrentDate ? (
+            !attendance?.login_time ? (
               <button
                 onClick={handleCanLog}
                 className="bg-accent-blue text-accent-yellow w-full p-2 rounded-md font-bold flex flex-row items-center justify-center 
@@ -255,7 +291,7 @@ const Attendance = () => {
                 Log In
                 <IoCalendar className="text-lg" />
               </button>
-            ) : !attendance.logout_time ? (
+            ) : !attendance?.logout_time ? (
               <button
                 onClick={handleCanLog}
                 className="bg-red-600 text-white w-full p-2 rounded-md font-bold flex flex-row items-center justify-center 
@@ -269,9 +305,10 @@ const Attendance = () => {
                 className="w-full flex flex-col items-center justify-center p-2 rounded-md 
                       text-accent-blue border-accent-blue border-2 font-bold t:w-fit t:px-4"
               >
-                <p>Attendance Completed</p>
+                Attendance Completed
               </div>
-            ))}
+            )
+          ) : null}
         </div>
 
         <div className="w-full flex flex-col items-center justify-center text-xs t:text-sm">
@@ -289,10 +326,10 @@ const Attendance = () => {
             className="w-full grid grid-cols-4 items-center justify-center *:flex *:flex-col *:items-center 
                       *:justify-center bg-white p-2 rounded-b-sm border-[1px] border-t-0 *:text-center t:rounded-b-md t:p-4"
           >
-            <p>{attendance.login_time ?? "-"}</p>
-            <p>{attendance.logout_time ?? "-"}</p>
-            <p>{attendance.absent ? "-" : attendance.late ? "Yes" : "No"}</p>
-            <p>{attendance.absent ? "Yes" : "No"}</p>
+            <p>{attendance?.login_time ?? "-"}</p>
+            <p>{attendance?.logout_time ?? "-"}</p>
+            <p>{attendance?.absent ? "-" : attendance?.late ? "Yes" : "No"}</p>
+            <p>{attendance?.absent ? "Yes" : "No"}</p>
           </div>
         </div>
 

@@ -18,11 +18,11 @@ const HRAttendance = () => {
       lates: 0,
       absents: 0,
     });
-  const [currentDate, setCurrentDate] = React.useState(new Date().getDate());
-  const [currentYear, setCurrentYear] = React.useState<number | string>(
+  const [activeDate, setActiveDate] = React.useState(new Date().getDate());
+  const [activeYear, setActiveYear] = React.useState<number | string>(
     new Date().getFullYear()
   );
-  const [currentMonth, setCurrentMonth] = React.useState({
+  const [activeMonth, setActiveMonth] = React.useState({
     label: new Date().toLocaleString("default", { month: "long" }),
     value: new Date().getMonth(),
   });
@@ -33,32 +33,41 @@ const HRAttendance = () => {
   const { data } = useSession({ required: true });
   const user = data?.user;
 
-  const daysOfWeek = ["S", "M", "T", "W", "T", "F", "S"];
-  const monthOptions = [
-    { label: "January", value: 0 },
-    { label: "February", value: 1 },
-    { label: "March", value: 2 },
-    { label: "April", value: 3 },
-    { label: "May", value: 4 },
-    { label: "June", value: 5 },
-    { label: "July", value: 6 },
-    { label: "August", value: 7 },
-    { label: "September", value: 8 },
-    { label: "October", value: 9 },
-    { label: "November", value: 10 },
-    { label: "December", value: 11 },
-  ];
+  const daysOfWeek = React.useMemo(
+    () => ["S", "M", "T", "W", "T", "F", "S"],
+    []
+  );
 
-  const getDaysInMonth = (year: number, month: number) => {
-    return new Date(year, month + 1, 0).getDate();
-  };
+  const monthOptions = React.useMemo(
+    () => [
+      { label: "January", value: 0 },
+      { label: "February", value: 1 },
+      { label: "March", value: 2 },
+      { label: "April", value: 3 },
+      { label: "May", value: 4 },
+      { label: "June", value: 5 },
+      { label: "July", value: 6 },
+      { label: "August", value: 7 },
+      { label: "September", value: 8 },
+      { label: "October", value: 9 },
+      { label: "November", value: 10 },
+      { label: "December", value: 11 },
+    ],
+    []
+  );
 
-  const getStartDayOfMonth = (year: number, month: number) => {
-    return new Date(year, month, 1).getDay();
-  };
+  const startDay = React.useMemo(
+    () => new Date(Number(activeYear), activeMonth.value + 1, 0).getDate(),
+    [activeYear, activeMonth.value]
+  );
+
+  const daysInMonth = React.useMemo(
+    () => new Date(Number(activeYear), activeMonth.value, 1).getDay(),
+    [activeYear, activeMonth.value]
+  );
 
   const handleCurrentMonth = (month: number, label: string) => {
-    setCurrentMonth({ value: month, label: label });
+    setActiveMonth({ value: month, label: label });
   };
 
   const handleActiveSelect = () => {
@@ -67,11 +76,11 @@ const HRAttendance = () => {
 
   const handleCurrentYear = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    setCurrentYear(value === "" ? "" : Number(value));
+    setActiveYear(value === "" ? "" : Number(value));
   };
 
   const handleCurrentDate = (date: number) => {
-    setCurrentDate(date);
+    setActiveDate(date);
   };
 
   const handleActiveSeeMore = (date: number) => {
@@ -88,9 +97,9 @@ const HRAttendance = () => {
             },
             withCredentials: true,
             params: {
-              currentDate,
-              currentMonth: currentMonth.value + 1,
-              currentYear: Number(currentYear),
+              activeDate,
+              activeMonth: activeMonth.value + 1,
+              activeYear: Number(activeYear),
             },
             signal: abort.signal,
           });
@@ -104,18 +113,10 @@ const HRAttendance = () => {
         console.log(axios.isAxiosError);
       }
     },
-    [url, user?.token, currentDate, currentMonth, currentYear]
+    [url, user?.token, activeDate, activeMonth, activeYear]
   );
 
-  const startDay = getStartDayOfMonth(Number(currentYear), currentMonth.value);
-  const daysInMonth = getDaysInMonth(Number(currentYear), currentMonth.value);
-  const calendar = [];
-
-  // before the start day of the month, set previous days as null
-  // this is to align the days of the week
-  for (let i = 0; i < startDay; i++) {
-    calendar[i] = null;
-  }
+  const calendar = Array(startDay).fill(null);
 
   // map the dates of the month in their respective days
   // daysInMonth + startDay to get the total days in the month
@@ -137,7 +138,7 @@ const HRAttendance = () => {
   });
 
   const mappedCalendar = calendar.map((date, index) => {
-    const selectedDate = currentDate === date;
+    const selectedDate = activeDate === date;
     return selectedDate ? (
       <div
         key={index}
@@ -184,9 +185,9 @@ const HRAttendance = () => {
       {activeSeeMore ? (
         <ShowAttendance
           id={activeSeeMore}
-          date={currentDate}
-          month={currentMonth.value}
-          year={Number(currentYear)}
+          date={activeDate}
+          month={activeMonth.value}
+          year={Number(activeYear)}
           toggleModal={() => handleActiveSeeMore(0)}
         />
       ) : null}
@@ -204,11 +205,11 @@ const HRAttendance = () => {
               name="month"
               options={monthOptions}
               placeholder="Month"
-              value={currentMonth.value}
+              value={activeMonth.value}
               onChange={handleCurrentMonth}
               required={false}
               icon={<IoCalendar />}
-              label={currentMonth.label}
+              label={activeMonth.label}
               activeSelect={activeSelect}
               toggleSelect={handleActiveSelect}
             />
@@ -219,7 +220,7 @@ const HRAttendance = () => {
               placeholder="Year"
               required={false}
               type="number"
-              value={currentYear}
+              value={activeYear}
               onChange={handleCurrentYear}
               icon={<IoCalendarNumber />}
               min={2000}
@@ -228,7 +229,7 @@ const HRAttendance = () => {
 
           <div className="w-full flex flex-col items-center justify-center t:hidden">
             <button
-              onClick={() => handleActiveSeeMore(currentDate)}
+              onClick={() => handleActiveSeeMore(activeDate)}
               className="w-full p-2 rounded-md bg-accent-blue text-accent-yellow font-bold"
             >
               View Attendance Details
