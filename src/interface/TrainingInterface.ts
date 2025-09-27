@@ -15,7 +15,7 @@ export interface TrainingContentInterface {
   title: string;
   description: string;
   content: RawFileInterface | CloudFileInterface | string | null;
-  type: "text" | "image" | "video" | "application";
+  type: "text" | "image" | "video" | "application" | "audio";
 }
 
 export interface EmployeeTrainingInterface {
