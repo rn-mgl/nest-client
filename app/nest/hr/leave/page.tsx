@@ -202,7 +202,6 @@ const HRLeave = () => {
 
   const handleFilters = React.useCallback(
     (tab: string) => {
-      console.log(tab);
       switch (tab) {
         case "types":
           handleSelectSearch("type", "Leave Type");

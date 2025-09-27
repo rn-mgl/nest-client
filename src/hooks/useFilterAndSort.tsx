@@ -42,31 +42,28 @@ export default function useFilterAndSort<T>(
       .filter((d) => {
         let matchedSearch = true;
 
-        if (search) {
-          if (search.searchKey === null || search.searchValue === null)
-            return true;
+        if (search && search.searchKey) {
+          if (search.searchValue === null || search.searchValue === "") {
+            matchedSearch = true;
+          } else {
+            const value =
+              drillPathValue(d, search.searchKey) ??
+              d[search.searchKey as keyof T];
 
-          const value =
-            drillPathValue(d, search.searchKey) ??
-            d[search.searchKey as keyof T];
-
-          matchedSearch = !!value
-            ?.toString()
-            .toLowerCase()
-            .includes(search.searchValue.toLowerCase());
+            matchedSearch = !!value
+              ?.toString()
+              .toLowerCase()
+              .includes(search.searchValue.toLowerCase());
+          }
         }
 
         let matchedCategory = true;
 
-        if (category) {
-          // if matched by value, or
-          if (d[category.categoryKey as keyof T] === category.categoryValue) {
-            matchedCategory = true;
-          }
-          // fallback to true if value is all, else did not match
-          else {
-            matchedCategory = category.categoryValue === "All" ? true : false;
-          }
+        if (category && category.categoryKey) {
+          // if matched by value or category value is All
+          matchedCategory =
+            d[category.categoryKey as keyof T] === category.categoryValue ||
+            category.categoryValue === "All";
         }
 
         return matchedSearch && matchedCategory;

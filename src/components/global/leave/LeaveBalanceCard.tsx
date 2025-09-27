@@ -39,7 +39,7 @@ const LeaveBalanceCard: React.FC<
       <div className="w-full flex flex-col items-center justify-center gap-4">
         <button
           onClick={props.toggleSelectedLeaveRequest}
-          className="p-2 bg-accent-blue w-full rounded-md font-medium text-accent-yellow text-sm"
+          className="p-2 bg-accent-blue w-full rounded-md font-bold text-accent-yellow text-sm"
         >
           Request Leave
         </button>
