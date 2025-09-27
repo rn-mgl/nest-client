@@ -286,7 +286,7 @@ const Attendance = () => {
               <button
                 onClick={handleCanLog}
                 className="bg-accent-blue text-accent-yellow w-full p-2 rounded-md font-bold flex flex-row items-center justify-center 
-                          gap-2 t:w-fit t:px-4 transition-all"
+                          gap-2 t:w-fit t:px-4 transition-all animate-fade"
               >
                 Log In
                 <IoCalendar className="text-lg" />
@@ -295,14 +295,14 @@ const Attendance = () => {
               <button
                 onClick={handleCanLog}
                 className="bg-red-600 text-white w-full p-2 rounded-md font-bold flex flex-row items-center justify-center 
-                          gap-2 t:w-fit t:px-4 transition-all"
+                          gap-2 t:w-fit t:px-4 transition-all animate-fade"
               >
                 Log Out
                 <IoCalendar className="text-lg" />
               </button>
             ) : (
               <div
-                className="w-full flex flex-col items-center justify-center p-2 rounded-md 
+                className="w-full flex flex-col items-center justify-center p-2 rounded-md animate-fade
                       text-accent-blue border-accent-blue border-2 font-bold t:w-fit t:px-4"
               >
                 Attendance Completed
