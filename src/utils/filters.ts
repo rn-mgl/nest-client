@@ -455,18 +455,18 @@ export const HR_FOLDERS_SEARCH: SearchPairsInterface[] = [
 
 export const EMPLOYEE_ONBOARDING_SEARCH: SearchPairsInterface[] = [
   {
-    key: "title",
+    key: "onboarding.title",
     label: "Title",
   },
   {
-    key: "description",
+    key: "onboarding.description",
     label: "Description",
   },
 ];
 
 export const EMPLOYEE_ONBOARDING_SORT: SortPairsInterface[] = [
   {
-    key: "title",
+    key: "onboarding.title",
     label: "Title",
   },
   {

@@ -42,9 +42,6 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
   const [reviewsToDelete, setReviewsToDelete] = React.useState<number[]>([]);
   const [contentsToDelete, setContentsToDelete] = React.useState<number[]>([]);
 
-  console.log(contentsToDelete);
-  console.log(reviewsToDelete);
-
   const certificateRef = React.useRef<HTMLInputElement | null>(null);
   const inputRefs = React.useRef<(HTMLInputElement | null)[]>([]);
 
@@ -121,6 +118,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
                   "image",
                   "video",
                   "application",
+                  "audio",
                 ].includes(mimeType)
                   ? (mimeType as "text" | "image" | "video" | "application")
                   : "text";

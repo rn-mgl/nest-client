@@ -76,8 +76,13 @@ export default function useFilterAndSort<T>(
 
         if (!sort.sortKey) return 0;
 
-        const left = a[sort.sortKey as keyof T] as string | number | null;
-        const right = b[sort.sortKey as keyof T] as string | number | null;
+        const left =
+          drillPathValue(a, sort.sortKey) ??
+          (a[sort.sortKey as keyof T] as string | number | null);
+
+        const right =
+          drillPathValue(b, sort.sortKey) ??
+          (b[sort.sortKey as keyof T] as string | number | null);
 
         if (left === null || right === null) return 0;
 

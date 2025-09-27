@@ -35,7 +35,12 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
     removeField: removeDocumentField,
     handleField: handleDocumentField,
     populateFields: populateDocumentFields,
-  } = useDynamicFields<OnboardingRequiredDocumentsInterface>([]);
+  } = useDynamicFields<OnboardingRequiredDocumentsInterface>([
+    {
+      title: "",
+      description: "",
+    },
+  ]);
 
   const {
     fields: policy_acknowledgements,
@@ -43,7 +48,12 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
     removeField: removePolicyField,
     handleField: handlePolicyField,
     populateFields: populatePolicyFields,
-  } = useDynamicFields<OnboardingPolicyAcknowledgemenInterface>([]);
+  } = useDynamicFields<OnboardingPolicyAcknowledgemenInterface>([
+    {
+      title: "",
+      description: "",
+    },
+  ]);
   const { activeFormPage, handleActiveFormPage } = useModalNav("information");
 
   const url = process.env.URL;

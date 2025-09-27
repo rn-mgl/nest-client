@@ -3,7 +3,8 @@ import React from "react";
 const BaseCard: React.FC<{
   title: string;
   description: string;
-  createdBy: string | null;
+  createdBy?: string | null;
+  assignedBy?: string | null;
   children: React.ReactNode;
 }> = ({ children, ...props }) => {
   return (
@@ -16,6 +17,8 @@ const BaseCard: React.FC<{
           <p className="font-bold truncate">{props.title}</p>
           {props.createdBy ? (
             <p className="text-xs">created by {props.createdBy}</p>
+          ) : props.assignedBy ? (
+            <p className="text-xs">assigned by {props.assignedBy}</p>
           ) : null}
         </div>
       </div>
