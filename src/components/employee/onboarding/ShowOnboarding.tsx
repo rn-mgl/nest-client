@@ -1,42 +1,46 @@
-import useModalNav from "@/src/hooks/useModalNav";
-import { ModalInterface } from "@/src/interface/ModalInterface";
-import {
-  EmployeeOnboardingInterface,
-  EmployeeOnboardingPolicyAcknowledgementInterface,
-  EmployeeOnboardingRequiredDocumentsInterface,
-  OnboardingInterface,
-  OnboardingPolicyAcknowledgemenInterface,
-  OnboardingRequiredDocumentsInterface,
-} from "@/src/interface/OnboardingInterface";
-import { getCSRFToken } from "@/src/utils/token";
-import axios from "axios";
-import { useSession } from "next-auth/react";
-import React from "react";
-import { IoClose } from "react-icons/io5";
-import ModalNav from "@/global/navigation/ModalNav";
+import File from "@/form/File";
 import TextBlock from "@/global/field/TextBlock";
 import TextField from "@/global/field/TextField";
-import File from "@/form/File";
+import ModalNav from "@/global/navigation/ModalNav";
+import useModalNav from "@/src/hooks/useModalNav";
+import {
+  CloudFileInterface,
+  RawFileInterface,
+} from "@/src/interface/FileInterface";
+import { ModalInterface } from "@/src/interface/ModalInterface";
+import {
+  OnboardingPolicyAcknowledgemenInterface,
+  OnboardingRequiredDocumentsInterface,
+  UserOnboardingInterface,
+  UserOnboardingPolicyAcknowledgemenInterface,
+  UserOnboardingRequiredDocumentsInterface,
+} from "@/src/interface/OnboardingInterface";
+import { getCSRFToken } from "@/src/utils/token";
+import { isCloudFileSummary, isRawFileSummary } from "@/src/utils/utils";
+import axios from "axios";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
+import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
+import { IoCheckmark, IoClose } from "react-icons/io5";
 
 const ShowOnboarding: React.FC<ModalInterface> = (props) => {
-  const [onboarding, setOnboarding] = React.useState<{
-    onboarding: OnboardingInterface & EmployeeOnboardingInterface;
-    policy_acknowledgements: (OnboardingPolicyAcknowledgemenInterface &
-      EmployeeOnboardingPolicyAcknowledgementInterface)[];
-    required_documents: (OnboardingRequiredDocumentsInterface &
-      EmployeeOnboardingRequiredDocumentsInterface)[];
-  }>({
-    onboarding: {
-      title: "",
-      description: "",
-      user_onboarding_id: 0,
-      status: "",
-    },
-    policy_acknowledgements: [],
-    required_documents: [],
-  });
+  const [onboarding, setOnboarding] =
+    React.useState<UserOnboardingInterface | null>(null);
+
+  const [requiredDocuments, setRequiredDocuments] = React.useState<
+    (OnboardingRequiredDocumentsInterface & {
+      user_compliance: (UserOnboardingRequiredDocumentsInterface | null) & {
+        document: CloudFileInterface | RawFileInterface | null;
+      };
+    })[]
+  >([]);
+
+  const [policyAcknowledgements, setPolicyAcknowledgements] = React.useState<
+    (OnboardingPolicyAcknowledgemenInterface & {
+      user_acknowledgement: UserOnboardingPolicyAcknowledgemenInterface | null;
+    })[]
+  >([]);
 
   const requiredDocumentsRef = React.useRef<(HTMLInputElement | null)[]>([]);
 
@@ -50,11 +54,18 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
     try {
       if (user?.token) {
         const { data: responseData } = await axios.get<{
-          onboarding: OnboardingInterface & EmployeeOnboardingInterface;
-          policy_acknowledgements: (OnboardingPolicyAcknowledgemenInterface &
-            EmployeeOnboardingPolicyAcknowledgementInterface)[];
-          required_documents: (OnboardingRequiredDocumentsInterface &
-            EmployeeOnboardingRequiredDocumentsInterface)[];
+          onboarding: UserOnboardingInterface & {
+            onboarding: {
+              required_documents: (OnboardingRequiredDocumentsInterface & {
+                user_compliance: (UserOnboardingRequiredDocumentsInterface | null) & {
+                  document: CloudFileInterface | null;
+                };
+              })[];
+              policy_acknowledgements: (OnboardingPolicyAcknowledgemenInterface & {
+                user_acknowledgement: UserOnboardingPolicyAcknowledgemenInterface | null;
+              })[];
+            };
+          };
         }>(`${url}/employee/employee_onboarding/${props.id}`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
@@ -62,8 +73,19 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
           withCredentials: true,
         });
 
-        if (responseData) {
-          setOnboarding(responseData);
+        if (responseData.onboarding) {
+          const {
+            onboarding: {
+              policy_acknowledgements,
+              required_documents,
+              ...onboardingData
+            },
+            ...userOnboardingData
+          } = responseData.onboarding;
+
+          setOnboarding({ ...userOnboardingData, onboarding: onboardingData });
+          setRequiredDocuments(required_documents);
+          setPolicyAcknowledgements(policy_acknowledgements);
         }
       }
     } catch (error) {
@@ -104,20 +126,25 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
-        const document = onboarding.required_documents[index];
+        const {
+          user_compliance: { document },
+          ...requirement
+        } = requiredDocuments[index];
+
+        if (
+          !document ||
+          typeof document !== "object" ||
+          !isRawFileSummary(document)
+        )
+          return;
 
         const formData = new FormData();
-        formData.set(
-          "document",
-          document.document && typeof document.document === "object"
-            ? document.document.rawFile
-            : ""
-        );
+
+        formData.set("document", document.rawFile);
+
         formData.set(
           "onboarding_required_document_id",
-          typeof document.onboarding_required_document_id === "number"
-            ? String(document.onboarding_required_document_id)
-            : ""
+          typeof requirement.id === "number" ? requirement.id.toString() : ""
         );
 
         const { data: responseData } = await axios.post(
@@ -148,17 +175,20 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const {
-          user_onboarding_required_document_id: documentId,
-          document: newDocument,
-        } = onboarding.required_documents[index];
+          user_compliance: { document, id: documentId },
+        } = requiredDocuments[index];
+
+        if (
+          !document ||
+          typeof document !== "object" ||
+          !isRawFileSummary(document)
+        ) {
+          return;
+        }
 
         const formData = new FormData();
-        formData.set(
-          "document",
-          typeof newDocument === "object" && newDocument?.rawFile
-            ? newDocument.rawFile
-            : ""
-        );
+
+        formData.set("document", document.rawFile);
         formData.set("_method", "PATCH");
 
         const { data: responseData } = await axios.post(
@@ -187,9 +217,7 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
     try {
       const { token } = await getCSRFToken();
 
-      const documentId =
-        onboarding.required_documents[index]
-          .user_onboarding_required_document_id;
+      const documentId = requiredDocuments[index].user_compliance.id;
 
       if (token && user?.token) {
         const { data: responseData } = await axios.delete(
@@ -222,28 +250,34 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
     const file = files[0];
     const url = URL.createObjectURL(file);
 
-    setOnboarding((prev) => {
-      const documents = [...prev.required_documents];
-      const newDocumentSet = { rawFile: file, fileURL: url };
+    setRequiredDocuments((prev) => {
+      const documents = [...prev];
 
-      documents[index] = { ...documents[index], document: newDocumentSet };
-
-      return {
-        ...prev,
-        required_documents: documents,
+      documents[index] = {
+        ...documents[index],
+        user_compliance: {
+          ...documents[index].user_compliance,
+          document: { rawFile: file, fileURL: url },
+        },
       };
+
+      return documents;
     });
   };
 
   const removeDocument = (index: number) => {
-    setOnboarding((prev) => {
-      const documents = [...prev.required_documents];
-      documents[index] = { ...documents[index], document: null };
+    setRequiredDocuments((prev) => {
+      const documents = [...prev];
 
-      return {
-        ...prev,
-        required_documents: documents,
+      documents[index] = {
+        ...documents[index],
+        user_compliance: {
+          ...documents[index].user_compliance,
+          document: null,
+        },
       };
+
+      return documents;
     });
 
     if (requiredDocumentsRef.current && requiredDocumentsRef.current[index]) {
@@ -252,112 +286,112 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
     }
   };
 
-  const mappedRequiredDocuments = onboarding?.required_documents.map(
-    (document, index) => {
-      return (
-        <div
-          key={index}
-          className="w-full flex flex-col items-center justify-start gap-2"
-        >
-          <div className="w-full p-2 rounded-md border-2 bg-white">
-            {document.title}
-          </div>
-          <div className="w-full p-2 rounded-md border-2 bg-white h-40 overflow-y-auto">
-            {document.description}
-          </div>
-          {document.user_onboarding_required_document_id &&
-          typeof document.document === "string" ? (
-            <div className="w-full p-3 rounded-md border-2 bg-white flex flex-col items-center justify-center relative">
-              <Link
-                href={document.document}
-                target="_blank"
-                className="flex flex-row items-center justify-center gap-2 group w-fit"
-              >
-                <div className="text-2xl aspect-square p-2 rounded-xs bg-accent-purple/50 group-hover:bg-accent-purple/80 transition-all">
-                  <AiFillFilePdf className="text-white" />
-                </div>
-                <span className="text-sm group-hover:underline underline-offset-2">
-                  View Attached {document.title} Document
-                </span>
-              </Link>
+  const mappedRequiredDocuments = requiredDocuments.map((document, index) => {
+    return (
+      <div
+        key={index}
+        className="w-full flex flex-col items-center justify-start gap-2"
+      >
+        <TextField label="Title" value={document.title} />
+        <TextBlock label="Description" value={document.description} />
 
+        {/* if there is no user compliance yet or the user compliance document is null, show the File input */}
+        {!document.user_compliance ||
+        !document.user_compliance.document ||
+        (document.user_compliance.document &&
+          typeof document.user_compliance.document === "object" &&
+          isRawFileSummary(document.user_compliance.document)) ? (
+          <div className="w-full flex flex-col items-center justify-center gap-2">
+            <File
+              accept="application/pdf"
+              file={
+                document.user_compliance &&
+                document.user_compliance.document &&
+                isRawFileSummary(document.user_compliance.document)
+                  ? document.user_compliance?.document.rawFile
+                  : null
+              }
+              ref={(el) => {
+                requiredDocumentsRef.current[index] = el;
+              }}
+              removeSelectedFile={() => removeDocument(index)}
+              id={`documentFor${document.id}`}
+              label="Document"
+              name="required_document"
+              onChange={(e) => handleRequiredDocuments(e, index)}
+              type="application"
+              url=""
+            />
+
+            {document.user_compliance &&
+            document.user_compliance.document &&
+            isRawFileSummary(document.user_compliance.document) ? (
               <button
-                onClick={() => removeUploadedDocument(index)}
-                className="p-1 rounded-full bg-red-600 absolute top-0 right-0"
-              >
-                <IoClose />
-              </button>
-            </div>
-          ) : (
-            <div className="w-full flex flex-col items-center justify-center gap-2">
-              <File
-                accept="application/pdf"
-                file={
-                  document.document && typeof document.document === "object"
-                    ? document.document.rawFile
-                    : null
+                type="button"
+                onClick={
+                  document.user_compliance.id
+                    ? () => updateRequiredDocument(index)
+                    : () => sendRequiredDocument(index)
                 }
-                ref={(el) => {
-                  requiredDocumentsRef.current[index] = el;
-                }}
-                removeSelectedFile={() => removeDocument(index)}
-                id={`documentFor${document.onboarding_required_document_id}`}
-                label="Document"
-                name="required_document"
-                onChange={(e) => handleRequiredDocuments(e, index)}
-                type="file"
-                url=""
-              />
+                className="w-full p-2 rounded-md bg-accent-purple text-neutral-100 font-bold"
+              >
+                {document.user_compliance.id ? "Update" : "Send"}
+              </button>
+            ) : null}
+          </div>
+        ) : document.user_compliance.document &&
+          typeof document.user_compliance.document === "object" &&
+          isCloudFileSummary(document.user_compliance.document) ? (
+          <div className="w-full p-3 rounded-md border-2 bg-white flex flex-col items-start justify-center relative">
+            <Link
+              href={document.user_compliance.document?.url}
+              target="_blank"
+              className="flex flex-row items-center justify-center gap-2 group w-fit"
+            >
+              <div className="text-2xl aspect-square p-2 rounded-xs bg-accent-purple/50 group-hover:bg-accent-purple/80 transition-all">
+                <AiFillFilePdf className="text-white" />
+              </div>
+              <span className="text-sm group-hover:underline underline-offset-2">
+                View Attached {document.title} Document
+              </span>
+            </Link>
 
-              {document.document && typeof document.document === "object" ? (
-                <button
-                  type="button"
-                  onClick={
-                    typeof document.user_onboarding_required_document_id ===
-                    "number"
-                      ? () => updateRequiredDocument(index)
-                      : () => sendRequiredDocument(index)
-                  }
-                  className="w-full p-2 rounded-md bg-accent-purple text-neutral-100 font-bold"
-                >
-                  Send
-                </button>
-              ) : null}
-            </div>
-          )}
-        </div>
-      );
-    }
-  );
+            <button
+              onClick={() => removeUploadedDocument(index)}
+              className="p-1 rounded-full bg-red-600 absolute top-0 right-0"
+            >
+              <IoClose />
+            </button>
+          </div>
+        ) : null}
+      </div>
+    );
+  });
 
-  const mappedPolicyAcknowledgements = onboarding?.policy_acknowledgements.map(
+  const mappedPolicyAcknowledgements = policyAcknowledgements.map(
     (policy, index) => {
       return (
         <div
           key={index}
           className="w-full flex flex-col items-center justify-center gap-2 "
         >
-          <div className="w-full p-2 rounded-md border-2 bg-white">
-            {policy.title}
-          </div>
-          <div className="w-full p-2 rounded-md border-2 bg-white min-h-40 max-h-80 overflow-y-auto">
-            {policy.description}
-          </div>
+          <TextField label="Title" value={policy.title} />
+          <TextBlock label="Description" value={policy.description} />
 
-          {!policy.acknowledged ? (
+          {!policy.user_acknowledgement ||
+          !policy.user_acknowledgement.acknowledged ? (
             <button
               className="w-full p-2 rounded-md bg-accent-purple text-neutral-100 font-bold"
-              onClick={() =>
-                handleAcknowledge(
-                  policy.onboarding_policy_acknowledgement_id ?? 0
-                )
-              }
+              onClick={() => handleAcknowledge(policy.id ?? 0)}
             >
               Acknowledge
             </button>
           ) : (
-            <div className="w-full p-2 rounded-md border-2 border-accent-purple text-accent-purple text-center">
-              Policy Acknowledged
+            <div
+              className="w-full p-2 rounded-md bg-accent-green text-neutral-100 font-bold 
+                        text-center flex flex-row items-center justify-center gap-2"
+            >
+              Policy Acknowledged <IoCheckmark />
             </div>
           )}
         </div>
@@ -370,12 +404,10 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
   }, [getOnboarding]);
 
   React.useEffect(() => {
-    requiredDocumentsRef.current = onboarding.required_documents.map(
-      (_, index) => {
-        return requiredDocumentsRef.current[index] || null;
-      }
-    );
-  }, [onboarding.required_documents]);
+    requiredDocumentsRef.current = requiredDocuments.map((_, index) => {
+      return requiredDocumentsRef.current[index] || null;
+    });
+  }, [requiredDocuments]);
 
   return (
     <div
