@@ -1,12 +1,7 @@
+import { BaseCardInterface } from "@/src/interface/CardInterface";
 import React from "react";
 
-const BaseCard: React.FC<{
-  title: string;
-  description: string;
-  createdBy?: string | null;
-  assignedBy?: string | null;
-  children: React.ReactNode;
-}> = ({ children, ...props }) => {
+const BaseCard: React.FC<BaseCardInterface> = ({ children, ...props }) => {
   return (
     <div
       className="w-full min-h-[17rem] p-4 rounded-md bg-neutral-100 flex 

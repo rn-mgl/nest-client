@@ -1,4 +1,4 @@
-import { TableInterface } from "@/src/interface/TableInterface";
+import { TableInterface } from "@/src/interface/FieldInterface";
 import React from "react";
 
 const Table: React.FC<TableInterface> = (props) => {

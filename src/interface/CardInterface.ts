@@ -4,7 +4,8 @@ import { UserInterface } from "./UserInterface";
 export interface BaseCardInterface {
   title: string;
   description: string;
-  createdBy: string;
+  createdBy?: string | null;
+  assignedBy?: string | null;
   children: React.ReactNode;
 }
 
