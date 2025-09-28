@@ -1,25 +1,22 @@
 "use client";
 
-import { LeaveRequestInterface } from "@/src/interface/LeaveInterface";
+import Input from "@/form/Input";
+import TextArea from "@/form/TextArea";
+import { LeaveRequestFormInterface } from "@/src/interface/LeaveInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose } from "react-icons/io5";
-import Input from "@/form/Input";
-import TextArea from "@/form/TextArea";
 
 const EditLeaveRequest: React.FC<ModalInterface> = (props) => {
-  const [leaveRequest, setLeaveRequest] = React.useState<LeaveRequestInterface>(
-    {
+  const [leaveRequest, setLeaveRequest] =
+    React.useState<LeaveRequestFormInterface>({
       reason: "",
       end_date: "",
       start_date: "",
-      status: "",
-      user_id: 0,
-    }
-  );
+    });
 
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });

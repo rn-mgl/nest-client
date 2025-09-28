@@ -1,5 +1,7 @@
 import { UserInterface } from "./UserInterface";
 
+// api response
+
 export interface LeaveTypeInterface {
   id?: number;
   type: string;
@@ -34,4 +36,12 @@ export interface LeaveRequestInterface {
   status: string;
   reason: string;
   created_at: string;
+}
+
+// form request
+
+export interface LeaveRequestFormInterface {
+  start_date: string;
+  end_date: string;
+  reason: string;
 }

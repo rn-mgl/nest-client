@@ -1,6 +1,6 @@
 import Input from "@/form/Input";
 import TextArea from "@/form/TextArea";
-import { LeaveRequestInterface } from "@/src/interface/LeaveInterface";
+import { LeaveRequestFormInterface } from "@/src/interface/LeaveInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
@@ -9,15 +9,12 @@ import React from "react";
 import { IoClose, IoText } from "react-icons/io5";
 
 const LeaveRequestForm: React.FC<ModalInterface> = (props) => {
-  const [leaveRequest, setLeaveRequest] = React.useState<LeaveRequestInterface>(
-    {
+  const [leaveRequest, setLeaveRequest] =
+    React.useState<LeaveRequestFormInterface>({
       start_date: "",
       end_date: "",
       reason: "",
-      status: "",
-      user_id: 0,
-    }
-  );
+    });
 
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
@@ -91,7 +88,7 @@ const LeaveRequestForm: React.FC<ModalInterface> = (props) => {
             required={true}
             label={true}
             onChange={handleLeaveRequest}
-            value={leaveRequest.start_date}
+            value={leaveRequest?.start_date}
           />
 
           <Input
@@ -102,7 +99,7 @@ const LeaveRequestForm: React.FC<ModalInterface> = (props) => {
             required={true}
             label={true}
             onChange={handleLeaveRequest}
-            value={leaveRequest.end_date}
+            value={leaveRequest?.end_date}
           />
 
           <TextArea
@@ -111,7 +108,7 @@ const LeaveRequestForm: React.FC<ModalInterface> = (props) => {
             onChange={handleLeaveRequest}
             placeholder="Reason"
             required={true}
-            value={leaveRequest.reason}
+            value={leaveRequest?.reason}
             rows={10}
             icon={<IoText />}
           />
