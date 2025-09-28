@@ -28,6 +28,16 @@ export interface AssignedPerformanceReviewInterface extends UserInterface {
   assigned_performance_review: null | UserPerformanceReviewInterface;
 }
 
+export interface UserPerformanceReviewSurveyResponseInterface {
+  id?: number;
+  performance_review_survey_id: number;
+  response_from: number;
+  response: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string;
+}
+
 export interface UserPerformanceReviewInterface {
   id?: number;
   performance_review_id: number;

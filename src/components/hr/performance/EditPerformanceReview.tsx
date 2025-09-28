@@ -26,7 +26,12 @@ const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
   const [surveyToDelete, setSurveyToDelete] = React.useState<Array<number>>([]);
 
   const { fields, addField, handleField, populateFields, removeField } =
-    useDynamicFields<PerformanceReviewSurveyInterface>([]);
+    useDynamicFields<PerformanceReviewSurveyInterface>([
+      {
+        created_by: 0,
+        survey: "",
+      },
+    ]);
   const { activeFormPage, handleActiveFormPage } = useModalNav("information");
 
   const url = process.env.URL;
@@ -56,7 +61,7 @@ const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
       if (user?.token) {
         const { data: responseData } = await axios.get<{
           performance: PerformanceReviewInterface & {
-            contents: PerformanceReviewSurveyInterface[];
+            surveys: PerformanceReviewSurveyInterface[];
           };
         }>(`${url}/hr/performance_review/${props.id}`, {
           headers: {
@@ -66,8 +71,8 @@ const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
         });
 
         if (responseData.performance) {
-          const { contents, ...performance } = responseData.performance;
-          populateFields(contents);
+          const { surveys, ...performance } = responseData.performance;
+          populateFields(surveys);
           setPerformanceReview(performance);
         }
       }

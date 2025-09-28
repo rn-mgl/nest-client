@@ -16,16 +16,16 @@ import TextBlock from "@/global/field/TextBlock";
 import TextField from "@/global/field/TextField";
 
 const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
-  const [performanceReview, setPerformanceReview] = React.useState<
-    PerformanceReviewInterface & {
-      contents: PerformanceReviewSurveyInterface[];
-    }
-  >({
-    title: "",
-    description: "",
-    created_by: 0,
-    contents: [],
-  });
+  const [performanceReview, setPerformanceReview] =
+    React.useState<PerformanceReviewInterface>({
+      title: "",
+      description: "",
+      created_by: 0,
+    });
+
+  const [surveys, setSurveys] = React.useState<
+    PerformanceReviewSurveyInterface[]
+  >([]);
 
   const { activeFormPage, handleActiveFormPage } = useModalNav("information");
 
@@ -36,9 +36,9 @@ const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
   const getPerformanceReview = React.useCallback(async () => {
     try {
       if (user?.token) {
-        const { data: performanceDetails } = await axios.get<{
+        const { data: responseData } = await axios.get<{
           performance: PerformanceReviewInterface & {
-            contents: PerformanceReviewSurveyInterface[];
+            surveys: PerformanceReviewSurveyInterface[];
           };
         }>(`${url}/hr/performance_review/${props.id}`, {
           headers: {
@@ -47,8 +47,10 @@ const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
           withCredentials: true,
         });
 
-        if (performanceDetails.performance) {
-          setPerformanceReview(performanceDetails.performance);
+        if (responseData.performance) {
+          const { surveys, ...performance } = responseData.performance;
+          setPerformanceReview(performance);
+          setSurveys(surveys);
         }
       }
     } catch (error) {
@@ -56,10 +58,10 @@ const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
     }
   }, [url, user?.token, props.id]);
 
-  const mappedSurveys = performanceReview.contents.map((content, index) => {
+  const mappedSurveys = surveys.map((survey, index) => {
     return (
       <div key={index} className="w-full">
-        <TextBlock label="" value={content.survey} />
+        <TextBlock label="" value={survey.survey} />
       </div>
     );
   });

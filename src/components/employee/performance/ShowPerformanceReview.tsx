@@ -1,33 +1,32 @@
 "use client";
 
+import TextArea from "@/form/TextArea";
+import TextBlock from "@/global/field/TextBlock";
+import TextField from "@/global/field/TextField";
+import ModalNav from "@/global/navigation/ModalNav";
+import useModalNav from "@/src/hooks/useModalNav";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
   PerformanceReviewInterface,
-  EmployeePerformanceReviewResponseInterface,
   PerformanceReviewSurveyInterface,
+  UserPerformanceReviewInterface,
+  UserPerformanceReviewSurveyResponseInterface,
 } from "@/src/interface/PerformanceReviewInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
-import { IoClose } from "react-icons/io5";
-import TextBlock from "@/global/field/TextBlock";
-import useModalNav from "@/src/hooks/useModalNav";
-import ModalNav from "@/global/navigation/ModalNav";
-import TextField from "@/global/field/TextField";
-import TextArea from "@/form/TextArea";
+import { IoCheckmark, IoClose } from "react-icons/io5";
 
 const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
-  const [performanceReview, setPerformanceReview] = React.useState<
-    PerformanceReviewInterface & {
-      contents: (PerformanceReviewSurveyInterface &
-        EmployeePerformanceReviewResponseInterface)[];
-    }
-  >({
-    title: "",
-    description: "",
-    contents: [],
-  });
+  const [performanceReview, setPerformanceReview] =
+    React.useState<UserPerformanceReviewInterface | null>(null);
+
+  const [surveys, setSurveys] = React.useState<
+    (PerformanceReviewSurveyInterface & {
+      user_response: UserPerformanceReviewSurveyResponseInterface | null;
+    })[]
+  >([]);
 
   const { data: session } = useSession({ required: true });
   const user = session?.user;
@@ -37,37 +36,61 @@ const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
 
   const handleSurvey = (
     e: React.ChangeEvent<HTMLTextAreaElement>,
-    fieldName: string,
     index: number
   ) => {
     const { value } = e.target;
 
-    setPerformanceReview((prev) => {
-      const updated = { ...prev };
-      updated.contents[index] = {
-        ...updated.contents[index],
-        [fieldName]: value,
+    setSurveys((prev) => {
+      const surveys = [...prev];
+
+      surveys[index] = {
+        ...surveys[index],
+        user_response: {
+          ...(surveys[index].user_response ?? {
+            performance_review_survey_id: surveys[index].id ?? 0,
+            response_from: user?.current ?? 0,
+            response: "",
+            created_at: "",
+            updated_at: "",
+            deleted_at: "",
+          }),
+          response: value,
+        },
       };
 
-      return updated;
+      return surveys;
     });
   };
 
   const getPerformanceReview = React.useCallback(async () => {
     try {
       if (user?.token) {
-        const { data: responseData } = await axios.get(
-          `${url}/employee/employee_performance_review/${props.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-            withCredentials: true,
-          }
-        );
+        const { data: responseData } = await axios.get<{
+          performance_review: UserPerformanceReviewInterface & {
+            performance_review: PerformanceReviewInterface & {
+              surveys: (PerformanceReviewSurveyInterface & {
+                user_response: UserPerformanceReviewSurveyResponseInterface | null;
+              })[];
+            };
+          };
+        }>(`${url}/employee/employee_performance_review/${props.id}`, {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+          withCredentials: true,
+        });
 
         if (responseData.performance_review) {
-          setPerformanceReview(responseData.performance_review);
+          const {
+            performance_review: { surveys, ...performanceReview },
+            ...userPerformanceReview
+          } = responseData.performance_review;
+
+          setPerformanceReview({
+            ...userPerformanceReview,
+            performance_review: performanceReview,
+          });
+          setSurveys(surveys);
         }
       }
     } catch (error) {
@@ -75,18 +98,20 @@ const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
     }
   }, [url, user?.token, props.id]);
 
-  const submitPerformanceReviewResponse = async (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
-    e.preventDefault();
-
+  const submitPerformanceReviewResponse = async (index: number) => {
     try {
       const { token } = await getCSRFToken();
+
+      const survey = surveys[index];
 
       if (token && user?.token) {
         const { data: responseData } = await axios.post(
           `${url}/employee/employee_performance_review_response`,
-          { response: performanceReview.contents },
+          {
+            response: survey.user_response?.response,
+            survey_id: survey.id,
+            response_id: survey?.user_response?.id ?? null,
+          },
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
@@ -105,21 +130,38 @@ const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
     }
   };
 
-  const mappedSurveys = performanceReview.contents.map((content, index) => {
+  const mappedSurveys = surveys.map((survey, index) => {
     return (
       <div
         key={index}
         className="w-full flex flex-col items-center justify-center gap-2 "
       >
-        <TextBlock label={`Survey ${index + 1}`} value={content.survey} />
+        <TextBlock label={`Survey ${index + 1}`} value={survey.survey} />
+
         <TextArea
           id={`response_${index}`}
           name={`response_${index}`}
-          onChange={(e) => handleSurvey(e, "response", index)}
+          onChange={(e) => handleSurvey(e, index)}
           placeholder="Survey Response"
           required={true}
-          value={content.response ?? ""}
+          value={survey?.user_response?.response ?? ""}
         />
+
+        {survey.user_response?.id ? (
+          <div
+            className="w-full p-2 rounded-md bg-accent-green text-neutral-100 font-bold 
+                               text-center flex flex-row items-center justify-center gap-2"
+          >
+            Responded <IoCheckmark />
+          </div>
+        ) : (
+          <button
+            onClick={() => submitPerformanceReviewResponse(index)}
+            className="w-full p-2 rounded-md bg-accent-blue font-bold text-neutral-100"
+          >
+            Send
+          </button>
+        )}
       </div>
     );
   });
@@ -143,10 +185,7 @@ const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
             <IoClose />
           </button>
         </div>
-        <form
-          onSubmit={(e) => submitPerformanceReviewResponse(e)}
-          className="w-full h-full p-2 flex flex-col items-center justify-start gap-4 overflow-hidden t:p-4"
-        >
+        <div className="w-full h-full p-2 flex flex-col items-center justify-start gap-4 overflow-hidden t:p-4">
           <ModalNav
             activeFormPage={activeFormPage}
             handleActiveFormPage={handleActiveFormPage}
@@ -155,24 +194,21 @@ const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
 
           {activeFormPage === "Information" ? (
             <div className="w-full h-full flex flex-col items-center justify-start gap-4">
-              <TextField label="Title" value={performanceReview.title} />
+              <TextField
+                label="Title"
+                value={performanceReview?.performance_review?.title ?? ""}
+              />
               <TextBlock
                 label="Description"
-                value={performanceReview.description}
+                value={performanceReview?.performance_review?.description ?? ""}
               />
             </div>
           ) : (
-            <>
-              <div className="w-full h-full flex flex-col items-center justify-start gap-4 overflow-y-auto">
-                {mappedSurveys}
-              </div>
-
-              <button className="w-full p-2 rounded-md bg-accent-blue font-bold text-neutral-100">
-                Submit
-              </button>
-            </>
+            <div className="w-full h-full flex flex-col items-center justify-start gap-4 overflow-y-auto">
+              {mappedSurveys}
+            </div>
           )}
-        </form>
+        </div>
       </div>
     </div>
   );

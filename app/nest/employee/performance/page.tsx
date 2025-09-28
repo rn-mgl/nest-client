@@ -1,27 +1,23 @@
 "use client";
 import ShowPerformanceReview from "@/src/components/employee/performance/ShowPerformanceReview";
+import BaseActions from "@/src/components/global/base/BaseActions";
+import BaseCard from "@/src/components/global/base/BaseCard";
 import Filter from "@/src/components/global/filter/Filter";
-import PerformanceReviewCard from "@/src/components/global/performance/PerformanceReviewCard";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
-import {
-  EmployeePerformanceReviewInterface,
-  PerformanceReviewInterface,
-} from "@/src/interface/PerformanceReviewInterface";
-import { UserInterface } from "@/src/interface/UserInterface";
+import { UserPerformanceReviewInterface } from "@/src/interface/PerformanceReviewInterface";
 import {
   EMPLOYEE_PERFORMANCE_REVIEW_SEARCH,
   EMPLOYEE_PERFORMANCE_REVIEW_SORT,
 } from "@/src/utils/filters";
+import { isUserSummary } from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 
 const Performance = () => {
   const [performanceReviews, setPerformanceReviews] = React.useState<
-    (PerformanceReviewInterface &
-      UserInterface &
-      EmployeePerformanceReviewInterface)[]
+    UserPerformanceReviewInterface[]
   >([]);
   const [activePerformanceReviewSeeMore, setActivePerformanceReviewSeeMore] =
     React.useState(0);
@@ -60,7 +56,6 @@ const Performance = () => {
               Authorization: `Bearer ${user.token}`,
             },
             withCredentials: true,
-            params: { ...search, ...sort },
           }
         );
 
@@ -71,32 +66,27 @@ const Performance = () => {
     } catch (error) {
       console.log(error);
     }
-  }, [url, user?.token, search, sort]);
+  }, [url, user?.token]);
 
   const mappedPerformanceReviews = performanceReviews.map(
     (performance, index) => {
+      const assignedBy = isUserSummary(performance.assigned_by)
+        ? performance.assigned_by.first_name
+        : null;
+
       return (
-        <PerformanceReviewCard
+        <BaseCard
           key={index}
-          role={user?.role ?? ""}
-          createdByCurrentUser={false}
-          //
-          title={performance.title}
-          description={performance.description}
-          status={performance.status}
-          //
-          id={performance.id}
-          email={performance.email}
-          email_verified_at={performance.email_verified_at}
-          first_name={performance.first_name}
-          last_name={performance.last_name}
-          //
-          handleActiveSeeMore={() =>
-            handleActivePerformanceReviewSeeMore(
-              performance.user_performance_review_id ?? 0
-            )
-          }
-        />
+          title={performance.performance_review.title}
+          description={performance.performance_review.description}
+          assignedBy={assignedBy}
+        >
+          <BaseActions
+            handleActiveSeeMore={() =>
+              handleActivePerformanceReviewSeeMore(performance.id ?? 0)
+            }
+          />
+        </BaseCard>
       );
     }
   );

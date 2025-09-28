@@ -216,9 +216,7 @@ const Leave = () => {
 
   const leaveRequestRows = leaveRequests.map((leave) => {
     {
-      const requestedAt = leave.created_at
-        ? normalizeDate(leave.created_at)
-        : "-";
+      const requestedAt = normalizeDate(leave.created_at);
 
       const start = normalizeDate(leave.start_date);
 
