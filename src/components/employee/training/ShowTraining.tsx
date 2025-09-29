@@ -1,15 +1,20 @@
 "use client";
 
+import Radio from "@/form/Radio";
+import TextBlock from "@/global/field/TextBlock";
+import TextField from "@/global/field/TextField";
+import ModalNav from "@/global/navigation/ModalNav";
 import useModalNav from "@/src/hooks/useModalNav";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
-  EmployeeTrainingInterface,
-  EmployeeTrainingReviewResponseInterface,
   TrainingContentInterface,
   TrainingInterface,
   TrainingReviewInterface,
+  UserTrainingInterface,
+  UserTrainingResponseInterface,
 } from "@/src/interface/TrainingInterface";
 import { getCSRFToken } from "@/src/utils/token";
+import { isUserTrainingResponseSummary } from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -17,30 +22,20 @@ import Link from "next/link";
 import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
 import { IoCheckmarkCircle, IoClose, IoCloseCircle } from "react-icons/io5";
-import Radio from "@/form/Radio";
-import TextBlock from "@/global/field/TextBlock";
-import TextField from "@/global/field/TextField";
-import ModalNav from "@/global/navigation/ModalNav";
 
 const ShowTraining: React.FC<ModalInterface> = (props) => {
   const [training, setTraining] = React.useState<
-    TrainingInterface &
-      EmployeeTrainingInterface & {
-        contents: TrainingContentInterface[];
-        reviews: (TrainingReviewInterface &
-          EmployeeTrainingReviewResponseInterface)[];
-      }
-  >({
-    title: "",
-    certificate: "",
-    contents: [],
-    reviews: [],
-    deadline: "",
-    deadline_days: 0,
-    description: "",
-    status: "",
-    score: null,
-  });
+    (UserTrainingInterface & { training: TrainingInterface }) | null
+  >(null);
+
+  const [contents, setContents] = React.useState<TrainingContentInterface[]>(
+    []
+  );
+  const [reviews, setReviews] = React.useState<
+    (TrainingReviewInterface & {
+      user_response: UserTrainingResponseInterface | null;
+    })[]
+  >([]);
 
   const { data: session } = useSession({ required: true });
   const { activeFormPage, handleActiveFormPage } = useModalNav("information");
@@ -53,31 +48,58 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
   ) => {
     const { value } = e.target;
 
-    setTraining((prev) => {
-      prev["reviews"][index] = {
-        ...prev["reviews"][index],
-        user_answer: parseInt(value),
+    setReviews((prev) => {
+      const reviews = [...prev];
+
+      reviews[index] = {
+        ...reviews[index],
+        user_response: {
+          ...(reviews[index].user_response ?? {
+            answer: 0,
+            created_at: "",
+            deleted_at: null,
+            response_from: user?.current ?? 0,
+            training_review_id: reviews[index].id ?? 0,
+            updated_at: "",
+          }),
+          answer: Number(value),
+        },
       };
 
-      return { ...prev };
+      return reviews;
     });
   };
 
   const getTraining = React.useCallback(async () => {
     try {
       if (user?.token) {
-        const { data: responseData } = await axios.get(
-          `${url}/employee/employee_training/${props.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-            withCredentials: true,
-          }
-        );
+        const { data: responseData } = await axios.get<{
+          training: UserTrainingInterface & {
+            training: TrainingInterface & {
+              reviews: (
+                | TrainingReviewInterface & {
+                    user_response: UserTrainingResponseInterface | null;
+                  }
+              )[];
+              contents: TrainingContentInterface[];
+            };
+          };
+        }>(`${url}/employee/employee_training/${props.id}`, {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+          withCredentials: true,
+        });
 
         if (responseData.training) {
-          setTraining(responseData.training);
+          const {
+            training: { reviews, contents, ...training },
+            ...userTraining
+          } = responseData.training;
+
+          setTraining({ ...userTraining, training });
+          setReviews(reviews);
+          setContents(contents);
         }
       }
     } catch (error) {
@@ -94,7 +116,15 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
       if (token && user?.token) {
         const { data: responseData } = await axios.post(
           `${url}/employee/employee_training_review_response`,
-          { reviews: training.reviews, training_id: training.training_id },
+          {
+            reviews: reviews
+              .filter((review) => review.user_response !== null)
+              .map((review) => ({
+                training_review_id: review.id ?? 0,
+                user_answer: review.user_response?.answer,
+              })),
+            training_id: training?.training.id,
+          },
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
@@ -113,7 +143,7 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
     }
   };
 
-  const mappedContents = training.contents.map((content, index) => {
+  const mappedContents = contents.map((content, index) => {
     const currentContent =
       content.content && typeof content.content === "string"
         ? content.content
@@ -152,7 +182,7 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
           <div className="w-full p-2 rounded-md bg-white border-2">
             <audio src={currentContent} controls={true} />
           </div>
-        ) : content.type === "file" ? (
+        ) : content.type === "application" ? (
           <div className="w-full p-2 rounded-md border-2 bg-white flex flex-row items-center justify-start">
             <Link
               href={currentContent}
@@ -172,23 +202,30 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
     );
   });
 
-  const mappedReviews = training.reviews.map((review, index) => {
-    const alreadyAnswered = review.user_training_review_response_id !== null;
+  const mappedReviews = reviews.map((review, index) => {
+    const alreadyAnswered =
+      review.user_response !== null &&
+      isUserTrainingResponseSummary(review.user_response) &&
+      review.user_response.id;
 
-    const mappedChoices = [1, 2, 3, 4].map((choice, index2) => {
+    const isCorrect = review.answer === review?.user_response?.answer;
+
+    const mappedChoices = [1, 2, 3, 4].map((choice) => {
       const currChoice =
         review[`choice_${choice}` as keyof TrainingReviewInterface];
 
+      const isChoiceSelected = review?.user_response?.answer === choice;
+
       return (
         <div
-          key={index2}
+          key={`${currChoice}-${choice}`}
           className="w-full flex flex-row items-center justify-between gap-2 "
         >
           {alreadyAnswered ? (
             <div className="p-1 rounded-md bg-white border-2">
               <div
                 className={`p-4 rounded-sm ${
-                  review.user_answer === choice ? "bg-accent-green" : "bg-white"
+                  isChoiceSelected ? "bg-accent-green" : "bg-white"
                 }`}
               ></div>
             </div>
@@ -196,7 +233,7 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
             <Radio
               name={`question_${index}_answer`}
               value={choice}
-              isChecked={review.user_answer === choice}
+              isChecked={isChoiceSelected}
               onChange={(e) => handleAnswer(e, index)}
             />
           )}
@@ -210,13 +247,13 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
 
     return (
       <div
-        key={index}
+        key={`${review.question}-${review.answer}`}
         className="w-full flex flex-col items-center justify-center gap-2"
       >
         <div className="w-full border-b-accent-blue border-b-2 py-2 flex flex-row items-center justify-start gap-2">
           <p>
             {alreadyAnswered ? (
-              review.is_correct ? (
+              isCorrect ? (
                 <IoCheckmarkCircle className="text-accent-green" />
               ) : (
                 <IoCloseCircle className="text-red-600" />
@@ -263,13 +300,19 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
           />
           {activeFormPage === "information" ? (
             <div className="w-full flex flex-col items-center justify-start gap-4 h-full">
-              <TextField label="Title" value={training.title} />
+              <TextField
+                label="Title"
+                value={training?.training?.title ?? ""}
+              />
               <TextField
                 label="Deadline"
-                value={training.deadline ?? "No Deadline"}
+                value={training?.deadline ?? "No Deadline"}
               />
-              <TextField label="Status" value={training.status} />
-              <TextBlock label="Description" value={training.description} />
+              <TextField label="Status" value={training?.status ?? ""} />
+              <TextBlock
+                label="Description"
+                value={training?.training?.description ?? ""}
+              />
             </div>
           ) : activeFormPage === "contents" ? (
             <div className="w-full h-full flex flex-col items-center justify-start gap-4 overflow-y-auto">
@@ -280,17 +323,17 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
               onSubmit={(e) => submitReview(e)}
               className="w-full h-full flex flex-col items-start justify-start gap-2 overflow-y-auto"
             >
-              {training.score !== null ? (
+              {training?.score !== null ? (
                 <div className="p-2 rounded-md bg-accent-purple font-bold text-white text-sm">
                   Score:{" "}
-                  <span className="text-accent-yellow">{training.score}</span> /{" "}
-                  {training.reviews.length}
+                  <span className="text-accent-yellow">{training?.score}</span>{" "}
+                  / {reviews.length}
                 </div>
               ) : null}
 
               {mappedReviews}
 
-              {training.score === null ? (
+              {training?.score === null ? (
                 <button className="w-full p-2 rounded-md bg-accent-purple text-neutral-100 font-bold mt-auto">
                   Submit
                 </button>

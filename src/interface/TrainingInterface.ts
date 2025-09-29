@@ -58,3 +58,13 @@ export interface UserTrainingInterface {
   training: TrainingInterface;
   deleted_at: string | null;
 }
+
+export interface UserTrainingResponseInterface {
+  id?: number;
+  response_from: number;
+  training_review_id: number;
+  answer: number;
+  created_at: "";
+  updated_at: "";
+  deleted_at: string | null;
+}

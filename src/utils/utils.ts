@@ -6,7 +6,10 @@ import {
 import { OnboardingInterface } from "@/interface/OnboardingInterface";
 import { PerformanceReviewInterface } from "@/interface/PerformanceReviewInterface";
 import { UserInterface } from "@/interface/UserInterface";
-import { TrainingInterface } from "../interface/TrainingInterface";
+import {
+  TrainingInterface,
+  UserTrainingResponseInterface,
+} from "../interface/TrainingInterface";
 import {
   DocumentInterface,
   FolderInterface,
@@ -56,6 +59,16 @@ export const isTrainingSummary = (
   value: number | object
 ): value is TrainingInterface => {
   return typeof value === "object" && value !== null;
+};
+
+export const isUserTrainingResponseSummary = (
+  value: object
+): value is UserTrainingResponseInterface => {
+  return (
+    "response_from" in value &&
+    "training_review_id" in value &&
+    "answer" in value
+  );
 };
 
 export const isDocumentSummary = (

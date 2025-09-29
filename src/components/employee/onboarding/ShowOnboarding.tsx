@@ -3,10 +3,6 @@ import TextBlock from "@/global/field/TextBlock";
 import TextField from "@/global/field/TextField";
 import ModalNav from "@/global/navigation/ModalNav";
 import useModalNav from "@/src/hooks/useModalNav";
-import {
-  CloudFileInterface,
-  RawFileInterface,
-} from "@/src/interface/FileInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
   OnboardingPolicyAcknowledgemenInterface,
@@ -30,9 +26,7 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
 
   const [requiredDocuments, setRequiredDocuments] = React.useState<
     (OnboardingRequiredDocumentsInterface & {
-      user_compliance: (UserOnboardingRequiredDocumentsInterface | null) & {
-        document: CloudFileInterface | RawFileInterface | null;
-      };
+      user_compliance: UserOnboardingRequiredDocumentsInterface | null;
     })[]
   >([]);
 
@@ -57,9 +51,7 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
           onboarding: UserOnboardingInterface & {
             onboarding: {
               required_documents: (OnboardingRequiredDocumentsInterface & {
-                user_compliance: (UserOnboardingRequiredDocumentsInterface | null) & {
-                  document: CloudFileInterface | null;
-                };
+                user_compliance: UserOnboardingRequiredDocumentsInterface | null;
               })[];
               policy_acknowledgements: (OnboardingPolicyAcknowledgemenInterface & {
                 user_acknowledgement: UserOnboardingPolicyAcknowledgemenInterface | null;
@@ -126,10 +118,19 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
+        const targetDocument = requiredDocuments[index];
+
+        if (
+          targetDocument.user_compliance === null ||
+          targetDocument.user_compliance.document === null
+        ) {
+          return;
+        }
+
         const {
           user_compliance: { document },
           ...requirement
-        } = requiredDocuments[index];
+        } = targetDocument;
 
         if (
           !document ||
@@ -174,9 +175,20 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
+        const targetDocument = requiredDocuments[index];
+
+        // if no file
+
+        if (
+          targetDocument.user_compliance === null ||
+          !targetDocument.user_compliance?.document
+        ) {
+          return;
+        }
+
         const {
           user_compliance: { document, id: documentId },
-        } = requiredDocuments[index];
+        } = targetDocument;
 
         if (
           !document ||
@@ -217,7 +229,11 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
     try {
       const { token } = await getCSRFToken();
 
-      const documentId = requiredDocuments[index].user_compliance.id;
+      const targetDocument = requiredDocuments[index];
+
+      if (targetDocument.user_compliance === null) return;
+
+      const documentId = targetDocument.user_compliance.id;
 
       if (token && user?.token) {
         const { data: responseData } = await axios.delete(
@@ -256,7 +272,11 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
       documents[index] = {
         ...documents[index],
         user_compliance: {
-          ...documents[index].user_compliance,
+          ...(documents[index].user_compliance ?? {
+            complied_by: user?.current ?? 0,
+            document: null,
+            required_document_id: 0,
+          }),
           document: { rawFile: file, fileURL: url },
         },
       };
@@ -268,6 +288,10 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
   const removeDocument = (index: number) => {
     setRequiredDocuments((prev) => {
       const documents = [...prev];
+
+      if (documents[index].user_compliance === null) {
+        return prev;
+      }
 
       documents[index] = {
         ...documents[index],

@@ -1,3 +1,4 @@
+import { CloudFileInterface, RawFileInterface } from "./FileInterface";
 import { UserInterface } from "./UserInterface";
 
 export interface OnboardingInterface {
@@ -40,6 +41,7 @@ export interface UserOnboardingRequiredDocumentsInterface {
   complied_by: number | UserInterface;
   required_document_id: number;
   requirement?: OnboardingRequiredDocumentsInterface;
+  document: CloudFileInterface | RawFileInterface | null;
 }
 
 export interface UserOnboardingPolicyAcknowledgemenInterface {
