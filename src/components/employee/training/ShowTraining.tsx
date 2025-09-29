@@ -14,7 +14,10 @@ import {
   UserTrainingResponseInterface,
 } from "@/src/interface/TrainingInterface";
 import { getCSRFToken } from "@/src/utils/token";
-import { isUserTrainingResponseSummary } from "@/src/utils/utils";
+import {
+  isCloudFileSummary,
+  isUserTrainingResponseSummary,
+} from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -99,7 +102,36 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
 
           setTraining({ ...userTraining, training });
           setReviews(reviews);
-          setContents(contents);
+          setContents(
+            contents.map((content) => {
+              if (typeof content.content === "string") {
+                content.type = "text";
+              } else if (
+                content.content &&
+                typeof content.content === "object" &&
+                isCloudFileSummary(content.content)
+              ) {
+                const mimeType = content.content.mime_type.split("/")[0];
+
+                content.type = [
+                  "text",
+                  "image",
+                  "video",
+                  "application",
+                  "audio",
+                ].includes(mimeType)
+                  ? (mimeType as
+                      | "text"
+                      | "image"
+                      | "video"
+                      | "application"
+                      | "audio")
+                  : "text";
+              }
+
+              return content;
+            })
+          );
         }
       }
     } catch (error) {
@@ -145,7 +177,11 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
 
   const mappedContents = contents.map((content, index) => {
     const currentContent =
-      content.content && typeof content.content === "string"
+      content.content &&
+      typeof content.content === "object" &&
+      isCloudFileSummary(content.content)
+        ? content.content.url
+        : typeof content.content === "string"
         ? content.content
         : "";
 
