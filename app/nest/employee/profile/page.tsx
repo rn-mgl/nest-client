@@ -2,29 +2,25 @@
 
 import ChangePassword from "@/src/components/employee/profile/ChangePassword";
 import EditEmployeeProfile from "@/src/components/employee/profile/EditEmployeeProfile";
-import { ProfileInterface } from "@/src/interface/ProfileInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
+import { isCloudFileSummary } from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import Image from "next/image";
 import React from "react";
 import { IoLockClosed, IoMail, IoPencil } from "react-icons/io5";
 
 const Profile = () => {
-  const [profile, setProfile] = React.useState<
-    UserInterface & ProfileInterface
-  >({
+  const [profile, setProfile] = React.useState<UserInterface>({
     first_name: "",
     last_name: "",
     email: "",
-    department: "",
     email_verified_at: "",
-    phone_number: "",
-    title: "",
-    user_id: 0,
-    image: "",
+    id: 0,
+    image: null,
     password: "",
+    verification_status: "Deactivated",
   });
+
   const [canEditProfile, setCanEditProfile] = React.useState(false);
   const [canChangePassword, setCanChangePassword] = React.useState(false);
 
@@ -75,7 +71,6 @@ const Profile = () => {
 
       {canEditProfile ? (
         <EditEmployeeProfile
-          profile={profile}
           toggleModal={handleCanEditProfile}
           refetchIndex={getProfile}
         />
@@ -84,18 +79,18 @@ const Profile = () => {
         <div className="w-full grid grid-cols-1 t:grid-cols-2 l-l:grid-cols-3 gap-4 items-start justify-start">
           <div className="w-full rounded-md bg-accent-blue p-4 flex flex-col items-center justify-start gap-2">
             {/* image */}
-            <div className="w-24 h-24 rounded-full bg-accent-purple border-8 border-white flex flex-col items-center justify-center relative overflow-hidden">
-              {typeof profile.image === "string" && profile.image !== "" ? (
-                <Image
-                  src={profile.image}
-                  alt="profile"
-                  width={200}
-                  height={200}
-                  className="absolute w-full"
-                />
-              ) : null}
-            </div>
-
+            <div
+              style={{
+                backgroundImage:
+                  profile.image &&
+                  typeof profile.image === "object" &&
+                  isCloudFileSummary(profile.image)
+                    ? `url(${profile.image.url})`
+                    : "",
+              }}
+              className="w-24 h-24 rounded-full bg-accent-purple border-8 border-white 
+                      flex flex-col items-center justify-center relative overflow-hidden bg-center bg-cover"
+            />
             {/* profile */}
             <div className="w-full flex flex-col items-center justify-start text-white">
               <div className="flex flex-col items-center justify-center gap-2 text-center">
@@ -129,9 +124,6 @@ const Profile = () => {
               </div>
             </div>
           </div>
-
-          <div className="w-full p-2 rounded-md bg-accent-green h-full"></div>
-          <div className="w-full p-2 rounded-md bg-accent-yellow h-full"></div>
         </div>
       </div>
     </div>
