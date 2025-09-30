@@ -1,22 +1,28 @@
 "use client";
 
-import DocumentCard from "@/src/components/global/document/DocumentCard";
+import BaseActions from "@/src/components/global/base/BaseActions";
+import BaseCard from "@/src/components/global/base/BaseCard";
 import FolderCard from "@/src/components/global/document/FolderCard";
 import ShowDocument from "@/src/components/global/document/ShowDocument";
 import Filter from "@/src/components/global/filter/Filter";
 import useCategory from "@/src/hooks/useCategory";
+import useFilterAndSort from "@/src/hooks/useFilterAndSort";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import {
-  FolderInterface,
   DocumentInterface,
+  FolderInterface,
 } from "@/src/interface/DocumentInterface";
-import { UserInterface } from "@/src/interface/UserInterface";
 import {
   EMPLOYEE_DOCUMENTS_CATEGORY,
   EMPLOYEE_DOCUMENTS_SEARCH,
   EMPLOYEE_DOCUMENTS_SORT,
 } from "@/src/utils/filters";
+import {
+  isDocumentSummary,
+  isFolderSummary,
+  isUserSummary,
+} from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -26,11 +32,12 @@ import { IoArrowBack } from "react-icons/io5";
 
 const Document = () => {
   const [documents, setDocuments] = React.useState<
-    ((DocumentInterface | FolderInterface) & UserInterface)[]
+    (DocumentInterface | FolderInterface)[]
   >([]);
   const [folder, setFolder] = React.useState<FolderInterface>({
-    name: "",
+    title: "",
     path: 0,
+    created_by: 0,
   });
   const [activeDocumentSeeMore, setActiveDocumentSeeMore] = React.useState(0);
 
@@ -38,9 +45,7 @@ const Document = () => {
   const { data: session } = useSession({ required: true });
   const user = session?.user;
   const params = useParams();
-  const folderId = params?.folder_id
-    ? parseInt(params?.folder_id as string)
-    : 0;
+  const folderId = params?.folder_id ? Number(params?.folder_id) : 0;
 
   const {
     search,
@@ -48,7 +53,7 @@ const Document = () => {
     handleCanSeeSearchDropDown,
     handleSearch,
     handleSelectSearch,
-  } = useSearch("name", "Name");
+  } = useSearch("title", "Title");
 
   const {
     category,
@@ -63,7 +68,7 @@ const Document = () => {
     handleCanSeeSortDropDown,
     handleSelectSort,
     handleToggleAsc,
-  } = useSort("name", "Name");
+  } = useSort("title", "Title");
 
   const handleActiveDocumentSeeMore = (id: number) => {
     setActiveDocumentSeeMore((prev) => (prev === id ? 0 : id));
@@ -78,8 +83,8 @@ const Document = () => {
             headers: {
               Authorization: `Bearer ${user.token}`,
             },
+            params: { path: folderId },
             withCredentials: true,
-            params: { path: folderId, ...search, ...sort, ...category },
           }
         );
 
@@ -90,7 +95,7 @@ const Document = () => {
     } catch (error) {
       console.log(error);
     }
-  }, [url, user?.token, folderId, search, sort, category]);
+  }, [url, user?.token, folderId]);
 
   const getFolder = React.useCallback(async () => {
     try {
@@ -114,46 +119,36 @@ const Document = () => {
     }
   }, [url, user?.token, folderId]);
 
-  const mappedDocuments = documents.map((document, index) => {
-    const type = "type" in document ? document.type : "folder";
-    const isDocument = type !== "folder";
+  console.log(documents);
+
+  const mappedDocuments = useFilterAndSort(
+    documents,
+    search,
+    sort,
+    category
+  ).map((document, index) => {
+    const isDocument = isDocumentSummary(document);
+    const isFolder = isFolderSummary(document);
+    const createdBy = isUserSummary(document.created_by)
+      ? document.created_by.first_name
+      : null;
 
     return isDocument ? (
-      <DocumentCard
-        role={user?.role ?? ""}
-        createdByCurrentUser={false}
+      <BaseCard
         key={index}
-        id={document.id}
-        name={document.name}
-        description={"description" in document ? document.description : ""}
-        document={"document" in document ? document.document : ""}
-        type={type}
-        //
-        first_name={document.first_name}
-        last_name={document.last_name}
-        email={document.email}
-        email_verified_at={document.email_verified_at}
-        id={document.id}
-        //
-        handleActiveSeeMore={() =>
-          handleActiveDocumentSeeMore(document.id ?? 0)
-        }
-      />
-    ) : (
-      <FolderCard
-        key={index}
-        role={user?.role ?? ""}
-        createdByCurrentUser={false}
-        id={document.id}
-        name={document.name}
-        //
-        first_name={document.first_name}
-        last_name={document.last_name}
-        email={document.email}
-        email_verified_at={document.email_verified_at}
-        id={document.id}
-      />
-    );
+        title={document.title}
+        description={document.description}
+        createdBy={createdBy}
+      >
+        <BaseActions
+          handleActiveSeeMore={() =>
+            handleActiveDocumentSeeMore(document.id ?? 0)
+          }
+        />
+      </BaseCard>
+    ) : isFolder ? (
+      <FolderCard key={index} createdBy={createdBy} folder={document} />
+    ) : null;
   });
 
   React.useEffect(() => {
@@ -191,6 +186,7 @@ const Document = () => {
           //
           categoryKeyValuePairs={EMPLOYEE_DOCUMENTS_CATEGORY}
           category={{
+            categoryKey: category.categoryKey,
             categoryValue: category.categoryValue,
             canSeeCategoryDropDown: canSeeCategoryDropDown,
             toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
@@ -210,15 +206,19 @@ const Document = () => {
         />
 
         {folderId ? (
-          <div className="w-full flex flex-row items-center justify-between">
+          <div className="w-full flex flex-col items-start justify-between t:w-40 gap-2">
+            <div className="w-full rounded-md bg-linear-to-br from-accent-yellow/30 to-accent-blue/30 p-2 text-center">
+              <p className="font-bold text-neutral-900">
+                {folder.title ?? "-"}
+              </p>
+            </div>
+
             <Link
-              href={`/nest/employee/document/${folder.path}`}
-              className="p-2 rounded-full hover:bg-neutral-100 transition-all"
+              href={`${folder.path}`}
+              className="p-2 rounded-md hover:bg-neutral-100 transition-all"
             >
               <IoArrowBack />
             </Link>
-
-            <p className="font-bold text-accent-blue">{folder.name}</p>
           </div>
         ) : null}
 

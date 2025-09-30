@@ -195,7 +195,6 @@ const HRDocument = () => {
     ) : isFolder ? (
       <FolderCard
         key={`${document.title}-${document.id}-folder`}
-        link={`/nest/${user?.role}/document/${document.id}`}
         createdBy={createdBy}
         folder={{ ...document }}
       >
@@ -342,17 +341,19 @@ const HRDocument = () => {
         </div>
 
         {folderId ? (
-          <div className="w-full flex flex-row items-center justify-between">
+          <div className="w-full flex flex-col items-start justify-between">
+            <div className="w-full rounded-md bg-linear-to-br from-accent-yellow/30 to-accent-blue/30 p-2 text-center">
+              <p className="font-bold text-neutral-900">
+                {folder.title ?? "-"}
+              </p>
+            </div>
+
             <Link
-              href={`/nest/hr/document/${
-                folder.path && typeof folder.path === "number" ? folder.path : 0
-              }`}
+              href={`${folder.path}`}
               className="p-2 rounded-full hover:bg-neutral-100 transition-all"
             >
               <IoArrowBack />
             </Link>
-
-            <p className="font-bold text-accent-blue">{folder.title}</p>
           </div>
         ) : null}
 

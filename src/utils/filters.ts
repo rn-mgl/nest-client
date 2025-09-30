@@ -581,14 +581,14 @@ export const EMPLOYEE_TRAINING_CATEGORY: CategoryPairsInterface[] = [
 export const EMPLOYEE_DOCUMENTS_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "type",
-    values: ["All", "Documents", "Folders"],
+    values: ["All", "Document", "Folder"],
   },
 ];
 
 export const EMPLOYEE_DOCUMENTS_SORT: SortPairsInterface[] = [
   {
-    key: "name",
-    label: "Name",
+    key: "title",
+    label: "Title",
   },
   {
     key: "created_at",
@@ -598,8 +598,8 @@ export const EMPLOYEE_DOCUMENTS_SORT: SortPairsInterface[] = [
 
 export const EMPLOYEE_DOCUMENTS_SEARCH: SearchPairsInterface[] = [
   {
-    key: "name",
-    label: "Name",
+    key: "title",
+    label: "Title",
   },
   {
     key: "description",
@@ -609,7 +609,7 @@ export const EMPLOYEE_DOCUMENTS_SEARCH: SearchPairsInterface[] = [
 
 export const EMPLOYEE_FOLDERS_SEARCH: SearchPairsInterface[] = [
   {
-    key: "name",
-    label: "Name",
+    key: "title",
+    label: "Title",
   },
 ];

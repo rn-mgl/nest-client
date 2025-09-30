@@ -8,7 +8,7 @@ const FolderCard: React.FC<FolderCardInterface> = ({ children, ...props }) => {
       <div className="flex flex-row items-start justify-between w-full">
         <div className="flex flex-col items-start justify-start">
           <Link
-            href={props.link}
+            href={String(props.folder.id) ?? "0"}
             className="font-bold truncate hover:underline"
           >
             {props.folder.title}
@@ -17,7 +17,7 @@ const FolderCard: React.FC<FolderCardInterface> = ({ children, ...props }) => {
         </div>
       </div>
 
-      {children}
+      {children ? children : null}
     </div>
   );
 };

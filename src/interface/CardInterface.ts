@@ -26,8 +26,8 @@ export interface EmployeeCardInterface {
 }
 
 export interface FolderCardInterface {
-  link: string;
+  // link: string;
   createdBy: string | null;
   folder: FolderInterface;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
