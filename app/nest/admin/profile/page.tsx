@@ -2,28 +2,23 @@
 
 import ChangePassword from "@/src/components/admin/profile/ChangePassword";
 import EditAdminProfile from "@/src/components/admin/profile/EditAdminProfile";
-import { ProfileInterface } from "@/src/interface/ProfileInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
+import { isCloudFileSummary } from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import Image from "next/image";
 import React from "react";
 import { IoLockClosed, IoLockOpen, IoMail, IoPencil } from "react-icons/io5";
 
 const AdminProfile = () => {
-  const [profile, setProfile] = React.useState<
-    UserInterface & ProfileInterface
-  >({
-    user_id: 0,
+  const [profile, setProfile] = React.useState<UserInterface>({
     first_name: "",
     last_name: "",
     email: "",
     email_verified_at: "",
     image: null,
     password: "",
-    title: "",
-    department: "",
-    phone_number: "",
+    id: 0,
+    verification_status: "Deactivated",
   });
   const [canEditProfile, setCanEditProfile] = React.useState(false);
   const [canChangePassword, setCanChangePassword] = React.useState(false);
@@ -71,7 +66,6 @@ const AdminProfile = () => {
     <div className="w-full flex flex-col items-center justify-start h-full">
       {canEditProfile ? (
         <EditAdminProfile
-          profile={profile}
           toggleModal={handleCanEditProfile}
           refetchIndex={getProfile}
         />
@@ -85,19 +79,17 @@ const AdminProfile = () => {
         <div className="w-full grid grid-cols-1 t:grid-cols-2 gap-4 l-l:grid-cols-3">
           <div className="w-full rounded-md bg-accent-blue flex flex-col items-center justify-center gap-2 p-4">
             {/* image */}
-            <div className="rounded-full w-24 h-24 bg-accent-purple border-8 border-white flex flex-col items-center justify-center">
-              {typeof profile.image === "string" && profile.image !== "" ? (
-                <div className="w-full h-full rounded-full flex flex-col items-center justify-center overflow-hidden relative">
-                  <Image
-                    src={profile.image}
-                    width={200}
-                    height={200}
-                    className="absolute w-full"
-                    alt="profile"
-                  />
-                </div>
-              ) : null}
-            </div>
+            <div
+              style={{
+                backgroundImage:
+                  profile.image &&
+                  typeof profile.image === "object" &&
+                  isCloudFileSummary(profile.image)
+                    ? `url(${profile.image.url})`
+                    : "",
+              }}
+              className="rounded-full w-24 h-24 bg-accent-purple border-8 border-white flex flex-col items-center justify-center bg-center bg-cover"
+            />
 
             {/* profile */}
             <div className="w-full flex flex-col items-center justify-start text-white">

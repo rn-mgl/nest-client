@@ -247,6 +247,7 @@ const AdminHR = () => {
           //
           categoryKeyValuePairs={ADMIN_HR_CATEGORY}
           category={{
+            categoryKey: category.categoryKey,
             categoryValue: category.categoryValue,
             canSeeCategoryDropDown: canSeeCategoryDropDown,
             toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,

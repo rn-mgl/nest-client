@@ -1,8 +1,8 @@
 "use client";
 import { AdminDashboardInterface } from "@/src/interface/DashboardInterface";
+import { isCloudFileSummary } from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import Image from "next/image";
 import React from "react";
 import {
   IoPeopleOutline,
@@ -48,28 +48,28 @@ const AdminDashboard = () => {
       return dateToCheck >= startOfWeek && dateToCheck <= endOfWeek;
     })
     .map((hr, index) => {
-      const hasImage = typeof hr.image === "string" && hr.image !== "";
-
       return (
         <div
           key={index}
           className="p-2 rounded-md bg-neutral-200 flex flex-row items-center justify-between gap-4 w-full"
         >
           <div
+            style={{
+              backgroundImage:
+                hr.image &&
+                typeof hr.image === "object" &&
+                isCloudFileSummary(hr.image)
+                  ? `url(${hr.image.url})`
+                  : "",
+            }}
             className={`rounded-full relative aspect-square p-4 ${
-              hasImage ? "bg-accent-blue/30" : "bg-accent-blue"
-            } flex flex-col items-center justify-center overflow-clip`}
-          >
-            {hasImage ? (
-              <Image
-                src={hr.image as string}
-                alt="profile"
-                width={300}
-                height={300}
-                className="absolute w-full"
-              />
-            ) : null}
-          </div>
+              hr.image &&
+              typeof hr.image === "object" &&
+              isCloudFileSummary(hr.image)
+                ? "bg-accent-blue/30"
+                : "bg-accent-blue"
+            } flex flex-col items-center justify-center overflow-clip bg-center bg-cover`}
+          ></div>
 
           <div className="w-full flex flex-col items-start justify-center">
             <p className="font-bold">

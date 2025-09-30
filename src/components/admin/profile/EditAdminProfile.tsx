@@ -1,28 +1,53 @@
 "use client";
 
+import Input from "@/form/Input";
 import { ModalInterface } from "@/src/interface/ModalInterface";
-import { ProfileInterface } from "@/src/interface/ProfileInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import { getCSRFToken } from "@/src/utils/token";
+import { isCloudFileSummary, isRawFileSummary } from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import Image from "next/image";
 import React from "react";
 import { IoClose, IoImage, IoPerson, IoTrash } from "react-icons/io5";
-import Input from "@/form/Input";
 
-const EditAdminProfile: React.FC<
-  ModalInterface & { profile: UserInterface & ProfileInterface }
-> = (props) => {
-  const [profile, setProfile] = React.useState<
-    UserInterface & ProfileInterface
-  >(props.profile);
+const EditAdminProfile: React.FC<ModalInterface> = (props) => {
+  const [profile, setProfile] = React.useState<UserInterface>({
+    first_name: "",
+    last_name: "",
+    email: "",
+    email_verified_at: "",
+    image: null,
+    password: "",
+    id: 0,
+    verification_status: "Deactivated",
+  });
 
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
   const user = session?.user;
-  const currentUser = user?.current;
+  const userToken = user?.token;
+  const userId = user?.current;
   const imageRef = React.useRef<HTMLInputElement>(null);
+
+  const getProfile = React.useCallback(async () => {
+    try {
+      if (userToken) {
+        const { data: responseData } = await axios.get(
+          `${url}/admin/profile/${userId}`,
+          {
+            headers: { Authorization: `Bearer ${userToken}` },
+            withCredentials: true,
+          }
+        );
+
+        if (responseData.profile) {
+          setProfile(responseData.profile);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, [userToken, userId, url]);
 
   const handleProfile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, files } = e.target;
@@ -68,21 +93,21 @@ const EditAdminProfile: React.FC<
       const { token } = await getCSRFToken();
 
       const formData = new FormData();
-      formData.append("first_name", profile.first_name);
-      formData.append("last_name", profile.last_name);
-      formData.append(
+      formData.set("first_name", profile.first_name);
+      formData.set("last_name", profile.last_name);
+      formData.set(
         "image",
-        typeof profile.image === "object" && profile.image?.rawFile
+        profile.image &&
+          typeof profile.image === "object" &&
+          isRawFileSummary(profile.image)
           ? profile.image.rawFile
-          : typeof profile.image === "string"
-          ? profile.image
           : ""
       );
-      formData.append("_method", "PATCH");
+      formData.set("_method", "PATCH");
 
       if (token && user?.token) {
         const { data: responseData } = await axios.post(
-          `${url}/admin/profile/${currentUser}`,
+          `${url}/admin/profile/${userId}`,
           formData,
           {
             headers: {
@@ -107,6 +132,10 @@ const EditAdminProfile: React.FC<
     }
   };
 
+  React.useEffect(() => {
+    getProfile();
+  }, [getProfile]);
+
   return (
     <div
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex items-center justify-center 
@@ -127,25 +156,21 @@ const EditAdminProfile: React.FC<
           className="w-full p-2 flex flex-col items-center justify-start gap-4 t:p-4"
         >
           <div className="w-full flex flex-col items-center justify-start gap-4">
-            <div className="w-40 aspect-square bg-accent-blue border-8 border-accent-yellow rounded-full bg-center bg-cover overflow-hidden flex flex-col items-center justify-center relative">
-              {typeof profile.image === "object" && profile.image?.fileURL ? (
-                <Image
-                  src={profile.image.fileURL}
-                  width={300}
-                  height={300}
-                  alt="profile"
-                  className="absolute w-full"
-                />
-              ) : typeof profile.image === "string" && profile.image !== "" ? (
-                <Image
-                  src={profile.image}
-                  width={300}
-                  height={300}
-                  alt="profile"
-                  className="absolute w-full"
-                />
-              ) : null}
-            </div>
+            <div
+              style={{
+                backgroundImage:
+                  profile.image &&
+                  typeof profile.image === "object" &&
+                  isCloudFileSummary(profile.image)
+                    ? `url(${profile.image})`
+                    : profile.image &&
+                      typeof profile.image === "object" &&
+                      isRawFileSummary(profile.image)
+                    ? `url(${profile.image.fileURL})`
+                    : "",
+              }}
+              className="w-40 bg-center bg-cover aspect-square bg-accent-blue border-8 border-accent-yellow rounded-full overflow-hidden flex flex-col items-center justify-center relative"
+            ></div>
 
             <div className="w-full flex flex-row items-center justify-between">
               <label
@@ -166,8 +191,10 @@ const EditAdminProfile: React.FC<
                 </p>
               </label>
 
-              {typeof profile.image === "object" ||
-              typeof profile.image === "string" ? (
+              {profile.image &&
+              typeof profile.image === "object" &&
+              (isCloudFileSummary(profile.image) ||
+                isRawFileSummary(profile.image)) ? (
                 <button
                   onClick={removeImage}
                   type="button"
