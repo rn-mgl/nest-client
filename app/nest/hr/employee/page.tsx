@@ -1,10 +1,10 @@
 "use client";
 
+import Tabs from "@/global/navigation/Tabs";
 import BaseActions from "@/src/components/global/base/BaseActions";
 import Table from "@/src/components/global/field/Table";
 import Filter from "@/src/components/global/filter/Filter";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
-import Tabs from "@/global/navigation/Tabs";
 import EmployeeCard from "@/src/components/hr/employee/EmployeeCard";
 import ShowEmployee from "@/src/components/hr/employee/ShowEmployee";
 import { useAlert } from "@/src/context/AlertContext";
@@ -52,11 +52,15 @@ import axios, { AxiosError } from "axios";
 
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { usePathname, useSearchParams } from "next/navigation";
-import React from "react";
+import { usePathname } from "next/navigation";
+import React, { use } from "react";
 import { IoCheckmark, IoClose } from "react-icons/io5";
 
-const HREmployee = () => {
+const HREmployee = ({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string }>;
+}) => {
   const [employees, setEmployees] = React.useState<UserInterface[]>([]);
   const [onboardings, setOnboardings] = React.useState<
     UserOnboardingInterface[]
@@ -126,9 +130,9 @@ const HREmployee = () => {
   const { data } = useSession({ required: true });
   const user = data?.user;
 
-  const params = useSearchParams();
+  const params = use(searchParams);
   const currentPath = usePathname();
-  const tab = params?.get("tab");
+  const tab = params.tab;
 
   const handleActiveEmployeeSeeMore = (id: number) => {
     setActiveEmployeeSeeMore((prev) => (prev === id ? 0 : id));

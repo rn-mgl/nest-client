@@ -25,7 +25,7 @@ import {
 import axios from "axios";
 
 import { useSession } from "next-auth/react";
-import React from "react";
+import React, { use } from "react";
 import { IoAdd, IoPencil, IoTrash } from "react-icons/io5";
 
 import Tabs from "@/global/navigation/Tabs";
@@ -42,9 +42,13 @@ import {
   normalizeDate,
   normalizeString,
 } from "@/src/utils/utils";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 
-const HRLeave = () => {
+const HRLeave = ({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string }>;
+}) => {
   const [canCreateLeaveType, setCanCreateLeaveType] = React.useState(false);
   const [activeEditLeaveType, setActiveEditLeaveType] = React.useState(0);
   const [activeDeleteLeaveType, setActiveDeleteLeaveType] = React.useState(0);
@@ -106,8 +110,8 @@ const HRLeave = () => {
   const user = data?.user;
 
   const currentPath = usePathname();
-  const params = useSearchParams();
-  const tab = params?.get("tab");
+  const params = use(searchParams);
+  const tab = params.tab;
 
   const handleActiveEditLeaveType = (id: number) => {
     setActiveEditLeaveType((prev) => (id === prev ? 0 : id));

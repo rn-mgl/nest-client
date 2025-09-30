@@ -25,11 +25,15 @@ import {
 import { normalizeDate, normalizeString } from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import { usePathname, useSearchParams } from "next/navigation";
-import React from "react";
+import { usePathname } from "next/navigation";
+import React, { use } from "react";
 import { IoPencil, IoTrash } from "react-icons/io5";
 
-const Leave = () => {
+const Leave = ({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string }>;
+}) => {
   const [leaveBalances, setLeaveBalances] = React.useState<
     LeaveBalanceInterface[]
   >([]);
@@ -46,8 +50,8 @@ const Leave = () => {
   const url = process.env.URL;
 
   const currentPath = usePathname();
-  const params = useSearchParams();
-  const tab = params?.get("tab");
+  const params = use(searchParams);
+  const tab = params.tab;
 
   const searchFilter = {
     balances: EMPLOYEE_LEAVE_BALANCE_SEARCH,
