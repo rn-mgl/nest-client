@@ -136,10 +136,9 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
 
     const formData = new FormData();
 
-    const certificate =
-      training.certificate && isRawFileSummary(training.certificate)
-        ? training.certificate.rawFile
-        : "";
+    const certificate = isRawFileSummary(training.certificate)
+      ? training.certificate.rawFile
+      : "";
 
     formData.set("title", training.title);
     formData.set("description", training.description);
@@ -155,12 +154,9 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
         type: content.type,
       };
       // ensure training file is using rawFile value if it is object
-      const trainingFile =
-        content.content &&
-        typeof content.content === "object" &&
-        isRawFileSummary(content.content)
-          ? content.content.rawFile
-          : "";
+      const trainingFile = isRawFileSummary(content.content)
+        ? content.content.rawFile
+        : "";
 
       formData.append(`contents[${index}]`, JSON.stringify(trainingContent));
       formData.append(`content_file[${index}]`, trainingFile);
@@ -201,12 +197,9 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
   };
 
   const mappedContents = contents.map((content, index) => {
-    const contentFile =
-      content.content &&
-      typeof content.content === "object" &&
-      isRawFileSummary(content.content)
-        ? content.content
-        : null;
+    const contentFile = isRawFileSummary(content.content)
+      ? content.content
+      : null;
 
     const dynamicContent =
       content.type === "text" && typeof content.content === "string" ? (
@@ -457,7 +450,6 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
                   accept="application/pdf"
                   type="application"
                   file={
-                    training.certificate &&
                     isRawFileSummary(training.certificate)
                       ? training.certificate.rawFile
                       : null

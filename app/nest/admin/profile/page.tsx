@@ -81,12 +81,9 @@ const AdminProfile = () => {
             {/* image */}
             <div
               style={{
-                backgroundImage:
-                  profile.image &&
-                  typeof profile.image === "object" &&
-                  isCloudFileSummary(profile.image)
-                    ? `url(${profile.image.url})`
-                    : "",
+                backgroundImage: isCloudFileSummary(profile.image)
+                  ? `url(${profile.image.url})`
+                  : "",
               }}
               className="rounded-full w-24 h-24 bg-accent-purple border-8 border-white flex flex-col items-center justify-center bg-center bg-cover"
             />

@@ -106,11 +106,7 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
             contents.map((content) => {
               if (typeof content.content === "string") {
                 content.type = "text";
-              } else if (
-                content.content &&
-                typeof content.content === "object" &&
-                isCloudFileSummary(content.content)
-              ) {
+              } else if (isCloudFileSummary(content.content)) {
                 const mimeType = content.content.mime_type.split("/")[0];
 
                 content.type = [
@@ -176,14 +172,11 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
   };
 
   const mappedContents = contents.map((content, index) => {
-    const currentContent =
-      content.content &&
-      typeof content.content === "object" &&
-      isCloudFileSummary(content.content)
-        ? content.content.url
-        : typeof content.content === "string"
-        ? content.content
-        : "";
+    const currentContent = isCloudFileSummary(content.content)
+      ? content.content.url
+      : typeof content.content === "string"
+      ? content.content
+      : "";
 
     return (
       <div

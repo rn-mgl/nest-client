@@ -61,11 +61,7 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
           setReviews(reviews);
           setContents(
             contents.map((content) => {
-              if (
-                content.content &&
-                typeof content.content === "object" &&
-                isCloudFileSummary(content.content)
-              ) {
+              if (isCloudFileSummary(content.content)) {
                 const mimeType = content.content.mime_type.split("/")[0];
 
                 content.type = [
@@ -95,9 +91,7 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
     const currentContent =
       typeof content.content === "string"
         ? content.content
-        : content.content &&
-          typeof content.content === "object" &&
-          isCloudFileSummary(content.content)
+        : isCloudFileSummary(content.content)
         ? content.content.url
         : "";
 
@@ -221,21 +215,20 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
                 <div className="flex flex-col items-start justify-center w-full gap-1">
                   <p className="text-xs">Certificate</p>
                   <div className="w-full h-full p-2 rounded-md border-2 bg-white flex flex-row">
-                    {training.certificate &&
-                      isCloudFileSummary(training.certificate) && (
-                        <Link
-                          href={training.certificate.url}
-                          target="_blank"
-                          className="flex flex-row items-center justify-center gap-2 group transition-all"
-                        >
-                          <div className="text-2xl aspect-square rounded-xs bg-accent-purple/50 p-2 group-hover:bg-accent-purple/80 transition-all">
-                            <AiFillFilePdf className="text-white" />
-                          </div>
-                          <span className="group-hover:underline underline-offset-2 transition-all text-sm">
-                            View {training.title} Certificate
-                          </span>
-                        </Link>
-                      )}
+                    {isCloudFileSummary(training.certificate) && (
+                      <Link
+                        href={training.certificate.url}
+                        target="_blank"
+                        className="flex flex-row items-center justify-center gap-2 group transition-all"
+                      >
+                        <div className="text-2xl aspect-square rounded-xs bg-accent-purple/50 p-2 group-hover:bg-accent-purple/80 transition-all">
+                          <AiFillFilePdf className="text-white" />
+                        </div>
+                        <span className="group-hover:underline underline-offset-2 transition-all text-sm">
+                          View {training.title} Certificate
+                        </span>
+                      </Link>
+                    )}
                   </div>
                 </div>
               </div>

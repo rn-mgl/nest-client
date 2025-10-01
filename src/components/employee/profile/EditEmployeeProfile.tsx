@@ -86,11 +86,7 @@ const EditEmployeeProfile: React.FC<ModalInterface> = (props) => {
         formData.set("last_name", profile.last_name);
         formData.set(
           "image",
-          profile.image &&
-            typeof profile.image === "object" &&
-            isRawFileSummary(profile.image)
-            ? profile.image.rawFile
-            : ""
+          isRawFileSummary(profile.image) ? profile.image.rawFile : ""
         );
         formData.set("_method", "PATCH");
 
@@ -158,16 +154,11 @@ const EditEmployeeProfile: React.FC<ModalInterface> = (props) => {
         >
           <div
             style={{
-              backgroundImage:
-                profile.image &&
-                typeof profile.image === "object" &&
-                isCloudFileSummary(profile.image)
-                  ? `url(${profile.image.url})`
-                  : profile.image &&
-                    typeof profile.image === "object" &&
-                    isRawFileSummary(profile.image)
-                  ? `url(${profile.image.fileURL})`
-                  : "",
+              backgroundImage: isCloudFileSummary(profile.image)
+                ? `url(${profile.image.url})`
+                : isRawFileSummary(profile.image)
+                ? `url(${profile.image.fileURL})`
+                : "",
             }}
             className="w-40 aspect-square bg-accent-blue rounded-full border-8 border-accent-yellow flex 
                     flex-col items-center justify-center relative overflow-hidden bg-center bg-cover"
@@ -188,10 +179,8 @@ const EditEmployeeProfile: React.FC<ModalInterface> = (props) => {
               <IoImage />
             </label>
 
-            {profile.image &&
-            typeof profile.image === "object" &&
-            (isRawFileSummary(profile.image) ||
-              isCloudFileSummary(profile.image)) ? (
+            {isRawFileSummary(profile.image) ||
+            isCloudFileSummary(profile.image) ? (
               <button
                 onClick={removeImage}
                 type="button"

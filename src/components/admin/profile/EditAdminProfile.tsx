@@ -97,11 +97,7 @@ const EditAdminProfile: React.FC<ModalInterface> = (props) => {
       formData.set("last_name", profile.last_name);
       formData.set(
         "image",
-        profile.image &&
-          typeof profile.image === "object" &&
-          isRawFileSummary(profile.image)
-          ? profile.image.rawFile
-          : ""
+        isRawFileSummary(profile.image) ? profile.image.rawFile : ""
       );
       formData.set("_method", "PATCH");
 
@@ -158,16 +154,11 @@ const EditAdminProfile: React.FC<ModalInterface> = (props) => {
           <div className="w-full flex flex-col items-center justify-start gap-4">
             <div
               style={{
-                backgroundImage:
-                  profile.image &&
-                  typeof profile.image === "object" &&
-                  isCloudFileSummary(profile.image)
-                    ? `url(${profile.image})`
-                    : profile.image &&
-                      typeof profile.image === "object" &&
-                      isRawFileSummary(profile.image)
-                    ? `url(${profile.image.fileURL})`
-                    : "",
+                backgroundImage: isCloudFileSummary(profile.image)
+                  ? `url(${profile.image})`
+                  : isRawFileSummary(profile.image)
+                  ? `url(${profile.image.fileURL})`
+                  : "",
               }}
               className="w-40 bg-center bg-cover aspect-square bg-accent-blue border-8 border-accent-yellow rounded-full overflow-hidden flex flex-col items-center justify-center relative"
             ></div>
@@ -191,10 +182,8 @@ const EditAdminProfile: React.FC<ModalInterface> = (props) => {
                 </p>
               </label>
 
-              {profile.image &&
-              typeof profile.image === "object" &&
-              (isCloudFileSummary(profile.image) ||
-                isRawFileSummary(profile.image)) ? (
+              {isCloudFileSummary(profile.image) ||
+              isRawFileSummary(profile.image) ? (
                 <button
                   onClick={removeImage}
                   type="button"

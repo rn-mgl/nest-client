@@ -70,12 +70,9 @@ const CreateDocument: React.FC<ModalInterface> = (props) => {
 
       const formData = new FormData();
 
-      const attachment =
-        document.document &&
-        typeof document.document === "object" &&
-        isRawFileSummary(document.document)
-          ? document.document.rawFile
-          : null;
+      const attachment = isRawFileSummary(document.document)
+        ? document.document.rawFile
+        : null;
 
       if (attachment === null) return;
 
@@ -175,8 +172,6 @@ const CreateDocument: React.FC<ModalInterface> = (props) => {
             removeSelectedFile={removeSelectedDocument}
             ref={documentRef}
             file={
-              document.document &&
-              typeof document.document === "object" &&
               isRawFileSummary(document.document)
                 ? document.document.rawFile
                 : null

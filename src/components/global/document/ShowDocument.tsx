@@ -86,8 +86,6 @@ const ShowDocument: React.FC<ModalInterface> = (props) => {
           <div className="w-full p-2 rounded-md border-2 bg-white flex flex-row items-center justify-start">
             <Link
               href={
-                document.document &&
-                typeof document.document === "object" &&
                 isCloudFileSummary(document.document)
                   ? document.document.url
                   : ""

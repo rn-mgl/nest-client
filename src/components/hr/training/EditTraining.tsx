@@ -106,11 +106,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
           populateReviewFields(reviews);
           populateContentFields(
             contents.map((content) => {
-              if (
-                content.content &&
-                typeof content.content === "object" &&
-                isCloudFileSummary(content.content)
-              ) {
+              if (isCloudFileSummary(content.content)) {
                 const mimeType = content.content.mime_type.split("/")[0];
 
                 content.type = [
@@ -210,7 +206,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
 
       formData.set(
         "certificate",
-        training.certificate && isRawFileSummary(training.certificate)
+        isRawFileSummary(training.certificate)
           ? training.certificate.rawFile
           : JSON.stringify(training.certificate)
       );
@@ -227,20 +223,20 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
         let trainingFile = null;
 
         // if the content type is an object, it's either a raw file or the cloud file
-        if (content.content && typeof content.content === "object") {
-          if (isRawFileSummary(content.content)) {
-            trainingFile = content.content.rawFile;
-            trainingContent.type = content.content.rawFile.type.split(
-              "/"
-            )[0] as "text" | "image" | "video" | "application";
-          } else if (isCloudFileSummary(content.content)) {
-            trainingFile = JSON.stringify(content.content);
-            trainingContent.type = content.content.mime_type.split("/")[0] as
-              | "text"
-              | "image"
-              | "video"
-              | "application";
-          }
+        if (isRawFileSummary(content.content)) {
+          trainingFile = content.content.rawFile;
+          trainingContent.type = content.content.rawFile.type.split("/")[0] as
+            | "text"
+            | "image"
+            | "video"
+            | "application";
+        } else if (isCloudFileSummary(content.content)) {
+          trainingFile = JSON.stringify(content.content);
+          trainingContent.type = content.content.mime_type.split("/")[0] as
+            | "text"
+            | "image"
+            | "video"
+            | "application";
         }
 
         formData.append(`contents[${index}]`, JSON.stringify(trainingContent));
@@ -291,19 +287,13 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
   };
 
   const mappedContents = contents.map((content, index) => {
-    const cloudFileContent =
-      content.content &&
-      typeof content.content === "object" &&
-      isCloudFileSummary(content.content)
-        ? content.content
-        : null;
+    const cloudFileContent = isCloudFileSummary(content.content)
+      ? content.content
+      : null;
 
-    const rawFileContent =
-      content.content &&
-      typeof content.content === "object" &&
-      isRawFileSummary(content.content)
-        ? content.content
-        : null;
+    const rawFileContent = isRawFileSummary(content.content)
+      ? content.content
+      : null;
 
     const dynamicContent =
       content.type === "text" ? (
@@ -641,8 +631,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
                 <label className="text-xs">Certificate</label>
 
                 {/* check if training.certificate instance is the uploaded */}
-                {training.certificate &&
-                isCloudFileSummary(training.certificate) ? (
+                {isCloudFileSummary(training.certificate) ? (
                   <div className="w-full h-full p-2 rounded-md border-2 bg-white flex flex-row relative">
                     <Link
                       href={training.certificate.url}
@@ -670,7 +659,6 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
                     accept="application/pdf"
                     type="application"
                     file={
-                      training.certificate &&
                       isRawFileSummary(training.certificate)
                         ? training.certificate.rawFile
                         : null

@@ -11,13 +11,13 @@ import { UserPerformanceReviewInterface } from "@/src/interface/PerformanceRevie
 import { UserTrainingInterface } from "@/src/interface/TrainingInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import {
+  isCloudFileSummary,
   isUserSummary,
   normalizeDate,
   normalizeString,
 } from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import Image from "next/image";
 import React from "react";
 import { IoClose, IoMail } from "react-icons/io5";
 
@@ -186,24 +186,14 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
             {/* photo and header */}
             <div className="w-full p-2 rounded-md bg-gradient-to-br from-accent-blue/30 to-accent-purple/30 h-32 t:h-40 relative flex flex-col items-center justify-center">
               <div
-                className={`absolute w-28 h-28 overflow-hidden rounded-full border-8 border-neutral-100 flex flex-col items-center justify-center
-                        bottom-0 translate-y-2/4 ${
-                          typeof employee.image === "string" &&
-                          employee.image !== ""
-                            ? "bg-accent-purple/30 backdrop-blur-lg"
-                            : "bg-accent-purple"
-                        }`}
-              >
-                {typeof employee.image === "string" && employee.image !== "" ? (
-                  <Image
-                    src={employee.image}
-                    alt="profile"
-                    className="absolute"
-                    width={300}
-                    height={300}
-                  />
-                ) : null}
-              </div>
+                style={{
+                  backgroundImage: isCloudFileSummary(employee.image)
+                    ? `url(${employee.image.url})`
+                    : "",
+                }}
+                className="absolute w-28 h-28 overflow-hidden rounded-full border-8 border-neutral-100 flex flex-col items-center justify-center
+                        bottom-0 translate-y-2/4 bg-center bg-cover"
+              />
             </div>
 
             {/* name and email */}
@@ -225,23 +215,19 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
             <div className="w-full p-2 rounded-md bg-accent-purple text-center text-neutral-100 font-medium">
               Onboardings
             </div>
-            {onboardings.length ? (
-              <div className="w-full">
-                <Table
-                  color="neutral"
-                  contents={mappedOnboardings}
-                  headers={[
-                    "Title",
-                    "Description",
-                    "Status",
-                    "Assigned On",
-                    "Assigned By",
-                  ]}
-                />
-              </div>
-            ) : (
-              <div>No Onboardings Found</div>
-            )}
+            <div className="w-full">
+              <Table
+                color="neutral"
+                contents={mappedOnboardings}
+                headers={[
+                  "Title",
+                  "Description",
+                  "Status",
+                  "Assigned On",
+                  "Assigned By",
+                ]}
+              />
+            </div>
           </div>
 
           {/* leave balances */}
@@ -249,23 +235,19 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
             <div className="w-full p-2 rounded-md bg-accent-purple font-medium text-neutral-100 text-center">
               Leave Balances
             </div>
-            {leaveBalances.length ? (
-              <div className="w-full overflow-x-auto">
-                <Table
-                  color="neutral"
-                  contents={mappedLeaveBalances}
-                  headers={[
-                    "Leave Type",
-                    "Description",
-                    "Balance",
-                    "Provided On",
-                    "Provided By",
-                  ]}
-                />
-              </div>
-            ) : (
-              <div>No Leaves Found</div>
-            )}
+            <div className="w-full overflow-x-auto">
+              <Table
+                color="neutral"
+                contents={mappedLeaveBalances}
+                headers={[
+                  "Leave Type",
+                  "Description",
+                  "Balance",
+                  "Provided On",
+                  "Provided By",
+                ]}
+              />
+            </div>
           </div>
 
           {/* leave requests */}
@@ -274,24 +256,20 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
               Leave Requests
             </div>
 
-            {leaveRequests.length ? (
-              <div className="w-full overflow-x-auto flex flex-col items-start justify-start">
-                <Table
-                  headers={[
-                    "Leave Type",
-                    "Reason",
-                    "Status",
-                    "Requested On",
-                    "Start",
-                    "End",
-                  ]}
-                  contents={mappedLeaveRequests}
-                  color="neutral"
-                />
-              </div>
-            ) : (
-              <div>No Leave Requests Found</div>
-            )}
+            <div className="w-full overflow-x-auto flex flex-col items-start justify-start">
+              <Table
+                headers={[
+                  "Leave Type",
+                  "Reason",
+                  "Status",
+                  "Requested On",
+                  "Start",
+                  "End",
+                ]}
+                contents={mappedLeaveRequests}
+                color="neutral"
+              />
+            </div>
           </div>
 
           {/* performance reviews */}
@@ -300,23 +278,19 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
               Performance Reviews
             </div>
 
-            {performanceReviews.length ? (
-              <div className="w-full">
-                <Table
-                  color="neutral"
-                  contents={mappedPerformanceReviews}
-                  headers={[
-                    "Title",
-                    "Description",
-                    "Status",
-                    "Assigned On",
-                    "Assigned By",
-                  ]}
-                />
-              </div>
-            ) : (
-              <div>No Performance Reviews Found</div>
-            )}
+            <div className="w-full">
+              <Table
+                color="neutral"
+                contents={mappedPerformanceReviews}
+                headers={[
+                  "Title",
+                  "Description",
+                  "Status",
+                  "Assigned On",
+                  "Assigned By",
+                ]}
+              />
+            </div>
           </div>
 
           {/* trainings */}
@@ -324,24 +298,18 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
             <div className="w-full p-2 rounded-md bg-accent-purple text-neutral-100 font-medium text-center">
               Trainings
             </div>
-            {trainings.length ? (
-              <div className="w-full">
-                <Table
-                  color="neutral"
-                  contents={mappedTrainings}
-                  headers={[
-                    "Title",
-                    "Description",
-                    "Status",
-                    "Deadline",
-                    "Assigned On",
-                    "Assigned By",
-                  ]}
-                />
-              </div>
-            ) : (
-              <div>No Trainings Found</div>
-            )}
+            <Table
+              color="neutral"
+              contents={mappedTrainings}
+              headers={[
+                "Title",
+                "Description",
+                "Status",
+                "Deadline",
+                "Assigned On",
+                "Assigned By",
+              ]}
+            />
           </div>
         </div>
       </div>

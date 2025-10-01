@@ -108,12 +108,10 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
 
       let file = null;
 
-      if (document.document && typeof document.document === "object") {
-        if (isRawFileSummary(document.document)) {
-          file = document.document.rawFile;
-        } else if (isCloudFileSummary(document.document)) {
-          file = JSON.stringify(document.document);
-        }
+      if (isRawFileSummary(document.document)) {
+        file = document.document.rawFile;
+      } else if (isCloudFileSummary(document.document)) {
+        file = JSON.stringify(document.document);
       }
 
       const formData = new FormData();
@@ -273,48 +271,46 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
           />
 
           <div className="w-full flex flex-col items-start justify-between gap-4">
-            {document.document && typeof document.document === "object" ? (
-              isRawFileSummary(document.document) ? (
-                <div className="p-2 w-full rounded-md border-2 bg-white flex flex-col items-center justify-center bg-center bg-cover relative">
-                  <div className="w-full flex flex-row items-center justify-start gap-2">
+            {isRawFileSummary(document.document) ? (
+              <div className="p-2 w-full rounded-md border-2 bg-white flex flex-col items-center justify-center bg-center bg-cover relative">
+                <div className="w-full flex flex-row items-center justify-start gap-2">
+                  <div className="aspect-square p-2.5 rounded-xs bg-accent-blue/50">
+                    <AiFillFilePdf className="text-white text-2xl" />
+                  </div>
+                  <p className="truncate text-sm">
+                    {document.document.rawFile.name}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={removeSelectedDocument}
+                  className="absolute -top-1 -right-1 bg-red-500 p-1 rounded-full"
+                >
+                  <IoClose className="text-sm" />
+                </button>
+              </div>
+            ) : isCloudFileSummary(document.document) ? (
+              <div className="p-2 w-full rounded-md border-2 bg-white flex flex-col items-center justify-center bg-center bg-cover relative">
+                <div className="w-full flex flex-row items-center justify-start gap-2">
+                  <Link
+                    href={document.document.url}
+                    target="_blank"
+                    className="flex flex-row items-center justify-center gap-2 group transition-all hover:underline underline-offset-2"
+                  >
                     <div className="aspect-square p-2.5 rounded-xs bg-accent-blue/50">
                       <AiFillFilePdf className="text-white text-2xl" />
                     </div>
-                    <p className="truncate text-sm">
-                      {document.document.rawFile.name}
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={removeSelectedDocument}
-                    className="absolute -top-1 -right-1 bg-red-500 p-1 rounded-full"
-                  >
-                    <IoClose className="text-sm" />
-                  </button>
+                    <span className="truncate text-sm">View Document?</span>
+                  </Link>
                 </div>
-              ) : isCloudFileSummary(document.document) ? (
-                <div className="p-2 w-full rounded-md border-2 bg-white flex flex-col items-center justify-center bg-center bg-cover relative">
-                  <div className="w-full flex flex-row items-center justify-start gap-2">
-                    <Link
-                      href={document.document.url}
-                      target="_blank"
-                      className="flex flex-row items-center justify-center gap-2 group transition-all hover:underline underline-offset-2"
-                    >
-                      <div className="aspect-square p-2.5 rounded-xs bg-accent-blue/50">
-                        <AiFillFilePdf className="text-white text-2xl" />
-                      </div>
-                      <span className="truncate text-sm">View Document?</span>
-                    </Link>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={removeSelectedDocument}
-                    className="absolute -top-1 -right-1 bg-red-500 p-1 rounded-full"
-                  >
-                    <IoClose className="text-sm" />
-                  </button>
-                </div>
-              ) : null
+                <button
+                  type="button"
+                  onClick={removeSelectedDocument}
+                  className="absolute -top-1 -right-1 bg-red-500 p-1 rounded-full"
+                >
+                  <IoClose className="text-sm" />
+                </button>
+              </div>
             ) : (
               <label
                 className="p-2 w-full h-16 rounded-md border-2  flex flex-row items-center 

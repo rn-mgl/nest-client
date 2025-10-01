@@ -79,9 +79,7 @@ const Profile = () => {
           <div className="w-full h-auto rounded-md bg-accent-blue p-4 flex flex-col items-center justify-start gap-2">
             {/* image */}
             <div className="w-24 h-24 rounded-full bg-accent-purple border-8 border-white flex flex-col items-center justify-center relative overflow-hidden">
-              {profile.image &&
-              typeof profile.image === "object" &&
-              isCloudFileSummary(profile.image) ? (
+              {isCloudFileSummary(profile.image) ? (
                 <Image
                   src={profile.image.url}
                   alt="profile"

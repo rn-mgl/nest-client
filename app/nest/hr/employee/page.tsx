@@ -302,10 +302,9 @@ const HREmployee = ({
       ? leave.requested_by
       : null;
 
-    const actionedBy =
-      leave.actioned_by !== null && isUserSummary(leave.actioned_by)
-        ? `${leave.actioned_by.first_name} ${leave.actioned_by.last_name}`
-        : null;
+    const actionedBy = isUserSummary(leave.actioned_by)
+      ? `${leave.actioned_by.first_name} ${leave.actioned_by.last_name}`
+      : null;
 
     const leaveType = isLeaveTypeSummary(leave.leave) ? leave.leave : null;
     const leaveBalance = isLeaveBalanceSummary(leave.leave_balance)

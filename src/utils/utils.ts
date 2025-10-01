@@ -19,52 +19,52 @@ import {
   RawFileInterface,
 } from "../interface/FileInterface";
 
-export const isUserSummary = (
-  value: number | object
-): value is UserInterface => {
+export const isUserSummary = (value: unknown): value is UserInterface => {
   return typeof value === "object" && value !== null;
 };
 
 export const isOnboardingSummary = (
-  value: number | object
+  value: unknown
 ): value is OnboardingInterface => {
   return typeof value === "object" && value !== null;
 };
 
 export const isLeaveTypeSummary = (
-  value: number | object
+  value: unknown
 ): value is LeaveTypeInterface => {
   return typeof value === "object" && value !== null;
 };
 
 export const isLeaveBalanceSummary = (
-  value: number | object
+  value: unknown
 ): value is LeaveBalanceInterface => {
   return typeof value === "object" && value !== null;
 };
 
 export const isLeaveRequestInterface = (
-  value: number | object
+  value: unknown
 ): value is LeaveRequestInterface => {
   return typeof value === "object" && value !== null;
 };
 
 export const isPerformanceReviewSummary = (
-  value: number | object
+  value: unknown
 ): value is PerformanceReviewInterface => {
   return typeof value === "object" && value !== null;
 };
 
 export const isTrainingSummary = (
-  value: number | object
+  value: unknown
 ): value is TrainingInterface => {
   return typeof value === "object" && value !== null;
 };
 
 export const isUserTrainingResponseSummary = (
-  value: object
+  value: unknown
 ): value is UserTrainingResponseInterface => {
   return (
+    typeof value === "object" &&
+    value !== null &&
     "response_from" in value &&
     "training_review_id" in value &&
     "answer" in value
@@ -72,28 +72,35 @@ export const isUserTrainingResponseSummary = (
 };
 
 export const isDocumentSummary = (
-  value: object
+  value: unknown
 ): value is DocumentInterface => {
   return (
     typeof value === "object" &&
+    value !== null &&
     "description" in value &&
     typeof value.description === "string"
   );
 };
 
-export const isFolderSummary = (value: object): value is FolderInterface => {
-  return typeof value === "object" && "description"! in value;
+export const isFolderSummary = (value: unknown): value is FolderInterface => {
+  return typeof value === "object" && value !== null && "description"! in value;
 };
 
-export const isRawFileSummary = (value: object): value is RawFileInterface => {
-  return typeof value === "object" && "rawFile" in value && "fileURL" in value;
+export const isRawFileSummary = (value: unknown): value is RawFileInterface => {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "rawFile" in value &&
+    "fileURL" in value
+  );
 };
 
 export const isCloudFileSummary = (
-  value: object
+  value: unknown
 ): value is CloudFileInterface => {
   return (
     typeof value === "object" &&
+    value !== null &&
     "original_name" in value &&
     "mime_type" in value &&
     "size" in value &&

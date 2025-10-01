@@ -81,12 +81,9 @@ const Profile = () => {
             {/* image */}
             <div
               style={{
-                backgroundImage:
-                  profile.image &&
-                  typeof profile.image === "object" &&
-                  isCloudFileSummary(profile.image)
-                    ? `url(${profile.image.url})`
-                    : "",
+                backgroundImage: isCloudFileSummary(profile.image)
+                  ? `url(${profile.image.url})`
+                  : "",
               }}
               className="w-24 h-24 rounded-full bg-accent-purple border-8 border-white 
                       flex flex-col items-center justify-center relative overflow-hidden bg-center bg-cover"

@@ -100,12 +100,10 @@ const EditHRProfile: React.FC<ModalInterface> = (props) => {
 
         let image = null;
 
-        if (profile.image && typeof profile.image === "object") {
-          if (isRawFileSummary(profile.image)) {
-            image = profile.image.rawFile;
-          } else if (isCloudFileSummary(profile.image)) {
-            image = JSON.stringify(profile.image);
-          }
+        if (isRawFileSummary(profile.image)) {
+          image = profile.image.rawFile;
+        } else if (isCloudFileSummary(profile.image)) {
+          image = JSON.stringify(profile.image);
         }
 
         formData.set("image", image ?? "");
@@ -163,24 +161,22 @@ const EditHRProfile: React.FC<ModalInterface> = (props) => {
         >
           <div className="w-full p-4 rounded-md bg-accent-yellow/40 flex flex-col items-center justify-center">
             <div className="w-40 aspect-square bg-accent-blue rounded-full border-8 border-accent-yellow flex flex-col items-center justify-center relative overflow-hidden">
-              {profile.image && typeof profile.image === "object" ? (
-                isRawFileSummary(profile.image) ? (
-                  <Image
-                    alt="Profile"
-                    width={300}
-                    height={300}
-                    src={profile.image.fileURL}
-                    className="absolute w-full"
-                  />
-                ) : isCloudFileSummary(profile.image) ? (
-                  <Image
-                    alt="Profile"
-                    width={300}
-                    height={300}
-                    src={profile.image.url}
-                    className="absolute w-full"
-                  />
-                ) : null
+              {isRawFileSummary(profile.image) ? (
+                <Image
+                  alt="Profile"
+                  width={300}
+                  height={300}
+                  src={profile.image.fileURL}
+                  className="absolute w-full"
+                />
+              ) : isCloudFileSummary(profile.image) ? (
+                <Image
+                  alt="Profile"
+                  width={300}
+                  height={300}
+                  src={profile.image.url}
+                  className="absolute w-full"
+                />
               ) : null}
             </div>
           </div>
@@ -200,10 +196,8 @@ const EditHRProfile: React.FC<ModalInterface> = (props) => {
               <IoImage />
             </label>
 
-            {profile.image &&
-            typeof profile.image === "object" &&
-            (isRawFileSummary(profile.image) ||
-              isCloudFileSummary(profile.image)) ? (
+            {isRawFileSummary(profile.image) ||
+            isCloudFileSummary(profile.image) ? (
               <button
                 onClick={removeImage}
                 type="button"

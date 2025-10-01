@@ -319,20 +319,16 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
         <TextField label="Title" value={document.title} />
         <TextBlock label="Description" value={document.description} />
 
-        {/* if there is no user compliance yet or the user compliance document is null, show the File input */}
+        {/* if there is no user compliance yet/the user compliance document is null/has file input content, show input file field */}
         {!document.user_compliance ||
         !document.user_compliance.document ||
-        (document.user_compliance.document &&
-          typeof document.user_compliance.document === "object" &&
-          isRawFileSummary(document.user_compliance.document)) ? (
+        isRawFileSummary(document.user_compliance.document) ? (
           <div className="w-full flex flex-col items-center justify-center gap-2">
             <File
               accept="application/pdf"
               file={
-                document.user_compliance &&
-                document.user_compliance.document &&
-                isRawFileSummary(document.user_compliance.document)
-                  ? document.user_compliance?.document.rawFile
+                isRawFileSummary(document.user_compliance?.document)
+                  ? document.user_compliance.document.rawFile
                   : null
               }
               ref={(el) => {
@@ -347,9 +343,7 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
               url=""
             />
 
-            {document.user_compliance &&
-            document.user_compliance.document &&
-            isRawFileSummary(document.user_compliance.document) ? (
+            {isRawFileSummary(document.user_compliance?.document) ? (
               <button
                 type="button"
                 onClick={
@@ -363,9 +357,7 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
               </button>
             ) : null}
           </div>
-        ) : document.user_compliance.document &&
-          typeof document.user_compliance.document === "object" &&
-          isCloudFileSummary(document.user_compliance.document) ? (
+        ) : isCloudFileSummary(document.user_compliance.document) ? (
           <div className="w-full p-3 rounded-md border-2 bg-white flex flex-col items-start justify-center relative">
             <Link
               href={document.user_compliance.document?.url}

@@ -55,16 +55,11 @@ const AdminDashboard = () => {
         >
           <div
             style={{
-              backgroundImage:
-                hr.image &&
-                typeof hr.image === "object" &&
-                isCloudFileSummary(hr.image)
-                  ? `url(${hr.image.url})`
-                  : "",
+              backgroundImage: isCloudFileSummary(hr.image)
+                ? `url(${hr.image.url})`
+                : "",
             }}
             className={`rounded-full relative aspect-square p-4 ${
-              hr.image &&
-              typeof hr.image === "object" &&
               isCloudFileSummary(hr.image)
                 ? "bg-accent-blue/30"
                 : "bg-accent-blue"
