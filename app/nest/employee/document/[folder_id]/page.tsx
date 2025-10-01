@@ -127,8 +127,6 @@ const Document = () => {
     [url, user?.token, folderId]
   );
 
-  console.log(documents);
-
   const mappedDocuments = useFilterAndSort(
     documents,
     search,
