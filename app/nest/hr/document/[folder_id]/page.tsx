@@ -43,7 +43,7 @@ const HRDocument = () => {
   const [canCreateDocument, setCanCreateDocument] = React.useState(false);
   const [folder, setFolder] = React.useState<FolderInterface>({
     title: "",
-    path: { label: "Home", value: 0 },
+    path: 0,
     created_by: 0,
   });
   const [canCreateFolder, setCanCreateFolder] = React.useState(false);
@@ -342,7 +342,7 @@ const HRDocument = () => {
 
         {folderId ? (
           <div className="w-full flex flex-col items-start justify-between">
-            <div className="w-full rounded-md bg-linear-to-br from-accent-yellow/30 to-accent-blue/30 p-2 text-center">
+            <div className="w-full t:w-40 rounded-md bg-linear-to-br from-accent-yellow/30 to-accent-blue/30 p-2 text-center">
               <p className="font-bold text-neutral-900">
                 {folder.title ?? "-"}
               </p>
@@ -357,7 +357,7 @@ const HRDocument = () => {
           </div>
         ) : null}
 
-        <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">
+        <div className="w-full gap-4 columns-1 space-y-4 t:columns-2 h-full *:break-inside-avoid l-l:columns-3">
           {mappedDocuments}
         </div>
       </div>

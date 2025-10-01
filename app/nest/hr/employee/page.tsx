@@ -39,6 +39,7 @@ import {
 } from "@/src/utils/filters";
 import { getCSRFToken } from "@/src/utils/token";
 import {
+  isCloudFileSummary,
   isLeaveBalanceSummary,
   isLeaveTypeSummary,
   isOnboardingSummary,
@@ -51,7 +52,6 @@ import {
 import axios, { AxiosError } from "axios";
 
 import { useSession } from "next-auth/react";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import React, { use } from "react";
 import { IoCheckmark, IoClose } from "react-icons/io5";
@@ -257,7 +257,9 @@ const HREmployee = ({
       : null;
 
     const assignedToImage =
-      typeof assignedTo?.image === "string" ? assignedTo?.image : null;
+      assignedTo && isCloudFileSummary(assignedTo.image)
+        ? assignedTo.image.url
+        : "";
 
     const onboardingDetails = isOnboardingSummary(onboarding.onboarding)
       ? onboarding.onboarding
@@ -266,20 +268,11 @@ const HREmployee = ({
     return {
       image: (
         <div
-          className={`flex flex-col items-center justify-center rounded-full overflow-clip relative max-w-10 aspect-square ${
+          style={{ backgroundImage: `url(${assignedToImage})` }}
+          className={`flex flex-col bg-center bg-cover items-center justify-center rounded-full overflow-clip relative max-w-10 aspect-square ${
             assignedToImage ? "bg-accent-blue/30" : "bg-accent-blue"
           }`}
-        >
-          {assignedToImage ? (
-            <Image
-              src={assignedToImage}
-              width={300}
-              height={300}
-              alt="profile"
-              className="absolute"
-            />
-          ) : null}
-        </div>
+        />
       ),
       first_name: assignedTo?.first_name ?? "-",
       last_name: assignedTo?.last_name ?? "-",
@@ -312,27 +305,20 @@ const HREmployee = ({
       : null;
 
     const requestedByImage =
-      typeof requestedBy?.image === "string" ? requestedBy.image : null;
+      requestedBy && isCloudFileSummary(requestedBy.image)
+        ? requestedBy.image.url
+        : "";
     const startOn = normalizeDate(leave.start_date);
     const endOn = normalizeDate(leave.end_date);
 
     return {
       image: (
         <div
-          className={`flex flex-col items-center justify-center rounded-full overflow-clip relative max-w-10 aspect-square ${
+          style={{ backgroundImage: `url(${requestedByImage})` }}
+          className={`flex flex-col items-center justify-center rounded-full overflow-clip relative max-w-10 bg-center bg-cover aspect-square ${
             requestedByImage ? "bg-accent-blue/30" : "bg-accent-blue"
           }`}
-        >
-          {requestedByImage ? (
-            <Image
-              src={requestedByImage}
-              width={300}
-              height={300}
-              alt="profile"
-              className="absolute"
-            />
-          ) : null}
-        </div>
+        />
       ),
       first_name: requestedBy?.first_name ?? "-",
       last_name: requestedBy?.last_name ?? "-",
@@ -386,9 +372,14 @@ const HREmployee = ({
     const assignedTo = isUserSummary(performance.assigned_to)
       ? performance.assigned_to
       : null;
+
     const assignedToImage =
-      typeof assignedTo?.image === "string" ? assignedTo.image : null;
+      assignedTo && isCloudFileSummary(assignedTo.image)
+        ? assignedTo.image.url
+        : "";
+
     const assignedOn = normalizeDate(performance.created_at);
+
     const performanceReview = isPerformanceReviewSummary(
       performance.performance_review
     )
@@ -398,21 +389,12 @@ const HREmployee = ({
     return {
       image: (
         <div
-          className={`max-w-10 flex flex-col items-center justify-center relative aspect-square rounded-full overflow-clip 
+          style={{ backgroundImage: `url(${assignedToImage})` }}
+          className={`max-w-10 flex flex-col items-center justify-center relative aspect-square rounded-full overflow-clip bg-center bg-cover
                       ${
                         assignedToImage ? "bg-accent-blue/30" : "bg-accent-blue"
                       }`}
-        >
-          {assignedToImage ? (
-            <Image
-              src={assignedToImage}
-              alt="profile"
-              width={300}
-              height={300}
-              className="absolute"
-            />
-          ) : null}
-        </div>
+        />
       ),
       first_name: assignedTo?.first_name ?? "-",
       last_name: assignedTo?.last_name ?? "-",
@@ -436,34 +418,31 @@ const HREmployee = ({
       : null;
 
     const assignedToImage =
-      typeof assignedTo?.image === "string" ? assignedTo.image : null;
+      assignedTo && isCloudFileSummary(assignedTo.image)
+        ? assignedTo.image.url
+        : "";
+
     const trainingDetails = isTrainingSummary(training.training)
       ? training.training
       : null;
+
     const deadline =
       typeof training.deadline === "string"
         ? normalizeDate(training.deadline)
         : "-";
+
     const assignedOn = normalizeDate(training.created_at);
 
     return {
       image: (
         <div
+          style={{ backgroundImage: `url(${assignedToImage})` }}
           className={`max-w-10 flex flex-col items-center justify-center relative aspect-square rounded-full overflow-clip 
+                      bg-center bg-cover
                       ${
                         assignedToImage ? "bg-accent-blue/30" : "bg-accent-blue"
                       }`}
-        >
-          {assignedToImage ? (
-            <Image
-              src={assignedToImage}
-              alt="profile"
-              width={300}
-              height={300}
-              className="absolute"
-            />
-          ) : null}
-        </div>
+        />
       ),
       first_name: assignedTo?.first_name ?? "-",
       last_name: assignedTo?.last_name ?? "-",

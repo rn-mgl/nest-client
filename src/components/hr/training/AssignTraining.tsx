@@ -3,6 +3,7 @@ import Table from "@/global/field/Table";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { AssignedTrainingInterface } from "@/src/interface/TrainingInterface";
 import { getCSRFToken } from "@/src/utils/token";
+import { isCloudFileSummary } from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
@@ -62,8 +63,15 @@ const AssignTraining: React.FC<ModalInterface> = (props) => {
   }, [url, user?.token, props.id]);
 
   const mappedUsers = userTrainings.map((user) => {
+    const userImage = isCloudFileSummary(user.image) ? user.image.url : "";
     const isChecked = assignedUsers.includes(user.id);
     return {
+      image: (
+        <div
+          style={{ backgroundImage: `url(${userImage})` }}
+          className="bg-accent-blue aspect-square w-10 rounded-full bg-center bg-cover"
+        />
+      ),
       first_name: user.first_name,
       last_name: user.last_name,
       email: user.email,
@@ -134,7 +142,7 @@ const AssignTraining: React.FC<ModalInterface> = (props) => {
           <Table
             color="neutral"
             contents={mappedUsers}
-            headers={["First Name", "Last Name", "Email", "Assign"]}
+            headers={["Image", "First Name", "Last Name", "Email", "Assign"]}
           />
 
           <button className="w-full p-2 rounded-md bg-accent-green text-neutral-100 mt-2 font-bold">

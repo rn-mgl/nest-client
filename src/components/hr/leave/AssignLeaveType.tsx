@@ -8,6 +8,7 @@ import Table from "@/global/field/Table";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd, IoClose, IoRemove } from "react-icons/io5";
+import { isCloudFileSummary } from "@/src/utils/utils";
 
 const AssignLeaveType: React.FC<ModalInterface> = (props) => {
   const [userLeaves, setUserLeaves] = React.useState<AssignedLeaveBalance[]>(
@@ -54,22 +55,14 @@ const AssignLeaveType: React.FC<ModalInterface> = (props) => {
 
     setUserLeaves((prev) => {
       const leaves = [...prev];
-      const targetUserLeave = { ...leaves[index] };
-
-      if (targetUserLeave.assigned_leave_balance === null) {
-        targetUserLeave.assigned_leave_balance = FALSE_LEAVE_BALANCE_DATA;
-      }
-
-      const updatedBalance = {
-        ...targetUserLeave.assigned_leave_balance,
-        balance: value,
-      };
 
       leaves[index] = {
-        ...targetUserLeave,
-        assigned_leave_balance: updatedBalance,
+        ...leaves[index],
+        assigned_leave_balance: {
+          ...(leaves[index].assigned_leave_balance ?? FALSE_LEAVE_BALANCE_DATA),
+          balance: value,
+        },
       };
-
       return leaves;
     });
   };
@@ -77,22 +70,13 @@ const AssignLeaveType: React.FC<ModalInterface> = (props) => {
   const handleAddLeaveBalance = (index: number) => {
     setUserLeaves((prev) => {
       const leaves = [...prev];
-      const targetUserLeave = { ...leaves[index] };
-
-      if (targetUserLeave.assigned_leave_balance === null) {
-        targetUserLeave.assigned_leave_balance = FALSE_LEAVE_BALANCE_DATA;
-      }
-
-      const balance = Number(targetUserLeave.assigned_leave_balance?.balance);
-
-      const updatedBalance = {
-        ...targetUserLeave.assigned_leave_balance,
-        balance: balance + 1,
-      };
 
       leaves[index] = {
-        ...targetUserLeave,
-        assigned_leave_balance: updatedBalance,
+        ...leaves[index],
+        assigned_leave_balance: {
+          ...(leaves[index].assigned_leave_balance ?? FALSE_LEAVE_BALANCE_DATA),
+          balance: Number(leaves[index].assigned_leave_balance?.balance) + 1,
+        },
       };
 
       return leaves;
@@ -102,22 +86,15 @@ const AssignLeaveType: React.FC<ModalInterface> = (props) => {
   const handleSubtractLeaveBalance = (index: number) => {
     setUserLeaves((prev) => {
       const leaves = [...prev];
-      const targetUserLeave = { ...leaves[index] };
-
-      if (targetUserLeave.assigned_leave_balance === null) {
-        targetUserLeave.assigned_leave_balance = FALSE_LEAVE_BALANCE_DATA;
-      }
-
-      const balance = Number(targetUserLeave.assigned_leave_balance.balance);
-
-      const updatedBalance = {
-        ...targetUserLeave.assigned_leave_balance,
-        balance: balance - 1 < 0 ? 0 : balance - 1,
-      };
-
       leaves[index] = {
-        ...targetUserLeave,
-        assigned_leave_balance: updatedBalance,
+        ...leaves[index],
+        assigned_leave_balance: {
+          ...(leaves[index].assigned_leave_balance ?? FALSE_LEAVE_BALANCE_DATA),
+          balance:
+            Number(leaves[index].assigned_leave_balance?.balance) - 1 < 0
+              ? 0
+              : Number(leaves[index].assigned_leave_balance?.balance) - 1,
+        },
       };
 
       return leaves;
@@ -185,9 +162,17 @@ const AssignLeaveType: React.FC<ModalInterface> = (props) => {
   };
 
   const mappedEmployees = userLeaves.map((user, index) => {
+    const userImage = isCloudFileSummary(user.image) ? user.image.url : "";
+
     const isChecked = assignedUsers.includes(user.id);
 
     return {
+      image: (
+        <div
+          style={{ backgroundImage: `url(${userImage})` }}
+          className="bg-accent-blue aspect-square w-10 rounded-full bg-center bg-cover"
+        />
+      ),
       first_name: user.first_name,
       last_name: user.last_name,
       email: user.email,
@@ -257,7 +242,14 @@ const AssignLeaveType: React.FC<ModalInterface> = (props) => {
           <Table
             color="neutral"
             contents={mappedEmployees}
-            headers={["First Name", "Last Name", "Email", "Balance", "Assign"]}
+            headers={[
+              "Image",
+              "First Name",
+              "Last Name",
+              "Email",
+              "Balance",
+              "Assign",
+            ]}
           />
 
           <button className="w-full p-2 rounded-md bg-accent-green text-neutral-100 mt-2 font-bold">

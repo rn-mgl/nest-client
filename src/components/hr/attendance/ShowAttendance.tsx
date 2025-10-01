@@ -3,7 +3,7 @@
 import { AttendanceInterface } from "@/src/interface/AttendanceInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
-import { normalizeDate } from "@/src/utils/utils";
+import { isCloudFileSummary, normalizeDate } from "@/src/utils/utils";
 import axios from "axios";
 
 import { useSession } from "next-auth/react";
@@ -54,6 +54,10 @@ const ShowAttendance: React.FC<ModalInterface & AttendanceDate> = (props) => {
 
   const mappedAttendanceDetails = userAttendances.map(
     (userAttendance, index) => {
+      const userImage = isCloudFileSummary(userAttendance.image)
+        ? userAttendance.image.url
+        : "";
+
       const login =
         typeof userAttendance.attendance.login_time === "string"
           ? normalizeDate(userAttendance.attendance.login_time)
@@ -79,7 +83,10 @@ const ShowAttendance: React.FC<ModalInterface & AttendanceDate> = (props) => {
           className="w-full min-w-[768px] grid grid-cols-6 gap-4 border-b-[1px] p-4 *:flex *:flex-row *:items-center *:justify-start"
         >
           <div className="col-span-2  gap-2 flex flex-row items-center justify-start">
-            <div className="w-10 h-10 min-w-10 min-h-10 rounded-full bg-accent-purple" />
+            <div
+              style={{ backgroundImage: `url(${userImage})` }}
+              className="w-10 h-10 min-w-10 min-h-10 rounded-full bg-accent-purple bg-center bg-cover"
+            />
             <p className=" truncate">
               {userAttendance.first_name} {userAttendance.last_name}
             </p>

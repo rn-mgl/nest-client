@@ -222,7 +222,7 @@ const Document = () => {
           </div>
         ) : null}
 
-        <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">
+        <div className="w-full gap-4 columns-1 space-y-4 t:columns-2 h-full *:break-inside-avoid l-l:columns-3">
           {mappedDocuments}
         </div>
       </div>

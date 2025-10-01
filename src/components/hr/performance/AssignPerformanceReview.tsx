@@ -3,6 +3,7 @@ import Table from "@/global/field/Table";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { AssignedPerformanceReviewInterface } from "@/src/interface/PerformanceReviewInterface";
 import { getCSRFToken } from "@/src/utils/token";
+import { isCloudFileSummary } from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
@@ -94,8 +95,16 @@ const AssignPerformanceReview: React.FC<ModalInterface> = (props) => {
   };
 
   const mappedUserPerformanceReviews = userPerformanceReviews.map((user) => {
+    const userImage = isCloudFileSummary(user.image) ? user.image.url : "";
+
     const isChecked = assignedUsers.includes(user.id);
     return {
+      image: (
+        <div
+          style={{ backgroundImage: `url(${userImage})` }}
+          className="bg-accent-blue aspect-square w-10 rounded-full bg-center bg-cover"
+        />
+      ),
       first_name: user.first_name,
       last_name: user.last_name,
       email: user.email,
@@ -134,7 +143,7 @@ const AssignPerformanceReview: React.FC<ModalInterface> = (props) => {
           <Table
             color="neutral"
             contents={mappedUserPerformanceReviews}
-            headers={["First Name", "Last Name", "Email", "Assign"]}
+            headers={["Image", "First Name", "Last Name", "Email", "Assign"]}
           />
 
           <button className="w-full p-2 rounded-md bg-accent-green text-neutral-100 font-bold mt-2">
