@@ -90,59 +90,67 @@ const Leave = ({
     handleSelectCategory,
   } = useCategory("status", "All");
 
-  const getLeaveBalances = React.useCallback(async () => {
-    try {
-      if (user?.token) {
-        const { data: responseData } = await axios.get(
-          `${url}/employee/leave_balance`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-            withCredentials: true,
+  const getLeaveBalances = React.useCallback(
+    async (controller?: AbortController) => {
+      try {
+        if (user?.token) {
+          const { data: responseData } = await axios.get(
+            `${url}/employee/leave_balance`,
+            {
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+              withCredentials: true,
+              signal: controller?.signal,
+            }
+          );
+
+          if (responseData.leave_balances) {
+            setLeaveBalances(responseData.leave_balances);
           }
-        );
-
-        if (responseData.leave_balances) {
-          setLeaveBalances(responseData.leave_balances);
         }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [user?.token, url]);
+    },
+    [user?.token, url]
+  );
 
-  const getLeaveRequests = React.useCallback(async () => {
-    try {
-      if (user?.token) {
-        const { data: responseData } = await axios.get(
-          `${url}/employee/leave_request`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-            withCredentials: true,
+  const getLeaveRequests = React.useCallback(
+    async (controller?: AbortController) => {
+      try {
+        if (user?.token) {
+          const { data: responseData } = await axios.get(
+            `${url}/employee/leave_request`,
+            {
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+              withCredentials: true,
+              signal: controller?.signal,
+            }
+          );
+
+          if (responseData.requests) {
+            setLeaveRequests(responseData.requests);
           }
-        );
-
-        if (responseData.requests) {
-          setLeaveRequests(responseData.requests);
         }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [url, user?.token]);
+    },
+    [url, user?.token]
+  );
 
   const getPageData = React.useCallback(
-    async (tab: string) => {
+    async (tab: string, controller: AbortController) => {
       try {
         switch (tab) {
           case "balances":
-            getLeaveBalances();
+            getLeaveBalances(controller);
             break;
           case "requests":
-            getLeaveRequests();
+            getLeaveRequests(controller);
             break;
         }
       } catch (error) {
@@ -261,7 +269,13 @@ const Leave = ({
   );
 
   React.useEffect(() => {
-    getPageData(activeTab);
+    const controller = new AbortController();
+
+    getPageData(activeTab, controller);
+
+    return () => {
+      controller.abort();
+    };
   }, [getPageData, activeTab]);
 
   React.useEffect(() => {

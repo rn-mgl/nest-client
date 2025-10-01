@@ -74,50 +74,58 @@ const Document = () => {
     setActiveDocumentSeeMore((prev) => (prev === id ? 0 : id));
   };
 
-  const getDocuments = React.useCallback(async () => {
-    try {
-      if (user?.token) {
-        const { data: responseData } = await axios.get(
-          `${url}/employee/document`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-            params: { path: folderId },
-            withCredentials: true,
+  const getDocuments = React.useCallback(
+    async (controller: AbortController) => {
+      try {
+        if (user?.token) {
+          const { data: responseData } = await axios.get(
+            `${url}/employee/document`,
+            {
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+              params: { path: folderId },
+              withCredentials: true,
+              signal: controller.signal,
+            }
+          );
+
+          if (responseData.documents) {
+            setDocuments(responseData.documents);
           }
-        );
-
-        if (responseData.documents) {
-          setDocuments(responseData.documents);
         }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [url, user?.token, folderId]);
+    },
+    [url, user?.token, folderId]
+  );
 
-  const getFolder = React.useCallback(async () => {
-    try {
-      if (user?.token && folderId) {
-        const { data: responseData } = await axios.get(
-          `${url}/employee/folder/${folderId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-            withCredentials: true,
+  const getFolder = React.useCallback(
+    async (controller: AbortController) => {
+      try {
+        if (user?.token && folderId) {
+          const { data: responseData } = await axios.get(
+            `${url}/employee/folder/${folderId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+              withCredentials: true,
+              signal: controller.signal,
+            }
+          );
+
+          if (responseData.folder) {
+            setFolder(responseData.folder);
           }
-        );
-
-        if (responseData.folder) {
-          setFolder(responseData.folder);
         }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [url, user?.token, folderId]);
+    },
+    [url, user?.token, folderId]
+  );
 
   console.log(documents);
 
@@ -152,11 +160,23 @@ const Document = () => {
   });
 
   React.useEffect(() => {
-    getDocuments();
+    const controller = new AbortController();
+
+    getDocuments(controller);
+
+    return () => {
+      controller.abort();
+    };
   }, [getDocuments]);
 
   React.useEffect(() => {
-    getFolder();
+    const controller = new AbortController();
+
+    getFolder(controller);
+
+    return () => {
+      controller.abort();
+    };
   }, [getFolder]);
 
   return (

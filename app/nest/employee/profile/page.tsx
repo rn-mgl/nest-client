@@ -29,27 +29,31 @@ const Profile = () => {
   const user = session?.user;
   const currentUser = user?.current;
 
-  const getProfile = React.useCallback(async () => {
-    try {
-      if (user?.token) {
-        const { data: responseData } = await axios.get(
-          `${url}/employee/profile/${currentUser}`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-            withCredentials: true,
-          }
-        );
+  const getProfile = React.useCallback(
+    async (controller?: AbortController) => {
+      try {
+        if (user?.token) {
+          const { data: responseData } = await axios.get(
+            `${url}/employee/profile/${currentUser}`,
+            {
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+              withCredentials: true,
+              signal: controller?.signal,
+            }
+          );
 
-        if (responseData.profile) {
-          setProfile(responseData.profile);
+          if (responseData.profile) {
+            setProfile(responseData.profile);
+          }
         }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [url, user?.token, currentUser]);
+    },
+    [url, user?.token, currentUser]
+  );
 
   const handleCanEditProfile = () => {
     setCanEditProfile((prev) => !prev);
@@ -60,7 +64,13 @@ const Profile = () => {
   };
 
   React.useEffect(() => {
-    getProfile();
+    const controller = new AbortController();
+
+    getProfile(controller);
+
+    return () => {
+      controller.abort();
+    };
   }, [getProfile]);
 
   return (

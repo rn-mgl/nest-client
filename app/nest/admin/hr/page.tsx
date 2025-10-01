@@ -75,24 +75,28 @@ const AdminHR = () => {
     window.location.href = `mailto:${email}`;
   };
 
-  const getAllHRs = React.useCallback(async () => {
-    try {
-      if (user?.token) {
-        const {
-          data: { hrs },
-        } = await axios.get(`${url}/admin/hr`, {
-          headers: {
-            Authorization: `Bearer ${user?.token}`,
-          },
-          withCredentials: true,
-        });
+  const getAllHRs = React.useCallback(
+    async (controller?: AbortController) => {
+      try {
+        if (user?.token) {
+          const {
+            data: { hrs },
+          } = await axios.get(`${url}/admin/hr`, {
+            headers: {
+              Authorization: `Bearer ${user?.token}`,
+            },
+            withCredentials: true,
+            signal: controller?.signal,
+          });
 
-        setHrs(hrs);
+          setHrs(hrs);
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [url, user?.token]);
+    },
+    [url, user?.token]
+  );
 
   const toggleVerification = async (hrId: number, toggle: boolean) => {
     try {
@@ -205,10 +209,14 @@ const AdminHR = () => {
     );
   });
 
-  console.log(category);
-
   React.useEffect(() => {
-    getAllHRs();
+    const controller = new AbortController();
+
+    getAllHRs(controller);
+
+    return () => {
+      controller.abort();
+    };
   }, [getAllHRs]);
 
   return (

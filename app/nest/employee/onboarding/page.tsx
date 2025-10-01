@@ -56,27 +56,31 @@ const Onboarding = () => {
     setActiveOnboardingSeeMore((prev) => (prev === id ? 0 : id));
   };
 
-  const getEmployeeOnboardings = React.useCallback(async () => {
-    try {
-      if (user?.token) {
-        const { data: responseData } = await axios.get(
-          `${url}/employee/employee_onboarding`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-            withCredentials: true,
-          }
-        );
+  const getEmployeeOnboardings = React.useCallback(
+    async (controller: AbortController) => {
+      try {
+        if (user?.token) {
+          const { data: responseData } = await axios.get(
+            `${url}/employee/employee_onboarding`,
+            {
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+              withCredentials: true,
+              signal: controller.signal,
+            }
+          );
 
-        if (responseData.onboardings) {
-          setEmployeeOnboardings(responseData.onboardings);
+          if (responseData.onboardings) {
+            setEmployeeOnboardings(responseData.onboardings);
+          }
         }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [url, user?.token]);
+    },
+    [url, user?.token]
+  );
 
   const mappedOnboardings = useFilterAndSort(
     employeeOnboardings,
@@ -105,7 +109,13 @@ const Onboarding = () => {
   });
 
   React.useEffect(() => {
-    getEmployeeOnboardings();
+    const controller = new AbortController();
+
+    getEmployeeOnboardings(controller);
+
+    return () => {
+      controller.abort();
+    };
   }, [getEmployeeOnboardings]);
 
   return (

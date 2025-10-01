@@ -50,26 +50,30 @@ const Training = () => {
     setActiveTrainingSeeMore((prev) => (prev === id ? 0 : id));
   };
 
-  const getTrainings = React.useCallback(async () => {
-    try {
-      if (user?.token) {
-        const { data: responseData } = await axios.get<{
-          trainings: UserTrainingInterface[];
-        }>(`${url}/employee/employee_training`, {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-          withCredentials: true,
-        });
+  const getTrainings = React.useCallback(
+    async (controller: AbortController) => {
+      try {
+        if (user?.token) {
+          const { data: responseData } = await axios.get<{
+            trainings: UserTrainingInterface[];
+          }>(`${url}/employee/employee_training`, {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+            withCredentials: true,
+            signal: controller.signal,
+          });
 
-        if (responseData.trainings) {
-          setTrainings(responseData.trainings);
+          if (responseData.trainings) {
+            setTrainings(responseData.trainings);
+          }
         }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [url, user?.token]);
+    },
+    [url, user?.token]
+  );
 
   const mappedTrainings = trainings.map((training, index) => {
     const assignedBy = isUserSummary(training.assigned_by)
@@ -93,7 +97,13 @@ const Training = () => {
   });
 
   React.useEffect(() => {
-    getTrainings();
+    const controller = new AbortController();
+
+    getTrainings(controller);
+
+    return () => {
+      controller.abort();
+    };
   }, [getTrainings]);
 
   return (

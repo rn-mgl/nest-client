@@ -46,27 +46,31 @@ const Performance = () => {
     setActivePerformanceReviewSeeMore((prev) => (prev === id ? 0 : id));
   };
 
-  const getPerformanceReviews = React.useCallback(async () => {
-    try {
-      if (user?.token) {
-        const { data: responseData } = await axios.get(
-          `${url}/employee/employee_performance_review`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-            withCredentials: true,
-          }
-        );
+  const getPerformanceReviews = React.useCallback(
+    async (controller?: AbortController) => {
+      try {
+        if (user?.token) {
+          const { data: responseData } = await axios.get(
+            `${url}/employee/employee_performance_review`,
+            {
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+              withCredentials: true,
+              signal: controller?.signal,
+            }
+          );
 
-        if (responseData.performance_reviews) {
-          setPerformanceReviews(responseData.performance_reviews);
+          if (responseData.performance_reviews) {
+            setPerformanceReviews(responseData.performance_reviews);
+          }
         }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [url, user?.token]);
+    },
+    [url, user?.token]
+  );
 
   const mappedPerformanceReviews = performanceReviews.map(
     (performance, index) => {
@@ -92,7 +96,13 @@ const Performance = () => {
   );
 
   React.useEffect(() => {
-    getPerformanceReviews();
+    const controller = new AbortController();
+
+    getPerformanceReviews(controller);
+
+    return () => {
+      controller.abort();
+    };
   }, [getPerformanceReviews]);
 
   return (
