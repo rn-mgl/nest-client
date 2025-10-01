@@ -88,7 +88,7 @@ const HRAttendance = () => {
   };
 
   const getAttendanceStatistics = React.useCallback(
-    async (abort: AbortController) => {
+    async (controller: AbortController) => {
       try {
         if (user?.token) {
           const { data: statistics } = await axios.get(`${url}/hr/attendance`, {
@@ -101,7 +101,7 @@ const HRAttendance = () => {
               activeMonth: activeMonth.value + 1,
               activeYear: Number(activeYear),
             },
-            signal: abort.signal,
+            signal: controller.signal,
           });
 
           if (statistics) {
@@ -109,8 +109,7 @@ const HRAttendance = () => {
           }
         }
       } catch (error) {
-        console.log(axios.isCancel(error));
-        console.log(axios.isAxiosError);
+        console.log(error);
       }
     },
     [url, user?.token, activeDate, activeMonth, activeYear]
@@ -171,12 +170,12 @@ const HRAttendance = () => {
   });
 
   React.useEffect(() => {
-    const abort = new AbortController();
+    const controller = new AbortController();
 
-    getAttendanceStatistics(abort);
+    getAttendanceStatistics(controller);
 
     return () => {
-      abort.abort();
+      controller.abort();
     };
   }, [getAttendanceStatistics]);
 

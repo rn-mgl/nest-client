@@ -76,30 +76,34 @@ const HROnboarding = () => {
     setActiveAssignOnboarding((prev) => (id === prev ? 0 : id));
   };
 
-  const getOnboardings = React.useCallback(async () => {
-    handleIsLoading(true);
-    try {
-      if (user?.token) {
-        const { data: allOnboarding } = await axios.get(
-          `${url}/hr/onboarding`,
-          {
-            headers: {
-              Authorization: `Bearer ${user?.token}`,
-            },
-            withCredentials: true,
-          }
-        );
+  const getOnboardings = React.useCallback(
+    async (controller?: AbortController) => {
+      handleIsLoading(true);
+      try {
+        if (user?.token) {
+          const { data: allOnboarding } = await axios.get(
+            `${url}/hr/onboarding`,
+            {
+              headers: {
+                Authorization: `Bearer ${user?.token}`,
+              },
+              signal: controller?.signal,
+              withCredentials: true,
+            }
+          );
 
-        setOnboardings(allOnboarding.onboardings);
+          setOnboardings(allOnboarding.onboardings);
 
+          handleIsLoading(false);
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
         handleIsLoading(false);
       }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      handleIsLoading(false);
-    }
-  }, [url, user?.token, handleIsLoading]);
+    },
+    [url, user?.token, handleIsLoading]
+  );
 
   const mappedOnboardings = useFilterAndSort(onboardings, search, sort).map(
     (onboarding) => {
@@ -135,7 +139,13 @@ const HROnboarding = () => {
   );
 
   React.useEffect(() => {
-    getOnboardings();
+    const controller = new AbortController();
+
+    getOnboardings(controller);
+
+    return () => {
+      controller.abort();
+    };
   }, [getOnboardings]);
 
   return (

@@ -80,27 +80,31 @@ const PerformanceReview = () => {
     setActiveAssignPerformanceReview((prev) => (prev === id ? 0 : id));
   };
 
-  const getPerformanceReviews = React.useCallback(async () => {
-    try {
-      if (user?.token) {
-        const { data: allPerformanceReviews } = await axios.get(
-          `${url}/hr/performance_review`,
-          {
-            headers: {
-              Authorization: `Bearer ${user?.token}`,
-            },
-            withCredentials: true,
-          }
-        );
+  const getPerformanceReviews = React.useCallback(
+    async (controller?: AbortController) => {
+      try {
+        if (user?.token) {
+          const { data: allPerformanceReviews } = await axios.get(
+            `${url}/hr/performance_review`,
+            {
+              headers: {
+                Authorization: `Bearer ${user?.token}`,
+              },
+              withCredentials: true,
+              signal: controller?.signal,
+            }
+          );
 
-        if (allPerformanceReviews.performances) {
-          setPerformanceReviews(allPerformanceReviews.performances);
+          if (allPerformanceReviews.performances) {
+            setPerformanceReviews(allPerformanceReviews.performances);
+          }
         }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [url, user?.token]);
+    },
+    [url, user?.token]
+  );
 
   const mappedPerformanceReviews = useFilterAndSort(
     performances,
@@ -141,7 +145,13 @@ const PerformanceReview = () => {
   });
 
   React.useEffect(() => {
-    getPerformanceReviews();
+    const controller = new AbortController();
+
+    getPerformanceReviews(controller);
+
+    return () => {
+      controller.abort();
+    };
   }, [getPerformanceReviews]);
 
   return (

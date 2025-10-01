@@ -73,28 +73,32 @@ const HRTraining = () => {
     setActiveAssignTraining((prev) => (prev === id ? 0 : id));
   };
 
-  const getTrainings = React.useCallback(async () => {
-    try {
-      handleIsLoading(true);
+  const getTrainings = React.useCallback(
+    async (controller?: AbortController) => {
+      try {
+        handleIsLoading(true);
 
-      if (user?.token) {
-        const { data } = await axios.get(`${url}/hr/training`, {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-          withCredentials: true,
-        });
+        if (user?.token) {
+          const { data } = await axios.get(`${url}/hr/training`, {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+            withCredentials: true,
+            signal: controller?.signal,
+          });
 
-        if (data.trainings) {
-          setTrainings(data.trainings);
+          if (data.trainings) {
+            setTrainings(data.trainings);
+          }
         }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        handleIsLoading(false);
       }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      handleIsLoading(false);
-    }
-  }, [user?.token, url, handleIsLoading]);
+    },
+    [user?.token, url, handleIsLoading]
+  );
 
   const mappedTrainings = useFilterAndSort(trainings, search, sort).map(
     (training) => {
@@ -123,7 +127,13 @@ const HRTraining = () => {
   );
 
   React.useEffect(() => {
-    getTrainings();
+    const controller = new AbortController();
+
+    getTrainings(controller);
+
+    return () => {
+      controller.abort();
+    };
   }, [getTrainings]);
 
   if (isLoading) {

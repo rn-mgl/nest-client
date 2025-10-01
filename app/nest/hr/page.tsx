@@ -51,28 +51,38 @@ const HRDashboard = () => {
   const { data: session } = useSession({ required: true });
   const user = session?.user;
 
-  const getDashboard = React.useCallback(async () => {
-    try {
-      if (user?.token) {
-        const { data: responseData } = await axios.get<HRDashboardInterface>(
-          `${url}/hr/dashboard`,
-          {
-            headers: { Authorization: `Bearer ${user?.token}` },
-            withCredentials: true,
-          }
-        );
+  const getDashboard = React.useCallback(
+    async (controller: AbortController) => {
+      try {
+        if (user?.token) {
+          const { data: responseData } = await axios.get<HRDashboardInterface>(
+            `${url}/hr/dashboard`,
+            {
+              headers: { Authorization: `Bearer ${user?.token}` },
+              withCredentials: true,
+              signal: controller.signal,
+            }
+          );
 
-        if (responseData) {
-          setDashboard(responseData);
+          if (responseData) {
+            setDashboard(responseData);
+          }
         }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [url, user?.token]);
+    },
+    [url, user?.token]
+  );
 
   React.useEffect(() => {
-    getDashboard();
+    const controller = new AbortController();
+
+    getDashboard(controller);
+
+    return () => {
+      controller.abort();
+    };
   }, [getDashboard]);
 
   return (

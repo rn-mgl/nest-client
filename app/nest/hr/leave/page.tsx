@@ -141,68 +141,83 @@ const HRLeave = ({
     setSelectedLeaveRequest((prev) => (prev === id ? 0 : id));
   };
 
-  const getLeaveTypes = React.useCallback(async () => {
-    try {
-      if (user?.token) {
-        const { data: responseData } = await axios.get(`${url}/hr/leave_type`, {
-          headers: {
-            Authorization: `Bearer ${user?.token}`,
-          },
-          withCredentials: true,
-        });
+  const getLeaveTypes = React.useCallback(
+    async (controller?: AbortController) => {
+      try {
+        if (user?.token) {
+          const { data: responseData } = await axios.get(
+            `${url}/hr/leave_type`,
+            {
+              headers: {
+                Authorization: `Bearer ${user?.token}`,
+              },
+              withCredentials: true,
+              signal: controller?.signal,
+            }
+          );
 
-        if (responseData.leaves) {
-          setLeaveTypes(responseData.leaves);
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [url, user?.token]);
-
-  const getLeaveBalances = React.useCallback(async () => {
-    try {
-      if (user?.token) {
-        const { data: responseData } = await axios.get(
-          `${url}/hr/leave_balance`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-            withCredentials: true,
+          if (responseData.leaves) {
+            setLeaveTypes(responseData.leaves);
           }
-        );
-
-        if (responseData.balances) {
-          setLeaveBalances(responseData.balances);
         }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [url, user?.token]);
+    },
+    [url, user?.token]
+  );
 
-  const getLeaveRequest = React.useCallback(async () => {
-    try {
-      if (user?.token) {
-        const { data: responseData } = await axios.get(
-          `${url}/hr/leave_request`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-            withCredentials: true,
+  const getLeaveBalances = React.useCallback(
+    async (controller?: AbortController) => {
+      try {
+        if (user?.token) {
+          const { data: responseData } = await axios.get(
+            `${url}/hr/leave_balance`,
+            {
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+              withCredentials: true,
+              signal: controller?.signal,
+            }
+          );
+
+          if (responseData.balances) {
+            setLeaveBalances(responseData.balances);
           }
-        );
-
-        if (responseData.requests) {
-          setLeaveRequest(responseData.requests);
         }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [url, user?.token]);
+    },
+    [url, user?.token]
+  );
+
+  const getLeaveRequest = React.useCallback(
+    async (controller?: AbortController) => {
+      try {
+        if (user?.token) {
+          const { data: responseData } = await axios.get(
+            `${url}/hr/leave_request`,
+            {
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+              withCredentials: true,
+              signal: controller?.signal,
+            }
+          );
+
+          if (responseData.requests) {
+            setLeaveRequest(responseData.requests);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [url, user?.token]
+  );
 
   const handleFilters = React.useCallback(
     (tab: string) => {
@@ -228,16 +243,16 @@ const HRLeave = ({
   );
 
   const getPageData = React.useCallback(
-    async (tab: string) => {
+    async (tab: string, controller: AbortController) => {
       switch (tab) {
         case "types":
-          await getLeaveTypes();
+          await getLeaveTypes(controller);
           break;
         case "balances":
-          await getLeaveBalances();
+          await getLeaveBalances(controller);
           break;
         case "requests":
-          await getLeaveRequest();
+          await getLeaveRequest(controller);
           break;
       }
     },
@@ -332,7 +347,13 @@ const HRLeave = ({
   }, [setActiveTab, tab]);
 
   React.useEffect(() => {
-    getPageData(activeTab);
+    const controller = new AbortController();
+
+    getPageData(activeTab, controller);
+
+    return () => {
+      controller.abort();
+    };
   }, [getPageData, activeTab]);
 
   React.useEffect(() => {

@@ -143,7 +143,7 @@ const HREmployee = ({
   };
 
   const getEmployeeData = React.useCallback(
-    async (tab: string) => {
+    async (tab: string, controller?: AbortController) => {
       try {
         handleIsLoading(true);
 
@@ -152,6 +152,7 @@ const HREmployee = ({
             headers: {
               Authorization: `Bearer ${user.token}`,
             },
+            signal: controller?.signal,
             params: { tab },
             withCredentials: true,
           });
@@ -181,11 +182,10 @@ const HREmployee = ({
 
         let message = "An error occurred when fetching the trainings.";
 
-        if (error instanceof AxiosError) {
+        if (error instanceof AxiosError && error.code !== "ERR_CANCELED") {
           message = error.response?.data.message ?? error.message;
+          addToast("Something went wrong", message, "error", 5000);
         }
-
-        addToast("Something went wrong", message, "error", 5000);
       } finally {
         handleIsLoading(false);
       }
@@ -463,7 +463,13 @@ const HREmployee = ({
   );
 
   React.useEffect(() => {
-    getEmployeeData(activeTab);
+    const controller = new AbortController();
+
+    getEmployeeData(activeTab, controller);
+
+    return () => {
+      controller.abort();
+    };
   }, [getEmployeeData, activeTab]);
 
   React.useEffect(() => {
