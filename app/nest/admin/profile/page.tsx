@@ -2,6 +2,8 @@
 
 import ChangePassword from "@/src/components/admin/profile/ChangePassword";
 import EditAdminProfile from "@/src/components/admin/profile/EditAdminProfile";
+import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import { UserInterface } from "@/src/interface/UserInterface";
 import { isCloudFileSummary } from "@/src/utils/utils";
 import axios from "axios";
@@ -23,6 +25,8 @@ const AdminProfile = () => {
   const [canEditProfile, setCanEditProfile] = React.useState(false);
   const [canChangePassword, setCanChangePassword] = React.useState(false);
 
+  const { handleIsLoading, isLoading } = useIsLoading(true);
+
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
   const user = session?.user;
@@ -30,6 +34,7 @@ const AdminProfile = () => {
 
   const getProfile = React.useCallback(
     async (controller?: AbortController) => {
+      handleIsLoading(true);
       try {
         if (user?.token) {
           const { data: responseData } = await axios.get(
@@ -49,9 +54,11 @@ const AdminProfile = () => {
         }
       } catch (error) {
         console.log(error);
+      } finally {
+        handleIsLoading(false);
       }
     },
-    [url, user?.token, currentUser]
+    [url, user?.token, currentUser, handleIsLoading]
   );
 
   const handleCanEditProfile = () => {
@@ -71,6 +78,10 @@ const AdminProfile = () => {
       controller.abort();
     };
   }, [getProfile]);
+
+  if (isLoading) {
+    return <PageSkeletonLoader />;
+  }
 
   return (
     <div className="w-full flex flex-col items-center justify-start h-full">

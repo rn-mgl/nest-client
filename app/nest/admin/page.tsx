@@ -1,4 +1,6 @@
 "use client";
+import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import { AdminDashboardInterface } from "@/src/interface/DashboardInterface";
 import { isCloudFileSummary } from "@/src/utils/utils";
 import axios from "axios";
@@ -14,6 +16,8 @@ const AdminDashboard = () => {
   const [dashboard, setDashboard] = React.useState<AdminDashboardInterface>({
     hrs: [],
   });
+
+  const { isLoading, handleIsLoading } = useIsLoading(true);
 
   const { data: session } = useSession({ required: true });
   const user = session?.user;
@@ -78,6 +82,7 @@ const AdminDashboard = () => {
 
   const getDashboard = React.useCallback(
     async (controller: AbortController) => {
+      handleIsLoading(true);
       try {
         if (user?.token) {
           const { data: responseData } =
@@ -93,9 +98,11 @@ const AdminDashboard = () => {
         }
       } catch (error) {
         console.log(error);
+      } finally {
+        handleIsLoading(false);
       }
     },
-    [url, user?.token]
+    [url, user?.token, handleIsLoading]
   );
 
   React.useEffect(() => {
@@ -107,6 +114,10 @@ const AdminDashboard = () => {
       controller.abort();
     };
   }, [getDashboard]);
+
+  if (isLoading) {
+    return <PageSkeletonLoader />;
+  }
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">

@@ -2,10 +2,12 @@
 
 import CreateHR from "@/src/components/admin/hr/CreateHR";
 import Filter from "@/src/components/global/filter/Filter";
+import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import { useAlert } from "@/src/context/AlertContext";
 import { useToasts } from "@/src/context/ToastContext";
 import useCategory from "@/src/hooks/useCategory";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { UserInterface } from "@/src/interface/UserInterface";
@@ -31,6 +33,8 @@ const AdminHR = () => {
   const [hrs, setHrs] = React.useState<UserInterface[]>([]);
   const [canCreateHR, setCanCreateHR] = React.useState(false);
   const [activeMenu, setActiveMenu] = React.useState(0);
+
+  const { isLoading, handleIsLoading } = useIsLoading(true);
 
   const {
     canSeeSearchDropDown,
@@ -77,6 +81,7 @@ const AdminHR = () => {
 
   const getAllHRs = React.useCallback(
     async (controller?: AbortController) => {
+      handleIsLoading(true);
       try {
         if (user?.token) {
           const {
@@ -93,9 +98,11 @@ const AdminHR = () => {
         }
       } catch (error) {
         console.log(error);
+      } finally {
+        handleIsLoading(false);
       }
     },
-    [url, user?.token]
+    [url, user?.token, handleIsLoading]
   );
 
   const toggleVerification = async (hrId: number, toggle: boolean) => {
@@ -271,9 +278,14 @@ const AdminHR = () => {
           Create HR
           <IoAdd className="text-lg" />
         </button>
-        <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">
-          {mappedHRs}
-        </div>
+
+        {isLoading ? (
+          <PageSkeletonLoader />
+        ) : (
+          <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">
+            {mappedHRs}
+          </div>
+        )}
       </div>
     </div>
   );
