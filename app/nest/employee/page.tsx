@@ -1,5 +1,6 @@
 "use client";
 
+import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import { EmployeeDashboardInterface } from "@/src/interface/DashboardInterface";
 import axios from "axios";
 import { useSession } from "next-auth/react";
@@ -54,6 +55,7 @@ const Employee = () => {
       pending: 0,
     },
   });
+  const [isPending, startTransition] = React.useTransition();
 
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
@@ -61,25 +63,27 @@ const Employee = () => {
 
   const getDashboard = React.useCallback(
     async (controller: AbortController) => {
-      try {
-        if (user?.token) {
-          const { data: responseData } =
-            await axios.get<EmployeeDashboardInterface>(
-              `${url}/employee/dashboard`,
-              {
-                headers: { Authorization: `Bearer ${user.token}` },
-                withCredentials: true,
-                signal: controller.signal,
-              }
-            );
+      startTransition(async () => {
+        try {
+          if (user?.token) {
+            const { data: responseData } =
+              await axios.get<EmployeeDashboardInterface>(
+                `${url}/employee/dashboard`,
+                {
+                  headers: { Authorization: `Bearer ${user.token}` },
+                  withCredentials: true,
+                  signal: controller.signal,
+                }
+              );
 
-          if (responseData) {
-            setDashboard(responseData);
+            if (responseData) {
+              setDashboard(responseData);
+            }
           }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
-      }
+      });
     },
     [url, user?.token]
   );
@@ -93,6 +97,10 @@ const Employee = () => {
       controller.abort();
     };
   }, [getDashboard]);
+
+  if (isPending) {
+    return <PageSkeletonLoader />;
+  }
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">

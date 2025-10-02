@@ -2,6 +2,7 @@
 
 import ChangePassword from "@/src/components/employee/profile/ChangePassword";
 import EditEmployeeProfile from "@/src/components/employee/profile/EditEmployeeProfile";
+import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import { UserInterface } from "@/src/interface/UserInterface";
 import { isCloudFileSummary } from "@/src/utils/utils";
 import axios from "axios";
@@ -20,9 +21,9 @@ const Profile = () => {
     password: "",
     verification_status: "Deactivated",
   });
-
   const [canEditProfile, setCanEditProfile] = React.useState(false);
   const [canChangePassword, setCanChangePassword] = React.useState(false);
+  const [isPending, startTransition] = React.useTransition();
 
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
@@ -31,26 +32,28 @@ const Profile = () => {
 
   const getProfile = React.useCallback(
     async (controller?: AbortController) => {
-      try {
-        if (user?.token) {
-          const { data: responseData } = await axios.get(
-            `${url}/employee/profile/${currentUser}`,
-            {
-              headers: {
-                Authorization: `Bearer ${user.token}`,
-              },
-              withCredentials: true,
-              signal: controller?.signal,
-            }
-          );
+      startTransition(async () => {
+        try {
+          if (user?.token) {
+            const { data: responseData } = await axios.get(
+              `${url}/employee/profile/${currentUser}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${user.token}`,
+                },
+                withCredentials: true,
+                signal: controller?.signal,
+              }
+            );
 
-          if (responseData.profile) {
-            setProfile(responseData.profile);
+            if (responseData.profile) {
+              setProfile(responseData.profile);
+            }
           }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
-      }
+      });
     },
     [url, user?.token, currentUser]
   );
@@ -72,6 +75,10 @@ const Profile = () => {
       controller.abort();
     };
   }, [getProfile]);
+
+  if (isPending) {
+    return <PageSkeletonLoader />;
+  }
 
   return (
     <div className="w-full flex flex-col items-center justify-start h-full">

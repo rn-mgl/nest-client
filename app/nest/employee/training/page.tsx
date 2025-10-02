@@ -3,6 +3,7 @@ import ShowTraining from "@/src/components/employee/training/ShowTraining";
 import BaseActions from "@/src/components/global/base/BaseActions";
 import BaseCard from "@/src/components/global/base/BaseCard";
 import Filter from "@/src/components/global/filter/Filter";
+import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import useCategory from "@/src/hooks/useCategory";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
@@ -20,6 +21,7 @@ import React from "react";
 const Training = () => {
   const [trainings, setTrainings] = React.useState<UserTrainingInterface[]>([]);
   const [activeTrainingSeeMore, setActiveTrainingSeeMore] = React.useState(0);
+  const [isPending, startTransition] = React.useTransition();
 
   const {
     canSeeSearchDropDown,
@@ -52,25 +54,27 @@ const Training = () => {
 
   const getTrainings = React.useCallback(
     async (controller: AbortController) => {
-      try {
-        if (user?.token) {
-          const { data: responseData } = await axios.get<{
-            trainings: UserTrainingInterface[];
-          }>(`${url}/employee/employee_training`, {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-            withCredentials: true,
-            signal: controller.signal,
-          });
+      startTransition(async () => {
+        try {
+          if (user?.token) {
+            const { data: responseData } = await axios.get<{
+              trainings: UserTrainingInterface[];
+            }>(`${url}/employee/employee_training`, {
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+              withCredentials: true,
+              signal: controller.signal,
+            });
 
-          if (responseData.trainings) {
-            setTrainings(responseData.trainings);
+            if (responseData.trainings) {
+              setTrainings(responseData.trainings);
+            }
           }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
-      }
+      });
     },
     [url, user?.token]
   );
@@ -150,9 +154,14 @@ const Training = () => {
             selectSort: handleSelectSort,
           }}
         />
-        <div className="w-full grid grid-cols-1 t:grid-cols-2 l-l:grid-cols-3 gap-4">
-          {mappedTrainings}
-        </div>
+
+        {isPending ? (
+          <PageSkeletonLoader />
+        ) : (
+          <div className="w-full grid grid-cols-1 t:grid-cols-2 l-l:grid-cols-3 gap-4">
+            {mappedTrainings}
+          </div>
+        )}
       </div>
     </div>
   );

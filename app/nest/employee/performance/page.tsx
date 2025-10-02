@@ -3,6 +3,7 @@ import ShowPerformanceReview from "@/src/components/employee/performance/ShowPer
 import BaseActions from "@/src/components/global/base/BaseActions";
 import BaseCard from "@/src/components/global/base/BaseCard";
 import Filter from "@/src/components/global/filter/Filter";
+import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { UserPerformanceReviewInterface } from "@/src/interface/PerformanceReviewInterface";
@@ -21,6 +22,7 @@ const Performance = () => {
   >([]);
   const [activePerformanceReviewSeeMore, setActivePerformanceReviewSeeMore] =
     React.useState(0);
+  const [isPending, startTransition] = React.useTransition();
 
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
@@ -48,26 +50,28 @@ const Performance = () => {
 
   const getPerformanceReviews = React.useCallback(
     async (controller?: AbortController) => {
-      try {
-        if (user?.token) {
-          const { data: responseData } = await axios.get(
-            `${url}/employee/employee_performance_review`,
-            {
-              headers: {
-                Authorization: `Bearer ${user.token}`,
-              },
-              withCredentials: true,
-              signal: controller?.signal,
-            }
-          );
+      startTransition(async () => {
+        try {
+          if (user?.token) {
+            const { data: responseData } = await axios.get(
+              `${url}/employee/employee_performance_review`,
+              {
+                headers: {
+                  Authorization: `Bearer ${user.token}`,
+                },
+                withCredentials: true,
+                signal: controller?.signal,
+              }
+            );
 
-          if (responseData.performance_reviews) {
-            setPerformanceReviews(responseData.performance_reviews);
+            if (responseData.performance_reviews) {
+              setPerformanceReviews(responseData.performance_reviews);
+            }
           }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
-      }
+      });
     },
     [url, user?.token]
   );
@@ -140,9 +144,14 @@ const Performance = () => {
             selectSort: handleSelectSort,
           }}
         />
-        <div className="w-full grid grid-cols-1 t:grid-cols-2 l-l:grid-cols-3 gap-4">
-          {mappedPerformanceReviews}
-        </div>
+
+        {isPending ? (
+          <PageSkeletonLoader />
+        ) : (
+          <div className="w-full grid grid-cols-1 t:grid-cols-2 l-l:grid-cols-3 gap-4">
+            {mappedPerformanceReviews}
+          </div>
+        )}
       </div>
     </div>
   );

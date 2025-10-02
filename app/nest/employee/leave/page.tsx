@@ -7,6 +7,7 @@ import Filter from "@/src/components/global/filter/Filter";
 import EditLeaveRequest from "@/src/components/global/leave/EditLeaveRequest";
 import LeaveBalanceCard from "@/src/components/global/leave/LeaveBalanceCard";
 import LeaveRequestForm from "@/src/components/global/leave/LeaveRequestForm";
+import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import useCategory from "@/src/hooks/useCategory";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
 import useSearch from "@/src/hooks/useSearch";
@@ -44,6 +45,7 @@ const Leave = ({
   const [canEditLeaveRequest, setCanEditLeaveRequest] = React.useState(0);
   const [canDeleteLeaveRequest, setCanDeleteLeaveRequest] = React.useState(0);
   const [activeTab, setActiveTab] = React.useState("balances");
+  const [isPending, startTransition] = React.useTransition();
 
   const { data: session } = useSession({ required: true });
   const user = session?.user;
@@ -92,52 +94,56 @@ const Leave = ({
 
   const getLeaveBalances = React.useCallback(
     async (controller?: AbortController) => {
-      try {
-        if (user?.token) {
-          const { data: responseData } = await axios.get(
-            `${url}/employee/leave_balance`,
-            {
-              headers: {
-                Authorization: `Bearer ${user.token}`,
-              },
-              withCredentials: true,
-              signal: controller?.signal,
-            }
-          );
+      startTransition(async () => {
+        try {
+          if (user?.token) {
+            const { data: responseData } = await axios.get(
+              `${url}/employee/leave_balance`,
+              {
+                headers: {
+                  Authorization: `Bearer ${user.token}`,
+                },
+                withCredentials: true,
+                signal: controller?.signal,
+              }
+            );
 
-          if (responseData.leave_balances) {
-            setLeaveBalances(responseData.leave_balances);
+            if (responseData.leave_balances) {
+              setLeaveBalances(responseData.leave_balances);
+            }
           }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
-      }
+      });
     },
     [user?.token, url]
   );
 
   const getLeaveRequests = React.useCallback(
     async (controller?: AbortController) => {
-      try {
-        if (user?.token) {
-          const { data: responseData } = await axios.get(
-            `${url}/employee/leave_request`,
-            {
-              headers: {
-                Authorization: `Bearer ${user.token}`,
-              },
-              withCredentials: true,
-              signal: controller?.signal,
-            }
-          );
+      startTransition(async () => {
+        try {
+          if (user?.token) {
+            const { data: responseData } = await axios.get(
+              `${url}/employee/leave_request`,
+              {
+                headers: {
+                  Authorization: `Bearer ${user.token}`,
+                },
+                withCredentials: true,
+                signal: controller?.signal,
+              }
+            );
 
-          if (responseData.requests) {
-            setLeaveRequests(responseData.requests);
+            if (responseData.requests) {
+              setLeaveRequests(responseData.requests);
+            }
           }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
-      }
+      });
     },
     [url, user?.token]
   );
@@ -356,7 +362,9 @@ const Leave = ({
             }}
           />
 
-          {activeTab === "balances" ? (
+          {isPending ? (
+            <PageSkeletonLoader />
+          ) : activeTab === "balances" ? (
             <div className="grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3 w-full h-auto">
               {mappedLeaveBalances}
             </div>
