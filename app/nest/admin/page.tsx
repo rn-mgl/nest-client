@@ -1,6 +1,5 @@
 "use client";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
-import useIsLoading from "@/src/hooks/useIsLoading";
 import { AdminDashboardInterface } from "@/src/interface/DashboardInterface";
 import { isCloudFileSummary } from "@/src/utils/utils";
 import axios from "axios";
@@ -17,7 +16,7 @@ const AdminDashboard = () => {
     hrs: [],
   });
 
-  const { isLoading, handleIsLoading } = useIsLoading(true);
+  const [isPending, startTransition] = React.useTransition();
 
   const { data: session } = useSession({ required: true });
   const user = session?.user;
@@ -82,27 +81,29 @@ const AdminDashboard = () => {
 
   const getDashboard = React.useCallback(
     async (controller: AbortController) => {
-      handleIsLoading(true);
-      try {
-        if (user?.token) {
-          const { data: responseData } =
-            await axios.get<AdminDashboardInterface>(`${url}/admin/dashboard`, {
-              headers: { Authorization: `Bearer ${user.token}` },
-              withCredentials: true,
-              signal: controller.signal,
-            });
+      startTransition(async () => {
+        try {
+          if (user?.token) {
+            const { data: responseData } =
+              await axios.get<AdminDashboardInterface>(
+                `${url}/admin/dashboard`,
+                {
+                  headers: { Authorization: `Bearer ${user.token}` },
+                  withCredentials: true,
+                  signal: controller.signal,
+                }
+              );
 
-          if (responseData) {
-            setDashboard(responseData);
+            if (responseData) {
+              setDashboard(responseData);
+            }
           }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        handleIsLoading(false);
-      }
+      });
     },
-    [url, user?.token, handleIsLoading]
+    [url, user?.token]
   );
 
   React.useEffect(() => {
@@ -115,7 +116,7 @@ const AdminDashboard = () => {
     };
   }, [getDashboard]);
 
-  if (isLoading) {
+  if (isPending) {
     return <PageSkeletonLoader />;
   }
 

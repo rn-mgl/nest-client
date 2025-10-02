@@ -7,7 +7,6 @@ import { useAlert } from "@/src/context/AlertContext";
 import { useToasts } from "@/src/context/ToastContext";
 import useCategory from "@/src/hooks/useCategory";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
-import useIsLoading from "@/src/hooks/useIsLoading";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { UserInterface } from "@/src/interface/UserInterface";
@@ -34,7 +33,7 @@ const AdminHR = () => {
   const [canCreateHR, setCanCreateHR] = React.useState(false);
   const [activeMenu, setActiveMenu] = React.useState(0);
 
-  const { isLoading, handleIsLoading } = useIsLoading(true);
+  const [isPending, startTransition] = React.useTransition();
 
   const {
     canSeeSearchDropDown,
@@ -81,28 +80,27 @@ const AdminHR = () => {
 
   const getAllHRs = React.useCallback(
     async (controller?: AbortController) => {
-      handleIsLoading(true);
-      try {
-        if (user?.token) {
-          const {
-            data: { hrs },
-          } = await axios.get(`${url}/admin/hr`, {
-            headers: {
-              Authorization: `Bearer ${user?.token}`,
-            },
-            withCredentials: true,
-            signal: controller?.signal,
-          });
+      startTransition(async () => {
+        try {
+          if (user?.token) {
+            const {
+              data: { hrs },
+            } = await axios.get(`${url}/admin/hr`, {
+              headers: {
+                Authorization: `Bearer ${user?.token}`,
+              },
+              withCredentials: true,
+              signal: controller?.signal,
+            });
 
-          setHrs(hrs);
+            setHrs(hrs);
+          }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        handleIsLoading(false);
-      }
+      });
     },
-    [url, user?.token, handleIsLoading]
+    [url, user?.token]
   );
 
   const toggleVerification = async (hrId: number, toggle: boolean) => {
@@ -279,7 +277,7 @@ const AdminHR = () => {
           <IoAdd className="text-lg" />
         </button>
 
-        {isLoading ? (
+        {isPending ? (
           <PageSkeletonLoader />
         ) : (
           <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">

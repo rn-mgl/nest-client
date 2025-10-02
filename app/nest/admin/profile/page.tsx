@@ -3,12 +3,11 @@
 import ChangePassword from "@/src/components/admin/profile/ChangePassword";
 import EditAdminProfile from "@/src/components/admin/profile/EditAdminProfile";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
-import useIsLoading from "@/src/hooks/useIsLoading";
 import { UserInterface } from "@/src/interface/UserInterface";
 import { isCloudFileSummary } from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import React from "react";
+import React, { useTransition } from "react";
 import { IoLockClosed, IoLockOpen, IoMail, IoPencil } from "react-icons/io5";
 
 const AdminProfile = () => {
@@ -24,8 +23,7 @@ const AdminProfile = () => {
   });
   const [canEditProfile, setCanEditProfile] = React.useState(false);
   const [canChangePassword, setCanChangePassword] = React.useState(false);
-
-  const { handleIsLoading, isLoading } = useIsLoading(true);
+  const [isPending, startTransition] = useTransition();
 
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
@@ -34,31 +32,30 @@ const AdminProfile = () => {
 
   const getProfile = React.useCallback(
     async (controller?: AbortController) => {
-      handleIsLoading(true);
-      try {
-        if (user?.token) {
-          const { data: responseData } = await axios.get(
-            `${url}/admin/profile/${currentUser}`,
-            {
-              headers: {
-                Authorization: `Bearer ${user.token}`,
-              },
-              withCredentials: true,
-              signal: controller?.signal,
-            }
-          );
+      startTransition(async () => {
+        try {
+          if (user?.token) {
+            const { data: responseData } = await axios.get(
+              `${url}/admin/profile/${currentUser}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${user.token}`,
+                },
+                withCredentials: true,
+                signal: controller?.signal,
+              }
+            );
 
-          if (responseData.profile) {
-            setProfile(responseData.profile);
+            if (responseData.profile) {
+              setProfile(responseData.profile);
+            }
           }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        handleIsLoading(false);
-      }
+      });
     },
-    [url, user?.token, currentUser, handleIsLoading]
+    [url, user?.token, currentUser]
   );
 
   const handleCanEditProfile = () => {
@@ -79,7 +76,7 @@ const AdminProfile = () => {
     };
   }, [getProfile]);
 
-  if (isLoading) {
+  if (isPending) {
     return <PageSkeletonLoader />;
   }
 
