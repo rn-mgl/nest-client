@@ -14,7 +14,7 @@ import BaseActions from "@/src/components/global/base/BaseActions";
 import BaseCard from "@/src/components/global/base/BaseCard";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import HRActions from "@/src/components/hr/global/HRActions";
-import useIsLoading from "@/src/hooks/useIsLoading";
+import useFilterAndSort from "@/src/hooks/useFilterAndSort";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { isUserSummary } from "@/src/utils/utils";
@@ -22,7 +22,6 @@ import { HR_TRAINING_SEARCH, HR_TRAINING_SORT } from "@/utils/filters";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd } from "react-icons/io5";
-import useFilterAndSort from "@/src/hooks/useFilterAndSort";
 
 const HRTraining = () => {
   const [trainings, setTrainings] = React.useState<TrainingInterface[]>([]);
@@ -31,6 +30,7 @@ const HRTraining = () => {
   const [activeDeleteTraining, setActiveDeleteTraining] = React.useState(0);
   const [canCreateTraining, setCanCreateTraining] = React.useState(false);
   const [activeAssignTraining, setActiveAssignTraining] = React.useState(0);
+  const [isPending, startTransition] = React.useTransition();
 
   const {
     search,
@@ -46,8 +46,6 @@ const HRTraining = () => {
     handleSelectSort,
     handleToggleAsc,
   } = useSort("created_at", "Created At");
-
-  const { isLoading, handleIsLoading } = useIsLoading(true);
 
   const url = process.env.URL;
   const { data } = useSession({ required: true });
@@ -75,29 +73,27 @@ const HRTraining = () => {
 
   const getTrainings = React.useCallback(
     async (controller?: AbortController) => {
-      try {
-        handleIsLoading(true);
+      startTransition(async () => {
+        try {
+          if (user?.token) {
+            const { data } = await axios.get(`${url}/hr/training`, {
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+              withCredentials: true,
+              signal: controller?.signal,
+            });
 
-        if (user?.token) {
-          const { data } = await axios.get(`${url}/hr/training`, {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-            withCredentials: true,
-            signal: controller?.signal,
-          });
-
-          if (data.trainings) {
-            setTrainings(data.trainings);
+            if (data.trainings) {
+              setTrainings(data.trainings);
+            }
           }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        handleIsLoading(false);
-      }
+      });
     },
-    [user?.token, url, handleIsLoading]
+    [user?.token, url]
   );
 
   const mappedTrainings = useFilterAndSort(trainings, search, sort).map(
@@ -135,10 +131,6 @@ const HRTraining = () => {
       controller.abort();
     };
   }, [getTrainings]);
-
-  if (isLoading) {
-    return <PageSkeletonLoader />;
-  }
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
@@ -217,9 +209,13 @@ const HRTraining = () => {
           Create Training <IoAdd className="text-lg" />
         </button>
 
-        <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">
-          {mappedTrainings}
-        </div>
+        {isPending ? (
+          <PageSkeletonLoader />
+        ) : (
+          <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">
+            {mappedTrainings}
+          </div>
+        )}
       </div>
     </div>
   );

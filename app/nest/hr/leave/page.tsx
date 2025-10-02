@@ -43,6 +43,7 @@ import {
   normalizeString,
 } from "@/src/utils/utils";
 import { usePathname } from "next/navigation";
+import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 
 const HRLeave = ({
   searchParams,
@@ -65,6 +66,7 @@ const HRLeave = ({
   const [leaveRequests, setLeaveRequest] = React.useState<
     LeaveRequestInterface[]
   >([]);
+  const [isPending, startTransition] = React.useTransition();
 
   const {
     canSeeSearchDropDown,
@@ -143,78 +145,84 @@ const HRLeave = ({
 
   const getLeaveTypes = React.useCallback(
     async (controller?: AbortController) => {
-      try {
-        if (user?.token) {
-          const { data: responseData } = await axios.get(
-            `${url}/hr/leave_type`,
-            {
-              headers: {
-                Authorization: `Bearer ${user?.token}`,
-              },
-              withCredentials: true,
-              signal: controller?.signal,
-            }
-          );
+      startTransition(async () => {
+        try {
+          if (user?.token) {
+            const { data: responseData } = await axios.get(
+              `${url}/hr/leave_type`,
+              {
+                headers: {
+                  Authorization: `Bearer ${user?.token}`,
+                },
+                withCredentials: true,
+                signal: controller?.signal,
+              }
+            );
 
-          if (responseData.leaves) {
-            setLeaveTypes(responseData.leaves);
+            if (responseData.leaves) {
+              setLeaveTypes(responseData.leaves);
+            }
           }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
-      }
+      });
     },
     [url, user?.token]
   );
 
   const getLeaveBalances = React.useCallback(
     async (controller?: AbortController) => {
-      try {
-        if (user?.token) {
-          const { data: responseData } = await axios.get(
-            `${url}/hr/leave_balance`,
-            {
-              headers: {
-                Authorization: `Bearer ${user.token}`,
-              },
-              withCredentials: true,
-              signal: controller?.signal,
-            }
-          );
+      startTransition(async () => {
+        try {
+          if (user?.token) {
+            const { data: responseData } = await axios.get(
+              `${url}/hr/leave_balance`,
+              {
+                headers: {
+                  Authorization: `Bearer ${user.token}`,
+                },
+                withCredentials: true,
+                signal: controller?.signal,
+              }
+            );
 
-          if (responseData.balances) {
-            setLeaveBalances(responseData.balances);
+            if (responseData.balances) {
+              setLeaveBalances(responseData.balances);
+            }
           }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
-      }
+      });
     },
     [url, user?.token]
   );
 
   const getLeaveRequest = React.useCallback(
     async (controller?: AbortController) => {
-      try {
-        if (user?.token) {
-          const { data: responseData } = await axios.get(
-            `${url}/hr/leave_request`,
-            {
-              headers: {
-                Authorization: `Bearer ${user.token}`,
-              },
-              withCredentials: true,
-              signal: controller?.signal,
-            }
-          );
+      startTransition(async () => {
+        try {
+          if (user?.token) {
+            const { data: responseData } = await axios.get(
+              `${url}/hr/leave_request`,
+              {
+                headers: {
+                  Authorization: `Bearer ${user.token}`,
+                },
+                withCredentials: true,
+                signal: controller?.signal,
+              }
+            );
 
-          if (responseData.requests) {
-            setLeaveRequest(responseData.requests);
+            if (responseData.requests) {
+              setLeaveRequest(responseData.requests);
+            }
           }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
-      }
+      });
     },
     [url, user?.token]
   );
@@ -467,19 +475,22 @@ const HRLeave = ({
         />
 
         {activeTab === "types" ? (
-          <React.Fragment>
-            <button
-              onClick={handleCanCreateLeaveType}
-              className="bg-accent-blue text-accent-yellow w-full p-2 rounded-md font-bold flex flex-row items-center justify-center 
+          <button
+            onClick={handleCanCreateLeaveType}
+            className="bg-accent-blue text-accent-yellow w-full p-2 rounded-md font-bold flex flex-row items-center justify-center 
                   gap-2 t:w-40 transition-all"
-            >
-              Create Leave
-              <IoAdd className="text-lg" />
-            </button>
-            <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">
-              {mappedLeaves}
-            </div>
-          </React.Fragment>
+          >
+            Create Leave
+            <IoAdd className="text-lg" />
+          </button>
+        ) : null}
+
+        {isPending ? (
+          <PageSkeletonLoader />
+        ) : activeTab === "types" ? (
+          <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">
+            {mappedLeaves}
+          </div>
         ) : activeTab === "balances" ? (
           <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">
             {mappedLeaveBalances}

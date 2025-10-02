@@ -1,9 +1,10 @@
 "use client";
 
+import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import { HRDashboardInterface } from "@/src/interface/DashboardInterface";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import React from "react";
+import React, { useTransition } from "react";
 import {
   IoArrowRedoOutline,
   IoArrowUndoOutline,
@@ -47,30 +48,32 @@ const HRDashboard = () => {
     trainings: { in_progress: 0, done: 0, pending: 0 },
   });
 
+  const [isPending, startTransition] = useTransition();
+
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
   const user = session?.user;
 
   const getDashboard = React.useCallback(
     async (controller: AbortController) => {
-      try {
-        if (user?.token) {
-          const { data: responseData } = await axios.get<HRDashboardInterface>(
-            `${url}/hr/dashboard`,
-            {
-              headers: { Authorization: `Bearer ${user?.token}` },
-              withCredentials: true,
-              signal: controller.signal,
-            }
-          );
+      startTransition(async () => {
+        try {
+          if (user?.token) {
+            const { data: responseData } =
+              await axios.get<HRDashboardInterface>(`${url}/hr/dashboard`, {
+                headers: { Authorization: `Bearer ${user?.token}` },
+                withCredentials: true,
+                signal: controller.signal,
+              });
 
-          if (responseData) {
-            setDashboard(responseData);
+            if (responseData) {
+              setDashboard(responseData);
+            }
           }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
-      }
+      });
     },
     [url, user?.token]
   );
@@ -84,6 +87,10 @@ const HRDashboard = () => {
       controller.abort();
     };
   }, [getDashboard]);
+
+  if (isPending) {
+    return <PageSkeletonLoader />;
+  }
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">

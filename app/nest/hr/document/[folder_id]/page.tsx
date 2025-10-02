@@ -38,6 +38,7 @@ import React from "react";
 import { IoAdd, IoArrowBack, IoPencil, IoTrash } from "react-icons/io5";
 import HRActions from "@/src/components/hr/global/HRActions";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
+import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 
 const HRDocument = () => {
   const [canCreateDocument, setCanCreateDocument] = React.useState(false);
@@ -47,7 +48,6 @@ const HRDocument = () => {
     created_by: 0,
   });
   const [canCreateFolder, setCanCreateFolder] = React.useState(false);
-
   const [documents, setDocuments] = React.useState<
     (
       | (DocumentInterface & { type: "Document" })
@@ -59,6 +59,7 @@ const HRDocument = () => {
   const [activeEditFolder, setActiveEditFolder] = React.useState(0);
   const [activeDeleteFolder, setActiveDeleteFolder] = React.useState(0);
   const [activeDocumentSeeMore, setActiveDocumentSeeMore] = React.useState(0);
+  const [isPending, startTransition] = React.useTransition();
 
   const {
     canSeeSearchDropDown,
@@ -119,52 +120,56 @@ const HRDocument = () => {
 
   const getDocuments = React.useCallback(
     async (controller?: AbortController) => {
-      try {
-        if (user?.token) {
-          const {
-            data: { documents },
-          } = await axios.get(`${url}/hr/document`, {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-            withCredentials: true,
-            params: { path: folderId },
-            signal: controller?.signal,
-          });
+      startTransition(async () => {
+        try {
+          if (user?.token) {
+            const {
+              data: { documents },
+            } = await axios.get(`${url}/hr/document`, {
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+              withCredentials: true,
+              params: { path: folderId },
+              signal: controller?.signal,
+            });
 
-          if (documents) {
-            setDocuments(documents);
+            if (documents) {
+              setDocuments(documents);
+            }
           }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
-      }
+      });
     },
     [url, user?.token, folderId]
   );
 
   const getFolder = React.useCallback(
     async (controller?: AbortController) => {
-      try {
-        if (user?.token && folderId) {
-          const { data: folderDetails } = await axios.get(
-            `${url}/hr/folder/${folderId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${user.token}`,
-              },
-              withCredentials: true,
-              signal: controller?.signal,
-            }
-          );
+      startTransition(async () => {
+        try {
+          if (user?.token && folderId) {
+            const { data: folderDetails } = await axios.get(
+              `${url}/hr/folder/${folderId}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${user.token}`,
+                },
+                withCredentials: true,
+                signal: controller?.signal,
+              }
+            );
 
-          if (folderDetails.folder) {
-            setFolder(folderDetails.folder);
+            if (folderDetails.folder) {
+              setFolder(folderDetails.folder);
+            }
           }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
-      }
+      });
     },
     [user?.token, folderId, url]
   );
@@ -360,26 +365,32 @@ const HRDocument = () => {
           </button>
         </div>
 
-        {folderId ? (
-          <div className="w-full flex flex-col items-start justify-between">
-            <div className="w-full t:w-40 rounded-md bg-linear-to-br from-accent-yellow/30 to-accent-blue/30 p-2 text-center">
-              <p className="font-bold text-neutral-900">
-                {folder.title ?? "-"}
-              </p>
+        {isPending ? (
+          <PageSkeletonLoader />
+        ) : (
+          <React.Fragment>
+            {folderId ? (
+              <div className="w-full flex flex-col items-start justify-between">
+                <div className="w-full t:w-40 rounded-md bg-linear-to-br from-accent-yellow/30 to-accent-blue/30 p-2 text-center">
+                  <p className="font-bold text-neutral-900">
+                    {folder.title ?? "-"}
+                  </p>
+                </div>
+
+                <Link
+                  href={`${folder.path}`}
+                  className="p-2 rounded-full hover:bg-neutral-100 transition-all"
+                >
+                  <IoArrowBack />
+                </Link>
+              </div>
+            ) : null}
+
+            <div className="w-full gap-4 columns-1 space-y-4 t:columns-2 h-full *:break-inside-avoid l-l:columns-3">
+              {mappedDocuments}
             </div>
-
-            <Link
-              href={`${folder.path}`}
-              className="p-2 rounded-full hover:bg-neutral-100 transition-all"
-            >
-              <IoArrowBack />
-            </Link>
-          </div>
-        ) : null}
-
-        <div className="w-full gap-4 columns-1 space-y-4 t:columns-2 h-full *:break-inside-avoid l-l:columns-3">
-          {mappedDocuments}
-        </div>
+          </React.Fragment>
+        )}
       </div>
     </div>
   );

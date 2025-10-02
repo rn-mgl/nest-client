@@ -11,7 +11,6 @@ import { useAlert } from "@/src/context/AlertContext";
 import { useToasts } from "@/src/context/ToastContext";
 import useCategory from "@/src/hooks/useCategory";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
-import useIsLoading from "@/src/hooks/useIsLoading";
 
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
@@ -53,7 +52,7 @@ import axios, { AxiosError } from "axios";
 
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
-import React, { use } from "react";
+import React, { use, useTransition } from "react";
 import { IoCheckmark, IoClose } from "react-icons/io5";
 
 const HREmployee = ({
@@ -72,6 +71,8 @@ const HREmployee = ({
   const [trainings, setTrainings] = React.useState<UserTrainingInterface[]>([]);
   const [activeEmployeeSeeMore, setActiveEmployeeSeeMore] = React.useState(0);
   const [activeTab, setActiveTab] = React.useState("employees");
+
+  const [isPending, startTransition] = useTransition();
 
   const searchFilters = {
     employees: HR_EMPLOYEE_SEARCH,
@@ -96,8 +97,6 @@ const HREmployee = ({
     performances: HR_EMPLOYEE_PERFORMANCE_CATEGORY,
     trainings: HR_EMPLOYEE_TRAINING_CATEGORY,
   };
-
-  const { isLoading, handleIsLoading } = useIsLoading(true);
 
   const { addToast } = useToasts();
 
@@ -144,53 +143,51 @@ const HREmployee = ({
 
   const getEmployeeData = React.useCallback(
     async (tab: string, controller?: AbortController) => {
-      try {
-        handleIsLoading(true);
+      startTransition(async () => {
+        try {
+          if (user?.token) {
+            const { data: responseData } = await axios.get(`${url}/hr/user`, {
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+              signal: controller?.signal,
+              params: { tab },
+              withCredentials: true,
+            });
 
-        if (user?.token) {
-          const { data: responseData } = await axios.get(`${url}/hr/user`, {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-            signal: controller?.signal,
-            params: { tab },
-            withCredentials: true,
-          });
-
-          if (responseData[tab]) {
-            switch (tab) {
-              case "employees":
-                setEmployees(responseData.employees);
-                break;
-              case "onboardings":
-                setOnboardings(responseData.onboardings);
-                break;
-              case "leaves":
-                setLeaves(responseData.leaves);
-                break;
-              case "performances":
-                setPerformances(responseData.performances);
-                break;
-              case "trainings":
-                setTrainings(responseData.trainings);
-                break;
+            if (responseData[tab]) {
+              switch (tab) {
+                case "employees":
+                  setEmployees(responseData.employees);
+                  break;
+                case "onboardings":
+                  setOnboardings(responseData.onboardings);
+                  break;
+                case "leaves":
+                  setLeaves(responseData.leaves);
+                  break;
+                case "performances":
+                  setPerformances(responseData.performances);
+                  break;
+                case "trainings":
+                  setTrainings(responseData.trainings);
+                  break;
+              }
             }
           }
-        }
-      } catch (error) {
-        console.log(error);
+        } catch (error) {
+          console.log(error);
 
-        let message = "An error occurred when fetching the trainings.";
+          let message = "An error occurred when fetching the trainings.";
 
-        if (error instanceof AxiosError && error.code !== "ERR_CANCELED") {
-          message = error.response?.data.message ?? error.message;
-          addToast("Something went wrong", message, "error", 5000);
+          if (error instanceof AxiosError && error.code !== "ERR_CANCELED") {
+            message = error.response?.data.message ?? error.message;
+            addToast("Something went wrong", message, "error", 5000);
+          }
         }
-      } finally {
-        handleIsLoading(false);
-      }
+      });
     },
-    [url, user?.token, handleIsLoading, addToast]
+    [url, user?.token, addToast]
   );
 
   const handleLeaveRequestStatus = async (
@@ -532,7 +529,7 @@ const HREmployee = ({
             }}
           />
 
-          {isLoading ? (
+          {isPending ? (
             <PageSkeletonLoader />
           ) : activeTab === "employees" ? (
             <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">

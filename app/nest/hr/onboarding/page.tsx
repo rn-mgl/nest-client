@@ -18,7 +18,6 @@ import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import HRActions from "@/src/components/hr/global/HRActions";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
-import useIsLoading from "@/src/hooks/useIsLoading";
 import { isUserSummary } from "@/src/utils/utils";
 import { useSession } from "next-auth/react";
 import React from "react";
@@ -34,6 +33,7 @@ const HROnboarding = () => {
   const [activeAssignOnboarding, setActiveAssignOnboarding] = React.useState(0);
   const [activeOnboardingSeeMore, setActiveOnboardingSeeMore] =
     React.useState(0);
+  const [isPending, startTransition] = React.useTransition();
 
   const {
     canSeeSearchDropDown,
@@ -49,8 +49,6 @@ const HROnboarding = () => {
     handleSelectSort,
     handleToggleAsc,
   } = useSort("title", "Title");
-
-  const { isLoading, handleIsLoading } = useIsLoading(true);
 
   const url = process.env.URL;
   const { data } = useSession({ required: true });
@@ -78,31 +76,28 @@ const HROnboarding = () => {
 
   const getOnboardings = React.useCallback(
     async (controller?: AbortController) => {
-      handleIsLoading(true);
-      try {
-        if (user?.token) {
-          const { data: allOnboarding } = await axios.get(
-            `${url}/hr/onboarding`,
-            {
-              headers: {
-                Authorization: `Bearer ${user?.token}`,
-              },
-              signal: controller?.signal,
-              withCredentials: true,
-            }
-          );
+      startTransition(async () => {
+        try {
+          if (user?.token) {
+            const { data: allOnboarding } = await axios.get(
+              `${url}/hr/onboarding`,
+              {
+                headers: {
+                  Authorization: `Bearer ${user?.token}`,
+                },
+                signal: controller?.signal,
+                withCredentials: true,
+              }
+            );
 
-          setOnboardings(allOnboarding.onboardings);
-
-          handleIsLoading(false);
+            setOnboardings(allOnboarding.onboardings);
+          }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        handleIsLoading(false);
-      }
+      });
     },
-    [url, user?.token, handleIsLoading]
+    [url, user?.token]
   );
 
   const mappedOnboardings = useFilterAndSort(onboardings, search, sort).map(
@@ -230,7 +225,7 @@ const HROnboarding = () => {
           Create Onboarding <IoAdd className="text-lg" />
         </button>
 
-        {isLoading ? (
+        {isPending ? (
           <PageSkeletonLoader />
         ) : (
           <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">

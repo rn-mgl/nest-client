@@ -4,6 +4,7 @@ import BaseActions from "@/src/components/global/base/BaseActions";
 import BaseCard from "@/src/components/global/base/BaseCard";
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import Filter from "@/src/components/global/filter/Filter";
+import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import HRActions from "@/src/components/hr/global/HRActions";
 import AssignPerformanceReview from "@/src/components/hr/performance/AssignPerformanceReview";
 import CreatePerformanceReview from "@/src/components/hr/performance/CreatePerformanceReview";
@@ -31,7 +32,6 @@ const PerformanceReview = () => {
   >([]);
   const [canCreatePerformanceReview, setCanCreatePerformanceReview] =
     React.useState(false);
-
   const [activePerformanceReviewSeeMore, setActivePerformanceReviewSeeMore] =
     React.useState(0);
   const [activeEditPerformanceReview, setActiveEditPerformanceReview] =
@@ -40,6 +40,7 @@ const PerformanceReview = () => {
     React.useState(0);
   const [activeAssignPerformanceReview, setActiveAssignPerformanceReview] =
     React.useState(0);
+  const [isPending, startTransition] = React.useTransition();
 
   const {
     canSeeSearchDropDown,
@@ -82,26 +83,28 @@ const PerformanceReview = () => {
 
   const getPerformanceReviews = React.useCallback(
     async (controller?: AbortController) => {
-      try {
-        if (user?.token) {
-          const { data: allPerformanceReviews } = await axios.get(
-            `${url}/hr/performance_review`,
-            {
-              headers: {
-                Authorization: `Bearer ${user?.token}`,
-              },
-              withCredentials: true,
-              signal: controller?.signal,
-            }
-          );
+      startTransition(async () => {
+        try {
+          if (user?.token) {
+            const { data: allPerformanceReviews } = await axios.get(
+              `${url}/hr/performance_review`,
+              {
+                headers: {
+                  Authorization: `Bearer ${user?.token}`,
+                },
+                withCredentials: true,
+                signal: controller?.signal,
+              }
+            );
 
-          if (allPerformanceReviews.performances) {
-            setPerformanceReviews(allPerformanceReviews.performances);
+            if (allPerformanceReviews.performances) {
+              setPerformanceReviews(allPerformanceReviews.performances);
+            }
           }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
-      }
+      });
     },
     [url, user?.token]
   );
@@ -239,9 +242,13 @@ const PerformanceReview = () => {
           Create Performance Review <IoAdd />
         </button>
 
-        <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">
-          {mappedPerformanceReviews}
-        </div>
+        {isPending ? (
+          <PageSkeletonLoader />
+        ) : (
+          <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">
+            {mappedPerformanceReviews}
+          </div>
+        )}
       </div>
     </div>
   );
