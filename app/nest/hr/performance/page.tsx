@@ -10,6 +10,7 @@ import AssignPerformanceReview from "@/src/components/hr/performance/AssignPerfo
 import CreatePerformanceReview from "@/src/components/hr/performance/CreatePerformanceReview";
 import EditPerformanceReview from "@/src/components/hr/performance/EditPerformanceReview";
 import ShowPerformanceReview from "@/src/components/hr/performance/ShowPerformanceReview";
+import { useToasts } from "@/src/context/ToastContext";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
 
 import useSearch from "@/src/hooks/useSearch";
@@ -20,7 +21,7 @@ import {
   HR_PERFORMANCE_SORT,
 } from "@/src/utils/filters";
 import { isUserSummary } from "@/src/utils/utils";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 
 import { useSession } from "next-auth/react";
 import React from "react";
@@ -41,6 +42,8 @@ const PerformanceReview = () => {
   const [activeAssignPerformanceReview, setActiveAssignPerformanceReview] =
     React.useState(0);
   const [isPending, startTransition] = React.useTransition();
+
+  const { addToast } = useToasts();
 
   const {
     canSeeSearchDropDown,
@@ -103,10 +106,18 @@ const PerformanceReview = () => {
           }
         } catch (error) {
           console.log(error);
+
+          let message = `An error occurred when the performances are being retrieved.`;
+
+          if (isAxiosError(error)) {
+            message = error.response?.data.message ?? error.message;
+          }
+
+          addToast("Performance Error", message, "error");
         }
       });
     },
-    [url, user?.token]
+    [url, user?.token, addToast]
   );
 
   const mappedPerformanceReviews = useFilterAndSort(

@@ -1,9 +1,10 @@
 import Input from "@/form/Input";
 import TextArea from "@/form/TextArea";
+import { useToasts } from "@/src/context/ToastContext";
 import { LeaveRequestFormInterface } from "@/src/interface/LeaveInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose, IoText } from "react-icons/io5";
@@ -15,6 +16,8 @@ const LeaveRequestForm: React.FC<ModalInterface> = (props) => {
       end_date: "",
       reason: "",
     });
+
+  const { addToast } = useToasts();
 
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
@@ -53,11 +56,25 @@ const LeaveRequestForm: React.FC<ModalInterface> = (props) => {
         );
 
         if (responseData.success) {
+          addToast(
+            "Leave Request Submitted",
+            `Leave Request has been sent.`,
+            "success"
+          );
           props.toggleModal();
         }
       }
     } catch (error) {
       console.log(error);
+
+      let message =
+        "An error occurred when the leave request is being submitted.";
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Leave Request Error", message, "error");
     }
   };
 

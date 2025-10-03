@@ -6,7 +6,7 @@ import {
   PerformanceReviewInterface,
   PerformanceReviewSurveyInterface,
 } from "@/src/interface/PerformanceReviewInterface";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 
 import { useSession } from "next-auth/react";
 import React from "react";
@@ -14,6 +14,7 @@ import { IoClose } from "react-icons/io5";
 import ModalNav from "@/global/navigation/ModalNav";
 import TextBlock from "@/global/field/TextBlock";
 import TextField from "@/global/field/TextField";
+import { useToasts } from "@/src/context/ToastContext";
 
 const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
   const [performanceReview, setPerformanceReview] =
@@ -26,6 +27,8 @@ const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
   const [surveys, setSurveys] = React.useState<
     PerformanceReviewSurveyInterface[]
   >([]);
+
+  const { addToast } = useToasts();
 
   const { activeFormPage, handleActiveFormPage } = useModalNav("information");
 
@@ -55,8 +58,16 @@ const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
       }
     } catch (error) {
       console.log(error);
+
+      let message = `An error occurred when the performance is being retrieved.`;
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Performance Error", message, "error");
     }
-  }, [url, user?.token, props.id]);
+  }, [url, user?.token, props.id, addToast]);
 
   const mappedSurveys = surveys.map((survey, index) => {
     return (

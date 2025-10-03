@@ -5,15 +5,18 @@ import { IoClose, IoText } from "react-icons/io5";
 import Input from "@/form/Input";
 import { getCSRFToken } from "@/src/utils/token";
 import { useSession } from "next-auth/react";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 
 import { useParams } from "next/navigation";
+import { useToasts } from "@/src/context/ToastContext";
 
 const CreateFolder: React.FC<ModalInterface> = (props) => {
   const [folder, setFolder] = React.useState<FolderInterface>({
     title: "",
     created_by: 0,
   });
+
+  const { addToast } = useToasts();
 
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -57,11 +60,24 @@ const CreateFolder: React.FC<ModalInterface> = (props) => {
           if (props.refetchIndex) {
             props.refetchIndex();
           }
+          addToast(
+            "Folder Created",
+            `${folder.title} has been created.`,
+            "success"
+          );
           props.toggleModal();
         }
       }
     } catch (error) {
       console.log(error);
+
+      let message = "An error occurred when the folder is being created";
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Folder Error", message, "error");
     }
   };
 

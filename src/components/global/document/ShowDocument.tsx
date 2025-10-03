@@ -3,7 +3,7 @@ import {
   DocumentInterface,
 } from "@/src/interface/DocumentInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 
 import TextBlock from "@/global/field/TextBlock";
 import TextField from "@/global/field/TextField";
@@ -13,6 +13,7 @@ import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
 import { IoClose } from "react-icons/io5";
 import { isCloudFileSummary } from "@/src/utils/utils";
+import { useToasts } from "@/src/context/ToastContext";
 
 const ShowDocument: React.FC<ModalInterface> = (props) => {
   const [document, setDocument] = React.useState<
@@ -25,6 +26,8 @@ const ShowDocument: React.FC<ModalInterface> = (props) => {
     created_by: 0,
     folder: null,
   });
+
+  const { addToast } = useToasts();
 
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -49,8 +52,17 @@ const ShowDocument: React.FC<ModalInterface> = (props) => {
       }
     } catch (error) {
       console.log(error);
+
+      let message =
+        "An error occurred when the document data is being retrieved";
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Document Error", message, "error");
     }
-  }, [props.id, url, user?.token, role]);
+  }, [props.id, url, user?.token, role, addToast]);
 
   React.useEffect(() => {
     getDocumentDetails();

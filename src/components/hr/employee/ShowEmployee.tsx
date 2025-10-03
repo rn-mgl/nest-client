@@ -1,6 +1,7 @@
 "use client";
 
 import Table from "@/src/components/global/field/Table";
+import { useToasts } from "@/src/context/ToastContext";
 import {
   LeaveBalanceInterface,
   LeaveRequestInterface,
@@ -16,7 +17,7 @@ import {
   normalizeDate,
   normalizeString,
 } from "@/src/utils/utils";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose, IoMail } from "react-icons/io5";
@@ -44,6 +45,8 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
     UserPerformanceReviewInterface[]
   >([]);
   const [trainings, setTrainings] = React.useState<UserTrainingInterface[]>([]);
+
+  const { addToast } = useToasts();
 
   const { data: session } = useSession({ required: true });
   const user = session?.user;
@@ -73,8 +76,17 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
       }
     } catch (error) {
       console.log(error);
+
+      let message =
+        "An error occurred when the employee data is being retrieved";
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Employee Error", message, "error");
     }
-  }, [user?.token, url, props.id]);
+  }, [user?.token, url, props.id, addToast]);
 
   const sendMail = () => {
     location.href = `mailto:${employee.email}`;

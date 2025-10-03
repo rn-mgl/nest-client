@@ -5,7 +5,7 @@ import {
   TrainingInterface,
   TrainingReviewInterface,
 } from "@/src/interface/TrainingInterface";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -17,6 +17,7 @@ import ModalNav from "@/global/navigation/ModalNav";
 import TextBlock from "@/global/field/TextBlock";
 import TextField from "@/global/field/TextField";
 import { isCloudFileSummary } from "@/src/utils/utils";
+import { useToasts } from "@/src/context/ToastContext";
 
 const ShowTraining: React.FC<ModalInterface> = (props) => {
   const [training, setTraining] = React.useState<TrainingInterface>({
@@ -32,7 +33,7 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
   );
   const [reviews, setReviews] = React.useState<TrainingReviewInterface[]>([]);
 
-  console.log(contents);
+  const { addToast } = useToasts();
 
   const { activeFormPage, handleActiveFormPage } = useModalNav("information");
 
@@ -84,8 +85,16 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
       }
     } catch (error) {
       console.log(error);
+
+      let message = `An error occurred when the training is being retrieved.`;
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Training Error", message, "error");
     }
-  }, [user?.token, props.id, url]);
+  }, [user?.token, props.id, url, addToast]);
 
   const mappedContents = contents.map((content, index) => {
     const currentContent =

@@ -11,7 +11,7 @@ import {
   TrainingReviewInterface,
 } from "@/src/interface/TrainingInterface";
 import { getCSRFToken } from "@/src/utils/token";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -30,6 +30,7 @@ import {
 } from "react-icons/io5";
 import File from "@/components/form/File";
 import { isCloudFileSummary, isRawFileSummary } from "@/src/utils/utils";
+import { useToasts } from "@/src/context/ToastContext";
 
 const EditTraining: React.FC<ModalInterface> = (props) => {
   const [training, setTraining] = React.useState<TrainingInterface>({
@@ -44,6 +45,8 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
 
   const certificateRef = React.useRef<HTMLInputElement | null>(null);
   const inputRefs = React.useRef<(HTMLInputElement | null)[]>([]);
+
+  const { addToast } = useToasts();
 
   const { activeFormPage, handleActiveFormPage } = useModalNav("information");
 
@@ -129,8 +132,23 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
       }
     } catch (error) {
       console.log(error);
+
+      let message = `An error occurred when the training is being retrieved.`;
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Training Error", message, "error");
     }
-  }, [user?.token, url, props.id, populateReviewFields, populateContentFields]);
+  }, [
+    user?.token,
+    url,
+    props.id,
+    populateReviewFields,
+    populateContentFields,
+    addToast,
+  ]);
 
   const handleTraining = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -277,12 +295,24 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
           if (props.refetchIndex) {
             props.refetchIndex();
           }
-
+          addToast(
+            "Training Updated",
+            `${training.title} has been successfully updated.`,
+            "success"
+          );
           props.toggleModal();
         }
       }
     } catch (error) {
       console.log(error);
+
+      let message = `An error occurred when the training is being updated.`;
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Training Error", message, "error");
     }
   };
 

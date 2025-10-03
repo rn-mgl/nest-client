@@ -1,10 +1,11 @@
 "use client";
 
+import { useToasts } from "@/src/context/ToastContext";
 import { AttendanceInterface } from "@/src/interface/AttendanceInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import { isCloudFileSummary, normalizeDate } from "@/src/utils/utils";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 
 import { useSession } from "next-auth/react";
 import React from "react";
@@ -20,6 +21,8 @@ const ShowAttendance: React.FC<ModalInterface & AttendanceDate> = (props) => {
   const [userAttendances, setUserAttendances] = React.useState<
     (UserInterface & { attendance: AttendanceInterface })[]
   >([]);
+
+  const { addToast } = useToasts();
 
   const url = process.env.URL;
   const { data } = useSession({ required: true });
@@ -47,9 +50,18 @@ const ShowAttendance: React.FC<ModalInterface & AttendanceDate> = (props) => {
         }
       } catch (error) {
         console.log(error);
+
+        let message =
+          "An error occurred when the employee attendance is being retrieved";
+
+        if (isAxiosError(error)) {
+          message = error.response?.data.message ?? error.message;
+        }
+
+        addToast("Attendance Error", message, "error");
       }
     },
-    [url, user?.token, props.year, props.month, props.date]
+    [url, user?.token, props.year, props.month, props.date, addToast]
   );
 
   const mappedAttendanceDetails = userAttendances.map(

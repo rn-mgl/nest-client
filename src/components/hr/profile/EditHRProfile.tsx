@@ -1,11 +1,12 @@
 "use client";
 
 import Input from "@/form/Input";
+import { useToasts } from "@/src/context/ToastContext";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import { isCloudFileSummary, isRawFileSummary } from "@/src/utils/utils";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import React from "react";
@@ -21,6 +22,8 @@ const EditHRProfile: React.FC<ModalInterface> = (props) => {
   });
 
   const imageRef = React.useRef<HTMLInputElement>(null);
+
+  const { addToast } = useToasts();
 
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
@@ -82,8 +85,17 @@ const EditHRProfile: React.FC<ModalInterface> = (props) => {
       }
     } catch (error) {
       console.log(error);
+
+      let message =
+        "An error occurred when the profile data is being retrieved";
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Profile Error", message, "error");
     }
-  }, [token, url, current]);
+  }, [token, url, current, addToast]);
 
   const submitUpdateProfile = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -127,12 +139,20 @@ const EditHRProfile: React.FC<ModalInterface> = (props) => {
           if (props.refetchIndex) {
             props.refetchIndex();
           }
-
+          addToast("Profile Updated", `Profile has been updated.`, "success");
           props.toggleModal();
         }
       }
     } catch (error) {
       console.log(error);
+
+      let message = "An error occurred when the profile data is being updated";
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Profile Error", message, "error");
     }
   };
 

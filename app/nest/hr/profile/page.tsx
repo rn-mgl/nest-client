@@ -2,9 +2,10 @@
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import ChangePassword from "@/src/components/hr/profile/ChangePassword";
 import EditHRProfile from "@/src/components/hr/profile/EditHRProfile";
+import { useToasts } from "@/src/context/ToastContext";
 import { UserInterface } from "@/src/interface/UserInterface";
 import { isCloudFileSummary } from "@/src/utils/utils";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import React from "react";
@@ -24,6 +25,8 @@ const Profile = () => {
   const [canEditProfile, setCanEditProfile] = React.useState(false);
   const [canChangePassword, setCanChangePassword] = React.useState(false);
   const [isPending, startTransition] = React.useTransition();
+
+  const { addToast } = useToasts();
 
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
@@ -52,10 +55,19 @@ const Profile = () => {
           }
         } catch (error) {
           console.log(error);
+
+          let message =
+            "An error occurred when the profile data is being retrieved";
+
+          if (isAxiosError(error)) {
+            message = error.response?.data.message ?? error.message;
+          }
+
+          addToast("Profile Error", message, "error");
         }
       });
     },
-    [url, user?.token, currentUser]
+    [url, user?.token, currentUser, addToast]
   );
 
   const handleCanEditProfile = () => {

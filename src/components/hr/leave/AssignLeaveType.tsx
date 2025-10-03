@@ -1,7 +1,7 @@
 import { AssignedLeaveBalance } from "@/src/interface/LeaveInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 
 import CheckBox from "@/form/CheckBox";
 import Table from "@/global/field/Table";
@@ -9,12 +9,14 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd, IoClose, IoRemove } from "react-icons/io5";
 import { isCloudFileSummary } from "@/src/utils/utils";
+import { useToasts } from "@/src/context/ToastContext";
 
 const AssignLeaveType: React.FC<ModalInterface> = (props) => {
   const [userLeaves, setUserLeaves] = React.useState<AssignedLeaveBalance[]>(
     []
   );
   const [assignedUsers, setAssignedUsers] = React.useState<number[]>([]);
+  const { addToast } = useToasts();
 
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -129,8 +131,17 @@ const AssignLeaveType: React.FC<ModalInterface> = (props) => {
       }
     } catch (error) {
       console.log(error);
+
+      let message =
+        "An error occurred when the employee leaves are being retrieved.";
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Employee Leaves", message, "error");
     }
-  }, [user?.token, url, props.id]);
+  }, [user?.token, url, props.id, addToast]);
 
   const submitAssignLeaveType = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -154,10 +165,29 @@ const AssignLeaveType: React.FC<ModalInterface> = (props) => {
           }
         );
 
-        console.log(responseData);
+        if (responseData.success) {
+          if (props.refetchIndex) {
+            props.refetchIndex();
+          }
+          addToast(
+            "Leave Assigned",
+            `Leave has been successfully assigned.`,
+            "success"
+          );
+          props.toggleModal();
+        }
       }
     } catch (error) {
       console.log(error);
+
+      let message =
+        "An error occurred when the user leaves are being assigned.";
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Employee Leaves", message, "error");
     }
   };
 

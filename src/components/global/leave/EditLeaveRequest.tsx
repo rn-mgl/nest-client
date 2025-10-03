@@ -2,10 +2,11 @@
 
 import Input from "@/form/Input";
 import TextArea from "@/form/TextArea";
+import { useToasts } from "@/src/context/ToastContext";
 import { LeaveRequestFormInterface } from "@/src/interface/LeaveInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose } from "react-icons/io5";
@@ -17,6 +18,8 @@ const EditLeaveRequest: React.FC<ModalInterface> = (props) => {
       end_date: "",
       start_date: "",
     });
+
+  const { addToast } = useToasts();
 
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
@@ -55,8 +58,17 @@ const EditLeaveRequest: React.FC<ModalInterface> = (props) => {
       }
     } catch (error) {
       console.log(error);
+
+      let message =
+        "An error occurred when the leave request is being retrieved.";
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Leave Request Error", message, "error");
     }
-  }, [url, user?.token, role, props.id]);
+  }, [url, user?.token, role, props.id, addToast]);
 
   const submitUpdateLeaveRequest = async (
     e: React.FormEvent<HTMLFormElement>
@@ -82,12 +94,25 @@ const EditLeaveRequest: React.FC<ModalInterface> = (props) => {
           if (props.refetchIndex) {
             props.refetchIndex();
           }
-
+          addToast(
+            "Leave Request Updated",
+            `Leave request has been updated.`,
+            "success"
+          );
           props.toggleModal();
         }
       }
     } catch (error) {
       console.log(error);
+
+      let message =
+        "An error occurred when the leave request is being updated.";
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Leave Request Error", message, "error");
     }
   };
 

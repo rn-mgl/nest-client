@@ -1,9 +1,10 @@
+import { useToasts } from "@/src/context/ToastContext";
 import {
   DeleteModalInterface,
   ModalInterface,
 } from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose } from "react-icons/io5";
@@ -11,6 +12,8 @@ import { IoClose } from "react-icons/io5";
 const DeleteEntity: React.FC<ModalInterface & DeleteModalInterface> = (
   props
 ) => {
+  const { addToast } = useToasts();
+
   const { data: session } = useSession({ required: true });
   const user = session?.user;
   const url = process.env.URL;
@@ -38,12 +41,24 @@ const DeleteEntity: React.FC<ModalInterface & DeleteModalInterface> = (
           if (props.refetchIndex) {
             props.refetchIndex();
           }
-
+          addToast(
+            `${props.label} Deleted`,
+            `${props.label} has been deleted.`,
+            "success"
+          );
           props.toggleModal();
         }
       }
     } catch (error) {
       console.log(error);
+
+      let message = `An error occurred when the ${props.label} is being deleted.`;
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Delete Error", message, "error");
     }
   };
 

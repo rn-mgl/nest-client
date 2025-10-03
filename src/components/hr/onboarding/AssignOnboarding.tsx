@@ -1,5 +1,6 @@
 import CheckBox from "@/form/CheckBox";
 import Table from "@/global/field/Table";
+import { useToasts } from "@/src/context/ToastContext";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
   AssignedOnboarding,
@@ -8,7 +9,7 @@ import {
 import { UserInterface } from "@/src/interface/UserInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import { isCloudFileSummary } from "@/src/utils/utils";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose } from "react-icons/io5";
@@ -17,6 +18,8 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
   const [userOnboardings, setUserOnboardings] = React.useState<
     AssignedOnboarding[]
   >([]);
+
+  const { addToast } = useToasts();
 
   const [assignedUsers, setAssignedUsers] = React.useState<number[]>([]);
 
@@ -64,8 +67,16 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
       }
     } catch (error) {
       console.log(error);
+
+      let message = `An error occurred when the user onboardings are being retrieved.`;
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Onboarding Error", message, "error");
     }
-  }, [url, user?.token, props.id]);
+  }, [url, user?.token, props.id, addToast]);
 
   const mappedUserOnboardings = userOnboardings.map((user) => {
     const userImage = isCloudFileSummary(user.image) ? user.image.url : "";
@@ -118,12 +129,24 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
           if (props.refetchIndex) {
             props.refetchIndex();
           }
-
+          addToast(
+            "Onboarding Assigned",
+            `Onboarding has been successfully assigned.`,
+            "success"
+          );
           props.toggleModal();
         }
       }
     } catch (error) {
       console.log(error);
+
+      let message = `An error occurred when the onboarding is being assigned.`;
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Onboarding Error", message, "error");
     }
   };
 

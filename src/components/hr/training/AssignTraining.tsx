@@ -1,10 +1,11 @@
 import CheckBox from "@/form/CheckBox";
 import Table from "@/global/field/Table";
+import { useToasts } from "@/src/context/ToastContext";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { AssignedTrainingInterface } from "@/src/interface/TrainingInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import { isCloudFileSummary } from "@/src/utils/utils";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose } from "react-icons/io5";
@@ -14,6 +15,8 @@ const AssignTraining: React.FC<ModalInterface> = (props) => {
     AssignedTrainingInterface[]
   >([]);
   const [assignedUsers, setAssignedUsers] = React.useState<number[]>([]);
+
+  const { addToast } = useToasts();
 
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -59,8 +62,16 @@ const AssignTraining: React.FC<ModalInterface> = (props) => {
       }
     } catch (error) {
       console.log(error);
+
+      let message = `An error occurred when the user trainings are being retrieved.`;
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Training Error", message, "error");
     }
-  }, [url, user?.token, props.id]);
+  }, [url, user?.token, props.id, addToast]);
 
   const mappedUsers = userTrainings.map((user) => {
     const userImage = isCloudFileSummary(user.image) ? user.image.url : "";
@@ -106,12 +117,24 @@ const AssignTraining: React.FC<ModalInterface> = (props) => {
           if (props.refetchIndex) {
             props.refetchIndex();
           }
-
+          addToast(
+            "Training Assigned",
+            `Training has been successfully assigned.`,
+            "success"
+          );
           props.toggleModal();
         }
       }
     } catch (error) {
       console.log(error);
+
+      let message = `An error occurred when the training is being assigned.`;
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Training Error", message, "error");
     }
   };
 

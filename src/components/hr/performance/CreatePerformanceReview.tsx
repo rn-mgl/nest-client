@@ -1,6 +1,7 @@
 import Input from "@/components/form/Input";
 import TextArea from "@/components/form/TextArea";
 import ModalNav from "@/global/navigation/ModalNav";
+import { useToasts } from "@/src/context/ToastContext";
 import useDynamicFields from "@/src/hooks/useDynamicFields";
 import useModalNav from "@/src/hooks/useModalNav";
 import { ModalInterface } from "@/src/interface/ModalInterface";
@@ -9,7 +10,7 @@ import {
   PerformanceReviewSurveyInterface,
 } from "@/src/interface/PerformanceReviewInterface";
 import { getCSRFToken } from "@/src/utils/token";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd, IoClose, IoReader, IoText, IoTrash } from "react-icons/io5";
@@ -21,6 +22,8 @@ const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
       description: "",
       created_by: 0,
     });
+
+  const { addToast } = useToasts();
 
   const url = process.env.URL;
   const { data } = useSession({ required: true });
@@ -73,12 +76,24 @@ const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
           if (props.refetchIndex) {
             props.refetchIndex();
           }
-
+          addToast(
+            "Performance Created",
+            `${performance.title} has been successfully created.`,
+            "success"
+          );
           props.toggleModal();
         }
       }
     } catch (error) {
       console.log(error);
+
+      let message = `An error occurred when the performance is being retrieved.`;
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Performance Error", message, "error");
     }
   };
 

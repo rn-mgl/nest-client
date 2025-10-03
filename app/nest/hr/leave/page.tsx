@@ -22,7 +22,7 @@ import {
   HR_LEAVE_TYPE_SEARCH,
   HR_LEAVE_TYPE_SORT,
 } from "@/src/utils/filters";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 
 import { useSession } from "next-auth/react";
 import React, { use } from "react";
@@ -44,6 +44,7 @@ import {
 } from "@/src/utils/utils";
 import { usePathname } from "next/navigation";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
+import { useToasts } from "@/src/context/ToastContext";
 
 const HRLeave = ({
   searchParams,
@@ -67,6 +68,8 @@ const HRLeave = ({
     LeaveRequestInterface[]
   >([]);
   const [isPending, startTransition] = React.useTransition();
+
+  const { addToast } = useToasts();
 
   const {
     canSeeSearchDropDown,
@@ -165,10 +168,19 @@ const HRLeave = ({
           }
         } catch (error) {
           console.log(error);
+
+          let message =
+            "An error occurred when the leave types are being retrieved";
+
+          if (isAxiosError(error)) {
+            message = error.response?.data.message ?? error.message;
+          }
+
+          addToast("Leave Type Error", message, "error");
         }
       });
     },
-    [url, user?.token]
+    [url, user?.token, addToast]
   );
 
   const getLeaveBalances = React.useCallback(
@@ -193,10 +205,19 @@ const HRLeave = ({
           }
         } catch (error) {
           console.log(error);
+
+          let message =
+            "An error occurred when the leave balances are being retrieved";
+
+          if (isAxiosError(error)) {
+            message = error.response?.data.message ?? error.message;
+          }
+
+          addToast("Leave Balance Error", message, "error");
         }
       });
     },
-    [url, user?.token]
+    [url, user?.token, addToast]
   );
 
   const getLeaveRequest = React.useCallback(
@@ -221,10 +242,19 @@ const HRLeave = ({
           }
         } catch (error) {
           console.log(error);
+
+          let message =
+            "An error occurred when the leave requests are being retrieved";
+
+          if (isAxiosError(error)) {
+            message = error.response?.data.message ?? error.message;
+          }
+
+          addToast("Leave Requests Error", message, "error");
         }
       });
     },
-    [url, user?.token]
+    [url, user?.token, addToast]
   );
 
   const handleFilters = React.useCallback(

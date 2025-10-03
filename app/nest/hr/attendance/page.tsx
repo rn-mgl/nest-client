@@ -3,8 +3,9 @@
 import Input from "@/src/components/form/Input";
 import Select from "@/src/components/form/Select";
 import ShowAttendance from "@/src/components/hr/attendance/ShowAttendance";
+import { useToasts } from "@/src/context/ToastContext";
 import { AttendanceStatisticsInterface } from "@/src/interface/AttendanceInterface";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 
 import { useSession } from "next-auth/react";
 import React from "react";
@@ -28,6 +29,8 @@ const HRAttendance = () => {
   });
   const [activeSelect, setActiveSelect] = React.useState(false);
   const [activeSeeMore, setActiveSeeMore] = React.useState(0);
+
+  const { addToast } = useToasts();
 
   const url = process.env.URL;
   const { data } = useSession({ required: true });
@@ -110,9 +113,18 @@ const HRAttendance = () => {
         }
       } catch (error) {
         console.log(error);
+
+        let message =
+          "An error occurred when the attendance data is being retrieved";
+
+        if (isAxiosError(error)) {
+          message = error.response?.data.message ?? error.message;
+        }
+
+        addToast("Attendance Error", message, "error");
       }
     },
-    [url, user?.token, activeDate, activeMonth, activeYear]
+    [url, user?.token, activeDate, activeMonth, activeYear, addToast]
   );
 
   const calendar = Array(startDay).fill(null);

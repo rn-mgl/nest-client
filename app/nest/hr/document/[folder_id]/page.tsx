@@ -21,7 +21,7 @@ import {
   HR_DOCUMENTS_SORT,
   HR_FOLDERS_SEARCH,
 } from "@/src/utils/filters";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 
 import BaseActions from "@/src/components/global/base/BaseActions";
 import BaseCard from "@/src/components/global/base/BaseCard";
@@ -39,6 +39,7 @@ import { IoAdd, IoArrowBack, IoPencil, IoTrash } from "react-icons/io5";
 import HRActions from "@/src/components/hr/global/HRActions";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
+import { useToasts } from "@/src/context/ToastContext";
 
 const HRDocument = () => {
   const [canCreateDocument, setCanCreateDocument] = React.useState(false);
@@ -60,6 +61,8 @@ const HRDocument = () => {
   const [activeDeleteFolder, setActiveDeleteFolder] = React.useState(0);
   const [activeDocumentSeeMore, setActiveDocumentSeeMore] = React.useState(0);
   const [isPending, startTransition] = React.useTransition();
+
+  const { addToast } = useToasts();
 
   const {
     canSeeSearchDropDown,
@@ -140,10 +143,19 @@ const HRDocument = () => {
           }
         } catch (error) {
           console.log(error);
+
+          let message =
+            "An error occurred when the documents and folders are being retrieved";
+
+          if (isAxiosError(error)) {
+            message = error.response?.data.message ?? error.message;
+          }
+
+          addToast("Document Error", message, "error");
         }
       });
     },
-    [url, user?.token, folderId]
+    [url, user?.token, folderId, addToast]
   );
 
   const getFolder = React.useCallback(
@@ -168,10 +180,19 @@ const HRDocument = () => {
           }
         } catch (error) {
           console.log(error);
+
+          let message =
+            "An error occurred when the  folder data is being retrieved";
+
+          if (isAxiosError(error)) {
+            message = error.response?.data.message ?? error.message;
+          }
+
+          addToast("Folder Error", message, "error");
         }
       });
     },
-    [user?.token, folderId, url]
+    [user?.token, folderId, url, addToast]
   );
 
   const mappedDocuments = useFilterAndSort(

@@ -11,12 +11,13 @@ import {
   OnboardingRequiredDocumentsInterface,
 } from "@/src/interface/OnboardingInterface";
 import { getCSRFToken } from "@/src/utils/token";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd, IoClose, IoReader, IoText, IoTrash } from "react-icons/io5";
 import ModalNav from "@/global/navigation/ModalNav";
+import { useToasts } from "@/src/context/ToastContext";
 
 const EditOnboarding: React.FC<ModalInterface> = (props) => {
   const [onboarding, setOnboarding] = React.useState<OnboardingInterface>({
@@ -28,6 +29,8 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
     []
   );
   const [policiesToDelete, setPoliciesToDelete] = React.useState<number[]>([]);
+
+  const { addToast } = useToasts();
 
   const {
     fields: required_documents,
@@ -150,12 +153,24 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
           if (props.refetchIndex) {
             props.refetchIndex();
           }
-
+          addToast(
+            "Onboarding Updated",
+            `${onboarding.title} has been successfully created.`,
+            "success"
+          );
           props.toggleModal();
         }
       }
     } catch (error) {
       console.log(error);
+
+      let message = `An error occurred when the onboarding is being updated.`;
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Onboarding Error", message, "error");
     }
   };
 

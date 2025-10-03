@@ -9,7 +9,7 @@ import {
   OnboardingRequiredDocumentsInterface,
 } from "@/src/interface/OnboardingInterface";
 import { getCSRFToken } from "@/src/utils/token";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 
 import { useToasts } from "@/src/context/ToastContext";
 import { useSession } from "next-auth/react";
@@ -161,8 +161,8 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
           `${url}/hr/onboarding`,
           {
             ...onboarding,
-            required_documents : requiredDocuments,
-            policy_acknowledgements : policyAcknowledgements,
+            required_documents: requiredDocuments,
+            policy_acknowledgements: policyAcknowledgements,
           },
           {
             headers: {
@@ -187,6 +187,14 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
       }
     } catch (error) {
       console.log(error);
+
+      let message = `An error occurred when the onboarding is being created.`;
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Onboarding Error", message, "error");
     }
   };
 

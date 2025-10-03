@@ -10,7 +10,7 @@ import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { OnboardingInterface } from "@/src/interface/OnboardingInterface";
 import { HR_ONBOARDING_SEARCH, HR_ONBOARDING_SORT } from "@/src/utils/filters";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 
 import BaseActions from "@/src/components/global/base/BaseActions";
 import BaseCard from "@/src/components/global/base/BaseCard";
@@ -22,6 +22,7 @@ import { isUserSummary } from "@/src/utils/utils";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd } from "react-icons/io5";
+import { useToasts } from "@/src/context/ToastContext";
 
 const HROnboarding = () => {
   const [onboardings, setOnboardings] = React.useState<OnboardingInterface[]>(
@@ -34,6 +35,8 @@ const HROnboarding = () => {
   const [activeOnboardingSeeMore, setActiveOnboardingSeeMore] =
     React.useState(0);
   const [isPending, startTransition] = React.useTransition();
+
+  const { addToast } = useToasts();
 
   const {
     canSeeSearchDropDown,
@@ -94,10 +97,18 @@ const HROnboarding = () => {
           }
         } catch (error) {
           console.log(error);
+
+          let message = `An error occurred when the onboardings are being retrieved.`;
+
+          if (isAxiosError(error)) {
+            message = error.response?.data.message ?? error.message;
+          }
+
+          addToast("Onboarding Error", message, "error");
         }
       });
     },
-    [url, user?.token]
+    [url, user?.token, addToast]
   );
 
   const mappedOnboardings = useFilterAndSort(onboardings, search, sort).map(

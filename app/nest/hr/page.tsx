@@ -1,8 +1,9 @@
 "use client";
 
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
+import { useToasts } from "@/src/context/ToastContext";
 import { HRDashboardInterface } from "@/src/interface/DashboardInterface";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import React, { useTransition } from "react";
 import {
@@ -50,6 +51,8 @@ const HRDashboard = () => {
 
   const [isPending, startTransition] = useTransition();
 
+  const { addToast } = useToasts();
+
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
   const user = session?.user;
@@ -72,10 +75,19 @@ const HRDashboard = () => {
           }
         } catch (error) {
           console.log(error);
+
+          let message =
+            "An error occurred when the dashboard data are being retrieved";
+
+          if (isAxiosError(error)) {
+            message = error.response?.data.message ?? error.message;
+          }
+
+          addToast("Dashboard Error", message, "error");
         }
       });
     },
-    [url, user?.token]
+    [url, user?.token, addToast]
   );
 
   React.useEffect(() => {

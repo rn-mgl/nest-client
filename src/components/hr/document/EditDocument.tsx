@@ -1,7 +1,7 @@
 import { DocumentInterface } from "@/src/interface/DocumentInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 
 import { useSession } from "next-auth/react";
 import React from "react";
@@ -13,6 +13,7 @@ import Link from "next/link";
 import useSelect from "@/src/hooks/useSelect";
 import Select from "@/form/Select";
 import { isCloudFileSummary, isRawFileSummary } from "@/src/utils/utils";
+import { useToasts } from "@/src/context/ToastContext";
 
 const EditDocument: React.FC<ModalInterface> = (props) => {
   const [document, setDocument] = React.useState<DocumentInterface>({
@@ -26,6 +27,8 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
   const [paths, setPaths] = React.useState<{ label: string; value: number }[]>(
     []
   );
+
+  const { addToast } = useToasts();
 
   const { activeSelect, toggleSelect } = useSelect();
   const documentRef = React.useRef<HTMLInputElement | null>(null);
@@ -63,9 +66,18 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
         }
       } catch (error) {
         console.log(error);
+
+        let message =
+          "An error occurred when the folder paths are being retrieved";
+
+        if (isAxiosError(error)) {
+          message = error.response?.data.message ?? error.message;
+        }
+
+        addToast("Folder Error", message, "error");
       }
     },
-    [url, user?.token]
+    [url, user?.token, addToast]
   );
 
   const getDocument = React.useCallback(async () => {
@@ -93,8 +105,17 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
       }
     } catch (error) {
       console.log(error);
+
+      let message =
+        "An error occurred when the document data is being retrieved";
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Document Error", message, "error");
     }
-  }, [url, user?.token, props.id, getAvailablePaths]);
+  }, [url, user?.token, props.id, getAvailablePaths, addToast]);
 
   const submitUpdateDocument = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -141,12 +162,24 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
           if (props.refetchIndex) {
             props.refetchIndex();
           }
-
+          addToast(
+            "Document Updated",
+            `${document.title} as been updated.`,
+            "success"
+          );
           props.toggleModal();
         }
       }
     } catch (error) {
       console.log(error);
+
+      let message = "An error occurred when the document data is being updated";
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Document Error", message, "error");
     }
   };
 

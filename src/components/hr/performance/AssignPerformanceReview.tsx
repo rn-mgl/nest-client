@@ -1,10 +1,11 @@
 import CheckBox from "@/form/CheckBox";
 import Table from "@/global/field/Table";
+import { useToasts } from "@/src/context/ToastContext";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { AssignedPerformanceReviewInterface } from "@/src/interface/PerformanceReviewInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import { isCloudFileSummary } from "@/src/utils/utils";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose } from "react-icons/io5";
@@ -14,6 +15,8 @@ const AssignPerformanceReview: React.FC<ModalInterface> = (props) => {
     AssignedPerformanceReviewInterface[]
   >([]);
   const [assignedUsers, setAssignedUsers] = React.useState<number[]>([]);
+
+  const { addToast } = useToasts();
 
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -58,8 +61,16 @@ const AssignPerformanceReview: React.FC<ModalInterface> = (props) => {
       }
     } catch (error) {
       console.log(error);
+
+      let message = `An error occurred when the user performance reviews are being retrieved.`;
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Performance Error", message, "error");
     }
-  }, [url, user?.token, props.id]);
+  }, [url, user?.token, props.id, addToast]);
 
   const submitAssignPerformanceReview = async (
     e: React.FormEvent<HTMLFormElement>
@@ -85,12 +96,24 @@ const AssignPerformanceReview: React.FC<ModalInterface> = (props) => {
           if (props.refetchIndex) {
             props.refetchIndex();
           }
-
+          addToast(
+            "Performance Assigned",
+            `Performance has been successfully assigned.`,
+            "success"
+          );
           props.toggleModal();
         }
       }
     } catch (error) {
       console.log(error);
+
+      let message = `An error occurred when the performance is being assigned.`;
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Performance Error", message, "error");
     }
   };
 

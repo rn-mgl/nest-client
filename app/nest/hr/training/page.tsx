@@ -4,7 +4,7 @@ import CreateTraining from "@/src/components/hr/training/CreateTraining";
 import EditTraining from "@/src/components/hr/training/EditTraining";
 import ShowTraining from "@/src/components/hr/training/ShowTraining";
 import { TrainingInterface } from "@/src/interface/TrainingInterface";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import Filter from "@/src/components/global/filter/Filter";
@@ -22,6 +22,7 @@ import { HR_TRAINING_SEARCH, HR_TRAINING_SORT } from "@/utils/filters";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd } from "react-icons/io5";
+import { useToasts } from "@/src/context/ToastContext";
 
 const HRTraining = () => {
   const [trainings, setTrainings] = React.useState<TrainingInterface[]>([]);
@@ -31,6 +32,8 @@ const HRTraining = () => {
   const [canCreateTraining, setCanCreateTraining] = React.useState(false);
   const [activeAssignTraining, setActiveAssignTraining] = React.useState(0);
   const [isPending, startTransition] = React.useTransition();
+
+  const { addToast } = useToasts();
 
   const {
     search,
@@ -90,10 +93,18 @@ const HRTraining = () => {
           }
         } catch (error) {
           console.log(error);
+
+          let message = `An error occurred when the trainings are being retrieved.`;
+
+          if (isAxiosError(error)) {
+            message = error.response?.data.message ?? error.message;
+          }
+
+          addToast("Training Error", message, "error");
         }
       });
     },
-    [user?.token, url]
+    [user?.token, url, addToast]
   );
 
   const mappedTrainings = useFilterAndSort(trainings, search, sort).map(

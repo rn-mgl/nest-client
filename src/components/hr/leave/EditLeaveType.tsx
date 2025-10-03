@@ -4,10 +4,11 @@ import { IoClose, IoOptions, IoReader } from "react-icons/io5";
 import { LeaveTypeInterface } from "@/src/interface/LeaveInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import { useSession } from "next-auth/react";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 
 import Input from "@/components/form/Input";
 import TextArea from "@/components/form/TextArea";
+import { useToasts } from "@/src/context/ToastContext";
 
 const EditLeaveType: React.FC<ModalInterface> = (props) => {
   const [leaveType, setLeaveType] = React.useState<LeaveTypeInterface>({
@@ -15,6 +16,7 @@ const EditLeaveType: React.FC<ModalInterface> = (props) => {
     description: "",
     created_by: 0,
   });
+  const { addToast } = useToasts();
   const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -48,8 +50,16 @@ const EditLeaveType: React.FC<ModalInterface> = (props) => {
       }
     } catch (error) {
       console.log(error);
+
+      let message = "An error occurred when the leave types is being retrieved";
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Leave Type Error", message, "error");
     }
-  }, [url, user?.token, props.id]);
+  }, [url, user?.token, props.id, addToast]);
 
   const submitUpdateLeaveType = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -73,11 +83,24 @@ const EditLeaveType: React.FC<ModalInterface> = (props) => {
           if (props.refetchIndex) {
             props.refetchIndex();
           }
+          addToast(
+            "Leave Type Updated",
+            `${leaveType.type} has been updated.`,
+            "success"
+          );
           props.toggleModal();
         }
       }
     } catch (error) {
       console.log(error);
+
+      let message = "An error occurred when the leave types is being updated.";
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Leave Type Error", message, "error");
     }
   };
 

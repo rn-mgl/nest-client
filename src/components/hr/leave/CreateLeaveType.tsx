@@ -6,7 +6,8 @@ import { IoClose, IoOptions, IoReader } from "react-icons/io5";
 import TextArea from "@/form/TextArea";
 import { getCSRFToken } from "@/src/utils/token";
 import { useSession } from "next-auth/react";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
+import { useToasts } from "@/src/context/ToastContext";
 
 const CreateLeaveType: React.FC<ModalInterface> = (props) => {
   const [leaveType, setLeaveType] = React.useState<LeaveTypeInterface>({
@@ -14,6 +15,7 @@ const CreateLeaveType: React.FC<ModalInterface> = (props) => {
     description: "",
     created_by: 0,
   });
+  const { addToast } = useToasts();
   const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -53,11 +55,24 @@ const CreateLeaveType: React.FC<ModalInterface> = (props) => {
           if (props.refetchIndex) {
             props.refetchIndex();
           }
+          addToast(
+            "Leave Type Created",
+            `${leaveType.type} as been created.`,
+            "success"
+          );
           props.toggleModal();
         }
       }
     } catch (error) {
       console.log(error);
+
+      let message = "An error occurred when the leave types is being created";
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Leave Type Error", message, "error");
     }
   };
 

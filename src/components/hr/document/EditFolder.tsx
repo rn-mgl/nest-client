@@ -2,13 +2,14 @@ import useSelect from "@/src/hooks/useSelect";
 import { FolderInterface } from "@/src/interface/DocumentInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose, IoText } from "react-icons/io5";
 import Input from "@/form/Input";
 import Select from "@/form/Select";
+import { useToasts } from "@/src/context/ToastContext";
 
 const EditFolder: React.FC<ModalInterface> = (props) => {
   const [folder, setFolder] = React.useState<FolderInterface>({
@@ -19,6 +20,7 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
   const [paths, setPaths] = React.useState<{ label: string; value: number }[]>(
     []
   );
+  const { addToast } = useToasts();
   const { activeSelect, toggleSelect } = useSelect();
 
   const url = process.env.URL;
@@ -76,9 +78,18 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
         }
       } catch (error) {
         console.log(error);
+
+        let message =
+          "An error occurred when the folder paths are being retrieved";
+
+        if (isAxiosError(error)) {
+          message = error.response?.data.message ?? error.message;
+        }
+
+        addToast("Folder Error", message, "error");
       }
     },
-    [url, user?.token, props.id]
+    [url, user?.token, props.id, addToast]
   );
 
   const getFolder = React.useCallback(async () => {
@@ -106,8 +117,16 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
       }
     } catch (error) {
       console.log(error);
+
+      let message = "An error occurred when the folder data is being retrieved";
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Folder Error", message, "error");
     }
-  }, [url, user?.token, props.id, getAvailablePaths]);
+  }, [url, user?.token, props.id, getAvailablePaths, addToast]);
 
   const submitUpdateFolder = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -144,12 +163,24 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
           if (props.refetchIndex) {
             props.refetchIndex();
           }
-
+          addToast(
+            "Folder Updated",
+            `${folder.title} has been updated.`,
+            "success"
+          );
           props.toggleModal();
         }
       }
     } catch (error) {
       console.log(error);
+
+      let message = "An error occurred when the folder data is being updated";
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Folder Error", message, "error");
     }
   };
 

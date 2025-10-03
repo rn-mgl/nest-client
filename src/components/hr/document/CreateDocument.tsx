@@ -1,7 +1,7 @@
 import { DocumentInterface } from "@/src/interface/DocumentInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 
 import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
@@ -11,6 +11,7 @@ import File from "@/form/File";
 import Input from "@/form/Input";
 import TextArea from "@/form/TextArea";
 import { isRawFileSummary } from "@/src/utils/utils";
+import { useToasts } from "@/src/context/ToastContext";
 
 const CreateDocument: React.FC<ModalInterface> = (props) => {
   const [document, setDocument] = React.useState<DocumentInterface>({
@@ -19,6 +20,8 @@ const CreateDocument: React.FC<ModalInterface> = (props) => {
     document: null,
     created_by: 0,
   });
+
+  const { addToast } = useToasts();
 
   const url = process.env.URL;
   const { data } = useSession({ required: true });
@@ -98,12 +101,24 @@ const CreateDocument: React.FC<ModalInterface> = (props) => {
           if (props.refetchIndex) {
             props.refetchIndex();
           }
-
+          addToast(
+            "Document Created",
+            `${document.title} has been created.`,
+            "success"
+          );
           props.toggleModal();
         }
       }
     } catch (error) {
       console.log(error);
+
+      let message = "An error occurred when the document is being created";
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Document Error", message, "error");
     }
   };
 

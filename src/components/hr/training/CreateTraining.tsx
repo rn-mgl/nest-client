@@ -10,7 +10,7 @@ import {
   TrainingReviewInterface,
 } from "@/src/interface/TrainingInterface";
 import { getCSRFToken } from "@/src/utils/token";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 
 import { useSession } from "next-auth/react";
 import React from "react";
@@ -28,6 +28,7 @@ import {
 import File from "@/form/File";
 import Radio from "@/form/Radio";
 import { isRawFileSummary } from "@/src/utils/utils";
+import { useToasts } from "@/src/context/ToastContext";
 
 const CreateTraining: React.FC<ModalInterface> = (props) => {
   const [training, setTraining] = React.useState<TrainingInterface>({
@@ -37,6 +38,8 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
     certificate: null,
     created_by: 0,
   });
+
+  const { addToast } = useToasts();
 
   const { activeFormPage, handleActiveFormPage } = useModalNav("information");
 
@@ -187,12 +190,24 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
           if (props.refetchIndex) {
             props.refetchIndex();
           }
-
+          addToast(
+            "Training Updated",
+            `${training.title} has been successfully created.`,
+            "success"
+          );
           props.toggleModal();
         }
       }
     } catch (error) {
       console.log(error);
+
+      let message = `An error occurred when the training is being created.`;
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Training Error", message, "error");
     }
   };
 

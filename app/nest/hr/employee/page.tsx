@@ -48,7 +48,7 @@ import {
   normalizeDate,
   normalizeString,
 } from "@/src/utils/utils";
-import axios, { AxiosError } from "axios";
+import axios, { isAxiosError } from "axios";
 
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
@@ -178,12 +178,13 @@ const HREmployee = ({
         } catch (error) {
           console.log(error);
 
-          let message = "An error occurred when fetching the trainings.";
+          let message = `An error occurred when the ${tab} data are being retrieved`;
 
-          if (error instanceof AxiosError && error.code !== "ERR_CANCELED") {
+          if (isAxiosError(error)) {
             message = error.response?.data.message ?? error.message;
-            addToast("Something went wrong", message, "error", 5000);
           }
+
+          addToast("Error", message, "error");
         }
       });
     },
@@ -217,12 +218,13 @@ const HREmployee = ({
     } catch (error) {
       console.log(error);
 
-      const message =
-        error instanceof AxiosError
-          ? error.response?.data.message ?? error.message
-          : "An error occurred";
+      let message = `An error occurred when the leave request is being handled.`;
 
-      addToast("Something went wrong", message, "error");
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Leave Error", message, "error");
     }
   };
 

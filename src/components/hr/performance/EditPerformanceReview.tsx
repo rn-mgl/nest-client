@@ -9,12 +9,13 @@ import {
   PerformanceReviewSurveyInterface,
 } from "@/src/interface/PerformanceReviewInterface";
 import { getCSRFToken } from "@/src/utils/token";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd, IoClose, IoReader, IoText, IoTrash } from "react-icons/io5";
 import ModalNav from "@/global/navigation/ModalNav";
+import { useToasts } from "@/src/context/ToastContext";
 
 const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
   const [performance, setPerformanceReview] =
@@ -24,6 +25,7 @@ const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
       created_by: 0,
     });
   const [surveyToDelete, setSurveyToDelete] = React.useState<Array<number>>([]);
+  const { addToast } = useToasts();
 
   const { fields, addField, handleField, populateFields, removeField } =
     useDynamicFields<PerformanceReviewSurveyInterface>([
@@ -78,8 +80,16 @@ const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
       }
     } catch (error) {
       console.log(error);
+
+      let message = `An error occurred when the performance is being retrieved.`;
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Performance Error", message, "error");
     }
-  }, [url, user?.token, props.id, populateFields]);
+  }, [url, user?.token, props.id, populateFields, addToast]);
 
   const mappedSurveys = fields.map((content, index) => {
     return (
@@ -138,12 +148,24 @@ const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
           if (props.refetchIndex) {
             props.refetchIndex();
           }
-
+          addToast(
+            "Performance Updated",
+            `${performance.title} has been successfully updated.`,
+            "success"
+          );
           props.toggleModal();
         }
       }
     } catch (error) {
       console.log(error);
+
+      let message = `An error occurred when the performance is being updated.`;
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Performance Error", message, "error");
     }
   };
 

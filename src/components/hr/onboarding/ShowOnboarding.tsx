@@ -7,7 +7,7 @@ import {
   OnboardingPolicyAcknowledgemenInterface,
   OnboardingRequiredDocumentsInterface,
 } from "@/src/interface/OnboardingInterface";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 
 import ModalNav from "@/global/navigation/ModalNav";
 import TextBlock from "@/global/field/TextBlock";
@@ -15,6 +15,7 @@ import TextField from "@/global/field/TextField";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose } from "react-icons/io5";
+import { useToasts } from "@/src/context/ToastContext";
 
 const ShowOnboarding: React.FC<ModalInterface> = (props) => {
   const [onboarding, setOnboarding] = React.useState<
@@ -29,6 +30,8 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
     required_documents: [],
     policy_acknowledgements: [],
   });
+
+  const { addToast } = useToasts();
 
   const { activeFormPage, handleActiveFormPage } = useModalNav("information");
 
@@ -57,8 +60,16 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
       }
     } catch (error) {
       console.log(error);
+
+      let message = `An error occurred when the onboarding is being retrieved.`;
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Onboarding Error", message, "error");
     }
-  }, [url, user?.token, props.id]);
+  }, [url, user?.token, props.id, addToast]);
 
   const mappedRequiredDocuments = onboarding.required_documents.map(
     (req, index) => {
