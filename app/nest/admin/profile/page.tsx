@@ -3,9 +3,10 @@
 import ChangePassword from "@/src/components/admin/profile/ChangePassword";
 import EditAdminProfile from "@/src/components/admin/profile/EditAdminProfile";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
+import { useToasts } from "@/src/context/ToastContext";
 import { UserInterface } from "@/src/interface/UserInterface";
 import { isCloudFileSummary } from "@/src/utils/utils";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import React, { useTransition } from "react";
 import { IoLockClosed, IoLockOpen, IoMail, IoPencil } from "react-icons/io5";
@@ -24,6 +25,8 @@ const AdminProfile = () => {
   const [canEditProfile, setCanEditProfile] = React.useState(false);
   const [canChangePassword, setCanChangePassword] = React.useState(false);
   const [isPending, startTransition] = useTransition();
+
+  const { addToast } = useToasts();
 
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
@@ -52,10 +55,19 @@ const AdminProfile = () => {
           }
         } catch (error) {
           console.log(error);
+
+          let message =
+            "An error occurred when the profile is being retrieved.";
+
+          if (isAxiosError(error)) {
+            message = error.response?.data.message ?? error.message;
+          }
+
+          addToast("Profile Error", message, "error");
         }
       });
     },
-    [url, user?.token, currentUser]
+    [url, user?.token, currentUser, addToast]
   );
 
   const handleCanEditProfile = () => {

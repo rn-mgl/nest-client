@@ -1,8 +1,9 @@
 "use client";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
+import { useToasts } from "@/src/context/ToastContext";
 import { AdminDashboardInterface } from "@/src/interface/DashboardInterface";
 import { isCloudFileSummary } from "@/src/utils/utils";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import {
@@ -18,17 +19,19 @@ const AdminDashboard = () => {
 
   const [isPending, startTransition] = React.useTransition();
 
+  const { addToast } = useToasts();
+
   const { data: session } = useSession({ required: true });
   const user = session?.user;
   const url = process.env.URL;
 
-  const activatedHRs = dashboard.hrs.filter(
-    (hr) => hr.email_verified_at !== null
-  );
+  const activatedHRs = React.useMemo(() => {
+    return dashboard.hrs.filter((hr) => hr.email_verified_at !== null);
+  }, [dashboard.hrs]);
 
-  const deactivatedHRs = dashboard.hrs.filter(
-    (hr) => hr.email_verified_at === null
-  );
+  const deactivatedHRs = React.useMemo(() => {
+    return dashboard.hrs.filter((hr) => hr.email_verified_at === null);
+  }, [dashboard.hrs]);
 
   const latestHRs = dashboard.hrs
     .filter((hr) => {
@@ -100,10 +103,19 @@ const AdminDashboard = () => {
           }
         } catch (error) {
           console.log(error);
+
+          let message =
+            "An error occurred when the dashboard data are being retrieved.";
+
+          if (isAxiosError(error)) {
+            message = error.response?.data.message ?? error.message;
+          }
+
+          addToast("Dashboard Error", message, "error");
         }
       });
     },
-    [url, user?.token]
+    [url, user?.token, addToast]
   );
 
   React.useEffect(() => {

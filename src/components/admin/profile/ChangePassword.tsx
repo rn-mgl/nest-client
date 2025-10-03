@@ -1,11 +1,12 @@
 import useShowPassword from "@/src/hooks/useShowPassword";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import { signOut, useSession } from "next-auth/react";
 import React from "react";
 import { IoClose, IoEye, IoEyeOff } from "react-icons/io5";
 import Input from "@/form/Input";
+import { useToasts } from "@/src/context/ToastContext";
 
 const ChangePassword: React.FC<ModalInterface> = (props) => {
   const [password, setPassword] = React.useState({
@@ -13,6 +14,8 @@ const ChangePassword: React.FC<ModalInterface> = (props) => {
     new_password: "",
     new_password_confirmation: "",
   });
+
+  const { addToast } = useToasts();
 
   const { showPassword, handleShowPassword } = useShowPassword();
 
@@ -55,6 +58,14 @@ const ChangePassword: React.FC<ModalInterface> = (props) => {
       }
     } catch (error) {
       console.log(error);
+
+      let message = "An error occurred when the password is being updated.";
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Password Error", message, "error");
     }
   };
 

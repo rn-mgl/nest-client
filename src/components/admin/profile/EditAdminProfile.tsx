@@ -1,11 +1,12 @@
 "use client";
 
 import Input from "@/form/Input";
+import { useToasts } from "@/src/context/ToastContext";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import { isCloudFileSummary, isRawFileSummary } from "@/src/utils/utils";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose, IoImage, IoPerson, IoTrash } from "react-icons/io5";
@@ -21,6 +22,8 @@ const EditAdminProfile: React.FC<ModalInterface> = (props) => {
     id: 0,
     verification_status: "Deactivated",
   });
+
+  const { addToast } = useToasts();
 
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
@@ -46,8 +49,17 @@ const EditAdminProfile: React.FC<ModalInterface> = (props) => {
       }
     } catch (error) {
       console.log(error);
+
+      let message =
+        "An error occurred when the profile details are being retrieved.";
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Profile Error", message, "error");
     }
-  }, [userToken, userId, url]);
+  }, [userToken, userId, url, addToast]);
 
   const handleProfile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, files } = e.target;
@@ -125,6 +137,15 @@ const EditAdminProfile: React.FC<ModalInterface> = (props) => {
       }
     } catch (error) {
       console.log(error);
+
+      let message =
+        "An error occurred when the profile details are being updated.";
+
+      if (isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Profile Error", message, "error");
     }
   };
 

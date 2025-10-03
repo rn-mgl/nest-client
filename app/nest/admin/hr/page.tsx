@@ -16,7 +16,7 @@ import {
   ADMIN_HR_SORT,
 } from "@/src/utils/filters";
 import { getCSRFToken } from "@/src/utils/token";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import {
@@ -97,10 +97,18 @@ const AdminHR = () => {
           }
         } catch (error) {
           console.log(error);
+
+          let message = "An error occurred when the HRs are being retrieved.";
+
+          if (isAxiosError(error)) {
+            message = error.response?.data.message ?? error.message;
+          }
+
+          addToast("HR List Error", message, "error");
         }
       });
     },
-    [url, user?.token]
+    [url, user?.token, addToast]
   );
 
   const toggleVerification = async (hrId: number, toggle: boolean) => {
