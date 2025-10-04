@@ -4,6 +4,7 @@ import BaseActions from "@/src/components/global/base/BaseActions";
 import BaseCard from "@/src/components/global/base/BaseCard";
 import Filter from "@/src/components/global/filter/Filter";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
+import { useToasts } from "@/src/context/ToastContext";
 import useCategory from "@/src/hooks/useCategory";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
 import useSearch from "@/src/hooks/useSearch";
@@ -26,6 +27,8 @@ const Onboarding = () => {
   const [activeOnboardingSeeMore, setActiveOnboardingSeeMore] =
     React.useState(0);
   const [isPending, startTransition] = React.useTransition();
+
+  const { addToast } = useToasts();
 
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
@@ -80,10 +83,19 @@ const Onboarding = () => {
           }
         } catch (error) {
           console.log(error);
+
+          let message =
+            "An error occurred when the onboardings are being retrieved.";
+
+          if (axios.isAxiosError(error)) {
+            message = error.response?.data.message ?? error.message;
+          }
+
+          addToast("Onboarding Error", message, "error");
         }
       });
     },
-    [url, user?.token]
+    [url, user?.token, addToast]
   );
 
   const mappedOnboardings = useFilterAndSort(

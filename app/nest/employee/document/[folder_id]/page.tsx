@@ -6,6 +6,7 @@ import FolderCard from "@/src/components/global/document/FolderCard";
 import ShowDocument from "@/src/components/global/document/ShowDocument";
 import Filter from "@/src/components/global/filter/Filter";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
+import { useToasts } from "@/src/context/ToastContext";
 import useCategory from "@/src/hooks/useCategory";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
 import useSearch from "@/src/hooks/useSearch";
@@ -42,6 +43,8 @@ const Document = () => {
   });
   const [activeDocumentSeeMore, setActiveDocumentSeeMore] = React.useState(0);
   const [isPending, startTransition] = React.useTransition();
+
+  const { addToast } = useToasts();
 
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
@@ -99,10 +102,19 @@ const Document = () => {
           }
         } catch (error) {
           console.log(error);
+
+          let message =
+            "An error occurred when the documents and folders are being retrieved.";
+
+          if (axios.isAxiosError(error)) {
+            message = error.response?.data.message ?? error.message;
+          }
+
+          addToast("Document Error", message, "error");
         }
       });
     },
-    [url, user?.token, folderId]
+    [url, user?.token, folderId, addToast]
   );
 
   const getFolder = React.useCallback(
@@ -127,10 +139,19 @@ const Document = () => {
           }
         } catch (error) {
           console.log(error);
+
+          let message =
+            "An error occurred when the folder details is being retrieved.";
+
+          if (axios.isAxiosError(error)) {
+            message = error.response?.data.message ?? error.message;
+          }
+
+          addToast("Folder Error", message, "error");
         }
       });
     },
-    [url, user?.token, folderId]
+    [url, user?.token, folderId, addToast]
   );
 
   const mappedDocuments = useFilterAndSort(

@@ -1,6 +1,7 @@
 "use client";
 
 import Input from "@/form/Input";
+import { useToasts } from "@/src/context/ToastContext";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import { getCSRFToken } from "@/src/utils/token";
@@ -21,6 +22,8 @@ const EditEmployeeProfile: React.FC<ModalInterface> = (props) => {
     password: "",
     verification_status: "Deactivated",
   });
+
+  const { addToast } = useToasts();
 
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
@@ -71,8 +74,17 @@ const EditEmployeeProfile: React.FC<ModalInterface> = (props) => {
       }
     } catch (error) {
       console.log(error);
+
+      let message =
+        "An error occurred when the profile data is being retrieved";
+
+      if (axios.isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Profile Error", message, "error");
     }
-  }, [userToken, userId, url]);
+  }, [userToken, userId, url, addToast]);
 
   const submitUpdateProfile = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -106,12 +118,20 @@ const EditEmployeeProfile: React.FC<ModalInterface> = (props) => {
           if (props.refetchIndex) {
             props.refetchIndex();
           }
-
+          addToast("Profile Updated", "Profile has been updated.", "success");
           props.toggleModal();
         }
       }
     } catch (error) {
       console.log(error);
+
+      let message = "An error occurred when the profile data is being updated";
+
+      if (axios.isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Profile Error", message, "error");
     }
   };
 

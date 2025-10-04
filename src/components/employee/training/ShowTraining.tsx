@@ -4,6 +4,7 @@ import Radio from "@/form/Radio";
 import TextBlock from "@/global/field/TextBlock";
 import TextField from "@/global/field/TextField";
 import ModalNav from "@/global/navigation/ModalNav";
+import { useToasts } from "@/src/context/ToastContext";
 import useModalNav from "@/src/hooks/useModalNav";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
@@ -39,6 +40,8 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
       user_response: UserTrainingResponseInterface | null;
     })[]
   >([]);
+
+  const { addToast } = useToasts();
 
   const { data: session } = useSession({ required: true });
   const { activeFormPage, handleActiveFormPage } = useModalNav("information");
@@ -132,8 +135,17 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
       }
     } catch (error) {
       console.log(error);
+
+      let message =
+        "An error occurred when the training data is being retrieved.";
+
+      if (axios.isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Training Error", message, "error");
     }
-  }, [url, user?.token, props.id]);
+  }, [url, user?.token, props.id, addToast]);
 
   const submitReview = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -163,11 +175,24 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
         );
 
         if (responseData.success) {
+          addToast(
+            "Response Submitted",
+            `Review response has been updated.`,
+            "success"
+          );
           await getTraining();
         }
       }
     } catch (error) {
       console.log(error);
+
+      let message = "An error occurred when the reviews are being submitted.";
+
+      if (axios.isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Training Error", message, "error");
     }
   };
 

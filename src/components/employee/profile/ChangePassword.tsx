@@ -8,6 +8,7 @@ import { signOut, useSession } from "next-auth/react";
 import React from "react";
 import { IoClose, IoEye, IoEyeOff } from "react-icons/io5";
 import Input from "@/form/Input";
+import { useToasts } from "@/src/context/ToastContext";
 
 const ChangePassword: React.FC<ModalInterface> = (props) => {
   const [password, setPassword] = React.useState({
@@ -17,6 +18,8 @@ const ChangePassword: React.FC<ModalInterface> = (props) => {
   });
 
   const { showPassword, handleShowPassword } = useShowPassword();
+
+  const { addToast } = useToasts();
 
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
@@ -58,6 +61,14 @@ const ChangePassword: React.FC<ModalInterface> = (props) => {
       }
     } catch (error) {
       console.log(error);
+
+      let message = "An error occurred when the password is being updated.";
+
+      if (axios.isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Password Error", message, "error");
     }
   };
 

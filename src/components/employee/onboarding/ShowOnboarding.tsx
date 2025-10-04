@@ -2,6 +2,7 @@ import File from "@/form/File";
 import TextBlock from "@/global/field/TextBlock";
 import TextField from "@/global/field/TextField";
 import ModalNav from "@/global/navigation/ModalNav";
+import { useToasts } from "@/src/context/ToastContext";
 import useModalNav from "@/src/hooks/useModalNav";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
@@ -37,6 +38,8 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
   >([]);
 
   const requiredDocumentsRef = React.useRef<(HTMLInputElement | null)[]>([]);
+
+  const { addToast } = useToasts();
 
   const { activeFormPage, handleActiveFormPage } = useModalNav("information");
 
@@ -82,8 +85,17 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
       }
     } catch (error) {
       console.log(error);
+
+      let message =
+        "An error occurred when the onboarding data is being retrieved.";
+
+      if (axios.isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Onboarding Error", message, "error");
     }
-  }, [props.id, url, user?.token]);
+  }, [props.id, url, user?.token, addToast]);
 
   const handleAcknowledge = async (policy_acknowledgement_id: number) => {
     try {

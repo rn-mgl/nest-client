@@ -4,6 +4,7 @@ import TextArea from "@/form/TextArea";
 import TextBlock from "@/global/field/TextBlock";
 import TextField from "@/global/field/TextField";
 import ModalNav from "@/global/navigation/ModalNav";
+import { useToasts } from "@/src/context/ToastContext";
 import useModalNav from "@/src/hooks/useModalNav";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
@@ -27,6 +28,8 @@ const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
       user_response: UserPerformanceReviewSurveyResponseInterface | null;
     })[]
   >([]);
+
+  const { addToast } = useToasts();
 
   const { data: session } = useSession({ required: true });
   const user = session?.user;
@@ -95,8 +98,17 @@ const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
       }
     } catch (error) {
       console.log(error);
+
+      let message =
+        "An error occurred when the performance review data is being retrieved.";
+
+      if (axios.isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Performance Review Error", message, "error");
     }
-  }, [url, user?.token, props.id]);
+  }, [url, user?.token, props.id, addToast]);
 
   const submitPerformanceReviewResponse = async (index: number) => {
     try {
@@ -122,11 +134,24 @@ const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
         );
 
         if (responseData.success) {
+          addToast(
+            "Response Submitted",
+            `Review response has been updated.`,
+            "success"
+          );
           await getPerformanceReview();
         }
       }
     } catch (error) {
       console.log(error);
+
+      let message = "An error occurred when the response is being submitted.";
+
+      if (axios.isAxiosError(error)) {
+        message = error.response?.data.message ?? error.message;
+      }
+
+      addToast("Performance Review Error", message, "error");
     }
   };
 

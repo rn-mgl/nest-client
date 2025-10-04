@@ -8,6 +8,7 @@ import EditLeaveRequest from "@/src/components/global/leave/EditLeaveRequest";
 import LeaveBalanceCard from "@/src/components/global/leave/LeaveBalanceCard";
 import LeaveRequestForm from "@/src/components/global/leave/LeaveRequestForm";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
+import { useToasts } from "@/src/context/ToastContext";
 import useCategory from "@/src/hooks/useCategory";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
 import useSearch from "@/src/hooks/useSearch";
@@ -46,6 +47,8 @@ const Leave = ({
   const [canDeleteLeaveRequest, setCanDeleteLeaveRequest] = React.useState(0);
   const [activeTab, setActiveTab] = React.useState("balances");
   const [isPending, startTransition] = React.useTransition();
+
+  const { addToast } = useToasts();
 
   const { data: session } = useSession({ required: true });
   const user = session?.user;
@@ -114,10 +117,19 @@ const Leave = ({
           }
         } catch (error) {
           console.log(error);
+
+          let message =
+            "An error occurred when the leave balances are being retrieved.";
+
+          if (axios.isAxiosError(error)) {
+            message = error.response?.data.message ?? error.message;
+          }
+
+          addToast("Leave Balance Error", message, "error");
         }
       });
     },
-    [user?.token, url]
+    [user?.token, url, addToast]
   );
 
   const getLeaveRequests = React.useCallback(
@@ -142,10 +154,19 @@ const Leave = ({
           }
         } catch (error) {
           console.log(error);
+
+          let message =
+            "An error occurred when the leave requests are being retrieved.";
+
+          if (axios.isAxiosError(error)) {
+            message = error.response?.data.message ?? error.message;
+          }
+
+          addToast("Leave Request Error", message, "error");
         }
       });
     },
-    [url, user?.token]
+    [url, user?.token, addToast]
   );
 
   const getPageData = React.useCallback(

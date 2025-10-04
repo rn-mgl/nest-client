@@ -4,6 +4,7 @@ import BaseActions from "@/src/components/global/base/BaseActions";
 import BaseCard from "@/src/components/global/base/BaseCard";
 import Filter from "@/src/components/global/filter/Filter";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
+import { useToasts } from "@/src/context/ToastContext";
 import useCategory from "@/src/hooks/useCategory";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
@@ -22,6 +23,7 @@ const Training = () => {
   const [trainings, setTrainings] = React.useState<UserTrainingInterface[]>([]);
   const [activeTrainingSeeMore, setActiveTrainingSeeMore] = React.useState(0);
   const [isPending, startTransition] = React.useTransition();
+  const { addToast } = useToasts();
 
   const {
     canSeeSearchDropDown,
@@ -73,10 +75,19 @@ const Training = () => {
           }
         } catch (error) {
           console.log(error);
+
+          let message =
+            "An error occurred when the trainings are being retrieved.";
+
+          if (axios.isAxiosError(error)) {
+            message = error.response?.data.message ?? error.message;
+          }
+
+          addToast("Training Error", message, "error");
         }
       });
     },
-    [url, user?.token]
+    [url, user?.token, addToast]
   );
 
   const mappedTrainings = trainings.map((training, index) => {

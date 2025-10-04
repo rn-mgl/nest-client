@@ -4,6 +4,7 @@ import BaseActions from "@/src/components/global/base/BaseActions";
 import BaseCard from "@/src/components/global/base/BaseCard";
 import Filter from "@/src/components/global/filter/Filter";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
+import { useToasts } from "@/src/context/ToastContext";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { UserPerformanceReviewInterface } from "@/src/interface/PerformanceReviewInterface";
@@ -23,6 +24,8 @@ const Performance = () => {
   const [activePerformanceReviewSeeMore, setActivePerformanceReviewSeeMore] =
     React.useState(0);
   const [isPending, startTransition] = React.useTransition();
+
+  const { addToast } = useToasts();
 
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
@@ -70,10 +73,19 @@ const Performance = () => {
           }
         } catch (error) {
           console.log(error);
+
+          let message =
+            "An error occurred when the performance reviews are being retrieved.";
+
+          if (axios.isAxiosError(error)) {
+            message = error.response?.data.message ?? error.message;
+          }
+
+          addToast("Performance Review Error", message, "error");
         }
       });
     },
-    [url, user?.token]
+    [url, user?.token, addToast]
   );
 
   const mappedPerformanceReviews = performanceReviews.map(

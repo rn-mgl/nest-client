@@ -3,6 +3,7 @@
 import ChangePassword from "@/src/components/employee/profile/ChangePassword";
 import EditEmployeeProfile from "@/src/components/employee/profile/EditEmployeeProfile";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
+import { useToasts } from "@/src/context/ToastContext";
 import { UserInterface } from "@/src/interface/UserInterface";
 import { isCloudFileSummary } from "@/src/utils/utils";
 import axios from "axios";
@@ -24,6 +25,8 @@ const Profile = () => {
   const [canEditProfile, setCanEditProfile] = React.useState(false);
   const [canChangePassword, setCanChangePassword] = React.useState(false);
   const [isPending, startTransition] = React.useTransition();
+
+  const { addToast } = useToasts();
 
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
@@ -52,10 +55,19 @@ const Profile = () => {
           }
         } catch (error) {
           console.log(error);
+
+          let message =
+            "An error occurred when the profile data is being retrieved";
+
+          if (axios.isAxiosError(error)) {
+            message = error.response?.data.message ?? error.message;
+          }
+
+          addToast("Profile Error", message, "error");
         }
       });
     },
-    [url, user?.token, currentUser]
+    [url, user?.token, currentUser, addToast]
   );
 
   const handleCanEditProfile = () => {
