@@ -180,7 +180,7 @@ const HREmployee = ({
 
           let message = `An error occurred when the ${tab} data are being retrieved`;
 
-          if (isAxiosError(error)) {
+          if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
             message = error.response?.data.message ?? error.message;
           }
 
@@ -220,7 +220,7 @@ const HREmployee = ({
 
       let message = `An error occurred when the leave request is being handled.`;
 
-      if (isAxiosError(error)) {
+      if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
         message = error.response?.data.message ?? error.message;
       }
 

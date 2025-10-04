@@ -172,7 +172,7 @@ const HRLeave = ({
           let message =
             "An error occurred when the leave types are being retrieved";
 
-          if (isAxiosError(error)) {
+          if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
             message = error.response?.data.message ?? error.message;
           }
 
@@ -209,7 +209,7 @@ const HRLeave = ({
           let message =
             "An error occurred when the leave balances are being retrieved";
 
-          if (isAxiosError(error)) {
+          if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
             message = error.response?.data.message ?? error.message;
           }
 
@@ -246,7 +246,7 @@ const HRLeave = ({
           let message =
             "An error occurred when the leave requests are being retrieved";
 
-          if (isAxiosError(error)) {
+          if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
             message = error.response?.data.message ?? error.message;
           }
 

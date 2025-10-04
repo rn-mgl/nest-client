@@ -77,7 +77,7 @@ const Performance = () => {
           let message =
             "An error occurred when the performance reviews are being retrieved.";
 
-          if (axios.isAxiosError(error)) {
+          if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
             message = error.response?.data.message ?? error.message;
           }
 

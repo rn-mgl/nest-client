@@ -59,7 +59,7 @@ const Profile = () => {
           let message =
             "An error occurred when the profile data is being retrieved";
 
-          if (axios.isAxiosError(error)) {
+          if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
             message = error.response?.data.message ?? error.message;
           }
 

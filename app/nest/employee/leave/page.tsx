@@ -121,7 +121,7 @@ const Leave = ({
           let message =
             "An error occurred when the leave balances are being retrieved.";
 
-          if (axios.isAxiosError(error)) {
+          if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
             message = error.response?.data.message ?? error.message;
           }
 
@@ -158,7 +158,7 @@ const Leave = ({
           let message =
             "An error occurred when the leave requests are being retrieved.";
 
-          if (axios.isAxiosError(error)) {
+          if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
             message = error.response?.data.message ?? error.message;
           }
 

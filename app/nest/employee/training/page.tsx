@@ -79,7 +79,7 @@ const Training = () => {
           let message =
             "An error occurred when the trainings are being retrieved.";
 
-          if (axios.isAxiosError(error)) {
+          if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
             message = error.response?.data.message ?? error.message;
           }
 

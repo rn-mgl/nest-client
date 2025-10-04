@@ -220,7 +220,7 @@ const Attendance = () => {
           let message =
             "An error occurred when the attendance data is being retrieved.";
 
-          if (axios.isAxiosError(error)) {
+          if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
             message = error.response?.data.message ?? error.message;
           }
 

@@ -106,7 +106,7 @@ const Document = () => {
           let message =
             "An error occurred when the documents and folders are being retrieved.";
 
-          if (axios.isAxiosError(error)) {
+          if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
             message = error.response?.data.message ?? error.message;
           }
 
@@ -143,7 +143,7 @@ const Document = () => {
           let message =
             "An error occurred when the folder details is being retrieved.";
 
-          if (axios.isAxiosError(error)) {
+          if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
             message = error.response?.data.message ?? error.message;
           }
 

@@ -147,7 +147,7 @@ const HRDocument = () => {
           let message =
             "An error occurred when the documents and folders are being retrieved";
 
-          if (isAxiosError(error)) {
+          if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
             message = error.response?.data.message ?? error.message;
           }
 
@@ -184,7 +184,7 @@ const HRDocument = () => {
           let message =
             "An error occurred when the  folder data is being retrieved";
 
-          if (isAxiosError(error)) {
+          if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
             message = error.response?.data.message ?? error.message;
           }
 

@@ -79,7 +79,7 @@ const HRDashboard = () => {
           let message =
             "An error occurred when the dashboard data are being retrieved";
 
-          if (isAxiosError(error)) {
+          if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
             message = error.response?.data.message ?? error.message;
           }
 
