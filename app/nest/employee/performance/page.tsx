@@ -5,6 +5,7 @@ import BaseCard from "@/src/components/global/base/BaseCard";
 import Filter from "@/src/components/global/filter/Filter";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { UserPerformanceReviewInterface } from "@/src/interface/PerformanceReviewInterface";
@@ -23,7 +24,7 @@ const Performance = () => {
   >([]);
   const [activePerformanceReviewSeeMore, setActivePerformanceReviewSeeMore] =
     React.useState(0);
-  const [isPending, startTransition] = React.useTransition();
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const { addToast } = useToasts();
 
@@ -53,38 +54,39 @@ const Performance = () => {
 
   const getPerformanceReviews = React.useCallback(
     async (controller?: AbortController) => {
-      startTransition(async () => {
-        try {
-          if (user?.token) {
-            const { data: responseData } = await axios.get(
-              `${url}/employee/employee_performance_review`,
-              {
-                headers: {
-                  Authorization: `Bearer ${user.token}`,
-                },
-                withCredentials: true,
-                signal: controller?.signal,
-              }
-            );
-
-            if (responseData.performance_reviews) {
-              setPerformanceReviews(responseData.performance_reviews);
+      handleIsLoading(true);
+      try {
+        if (user?.token) {
+          const { data: responseData } = await axios.get(
+            `${url}/employee/employee_performance_review`,
+            {
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+              withCredentials: true,
+              signal: controller?.signal,
             }
-          }
-        } catch (error) {
-          console.log(error);
+          );
 
-          if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            const message =
-              error.response?.data.message ??
-              error.message ??
-              "An error occurred when the performance reviews are being retrieved.";
-            addToast("Performance Review Error", message, "error");
+          if (responseData.performance_reviews) {
+            setPerformanceReviews(responseData.performance_reviews);
           }
         }
-      });
+      } catch (error) {
+        console.log(error);
+
+        if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
+          const message =
+            error.response?.data.message ??
+            error.message ??
+            "An error occurred when the performance reviews are being retrieved.";
+          addToast("Performance Review Error", message, "error");
+        }
+      } finally {
+        handleIsLoading(false);
+      }
     },
-    [url, user?.token, addToast]
+    [url, user?.token, addToast, handleIsLoading]
   );
 
   const mappedPerformanceReviews = performanceReviews.map(
@@ -156,7 +158,7 @@ const Performance = () => {
           }}
         />
 
-        {isPending ? (
+        {isLoading ? (
           <PageSkeletonLoader />
         ) : (
           <div className="w-full grid grid-cols-1 t:grid-cols-2 l-l:grid-cols-3 gap-4">

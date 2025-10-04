@@ -26,6 +26,10 @@ import axios, { isAxiosError } from "axios";
 import BaseActions from "@/src/components/global/base/BaseActions";
 import BaseCard from "@/src/components/global/base/BaseCard";
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
+import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
+import HRActions from "@/src/components/hr/global/HRActions";
+import { useToasts } from "@/src/context/ToastContext";
+import useFilterAndSort from "@/src/hooks/useFilterAndSort";
 import {
   isDocumentSummary,
   isFolderSummary,
@@ -36,10 +40,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import React from "react";
 import { IoAdd, IoArrowBack, IoPencil, IoTrash } from "react-icons/io5";
-import HRActions from "@/src/components/hr/global/HRActions";
-import useFilterAndSort from "@/src/hooks/useFilterAndSort";
-import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
-import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
 
 const HRDocument = () => {
   const [canCreateDocument, setCanCreateDocument] = React.useState(false);
@@ -60,7 +61,7 @@ const HRDocument = () => {
   const [activeEditFolder, setActiveEditFolder] = React.useState(0);
   const [activeDeleteFolder, setActiveDeleteFolder] = React.useState(0);
   const [activeDocumentSeeMore, setActiveDocumentSeeMore] = React.useState(0);
-  const [isPending, startTransition] = React.useTransition();
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const { addToast } = useToasts();
 
@@ -123,74 +124,76 @@ const HRDocument = () => {
 
   const getDocuments = React.useCallback(
     async (controller?: AbortController) => {
-      startTransition(async () => {
-        try {
-          if (user?.token) {
-            const {
-              data: { documents },
-            } = await axios.get(`${url}/hr/document`, {
-              headers: {
-                Authorization: `Bearer ${user.token}`,
-              },
-              withCredentials: true,
-              params: { path: folderId },
-              signal: controller?.signal,
-            });
+      handleIsLoading(true);
+      try {
+        if (user?.token) {
+          const {
+            data: { documents },
+          } = await axios.get(`${url}/hr/document`, {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+            withCredentials: true,
+            params: { path: folderId },
+            signal: controller?.signal,
+          });
 
-            if (documents) {
-              setDocuments(documents);
-            }
-          }
-        } catch (error) {
-          console.log(error);
-
-          if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            const message =
-              error.response?.data.message ??
-              error.message ??
-              "An error occurred when the documents and folders are being retrieved";
-            addToast("Document Error", message, "error");
+          if (documents) {
+            setDocuments(documents);
           }
         }
-      });
+      } catch (error) {
+        console.log(error);
+
+        if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
+          const message =
+            error.response?.data.message ??
+            error.message ??
+            "An error occurred when the documents and folders are being retrieved";
+          addToast("Document Error", message, "error");
+        }
+      } finally {
+        handleIsLoading(false);
+      }
     },
-    [url, user?.token, folderId, addToast]
+    [url, user?.token, folderId, addToast, handleIsLoading]
   );
 
   const getFolder = React.useCallback(
     async (controller?: AbortController) => {
-      startTransition(async () => {
-        try {
-          if (user?.token && folderId) {
-            const { data: folderDetails } = await axios.get(
-              `${url}/hr/folder/${folderId}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${user.token}`,
-                },
-                withCredentials: true,
-                signal: controller?.signal,
-              }
-            );
-
-            if (folderDetails.folder) {
-              setFolder(folderDetails.folder);
+      handleIsLoading(true);
+      try {
+        if (user?.token && folderId) {
+          const { data: folderDetails } = await axios.get(
+            `${url}/hr/folder/${folderId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+              withCredentials: true,
+              signal: controller?.signal,
             }
-          }
-        } catch (error) {
-          console.log(error);
+          );
 
-          if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            const message =
-              error.response?.data.message ??
-              error.message ??
-              "An error occurred when the  folder data is being retrieved";
-            addToast("Folder Error", message, "error");
+          if (folderDetails.folder) {
+            setFolder(folderDetails.folder);
           }
         }
-      });
+      } catch (error) {
+        console.log(error);
+
+        if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
+          const message =
+            error.response?.data.message ??
+            error.message ??
+            "An error occurred when the  folder data is being retrieved";
+          addToast("Folder Error", message, "error");
+        }
+      } finally {
+        handleIsLoading(false);
+      }
     },
-    [user?.token, folderId, url, addToast]
+    [user?.token, folderId, url, addToast, handleIsLoading]
   );
 
   const mappedDocuments = useFilterAndSort(
@@ -384,7 +387,7 @@ const HRDocument = () => {
           </button>
         </div>
 
-        {isPending ? (
+        {isLoading ? (
           <PageSkeletonLoader />
         ) : (
           <React.Fragment>

@@ -23,6 +23,7 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd } from "react-icons/io5";
 import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
 
 const HRTraining = () => {
   const [trainings, setTrainings] = React.useState<TrainingInterface[]>([]);
@@ -31,7 +32,7 @@ const HRTraining = () => {
   const [activeDeleteTraining, setActiveDeleteTraining] = React.useState(0);
   const [canCreateTraining, setCanCreateTraining] = React.useState(false);
   const [activeAssignTraining, setActiveAssignTraining] = React.useState(0);
-  const [isPending, startTransition] = React.useTransition();
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const { addToast } = useToasts();
 
@@ -76,35 +77,36 @@ const HRTraining = () => {
 
   const getTrainings = React.useCallback(
     async (controller?: AbortController) => {
-      startTransition(async () => {
-        try {
-          if (user?.token) {
-            const { data } = await axios.get(`${url}/hr/training`, {
-              headers: {
-                Authorization: `Bearer ${user.token}`,
-              },
-              withCredentials: true,
-              signal: controller?.signal,
-            });
+      handleIsLoading(true);
+      try {
+        if (user?.token) {
+          const { data } = await axios.get(`${url}/hr/training`, {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+            withCredentials: true,
+            signal: controller?.signal,
+          });
 
-            if (data.trainings) {
-              setTrainings(data.trainings);
-            }
-          }
-        } catch (error) {
-          console.log(error);
-
-          if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            const message =
-              error.response?.data.message ??
-              error.message ??
-              `An error occurred when the trainings are being retrieved.`;
-            addToast("Training Error", message, "error");
+          if (data.trainings) {
+            setTrainings(data.trainings);
           }
         }
-      });
+      } catch (error) {
+        console.log(error);
+
+        if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
+          const message =
+            error.response?.data.message ??
+            error.message ??
+            `An error occurred when the trainings are being retrieved.`;
+          addToast("Training Error", message, "error");
+        }
+      } finally {
+        handleIsLoading(false);
+      }
     },
-    [user?.token, url, addToast]
+    [user?.token, url, addToast, handleIsLoading]
   );
 
   const mappedTrainings = useFilterAndSort(trainings, search, sort).map(
@@ -220,7 +222,7 @@ const HRTraining = () => {
           Create Training <IoAdd className="text-lg" />
         </button>
 
-        {isPending ? (
+        {isLoading ? (
           <PageSkeletonLoader />
         ) : (
           <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">

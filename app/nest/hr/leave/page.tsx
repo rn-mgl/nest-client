@@ -45,6 +45,7 @@ import {
 import { usePathname } from "next/navigation";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
 
 const HRLeave = ({
   searchParams,
@@ -67,7 +68,7 @@ const HRLeave = ({
   const [leaveRequests, setLeaveRequest] = React.useState<
     LeaveRequestInterface[]
   >([]);
-  const [isPending, startTransition] = React.useTransition();
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const { addToast } = useToasts();
 
@@ -148,110 +149,113 @@ const HRLeave = ({
 
   const getLeaveTypes = React.useCallback(
     async (controller?: AbortController) => {
-      startTransition(async () => {
-        try {
-          if (user?.token) {
-            const { data: responseData } = await axios.get(
-              `${url}/hr/leave_type`,
-              {
-                headers: {
-                  Authorization: `Bearer ${user?.token}`,
-                },
-                withCredentials: true,
-                signal: controller?.signal,
-              }
-            );
-
-            if (responseData.leaves) {
-              setLeaveTypes(responseData.leaves);
+      handleIsLoading(true);
+      try {
+        if (user?.token) {
+          const { data: responseData } = await axios.get(
+            `${url}/hr/leave_type`,
+            {
+              headers: {
+                Authorization: `Bearer ${user?.token}`,
+              },
+              withCredentials: true,
+              signal: controller?.signal,
             }
-          }
-        } catch (error) {
-          console.log(error);
+          );
 
-          if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            const message =
-              error.response?.data.message ??
-              error.message ??
-              "An error occurred when the leave types are being retrieved";
-            addToast("Leave Type Error", message, "error");
+          if (responseData.leaves) {
+            setLeaveTypes(responseData.leaves);
           }
         }
-      });
+      } catch (error) {
+        console.log(error);
+
+        if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
+          const message =
+            error.response?.data.message ??
+            error.message ??
+            "An error occurred when the leave types are being retrieved";
+          addToast("Leave Type Error", message, "error");
+        }
+      } finally {
+        handleIsLoading(false);
+      }
     },
-    [url, user?.token, addToast]
+    [url, user?.token, addToast, handleIsLoading]
   );
 
   const getLeaveBalances = React.useCallback(
     async (controller?: AbortController) => {
-      startTransition(async () => {
-        try {
-          if (user?.token) {
-            const { data: responseData } = await axios.get(
-              `${url}/hr/leave_balance`,
-              {
-                headers: {
-                  Authorization: `Bearer ${user.token}`,
-                },
-                withCredentials: true,
-                signal: controller?.signal,
-              }
-            );
-
-            if (responseData.balances) {
-              setLeaveBalances(responseData.balances);
+      handleIsLoading(true);
+      try {
+        if (user?.token) {
+          const { data: responseData } = await axios.get(
+            `${url}/hr/leave_balance`,
+            {
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+              withCredentials: true,
+              signal: controller?.signal,
             }
-          }
-        } catch (error) {
-          console.log(error);
+          );
 
-          if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            const message =
-              error.response?.data.message ??
-              error.message ??
-              "An error occurred when the leave balances are being retrieved";
-            addToast("Leave Balance Error", message, "error");
+          if (responseData.balances) {
+            setLeaveBalances(responseData.balances);
           }
         }
-      });
+      } catch (error) {
+        console.log(error);
+
+        if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
+          const message =
+            error.response?.data.message ??
+            error.message ??
+            "An error occurred when the leave balances are being retrieved";
+          addToast("Leave Balance Error", message, "error");
+        }
+      } finally {
+        handleIsLoading(false);
+      }
     },
-    [url, user?.token, addToast]
+    [url, user?.token, addToast, handleIsLoading]
   );
 
   const getLeaveRequest = React.useCallback(
     async (controller?: AbortController) => {
-      startTransition(async () => {
-        try {
-          if (user?.token) {
-            const { data: responseData } = await axios.get(
-              `${url}/hr/leave_request`,
-              {
-                headers: {
-                  Authorization: `Bearer ${user.token}`,
-                },
-                withCredentials: true,
-                signal: controller?.signal,
-              }
-            );
-
-            if (responseData.requests) {
-              setLeaveRequest(responseData.requests);
+      handleIsLoading(true);
+      try {
+        if (user?.token) {
+          const { data: responseData } = await axios.get(
+            `${url}/hr/leave_request`,
+            {
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+              withCredentials: true,
+              signal: controller?.signal,
             }
-          }
-        } catch (error) {
-          console.log(error);
+          );
 
-          if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            const message =
-              error.response?.data.message ??
-              error.message ??
-              "An error occurred when the leave requests are being retrieved";
-            addToast("Leave Requests Error", message, "error");
+          if (responseData.requests) {
+            setLeaveRequest(responseData.requests);
           }
         }
-      });
+      } catch (error) {
+        console.log(error);
+
+        if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
+          const message =
+            error.response?.data.message ??
+            error.message ??
+            "An error occurred when the leave requests are being retrieved";
+          addToast("Leave Requests Error", message, "error");
+        }
+      } finally {
+        handleIsLoading(false);
+      }
     },
-    [url, user?.token, addToast]
+    [url, user?.token, addToast, handleIsLoading]
   );
 
   const handleFilters = React.useCallback(
@@ -512,7 +516,7 @@ const HRLeave = ({
           </button>
         ) : null}
 
-        {isPending ? (
+        {isLoading ? (
           <PageSkeletonLoader />
         ) : activeTab === "types" ? (
           <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">

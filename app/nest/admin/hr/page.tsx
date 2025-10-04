@@ -7,6 +7,7 @@ import { useAlert } from "@/src/context/AlertContext";
 import { useToasts } from "@/src/context/ToastContext";
 import useCategory from "@/src/hooks/useCategory";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { UserInterface } from "@/src/interface/UserInterface";
@@ -34,7 +35,7 @@ const AdminHR = () => {
   const [canCreateHR, setCanCreateHR] = React.useState(false);
   const [activeMenu, setActiveMenu] = React.useState(0);
 
-  const [isPending, startTransition] = React.useTransition();
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const {
     canSeeSearchDropDown,
@@ -81,35 +82,36 @@ const AdminHR = () => {
 
   const getAllHRs = React.useCallback(
     async (controller?: AbortController) => {
-      startTransition(async () => {
-        try {
-          if (user?.token) {
-            const {
-              data: { hrs },
-            } = await axios.get(`${url}/admin/hr`, {
-              headers: {
-                Authorization: `Bearer ${user?.token}`,
-              },
-              withCredentials: true,
-              signal: controller?.signal,
-            });
+      handleIsLoading(true);
+      try {
+        if (user?.token) {
+          const {
+            data: { hrs },
+          } = await axios.get(`${url}/admin/hr`, {
+            headers: {
+              Authorization: `Bearer ${user?.token}`,
+            },
+            withCredentials: true,
+            signal: controller?.signal,
+          });
 
-            setHrs(hrs);
-          }
-        } catch (error) {
-          console.log(error);
-
-          if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            const message =
-              error.response?.data.message ??
-              error.message ??
-              "An error occurred when the HRs are being retrieved.";
-            addToast("HR List Error", message, "error");
-          }
+          setHrs(hrs);
         }
-      });
+      } catch (error) {
+        console.log(error);
+
+        if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
+          const message =
+            error.response?.data.message ??
+            error.message ??
+            "An error occurred when the HRs are being retrieved.";
+          addToast("HR List Error", message, "error");
+        }
+      } finally {
+        handleIsLoading(false);
+      }
     },
-    [url, user?.token, addToast]
+    [url, user?.token, addToast, handleIsLoading]
   );
 
   const toggleVerification = async (hrId: number, toggle: boolean) => {
@@ -293,7 +295,7 @@ const AdminHR = () => {
           <IoAdd className="text-lg" />
         </button>
 
-        {isPending ? (
+        {isLoading ? (
           <PageSkeletonLoader />
         ) : (
           <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">

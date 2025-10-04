@@ -4,6 +4,7 @@ import ChangePassword from "@/src/components/employee/profile/ChangePassword";
 import EditEmployeeProfile from "@/src/components/employee/profile/EditEmployeeProfile";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import { UserInterface } from "@/src/interface/UserInterface";
 import { isCloudFileSummary } from "@/src/utils/utils";
 import axios from "axios";
@@ -24,7 +25,7 @@ const Profile = () => {
   });
   const [canEditProfile, setCanEditProfile] = React.useState(false);
   const [canChangePassword, setCanChangePassword] = React.useState(false);
-  const [isPending, startTransition] = React.useTransition();
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const { addToast } = useToasts();
 
@@ -35,38 +36,39 @@ const Profile = () => {
 
   const getProfile = React.useCallback(
     async (controller?: AbortController) => {
-      startTransition(async () => {
-        try {
-          if (user?.token) {
-            const { data: responseData } = await axios.get(
-              `${url}/employee/profile/${currentUser}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${user.token}`,
-                },
-                withCredentials: true,
-                signal: controller?.signal,
-              }
-            );
-
-            if (responseData.profile) {
-              setProfile(responseData.profile);
+      handleIsLoading(true);
+      try {
+        if (user?.token) {
+          const { data: responseData } = await axios.get(
+            `${url}/employee/profile/${currentUser}`,
+            {
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+              withCredentials: true,
+              signal: controller?.signal,
             }
-          }
-        } catch (error) {
-          console.log(error);
+          );
 
-          if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            const message =
-              error.response?.data.message ??
-              error.message ??
-              "An error occurred when the profile data is being retrieved";
-            addToast("Profile Error", message, "error");
+          if (responseData.profile) {
+            setProfile(responseData.profile);
           }
         }
-      });
+      } catch (error) {
+        console.log(error);
+
+        if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
+          const message =
+            error.response?.data.message ??
+            error.message ??
+            "An error occurred when the profile data is being retrieved";
+          addToast("Profile Error", message, "error");
+        }
+      } finally {
+        handleIsLoading(false);
+      }
     },
-    [url, user?.token, currentUser, addToast]
+    [url, user?.token, currentUser, addToast, handleIsLoading]
   );
 
   const handleCanEditProfile = () => {
@@ -87,7 +89,7 @@ const Profile = () => {
     };
   }, [getProfile]);
 
-  if (isPending) {
+  if (isLoading) {
     return <PageSkeletonLoader />;
   }
 

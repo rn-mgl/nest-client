@@ -17,12 +17,13 @@ import BaseCard from "@/src/components/global/base/BaseCard";
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import HRActions from "@/src/components/hr/global/HRActions";
+import { useToasts } from "@/src/context/ToastContext";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import { isUserSummary } from "@/src/utils/utils";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd } from "react-icons/io5";
-import { useToasts } from "@/src/context/ToastContext";
 
 const HROnboarding = () => {
   const [onboardings, setOnboardings] = React.useState<OnboardingInterface[]>(
@@ -34,7 +35,7 @@ const HROnboarding = () => {
   const [activeAssignOnboarding, setActiveAssignOnboarding] = React.useState(0);
   const [activeOnboardingSeeMore, setActiveOnboardingSeeMore] =
     React.useState(0);
-  const [isPending, startTransition] = React.useTransition();
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const { addToast } = useToasts();
 
@@ -79,36 +80,37 @@ const HROnboarding = () => {
 
   const getOnboardings = React.useCallback(
     async (controller?: AbortController) => {
-      startTransition(async () => {
-        try {
-          if (user?.token) {
-            const { data: allOnboarding } = await axios.get(
-              `${url}/hr/onboarding`,
-              {
-                headers: {
-                  Authorization: `Bearer ${user?.token}`,
-                },
-                signal: controller?.signal,
-                withCredentials: true,
-              }
-            );
+      handleIsLoading(true);
+      try {
+        if (user?.token) {
+          const { data: allOnboarding } = await axios.get(
+            `${url}/hr/onboarding`,
+            {
+              headers: {
+                Authorization: `Bearer ${user?.token}`,
+              },
+              signal: controller?.signal,
+              withCredentials: true,
+            }
+          );
 
-            setOnboardings(allOnboarding.onboardings);
-          }
-        } catch (error) {
-          console.log(error);
-
-          if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            const message =
-              error.response?.data.message ??
-              error.message ??
-              `An error occurred when the onboardings are being retrieved.`;
-            addToast("Onboarding Error", message, "error");
-          }
+          setOnboardings(allOnboarding.onboardings);
         }
-      });
+      } catch (error) {
+        console.log(error);
+
+        if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
+          const message =
+            error.response?.data.message ??
+            error.message ??
+            `An error occurred when the onboardings are being retrieved.`;
+          addToast("Onboarding Error", message, "error");
+        }
+      } finally {
+        handleIsLoading(false);
+      }
     },
-    [url, user?.token, addToast]
+    [url, user?.token, addToast, handleIsLoading]
   );
 
   const mappedOnboardings = useFilterAndSort(onboardings, search, sort).map(
@@ -236,7 +238,7 @@ const HROnboarding = () => {
           Create Onboarding <IoAdd className="text-lg" />
         </button>
 
-        {isPending ? (
+        {isLoading ? (
           <PageSkeletonLoader />
         ) : (
           <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">

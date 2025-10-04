@@ -6,6 +6,7 @@ import Filter from "@/src/components/global/filter/Filter";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import { useToasts } from "@/src/context/ToastContext";
 import useCategory from "@/src/hooks/useCategory";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { UserTrainingInterface } from "@/src/interface/TrainingInterface";
@@ -22,7 +23,7 @@ import React from "react";
 const Training = () => {
   const [trainings, setTrainings] = React.useState<UserTrainingInterface[]>([]);
   const [activeTrainingSeeMore, setActiveTrainingSeeMore] = React.useState(0);
-  const [isPending, startTransition] = React.useTransition();
+  const { isLoading, handleIsLoading } = useIsLoading();
   const { addToast } = useToasts();
 
   const {
@@ -56,37 +57,38 @@ const Training = () => {
 
   const getTrainings = React.useCallback(
     async (controller: AbortController) => {
-      startTransition(async () => {
-        try {
-          if (user?.token) {
-            const { data: responseData } = await axios.get<{
-              trainings: UserTrainingInterface[];
-            }>(`${url}/employee/employee_training`, {
-              headers: {
-                Authorization: `Bearer ${user.token}`,
-              },
-              withCredentials: true,
-              signal: controller.signal,
-            });
+      handleIsLoading(true);
+      try {
+        if (user?.token) {
+          const { data: responseData } = await axios.get<{
+            trainings: UserTrainingInterface[];
+          }>(`${url}/employee/employee_training`, {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+            withCredentials: true,
+            signal: controller.signal,
+          });
 
-            if (responseData.trainings) {
-              setTrainings(responseData.trainings);
-            }
-          }
-        } catch (error) {
-          console.log(error);
-
-          if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            const message =
-              error.response?.data.message ??
-              error.message ??
-              "An error occurred when the trainings are being retrieved.";
-            addToast("Training Error", message, "error");
+          if (responseData.trainings) {
+            setTrainings(responseData.trainings);
           }
         }
-      });
+      } catch (error) {
+        console.log(error);
+
+        if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
+          const message =
+            error.response?.data.message ??
+            error.message ??
+            "An error occurred when the trainings are being retrieved.";
+          addToast("Training Error", message, "error");
+        }
+      } finally {
+        handleIsLoading(false);
+      }
     },
-    [url, user?.token, addToast]
+    [url, user?.token, addToast, handleIsLoading]
   );
 
   const mappedTrainings = trainings.map((training, index) => {
@@ -165,7 +167,7 @@ const Training = () => {
           }}
         />
 
-        {isPending ? (
+        {isLoading ? (
           <PageSkeletonLoader />
         ) : (
           <div className="w-full grid grid-cols-1 t:grid-cols-2 l-l:grid-cols-3 gap-4">

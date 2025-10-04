@@ -2,10 +2,11 @@
 
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import { HRDashboardInterface } from "@/src/interface/DashboardInterface";
 import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
-import React, { useTransition } from "react";
+import React from "react";
 import {
   IoArrowRedoOutline,
   IoArrowUndoOutline,
@@ -49,7 +50,7 @@ const HRDashboard = () => {
     trainings: { in_progress: 0, done: 0, pending: 0 },
   });
 
-  const [isPending, startTransition] = useTransition();
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const { addToast } = useToasts();
 
@@ -59,34 +60,37 @@ const HRDashboard = () => {
 
   const getDashboard = React.useCallback(
     async (controller: AbortController) => {
-      startTransition(async () => {
-        try {
-          if (user?.token) {
-            const { data: responseData } =
-              await axios.get<HRDashboardInterface>(`${url}/hr/dashboard`, {
-                headers: { Authorization: `Bearer ${user?.token}` },
-                withCredentials: true,
-                signal: controller.signal,
-              });
-
-            if (responseData) {
-              setDashboard(responseData);
+      handleIsLoading(true);
+      try {
+        if (user?.token) {
+          const { data: responseData } = await axios.get<HRDashboardInterface>(
+            `${url}/hr/dashboard`,
+            {
+              headers: { Authorization: `Bearer ${user?.token}` },
+              withCredentials: true,
+              signal: controller.signal,
             }
-          }
-        } catch (error) {
-          console.log(error);
+          );
 
-          if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            const message =
-              error.response?.data.message ??
-              error.message ??
-              "An error occurred when the dashboard data are being retrieved";
-            addToast("Dashboard Error", message, "error");
+          if (responseData) {
+            setDashboard(responseData);
           }
         }
-      });
+      } catch (error) {
+        console.log(error);
+
+        if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
+          const message =
+            error.response?.data.message ??
+            error.message ??
+            "An error occurred when the dashboard data are being retrieved";
+          addToast("Dashboard Error", message, "error");
+        }
+      } finally {
+        handleIsLoading(false);
+      }
     },
-    [url, user?.token, addToast]
+    [url, user?.token, addToast, handleIsLoading]
   );
 
   React.useEffect(() => {
@@ -99,7 +103,7 @@ const HRDashboard = () => {
     };
   }, [getDashboard]);
 
-  if (isPending) {
+  if (isLoading) {
     return <PageSkeletonLoader />;
   }
 

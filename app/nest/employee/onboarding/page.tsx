@@ -7,6 +7,7 @@ import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoade
 import { useToasts } from "@/src/context/ToastContext";
 import useCategory from "@/src/hooks/useCategory";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { UserOnboardingInterface } from "@/src/interface/OnboardingInterface";
@@ -26,7 +27,7 @@ const Onboarding = () => {
   >([]);
   const [activeOnboardingSeeMore, setActiveOnboardingSeeMore] =
     React.useState(0);
-  const [isPending, startTransition] = React.useTransition();
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const { addToast } = useToasts();
 
@@ -63,38 +64,39 @@ const Onboarding = () => {
 
   const getEmployeeOnboardings = React.useCallback(
     async (controller: AbortController) => {
-      startTransition(async () => {
-        try {
-          if (user?.token) {
-            const { data: responseData } = await axios.get(
-              `${url}/employee/employee_onboarding`,
-              {
-                headers: {
-                  Authorization: `Bearer ${user.token}`,
-                },
-                withCredentials: true,
-                signal: controller.signal,
-              }
-            );
-
-            if (responseData.onboardings) {
-              setEmployeeOnboardings(responseData.onboardings);
+      handleIsLoading(true);
+      try {
+        if (user?.token) {
+          const { data: responseData } = await axios.get(
+            `${url}/employee/employee_onboarding`,
+            {
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+              withCredentials: true,
+              signal: controller.signal,
             }
-          }
-        } catch (error) {
-          console.log(error);
+          );
 
-          if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            const message =
-              error.response?.data.message ??
-              error.message ??
-              "An error occurred when the onboardings are being retrieved.";
-            addToast("Onboarding Error", message, "error");
+          if (responseData.onboardings) {
+            setEmployeeOnboardings(responseData.onboardings);
           }
         }
-      });
+      } catch (error) {
+        console.log(error);
+
+        if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
+          const message =
+            error.response?.data.message ??
+            error.message ??
+            "An error occurred when the onboardings are being retrieved.";
+          addToast("Onboarding Error", message, "error");
+        }
+      } finally {
+        handleIsLoading(false);
+      }
     },
-    [url, user?.token, addToast]
+    [url, user?.token, addToast, handleIsLoading]
   );
 
   const mappedOnboardings = useFilterAndSort(
@@ -179,7 +181,7 @@ const Onboarding = () => {
           }}
         />
 
-        {isPending ? (
+        {isLoading ? (
           <PageSkeletonLoader />
         ) : (
           <div className="grid grid-cols-1 w-full gap-4 t:grid-cols-2 l-l:grid-cols-3">

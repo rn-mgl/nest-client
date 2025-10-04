@@ -11,6 +11,7 @@ import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoade
 import { useToasts } from "@/src/context/ToastContext";
 import useCategory from "@/src/hooks/useCategory";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import {
@@ -46,7 +47,7 @@ const Leave = ({
   const [canEditLeaveRequest, setCanEditLeaveRequest] = React.useState(0);
   const [canDeleteLeaveRequest, setCanDeleteLeaveRequest] = React.useState(0);
   const [activeTab, setActiveTab] = React.useState("balances");
-  const [isPending, startTransition] = React.useTransition();
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const { addToast } = useToasts();
 
@@ -97,75 +98,77 @@ const Leave = ({
 
   const getLeaveBalances = React.useCallback(
     async (controller?: AbortController) => {
-      startTransition(async () => {
-        try {
-          if (user?.token) {
-            const { data: responseData } = await axios.get(
-              `${url}/employee/leave_balance`,
-              {
-                headers: {
-                  Authorization: `Bearer ${user.token}`,
-                },
-                withCredentials: true,
-                signal: controller?.signal,
-              }
-            );
-
-            if (responseData.leave_balances) {
-              setLeaveBalances(responseData.leave_balances);
+      handleIsLoading(true);
+      try {
+        if (user?.token) {
+          const { data: responseData } = await axios.get(
+            `${url}/employee/leave_balance`,
+            {
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+              withCredentials: true,
+              signal: controller?.signal,
             }
-          }
-        } catch (error) {
-          console.log(error);
+          );
 
-          if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            const message =
-              error.response?.data.message ??
-              error.message ??
-              "An error occurred when the leave balances are being retrieved.";
-            addToast("Leave Balance Error", message, "error");
+          if (responseData.leave_balances) {
+            setLeaveBalances(responseData.leave_balances);
           }
         }
-      });
+      } catch (error) {
+        console.log(error);
+
+        if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
+          const message =
+            error.response?.data.message ??
+            error.message ??
+            "An error occurred when the leave balances are being retrieved.";
+          addToast("Leave Balance Error", message, "error");
+        }
+      } finally {
+        handleIsLoading(false);
+      }
     },
-    [user?.token, url, addToast]
+    [user?.token, url, addToast, handleIsLoading]
   );
 
   const getLeaveRequests = React.useCallback(
     async (controller?: AbortController) => {
-      startTransition(async () => {
-        try {
-          if (user?.token) {
-            const { data: responseData } = await axios.get(
-              `${url}/employee/leave_request`,
-              {
-                headers: {
-                  Authorization: `Bearer ${user.token}`,
-                },
-                withCredentials: true,
-                signal: controller?.signal,
-              }
-            );
-
-            if (responseData.requests) {
-              setLeaveRequests(responseData.requests);
+      handleIsLoading(true);
+      try {
+        if (user?.token) {
+          const { data: responseData } = await axios.get(
+            `${url}/employee/leave_request`,
+            {
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+              withCredentials: true,
+              signal: controller?.signal,
             }
+          );
+
+          if (responseData.requests) {
+            setLeaveRequests(responseData.requests);
           }
-        } catch (error) {
-          console.log(error);
-
-          let message =
-            "An error occurred when the leave requests are being retrieved.";
-
-          if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            message = error.response?.data.message ?? error.message;
-          }
-
-          addToast("Leave Request Error", message, "error");
         }
-      });
+      } catch (error) {
+        console.log(error);
+
+        let message =
+          "An error occurred when the leave requests are being retrieved.";
+
+        if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
+          message = error.response?.data.message ?? error.message;
+        }
+
+        addToast("Leave Request Error", message, "error");
+      } finally {
+        handleIsLoading(false);
+      }
     },
-    [url, user?.token, addToast]
+    [url, user?.token, addToast, handleIsLoading]
   );
 
   const getPageData = React.useCallback(
@@ -382,7 +385,7 @@ const Leave = ({
             }}
           />
 
-          {isPending ? (
+          {isLoading ? (
             <PageSkeletonLoader />
           ) : activeTab === "balances" ? (
             <div className="grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3 w-full h-auto">

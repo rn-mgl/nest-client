@@ -9,6 +9,7 @@ import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoade
 import { useToasts } from "@/src/context/ToastContext";
 import useCategory from "@/src/hooks/useCategory";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import {
@@ -42,7 +43,7 @@ const Document = () => {
     created_by: 0,
   });
   const [activeDocumentSeeMore, setActiveDocumentSeeMore] = React.useState(0);
-  const [isPending, startTransition] = React.useTransition();
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const { addToast } = useToasts();
 
@@ -81,75 +82,78 @@ const Document = () => {
 
   const getDocuments = React.useCallback(
     async (controller: AbortController) => {
-      startTransition(async () => {
-        try {
-          if (user?.token) {
-            const { data: responseData } = await axios.get(
-              `${url}/employee/document`,
-              {
-                headers: {
-                  Authorization: `Bearer ${user.token}`,
-                },
-                params: { path: folderId },
-                withCredentials: true,
-                signal: controller.signal,
-              }
-            );
+      handleIsLoading(true);
 
-            if (responseData.documents) {
-              setDocuments(responseData.documents);
+      try {
+        if (user?.token) {
+          const { data: responseData } = await axios.get(
+            `${url}/employee/document`,
+            {
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+              params: { path: folderId },
+              withCredentials: true,
+              signal: controller.signal,
             }
-          }
-        } catch (error) {
-          console.log(error);
+          );
 
-          if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            const message =
-              error.response?.data.message ??
-              error.message ??
-              "An error occurred when the documents and folders are being retrieved.";
-            addToast("Document Error", message, "error");
+          if (responseData.documents) {
+            setDocuments(responseData.documents);
           }
         }
-      });
+      } catch (error) {
+        console.log(error);
+
+        if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
+          const message =
+            error.response?.data.message ??
+            error.message ??
+            "An error occurred when the documents and folders are being retrieved.";
+          addToast("Document Error", message, "error");
+        }
+      } finally {
+        handleIsLoading(false);
+      }
     },
-    [url, user?.token, folderId, addToast]
+    [url, user?.token, folderId, addToast, handleIsLoading]
   );
 
   const getFolder = React.useCallback(
     async (controller: AbortController) => {
-      startTransition(async () => {
-        try {
-          if (user?.token && folderId) {
-            const { data: responseData } = await axios.get(
-              `${url}/employee/folder/${folderId}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${user.token}`,
-                },
-                withCredentials: true,
-                signal: controller.signal,
-              }
-            );
-
-            if (responseData.folder) {
-              setFolder(responseData.folder);
+      handleIsLoading(true);
+      try {
+        if (user?.token && folderId) {
+          const { data: responseData } = await axios.get(
+            `${url}/employee/folder/${folderId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+              withCredentials: true,
+              signal: controller.signal,
             }
-          }
-        } catch (error) {
-          console.log(error);
+          );
 
-          if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            const message =
-              error.response?.data.message ??
-              error.message ??
-              "An error occurred when the folder details is being retrieved.";
-            addToast("Folder Error", message, "error");
+          if (responseData.folder) {
+            setFolder(responseData.folder);
           }
         }
-      });
+      } catch (error) {
+        console.log(error);
+
+        if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
+          const message =
+            error.response?.data.message ??
+            error.message ??
+            "An error occurred when the folder details is being retrieved.";
+          addToast("Folder Error", message, "error");
+        }
+      } finally {
+        handleIsLoading(false);
+      }
     },
-    [url, user?.token, folderId, addToast]
+    [url, user?.token, folderId, addToast, handleIsLoading]
   );
 
   const mappedDocuments = useFilterAndSort(
@@ -248,7 +252,7 @@ const Document = () => {
           }}
         />
 
-        {isPending ? (
+        {isLoading ? (
           <PageSkeletonLoader />
         ) : (
           <React.Fragment>

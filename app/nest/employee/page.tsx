@@ -2,6 +2,7 @@
 
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import { EmployeeDashboardInterface } from "@/src/interface/DashboardInterface";
 import axios from "axios";
 import { useSession } from "next-auth/react";
@@ -56,7 +57,7 @@ const Employee = () => {
       pending: 0,
     },
   });
-  const [isPending, startTransition] = React.useTransition();
+  const { isLoading, handleIsLoading } = useIsLoading();
   const { addToast } = useToasts();
 
   const url = process.env.URL;
@@ -65,37 +66,38 @@ const Employee = () => {
 
   const getDashboard = React.useCallback(
     async (controller: AbortController) => {
-      startTransition(async () => {
-        try {
-          if (user?.token) {
-            const { data: responseData } =
-              await axios.get<EmployeeDashboardInterface>(
-                `${url}/employee/dashboard`,
-                {
-                  headers: { Authorization: `Bearer ${user.token}` },
-                  withCredentials: true,
-                  signal: controller.signal,
-                }
-              );
+      handleIsLoading(true);
+      try {
+        if (user?.token) {
+          const { data: responseData } =
+            await axios.get<EmployeeDashboardInterface>(
+              `${url}/employee/dashboard`,
+              {
+                headers: { Authorization: `Bearer ${user.token}` },
+                withCredentials: true,
+                signal: controller.signal,
+              }
+            );
 
-            if (responseData) {
-              setDashboard(responseData);
-            }
-          }
-        } catch (error) {
-          console.log(error);
-
-          if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            const message =
-              error.response?.data.message ??
-              error.message ??
-              "An error occurred when the dashboard data is being retrieved";
-            addToast("Dashboard Error", message, "error");
+          if (responseData) {
+            setDashboard(responseData);
           }
         }
-      });
+      } catch (error) {
+        console.log(error);
+
+        if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
+          const message =
+            error.response?.data.message ??
+            error.message ??
+            "An error occurred when the dashboard data is being retrieved";
+          addToast("Dashboard Error", message, "error");
+        }
+      } finally {
+        handleIsLoading(false);
+      }
     },
-    [url, user?.token, addToast]
+    [url, user?.token, addToast, handleIsLoading]
   );
 
   React.useEffect(() => {
@@ -108,7 +110,7 @@ const Employee = () => {
     };
   }, [getDashboard]);
 
-  if (isPending) {
+  if (isLoading) {
     return <PageSkeletonLoader />;
   }
 

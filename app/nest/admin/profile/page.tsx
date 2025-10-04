@@ -4,11 +4,12 @@ import ChangePassword from "@/src/components/admin/profile/ChangePassword";
 import EditAdminProfile from "@/src/components/admin/profile/EditAdminProfile";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import { UserInterface } from "@/src/interface/UserInterface";
 import { isCloudFileSummary } from "@/src/utils/utils";
 import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
-import React, { useTransition } from "react";
+import React from "react";
 import { IoLockClosed, IoLockOpen, IoMail, IoPencil } from "react-icons/io5";
 
 const AdminProfile = () => {
@@ -24,7 +25,7 @@ const AdminProfile = () => {
   });
   const [canEditProfile, setCanEditProfile] = React.useState(false);
   const [canChangePassword, setCanChangePassword] = React.useState(false);
-  const [isPending, startTransition] = useTransition();
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const { addToast } = useToasts();
 
@@ -35,39 +36,41 @@ const AdminProfile = () => {
 
   const getProfile = React.useCallback(
     async (controller?: AbortController) => {
-      startTransition(async () => {
-        try {
-          if (user?.token) {
-            const { data: responseData } = await axios.get(
-              `${url}/admin/profile/${currentUser}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${user.token}`,
-                },
-                withCredentials: true,
-                signal: controller?.signal,
-              }
-            );
+      handleIsLoading(true);
 
-            if (responseData.profile) {
-              setProfile(responseData.profile);
+      try {
+        if (user?.token) {
+          const { data: responseData } = await axios.get(
+            `${url}/admin/profile/${currentUser}`,
+            {
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+              withCredentials: true,
+              signal: controller?.signal,
             }
-          }
-        } catch (error) {
-          console.log(error);
+          );
 
-          if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            const message =
-              error.response?.data.message ??
-              error.message ??
-              "An error occurred when the profile is being retrieved.";
-
-            addToast("Profile Error", message, "error");
+          if (responseData.profile) {
+            setProfile(responseData.profile);
           }
         }
-      });
+      } catch (error) {
+        console.log(error);
+
+        if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
+          const message =
+            error.response?.data.message ??
+            error.message ??
+            "An error occurred when the profile is being retrieved.";
+
+          addToast("Profile Error", message, "error");
+        }
+      } finally {
+        handleIsLoading(false);
+      }
     },
-    [url, user?.token, currentUser, addToast]
+    [url, user?.token, currentUser, addToast, handleIsLoading]
   );
 
   const handleCanEditProfile = () => {
@@ -88,7 +91,7 @@ const AdminProfile = () => {
     };
   }, [getProfile]);
 
-  if (isPending) {
+  if (isLoading) {
     return <PageSkeletonLoader />;
   }
 

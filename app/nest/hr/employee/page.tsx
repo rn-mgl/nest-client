@@ -11,6 +11,7 @@ import { useAlert } from "@/src/context/AlertContext";
 import { useToasts } from "@/src/context/ToastContext";
 import useCategory from "@/src/hooks/useCategory";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
+import useIsLoading from "@/src/hooks/useIsLoading";
 
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
@@ -52,7 +53,7 @@ import axios, { isAxiosError } from "axios";
 
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
-import React, { use, useTransition } from "react";
+import React, { use } from "react";
 import { IoCheckmark, IoClose } from "react-icons/io5";
 
 const HREmployee = ({
@@ -72,7 +73,7 @@ const HREmployee = ({
   const [activeEmployeeSeeMore, setActiveEmployeeSeeMore] = React.useState(0);
   const [activeTab, setActiveTab] = React.useState("employees");
 
-  const [isPending, startTransition] = useTransition();
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const searchFilters = {
     employees: HR_EMPLOYEE_SEARCH,
@@ -143,52 +144,53 @@ const HREmployee = ({
 
   const getEmployeeData = React.useCallback(
     async (tab: string, controller?: AbortController) => {
-      startTransition(async () => {
-        try {
-          if (user?.token) {
-            const { data: responseData } = await axios.get(`${url}/hr/user`, {
-              headers: {
-                Authorization: `Bearer ${user.token}`,
-              },
-              signal: controller?.signal,
-              params: { tab },
-              withCredentials: true,
-            });
+      handleIsLoading(true);
+      try {
+        if (user?.token) {
+          const { data: responseData } = await axios.get(`${url}/hr/user`, {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+            signal: controller?.signal,
+            params: { tab },
+            withCredentials: true,
+          });
 
-            if (responseData[tab]) {
-              switch (tab) {
-                case "employees":
-                  setEmployees(responseData.employees);
-                  break;
-                case "onboardings":
-                  setOnboardings(responseData.onboardings);
-                  break;
-                case "leaves":
-                  setLeaves(responseData.leaves);
-                  break;
-                case "performances":
-                  setPerformances(responseData.performances);
-                  break;
-                case "trainings":
-                  setTrainings(responseData.trainings);
-                  break;
-              }
+          if (responseData[tab]) {
+            switch (tab) {
+              case "employees":
+                setEmployees(responseData.employees);
+                break;
+              case "onboardings":
+                setOnboardings(responseData.onboardings);
+                break;
+              case "leaves":
+                setLeaves(responseData.leaves);
+                break;
+              case "performances":
+                setPerformances(responseData.performances);
+                break;
+              case "trainings":
+                setTrainings(responseData.trainings);
+                break;
             }
           }
-        } catch (error) {
-          console.log(error);
-
-          if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            const message =
-              error.response?.data.message ??
-              error.message ??
-              `An error occurred when the ${tab} data are being retrieved`;
-            addToast("Error", message, "error");
-          }
         }
-      });
+      } catch (error) {
+        console.log(error);
+
+        if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
+          const message =
+            error.response?.data.message ??
+            error.message ??
+            `An error occurred when the ${tab} data are being retrieved`;
+          addToast("Error", message, "error");
+        }
+      } finally {
+        handleIsLoading(false);
+      }
     },
-    [url, user?.token, addToast]
+    [url, user?.token, addToast, handleIsLoading]
   );
 
   const handleLeaveRequestStatus = async (
@@ -531,7 +533,7 @@ const HREmployee = ({
             }}
           />
 
-          {isPending ? (
+          {isLoading ? (
             <PageSkeletonLoader />
           ) : activeTab === "employees" ? (
             <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">

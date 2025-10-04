@@ -12,6 +12,7 @@ import EditPerformanceReview from "@/src/components/hr/performance/EditPerforman
 import ShowPerformanceReview from "@/src/components/hr/performance/ShowPerformanceReview";
 import { useToasts } from "@/src/context/ToastContext";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
+import useIsLoading from "@/src/hooks/useIsLoading";
 
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
@@ -41,7 +42,7 @@ const PerformanceReview = () => {
     React.useState(0);
   const [activeAssignPerformanceReview, setActiveAssignPerformanceReview] =
     React.useState(0);
-  const [isPending, startTransition] = React.useTransition();
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const { addToast } = useToasts();
 
@@ -86,38 +87,39 @@ const PerformanceReview = () => {
 
   const getPerformanceReviews = React.useCallback(
     async (controller?: AbortController) => {
-      startTransition(async () => {
-        try {
-          if (user?.token) {
-            const { data: allPerformanceReviews } = await axios.get(
-              `${url}/hr/performance_review`,
-              {
-                headers: {
-                  Authorization: `Bearer ${user?.token}`,
-                },
-                withCredentials: true,
-                signal: controller?.signal,
-              }
-            );
-
-            if (allPerformanceReviews.performances) {
-              setPerformanceReviews(allPerformanceReviews.performances);
+      handleIsLoading(true);
+      try {
+        if (user?.token) {
+          const { data: allPerformanceReviews } = await axios.get(
+            `${url}/hr/performance_review`,
+            {
+              headers: {
+                Authorization: `Bearer ${user?.token}`,
+              },
+              withCredentials: true,
+              signal: controller?.signal,
             }
-          }
-        } catch (error) {
-          console.log(error);
+          );
 
-          if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            const message =
-              error.response?.data.message ??
-              error.message ??
-              "An error occurred when the performances are being retrieved.";
-            addToast("Performance Error", message, "error");
+          if (allPerformanceReviews.performances) {
+            setPerformanceReviews(allPerformanceReviews.performances);
           }
         }
-      });
+      } catch (error) {
+        console.log(error);
+
+        if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
+          const message =
+            error.response?.data.message ??
+            error.message ??
+            "An error occurred when the performances are being retrieved.";
+          addToast("Performance Error", message, "error");
+        }
+      } finally {
+        handleIsLoading(false);
+      }
     },
-    [url, user?.token, addToast]
+    [url, user?.token, addToast, handleIsLoading]
   );
 
   const mappedPerformanceReviews = useFilterAndSort(
@@ -253,7 +255,7 @@ const PerformanceReview = () => {
           Create Performance Review <IoAdd />
         </button>
 
-        {isPending ? (
+        {isLoading ? (
           <PageSkeletonLoader />
         ) : (
           <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">

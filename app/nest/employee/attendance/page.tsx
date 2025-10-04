@@ -4,6 +4,7 @@ import Log from "@/src/components/employee/attendance/Log";
 import Input from "@/src/components/form/Input";
 import Select from "@/src/components/form/Select";
 import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import { AttendanceInterface } from "@/src/interface/AttendanceInterface";
 import axios from "axios";
 import { useSession } from "next-auth/react";
@@ -25,7 +26,7 @@ const Attendance = () => {
   const [attendance, setAttendance] =
     React.useState<AttendanceInterface | null>(null);
 
-  const [isPending, startTransition] = React.useTransition();
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const { addToast } = useToasts();
 
@@ -187,45 +188,46 @@ const Attendance = () => {
 
   const getAttendance = React.useCallback(
     async (abort?: AbortController) => {
-      startTransition(async () => {
-        setAttendance(null);
+      handleIsLoading(true);
+      setAttendance(null);
 
-        if (activeDateGreaterThanCurrentDate) {
-          return;
-        }
+      if (activeDateGreaterThanCurrentDate) {
+        return;
+      }
 
-        try {
-          const stringDate = `${activeYear}-${
-            activeMonth.value + 1
-          }-${activeDate}`;
+      try {
+        const stringDate = `${activeYear}-${
+          activeMonth.value + 1
+        }-${activeDate}`;
 
-          if (user?.token) {
-            const { data: responseData } = await axios.get<{
-              attendance: AttendanceInterface;
-            }>(`${url}/employee/attendance/${stringDate}`, {
-              headers: {
-                Authorization: `Bearer ${user.token}`,
-              },
-              signal: abort?.signal,
-              withCredentials: true,
-            });
+        if (user?.token) {
+          const { data: responseData } = await axios.get<{
+            attendance: AttendanceInterface;
+          }>(`${url}/employee/attendance/${stringDate}`, {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+            signal: abort?.signal,
+            withCredentials: true,
+          });
 
-            if (responseData.attendance) {
-              setAttendance(responseData.attendance);
-            }
-          }
-        } catch (error) {
-          console.log(error);
-
-          if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            const message =
-              error.response?.data.message ??
-              error.message ??
-              "An error occurred when the attendance data is being retrieved.";
-            addToast("Attendance Error", message, "error");
+          if (responseData.attendance) {
+            setAttendance(responseData.attendance);
           }
         }
-      });
+      } catch (error) {
+        console.log(error);
+
+        if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
+          const message =
+            error.response?.data.message ??
+            error.message ??
+            "An error occurred when the attendance data is being retrieved.";
+          addToast("Attendance Error", message, "error");
+        }
+      } finally {
+        handleIsLoading(false);
+      }
     },
     [
       url,
@@ -235,6 +237,7 @@ const Attendance = () => {
       activeDate,
       activeDateGreaterThanCurrentDate,
       addToast,
+      handleIsLoading,
     ]
   );
 
@@ -289,7 +292,7 @@ const Attendance = () => {
             />
           </div>
 
-          {!isPending && attendance && activeDateEqualToCurrentDate ? (
+          {!isLoading && attendance && activeDateEqualToCurrentDate ? (
             !attendance?.login_time ? (
               <button
                 onClick={handleCanLog}
