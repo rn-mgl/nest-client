@@ -8,7 +8,6 @@ import { getCSRFToken } from "@/src/utils/token";
 import { isCloudFileSummary, isRawFileSummary } from "@/src/utils/utils";
 import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
-import Image from "next/image";
 import React from "react";
 import { IoClose, IoImage, IoText, IoTrash } from "react-icons/io5";
 
@@ -180,25 +179,16 @@ const EditHRProfile: React.FC<ModalInterface> = (props) => {
           className="w-full p-2 rounded-b-md bg-neutral-100 flex flex-col items-center justify-start gap-4 t:p-4"
         >
           <div className="w-full p-4 rounded-md bg-accent-yellow/40 flex flex-col items-center justify-center">
-            <div className="w-40 aspect-square bg-accent-blue rounded-full border-8 border-accent-yellow flex flex-col items-center justify-center relative overflow-hidden">
-              {isRawFileSummary(profile.image) ? (
-                <Image
-                  alt="Profile"
-                  width={300}
-                  height={300}
-                  src={profile.image.fileURL}
-                  className="absolute w-full"
-                />
-              ) : isCloudFileSummary(profile.image) ? (
-                <Image
-                  alt="Profile"
-                  width={300}
-                  height={300}
-                  src={profile.image.url}
-                  className="absolute w-full"
-                />
-              ) : null}
-            </div>
+            <div
+              style={{
+                backgroundImage: isRawFileSummary(profile.image)
+                  ? profile.image.fileURL
+                  : isCloudFileSummary(profile.image)
+                  ? profile.image.url
+                  : "",
+              }}
+              className="w-40 aspect-square bg-accent-blue rounded-full border-8 border-accent-yellow flex flex-col items-center justify-center relative overflow-hidden"
+            />
           </div>
 
           <div className="w-full flex flex-row items-center justify-between">

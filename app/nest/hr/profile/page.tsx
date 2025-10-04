@@ -7,7 +7,6 @@ import { UserInterface } from "@/src/interface/UserInterface";
 import { isCloudFileSummary } from "@/src/utils/utils";
 import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
-import Image from "next/image";
 import React from "react";
 import { IoLockClosed, IoMail, IoPencil } from "react-icons/io5";
 
@@ -108,17 +107,14 @@ const Profile = () => {
         <div className="w-full grid">
           <div className="w-full h-auto rounded-md bg-accent-blue p-4 flex flex-col items-center justify-start gap-2">
             {/* image */}
-            <div className="w-24 h-24 rounded-full bg-accent-purple border-8 border-white flex flex-col items-center justify-center relative overflow-hidden">
-              {isCloudFileSummary(profile.image) ? (
-                <Image
-                  src={profile.image.url}
-                  alt="profile"
-                  width={200}
-                  height={200}
-                  className="absolute w-full"
-                />
-              ) : null}
-            </div>
+            <div
+              style={{
+                backgroundImage: isCloudFileSummary(profile.image)
+                  ? `url(${profile.image.url})`
+                  : "",
+              }}
+              className="w-24 h-24 rounded-full bg-accent-purple border-8 border-white flex flex-col items-center justify-center relative overflow-hidden bg-center bg-cover"
+            />
 
             {/* profile */}
             <div className="w-full flex flex-col items-center justify-start text-white">
