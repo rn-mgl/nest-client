@@ -59,14 +59,13 @@ const EditLeaveRequest: React.FC<ModalInterface> = (props) => {
     } catch (error) {
       console.log(error);
 
-      let message =
-        "An error occurred when the leave request is being retrieved.";
-
       if (isAxiosError(error)) {
-        message = error.response?.data.message ?? error.message;
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          "An error occurred when the leave request is being retrieved.";
+        addToast("Leave Request Error", message, "error");
       }
-
-      addToast("Leave Request Error", message, "error");
     }
   }, [url, user?.token, role, props.id, addToast]);
 
@@ -105,14 +104,13 @@ const EditLeaveRequest: React.FC<ModalInterface> = (props) => {
     } catch (error) {
       console.log(error);
 
-      let message =
-        "An error occurred when the leave request is being updated.";
-
       if (isAxiosError(error)) {
-        message = error.response?.data.message ?? error.message;
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          "An error occurred when the leave request is being updated.";
+        addToast("Leave Request Error", message, "error");
       }
-
-      addToast("Leave Request Error", message, "error");
     }
   };
 

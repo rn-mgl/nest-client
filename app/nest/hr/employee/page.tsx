@@ -178,13 +178,13 @@ const HREmployee = ({
         } catch (error) {
           console.log(error);
 
-          let message = `An error occurred when the ${tab} data are being retrieved`;
-
           if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            message = error.response?.data.message ?? error.message;
+            const message =
+              error.response?.data.message ??
+              error.message ??
+              `An error occurred when the ${tab} data are being retrieved`;
+            addToast("Error", message, "error");
           }
-
-          addToast("Error", message, "error");
         }
       });
     },
@@ -218,13 +218,13 @@ const HREmployee = ({
     } catch (error) {
       console.log(error);
 
-      let message = `An error occurred when the leave request is being handled.`;
-
       if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
-        message = error.response?.data.message ?? error.message;
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          `An error occurred when the leave request is being handled.`;
+        addToast("Leave Error", message, "error");
       }
-
-      addToast("Leave Error", message, "error");
     }
   };
 

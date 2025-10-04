@@ -136,14 +136,13 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
     } catch (error) {
       console.log(error);
 
-      let message =
-        "An error occurred when the training data is being retrieved.";
-
       if (axios.isAxiosError(error)) {
-        message = error.response?.data.message ?? error.message;
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          "An error occurred when the training data is being retrieved.";
+        addToast("Training Error", message, "error");
       }
-
-      addToast("Training Error", message, "error");
     }
   }, [url, user?.token, props.id, addToast]);
 
@@ -186,13 +185,14 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
     } catch (error) {
       console.log(error);
 
-      let message = "An error occurred when the reviews are being submitted.";
-
       if (axios.isAxiosError(error)) {
-        message = error.response?.data.message ?? error.message;
-      }
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          "An error occurred when the reviews are being submitted.";
 
-      addToast("Training Error", message, "error");
+        addToast("Training Error", message, "error");
+      }
     }
   };
 

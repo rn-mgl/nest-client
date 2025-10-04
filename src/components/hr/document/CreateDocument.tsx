@@ -112,13 +112,13 @@ const CreateDocument: React.FC<ModalInterface> = (props) => {
     } catch (error) {
       console.log(error);
 
-      let message = "An error occurred when the document is being created";
-
       if (isAxiosError(error)) {
-        message = error.response?.data.message ?? error.message;
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          "An error occurred when the document is being created";
+        addToast("Document Error", message, "error");
       }
-
-      addToast("Document Error", message, "error");
     }
   };
 

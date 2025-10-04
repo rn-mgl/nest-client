@@ -107,13 +107,13 @@ const PerformanceReview = () => {
         } catch (error) {
           console.log(error);
 
-          let message = `An error occurred when the performances are being retrieved.`;
-
           if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            message = error.response?.data.message ?? error.message;
+            const message =
+              error.response?.data.message ??
+              error.message ??
+              "An error occurred when the performances are being retrieved.";
+            addToast("Performance Error", message, "error");
           }
-
-          addToast("Performance Error", message, "error");
         }
       });
     },

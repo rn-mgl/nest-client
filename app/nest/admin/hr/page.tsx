@@ -99,13 +99,13 @@ const AdminHR = () => {
         } catch (error) {
           console.log(error);
 
-          let message = "An error occurred when the HRs are being retrieved.";
-
           if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            message = error.response?.data.message ?? error.message;
+            const message =
+              error.response?.data.message ??
+              error.message ??
+              "An error occurred when the HRs are being retrieved.";
+            addToast("HR List Error", message, "error");
           }
-
-          addToast("HR List Error", message, "error");
         }
       });
     },

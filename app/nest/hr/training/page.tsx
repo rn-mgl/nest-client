@@ -94,13 +94,13 @@ const HRTraining = () => {
         } catch (error) {
           console.log(error);
 
-          let message = `An error occurred when the trainings are being retrieved.`;
-
           if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            message = error.response?.data.message ?? error.message;
+            const message =
+              error.response?.data.message ??
+              error.message ??
+              `An error occurred when the trainings are being retrieved.`;
+            addToast("Training Error", message, "error");
           }
-
-          addToast("Training Error", message, "error");
         }
       });
     },

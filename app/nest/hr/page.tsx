@@ -76,14 +76,13 @@ const HRDashboard = () => {
         } catch (error) {
           console.log(error);
 
-          let message =
-            "An error occurred when the dashboard data are being retrieved";
-
           if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            message = error.response?.data.message ?? error.message;
+            const message =
+              error.response?.data.message ??
+              error.message ??
+              "An error occurred when the dashboard data are being retrieved";
+            addToast("Dashboard Error", message, "error");
           }
-
-          addToast("Dashboard Error", message, "error");
         }
       });
     },

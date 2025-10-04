@@ -61,13 +61,13 @@ const ChangePassword: React.FC<ModalInterface> = (props) => {
     } catch (error) {
       console.log(error);
 
-      let message = "An error occurred when the password is being updated";
-
       if (isAxiosError(error)) {
-        message = error.response?.data.message ?? error.message;
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          "An error occurred when the password is being updated";
+        addToast("Password Error", message, "error");
       }
-
-      addToast("Password Error", message, "error");
     }
   };
 

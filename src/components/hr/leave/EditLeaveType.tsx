@@ -51,13 +51,13 @@ const EditLeaveType: React.FC<ModalInterface> = (props) => {
     } catch (error) {
       console.log(error);
 
-      let message = "An error occurred when the leave types is being retrieved";
-
       if (isAxiosError(error)) {
-        message = error.response?.data.message ?? error.message;
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          "An error occurred when the leave types is being retrieved";
+        addToast("Leave Type Error", message, "error");
       }
-
-      addToast("Leave Type Error", message, "error");
     }
   }, [url, user?.token, props.id, addToast]);
 
@@ -94,13 +94,13 @@ const EditLeaveType: React.FC<ModalInterface> = (props) => {
     } catch (error) {
       console.log(error);
 
-      let message = "An error occurred when the leave types is being updated.";
-
       if (isAxiosError(error)) {
-        message = error.response?.data.message ?? error.message;
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          "An error occurred when the leave types is being updated.";
+        addToast("Leave Type Error", message, "error");
       }
-
-      addToast("Leave Type Error", message, "error");
     }
   };
 

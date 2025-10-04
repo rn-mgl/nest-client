@@ -98,13 +98,13 @@ const HROnboarding = () => {
         } catch (error) {
           console.log(error);
 
-          let message = `An error occurred when the onboardings are being retrieved.`;
-
           if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            message = error.response?.data.message ?? error.message;
+            const message =
+              error.response?.data.message ??
+              error.message ??
+              `An error occurred when the onboardings are being retrieved.`;
+            addToast("Onboarding Error", message, "error");
           }
-
-          addToast("Onboarding Error", message, "error");
         }
       });
     },

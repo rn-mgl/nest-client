@@ -66,13 +66,13 @@ const CreateLeaveType: React.FC<ModalInterface> = (props) => {
     } catch (error) {
       console.log(error);
 
-      let message = "An error occurred when the leave types is being created";
-
       if (isAxiosError(error)) {
-        message = error.response?.data.message ?? error.message;
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          "An error occurred when the leave types is being created";
+        addToast("Leave Type Error", message, "error");
       }
-
-      addToast("Leave Type Error", message, "error");
     }
   };
 

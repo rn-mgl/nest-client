@@ -85,14 +85,13 @@ const EditHRProfile: React.FC<ModalInterface> = (props) => {
     } catch (error) {
       console.log(error);
 
-      let message =
-        "An error occurred when the profile data is being retrieved";
-
       if (isAxiosError(error)) {
-        message = error.response?.data.message ?? error.message;
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          "An error occurred when the profile data is being retrieved";
+        addToast("Profile Error", message, "error");
       }
-
-      addToast("Profile Error", message, "error");
     }
   }, [token, url, current, addToast]);
 
@@ -145,13 +144,13 @@ const EditHRProfile: React.FC<ModalInterface> = (props) => {
     } catch (error) {
       console.log(error);
 
-      let message = "An error occurred when the profile data is being updated";
-
       if (isAxiosError(error)) {
-        message = error.response?.data.message ?? error.message;
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          "An error occurred when the profile data is being updated";
+        addToast("Profile Error", message, "error");
       }
-
-      addToast("Profile Error", message, "error");
     }
   };
 

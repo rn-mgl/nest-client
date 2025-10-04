@@ -144,14 +144,13 @@ const HRDocument = () => {
         } catch (error) {
           console.log(error);
 
-          let message =
-            "An error occurred when the documents and folders are being retrieved";
-
           if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            message = error.response?.data.message ?? error.message;
+            const message =
+              error.response?.data.message ??
+              error.message ??
+              "An error occurred when the documents and folders are being retrieved";
+            addToast("Document Error", message, "error");
           }
-
-          addToast("Document Error", message, "error");
         }
       });
     },
@@ -181,14 +180,13 @@ const HRDocument = () => {
         } catch (error) {
           console.log(error);
 
-          let message =
-            "An error occurred when the  folder data is being retrieved";
-
           if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            message = error.response?.data.message ?? error.message;
+            const message =
+              error.response?.data.message ??
+              error.message ??
+              "An error occurred when the  folder data is being retrieved";
+            addToast("Folder Error", message, "error");
           }
-
-          addToast("Folder Error", message, "error");
         }
       });
     },

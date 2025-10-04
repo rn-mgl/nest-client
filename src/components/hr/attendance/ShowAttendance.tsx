@@ -51,14 +51,13 @@ const ShowAttendance: React.FC<ModalInterface & AttendanceDate> = (props) => {
       } catch (error) {
         console.log(error);
 
-        let message =
-          "An error occurred when the employee attendance is being retrieved";
-
         if (isAxiosError(error)) {
-          message = error.response?.data.message ?? error.message;
+          const message =
+            error.response?.data.message ??
+            error.message ??
+            "An error occurred when the employee attendance is being retrieved";
+          addToast("Attendance Error", message, "error");
         }
-
-        addToast("Attendance Error", message, "error");
       }
     },
     [url, user?.token, props.year, props.month, props.date, addToast]

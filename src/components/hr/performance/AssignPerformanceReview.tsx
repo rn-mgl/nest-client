@@ -62,13 +62,13 @@ const AssignPerformanceReview: React.FC<ModalInterface> = (props) => {
     } catch (error) {
       console.log(error);
 
-      let message = `An error occurred when the user performance reviews are being retrieved.`;
-
       if (isAxiosError(error)) {
-        message = error.response?.data.message ?? error.message;
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          `An error occurred when the user performance reviews are being retrieved.`;
+        addToast("Performance Error", message, "error");
       }
-
-      addToast("Performance Error", message, "error");
     }
   }, [url, user?.token, props.id, addToast]);
 
@@ -107,13 +107,13 @@ const AssignPerformanceReview: React.FC<ModalInterface> = (props) => {
     } catch (error) {
       console.log(error);
 
-      let message = `An error occurred when the performance is being assigned.`;
-
       if (isAxiosError(error)) {
-        message = error.response?.data.message ?? error.message;
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          `An error occurred when the performance is being assigned.`;
+        addToast("Performance Error", message, "error");
       }
-
-      addToast("Performance Error", message, "error");
     }
   };
 

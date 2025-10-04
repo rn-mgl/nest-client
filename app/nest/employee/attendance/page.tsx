@@ -217,14 +217,13 @@ const Attendance = () => {
         } catch (error) {
           console.log(error);
 
-          let message =
-            "An error occurred when the attendance data is being retrieved.";
-
           if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            message = error.response?.data.message ?? error.message;
+            const message =
+              error.response?.data.message ??
+              error.message ??
+              "An error occurred when the attendance data is being retrieved.";
+            addToast("Attendance Error", message, "error");
           }
-
-          addToast("Attendance Error", message, "error");
         }
       });
     },

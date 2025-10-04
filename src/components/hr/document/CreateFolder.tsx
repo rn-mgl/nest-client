@@ -71,13 +71,13 @@ const CreateFolder: React.FC<ModalInterface> = (props) => {
     } catch (error) {
       console.log(error);
 
-      let message = "An error occurred when the folder is being created";
-
       if (isAxiosError(error)) {
-        message = error.response?.data.message ?? error.message;
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          "An error occurred when the folder is being created";
+        addToast("Folder Error", message, "error");
       }
-
-      addToast("Folder Error", message, "error");
     }
   };
 

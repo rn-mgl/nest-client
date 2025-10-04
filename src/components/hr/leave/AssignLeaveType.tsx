@@ -132,14 +132,13 @@ const AssignLeaveType: React.FC<ModalInterface> = (props) => {
     } catch (error) {
       console.log(error);
 
-      let message =
-        "An error occurred when the employee leaves are being retrieved.";
-
       if (isAxiosError(error)) {
-        message = error.response?.data.message ?? error.message;
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          "An error occurred when the employee leaves are being retrieved.";
+        addToast("Employee Leaves", message, "error");
       }
-
-      addToast("Employee Leaves", message, "error");
     }
   }, [user?.token, url, props.id, addToast]);
 
@@ -180,14 +179,13 @@ const AssignLeaveType: React.FC<ModalInterface> = (props) => {
     } catch (error) {
       console.log(error);
 
-      let message =
-        "An error occurred when the user leaves are being assigned.";
-
       if (isAxiosError(error)) {
-        message = error.response?.data.message ?? error.message;
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          "An error occurred when the user leaves are being assigned.";
+        addToast("Employee Leaves", message, "error");
       }
-
-      addToast("Employee Leaves", message, "error");
     }
   };
 

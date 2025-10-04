@@ -59,13 +59,13 @@ const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
     } catch (error) {
       console.log(error);
 
-      let message = `An error occurred when the performance is being retrieved.`;
-
       if (isAxiosError(error)) {
-        message = error.response?.data.message ?? error.message;
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          `An error occurred when the performance is being retrieved.`;
+        addToast("Performance Error", message, "error");
       }
-
-      addToast("Performance Error", message, "error");
     }
   }, [url, user?.token, props.id, addToast]);
 

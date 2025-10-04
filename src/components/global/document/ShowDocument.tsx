@@ -53,14 +53,13 @@ const ShowDocument: React.FC<ModalInterface> = (props) => {
     } catch (error) {
       console.log(error);
 
-      let message =
-        "An error occurred when the document data is being retrieved";
-
       if (isAxiosError(error)) {
-        message = error.response?.data.message ?? error.message;
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          "An error occurred when the document data is being retrieved";
+        addToast("Document Error", message, "error");
       }
-
-      addToast("Document Error", message, "error");
     }
   }, [props.id, url, user?.token, role, addToast]);
 

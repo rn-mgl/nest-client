@@ -77,14 +77,13 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
     } catch (error) {
       console.log(error);
 
-      let message =
-        "An error occurred when the employee data is being retrieved";
-
       if (isAxiosError(error)) {
-        message = error.response?.data.message ?? error.message;
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          "An error occurred when the employee data is being retrieved";
+        addToast("Employee Error", message, "error");
       }
-
-      addToast("Employee Error", message, "error");
     }
   }, [user?.token, url, props.id, addToast]);
 

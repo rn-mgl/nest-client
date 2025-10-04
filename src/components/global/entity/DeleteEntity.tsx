@@ -52,13 +52,13 @@ const DeleteEntity: React.FC<ModalInterface & DeleteModalInterface> = (
     } catch (error) {
       console.log(error);
 
-      let message = `An error occurred when the ${props.label} is being deleted.`;
-
       if (isAxiosError(error)) {
-        message = error.response?.data.message ?? error.message;
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          `An error occurred when the ${props.label} is being deleted.`;
+        addToast("Delete Error", message, "error");
       }
-
-      addToast("Delete Error", message, "error");
     }
   };
 

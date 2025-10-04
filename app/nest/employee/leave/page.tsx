@@ -118,14 +118,13 @@ const Leave = ({
         } catch (error) {
           console.log(error);
 
-          let message =
-            "An error occurred when the leave balances are being retrieved.";
-
           if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            message = error.response?.data.message ?? error.message;
+            const message =
+              error.response?.data.message ??
+              error.message ??
+              "An error occurred when the leave balances are being retrieved.";
+            addToast("Leave Balance Error", message, "error");
           }
-
-          addToast("Leave Balance Error", message, "error");
         }
       });
     },

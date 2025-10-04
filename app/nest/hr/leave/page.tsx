@@ -169,14 +169,13 @@ const HRLeave = ({
         } catch (error) {
           console.log(error);
 
-          let message =
-            "An error occurred when the leave types are being retrieved";
-
           if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            message = error.response?.data.message ?? error.message;
+            const message =
+              error.response?.data.message ??
+              error.message ??
+              "An error occurred when the leave types are being retrieved";
+            addToast("Leave Type Error", message, "error");
           }
-
-          addToast("Leave Type Error", message, "error");
         }
       });
     },
@@ -206,14 +205,13 @@ const HRLeave = ({
         } catch (error) {
           console.log(error);
 
-          let message =
-            "An error occurred when the leave balances are being retrieved";
-
           if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            message = error.response?.data.message ?? error.message;
+            const message =
+              error.response?.data.message ??
+              error.message ??
+              "An error occurred when the leave balances are being retrieved";
+            addToast("Leave Balance Error", message, "error");
           }
-
-          addToast("Leave Balance Error", message, "error");
         }
       });
     },
@@ -243,14 +241,13 @@ const HRLeave = ({
         } catch (error) {
           console.log(error);
 
-          let message =
-            "An error occurred when the leave requests are being retrieved";
-
           if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            message = error.response?.data.message ?? error.message;
+            const message =
+              error.response?.data.message ??
+              error.message ??
+              "An error occurred when the leave requests are being retrieved";
+            addToast("Leave Requests Error", message, "error");
           }
-
-          addToast("Leave Requests Error", message, "error");
         }
       });
     },

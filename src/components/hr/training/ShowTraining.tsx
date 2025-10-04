@@ -86,13 +86,13 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
     } catch (error) {
       console.log(error);
 
-      let message = `An error occurred when the training is being retrieved.`;
-
       if (isAxiosError(error)) {
-        message = error.response?.data.message ?? error.message;
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          `An error occurred when the training is being retrieved.`;
+        addToast("Training Error", message, "error");
       }
-
-      addToast("Training Error", message, "error");
     }
   }, [user?.token, props.id, url, addToast]);
 

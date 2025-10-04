@@ -79,14 +79,13 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
       } catch (error) {
         console.log(error);
 
-        let message =
-          "An error occurred when the folder paths are being retrieved";
-
         if (isAxiosError(error)) {
-          message = error.response?.data.message ?? error.message;
+          const message =
+            error.response?.data.message ??
+            error.message ??
+            "An error occurred when the folder paths are being retrieved";
+          addToast("Folder Error", message, "error");
         }
-
-        addToast("Folder Error", message, "error");
       }
     },
     [url, user?.token, props.id, addToast]
@@ -118,13 +117,13 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
     } catch (error) {
       console.log(error);
 
-      let message = "An error occurred when the folder data is being retrieved";
-
       if (isAxiosError(error)) {
-        message = error.response?.data.message ?? error.message;
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          "An error occurred when the folder data is being retrieved";
+        addToast("Folder Error", message, "error");
       }
-
-      addToast("Folder Error", message, "error");
     }
   }, [url, user?.token, props.id, getAvailablePaths, addToast]);
 
@@ -174,13 +173,14 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
     } catch (error) {
       console.log(error);
 
-      let message = "An error occurred when the folder data is being updated";
-
       if (isAxiosError(error)) {
-        message = error.response?.data.message ?? error.message;
-      }
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          "An error occurred when the folder data is being updated";
 
-      addToast("Folder Error", message, "error");
+        addToast("Folder Error", message, "error");
+      }
     }
   };
 

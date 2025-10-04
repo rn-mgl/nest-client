@@ -56,14 +56,13 @@ const Profile = () => {
         } catch (error) {
           console.log(error);
 
-          let message =
-            "An error occurred when the profile data is being retrieved";
-
           if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
-            message = error.response?.data.message ?? error.message;
+            const message =
+              error.response?.data.message ??
+              error.message ??
+              "An error occurred when the profile data is being retrieved";
+            addToast("Profile Error", message, "error");
           }
-
-          addToast("Profile Error", message, "error");
         }
       });
     },

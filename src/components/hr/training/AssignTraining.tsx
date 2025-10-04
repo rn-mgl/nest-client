@@ -63,13 +63,13 @@ const AssignTraining: React.FC<ModalInterface> = (props) => {
     } catch (error) {
       console.log(error);
 
-      let message = `An error occurred when the user trainings are being retrieved.`;
-
       if (isAxiosError(error)) {
-        message = error.response?.data.message ?? error.message;
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          `An error occurred when the user trainings are being retrieved.`;
+        addToast("Training Error", message, "error");
       }
-
-      addToast("Training Error", message, "error");
     }
   }, [url, user?.token, props.id, addToast]);
 
@@ -128,13 +128,13 @@ const AssignTraining: React.FC<ModalInterface> = (props) => {
     } catch (error) {
       console.log(error);
 
-      let message = `An error occurred when the training is being assigned.`;
-
       if (isAxiosError(error)) {
-        message = error.response?.data.message ?? error.message;
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          `An error occurred when the training is being assigned.`;
+        addToast("Training Error", message, "error");
       }
-
-      addToast("Training Error", message, "error");
     }
   };
 

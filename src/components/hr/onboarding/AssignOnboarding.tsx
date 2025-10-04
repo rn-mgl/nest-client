@@ -68,13 +68,13 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
     } catch (error) {
       console.log(error);
 
-      let message = `An error occurred when the user onboardings are being retrieved.`;
-
       if (isAxiosError(error)) {
-        message = error.response?.data.message ?? error.message;
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          `An error occurred when the user onboardings are being retrieved.`;
+        addToast("Onboarding Error", message, "error");
       }
-
-      addToast("Onboarding Error", message, "error");
     }
   }, [url, user?.token, props.id, addToast]);
 
@@ -140,13 +140,13 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
     } catch (error) {
       console.log(error);
 
-      let message = `An error occurred when the onboarding is being assigned.`;
-
       if (isAxiosError(error)) {
-        message = error.response?.data.message ?? error.message;
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          `An error occurred when the onboarding is being assigned.`;
+        addToast("Onboarding Error", message, "error");
       }
-
-      addToast("Onboarding Error", message, "error");
     }
   };
 
