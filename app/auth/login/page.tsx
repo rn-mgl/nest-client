@@ -22,7 +22,7 @@ const Login = () => {
   });
 
   const { showPassword, handleShowPassword } = useShowPassword();
-  const { isLoading, handleIsLoading } = useIsLoading(false);
+  const { isLoading, handleIsLoading } = useIsLoading();
   const { addToast } = useToasts();
 
   const url = process.env.URL;
