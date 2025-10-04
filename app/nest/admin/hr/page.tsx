@@ -16,6 +16,7 @@ import {
   ADMIN_HR_SORT,
 } from "@/src/utils/filters";
 import { getCSRFToken } from "@/src/utils/token";
+import { isCloudFileSummary } from "@/src/utils/utils";
 import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
@@ -151,7 +152,14 @@ const AdminHR = () => {
         key={hr.id}
         className="w-full p-4 rounded-md bg-neutral-100 flex flex-row items-start justify-start gap-4 relative"
       >
-        <div className="w-12 h-12 min-w-12 min-h-12 bg-linear-to-b from-accent-yellow to-accent-blue rounded-full"></div>
+        <div
+          style={{
+            backgroundImage: isCloudFileSummary(hr.image)
+              ? `url(${hr.image.url})`
+              : "",
+          }}
+          className="w-12 h-12 min-w-12 min-h-12 bg-linear-to-b from-accent-yellow to-accent-blue rounded-full"
+        />
 
         <div className="flex flex-col items-start justify-center gap-1 w-full overflow-hidden">
           <p

@@ -204,7 +204,7 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
                     : "",
                 }}
                 className="absolute w-28 h-28 overflow-hidden rounded-full border-8 border-neutral-100 flex flex-col items-center justify-center
-                        bottom-0 translate-y-2/4 bg-center bg-cover"
+                        bottom-0 translate-y-2/4 bg-center bg-cover bg-accent-blue"
               />
             </div>
 
