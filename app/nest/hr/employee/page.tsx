@@ -317,8 +317,6 @@ const HRUser = ({
     category
   );
 
-  console.log(attendanceRows);
-
   const onboardingRows = onboardings.map((onboarding) => {
     const assignedOn = normalizeDate(onboarding.created_at);
 
@@ -545,8 +543,6 @@ const HRUser = ({
   React.useEffect(() => {
     setActiveTab(tab ?? "users");
   }, [setActiveTab, tab]);
-
-  console.log(date);
 
   return (
     <div className="w-full min-h-full h-auto flex flex-col items-center justify-start">
