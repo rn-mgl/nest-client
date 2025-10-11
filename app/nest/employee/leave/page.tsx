@@ -29,7 +29,7 @@ import { normalizeDate, normalizeString } from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
-import React, { use } from "react";
+import React from "react";
 import { IoPencil, IoTrash } from "react-icons/io5";
 
 const Leave = ({
@@ -56,8 +56,7 @@ const Leave = ({
   const url = process.env.URL;
 
   const currentPath = usePathname();
-  const params = use(searchParams);
-  const tab = params.tab;
+  const { tab } = React.use(searchParams);
 
   const searchFilter = {
     balances: EMPLOYEE_LEAVE_BALANCE_SEARCH,

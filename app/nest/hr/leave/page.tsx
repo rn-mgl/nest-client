@@ -25,7 +25,7 @@ import {
 import axios, { isAxiosError } from "axios";
 
 import { useSession } from "next-auth/react";
-import React, { use } from "react";
+import React from "react";
 import { IoAdd, IoPencil, IoTrash } from "react-icons/io5";
 
 import Tabs from "@/global/navigation/Tabs";
@@ -116,8 +116,7 @@ const HRLeave = ({
   const user = data?.user;
 
   const currentPath = usePathname();
-  const params = use(searchParams);
-  const tab = params.tab;
+  const { tab } = React.use(searchParams);
 
   const handleActiveEditLeaveType = (id: number) => {
     setActiveEditLeaveType((prev) => (id === prev ? 0 : id));

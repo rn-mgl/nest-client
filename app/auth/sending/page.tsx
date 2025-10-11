@@ -6,14 +6,14 @@ import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
 import Image from "next/image";
-import { use } from "react";
+import React from "react";
 
 const Sending = ({
   searchParams,
 }: {
   searchParams: Promise<{ type?: string }>;
 }) => {
-  const params = use(searchParams);
+  const params = React.use(searchParams);
   const type = params.type;
   const url = process.env.URL;
 

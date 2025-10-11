@@ -53,7 +53,7 @@ import axios, { isAxiosError } from "axios";
 
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
-import React, { use } from "react";
+import React from "react";
 import { IoCheckmark, IoClose } from "react-icons/io5";
 
 const HREmployee = ({
@@ -130,7 +130,7 @@ const HREmployee = ({
   const { data } = useSession({ required: true });
   const user = data?.user;
 
-  const params = use(searchParams);
+  const params = React.use(searchParams);
   const currentPath = usePathname();
   const tab = params.tab;
 
