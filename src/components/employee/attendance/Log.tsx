@@ -8,10 +8,6 @@ import React from "react";
 import { IoClose } from "react-icons/io5";
 
 const Log: React.FC<ModalInterface> = (props) => {
-  const [percentage, setPercentage] = React.useState(0);
-  const [status, setStatus] = React.useState<"base" | "logging" | "failed">(
-    "base"
-  );
   const timerRef = React.useRef<NodeJS.Timeout>();
 
   const { addToast } = useToasts();
@@ -43,7 +39,6 @@ const Log: React.FC<ModalInterface> = (props) => {
         if (responseData.success) {
           toggleModal();
           if (refetchIndex) {
-            setPercentage(0);
             refetchIndex();
           }
 
@@ -61,9 +56,6 @@ const Log: React.FC<ModalInterface> = (props) => {
 
       addToast("Something went wrong", message, "error");
       clearInterval(timerRef.current);
-      setPercentage(0);
-      setStatus("base");
-
       return false;
     }
   };
@@ -88,7 +80,6 @@ const Log: React.FC<ModalInterface> = (props) => {
         if (responseData.success) {
           toggleModal();
           if (refetchIndex) {
-            setPercentage(0);
             refetchIndex();
           }
 
@@ -106,8 +97,6 @@ const Log: React.FC<ModalInterface> = (props) => {
 
       addToast("Something went wrong", message, "error");
       clearInterval(timerRef.current);
-      setPercentage(0);
-      setStatus("base");
 
       return false;
     }
@@ -143,38 +132,20 @@ const Log: React.FC<ModalInterface> = (props) => {
 
         <div className="w-full p-2 rounded-b-md flex flex-col items-center justify-start gap-4 t:p-4">
           <p className="text-center font-bold">
-            Hold the button to log {logType}.
+            Click the button to log {logType}.
           </p>
 
-          {status === "base" ? (
-            <button
-              onClick={logType === "in" ? submitLogIn : submitLogOut}
-              className={`w-full font-bold text-center rounded-md p-2 mt-2 capitalize
+          <button
+            onClick={logType === "in" ? submitLogIn : submitLogOut}
+            className={`w-full font-bold text-center rounded-md p-2 mt-2 capitalize
                  ${
                    logType === "in"
                      ? "bg-accent-blue text-accent-yellow"
                      : "bg-red-600 text-white"
                  }`}
-            >
-              Log {logType}
-            </button>
-          ) : status === "logging" ? (
-            <div>Logging</div>
-          ) : (
-            <div className="capitalize">{status}</div>
-          )}
-
-          <div className="w-full rounded-full h-2 bg-neutral-200 relative flex flex-col items-start justify-center">
-            <div
-              style={{ width: `${percentage}%` }}
-              className={`absolute bg-linear-to-r transition-all rounded-full w-0 h-2
-                 ${
-                   logType === "in"
-                     ? "from-accent-blue to-accent-green"
-                     : "from-red-500 to-orange-500"
-                 }`}
-            ></div>
-          </div>
+          >
+            Log {logType}
+          </button>
         </div>
       </div>
     </div>
