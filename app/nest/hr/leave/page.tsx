@@ -34,18 +34,17 @@ import Table from "@/src/components/global/field/Table";
 import EditLeaveRequest from "@/src/components/global/leave/EditLeaveRequest";
 import LeaveBalanceCard from "@/src/components/global/leave/LeaveBalanceCard";
 import LeaveRequestForm from "@/src/components/global/leave/LeaveRequestForm";
+import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import HRActions from "@/src/components/hr/global/HRActions";
+import { useToasts } from "@/src/context/ToastContext";
 import useCategory from "@/src/hooks/useCategory";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import {
   isUserSummary,
   normalizeDate,
   normalizeString,
 } from "@/src/utils/utils";
-import { usePathname } from "next/navigation";
-import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
-import { useToasts } from "@/src/context/ToastContext";
-import useIsLoading from "@/src/hooks/useIsLoading";
 
 const HRLeave = ({
   searchParams,
@@ -115,7 +114,6 @@ const HRLeave = ({
   const url = process.env.URL;
   const user = data?.user;
 
-  const currentPath = usePathname();
   const { tab } = React.use(searchParams);
 
   const handleActiveEditLeaveType = (id: number) => {
@@ -465,11 +463,7 @@ const HRLeave = ({
         className="w-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2
           t:items-start t:p-4 gap-4 t:gap-8"
       >
-        <Tabs
-          activeTab={activeTab}
-          path={currentPath ?? ""}
-          tabs={["types", "balances", "requests"]}
-        />
+        <Tabs activeTab={activeTab} tabs={["types", "balances", "requests"]} />
 
         <Filter
           searchKeyLabelPairs={searchFilters[activeTab as keyof object]}

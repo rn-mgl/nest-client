@@ -28,7 +28,6 @@ import {
 import { normalizeDate, normalizeString } from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import { usePathname } from "next/navigation";
 import React from "react";
 import { IoPencil, IoTrash } from "react-icons/io5";
 
@@ -55,7 +54,6 @@ const Leave = ({
   const user = session?.user;
   const url = process.env.URL;
 
-  const currentPath = usePathname();
   const { tab } = React.use(searchParams);
 
   const searchFilter = {
@@ -343,11 +341,7 @@ const Leave = ({
       ) : null}
 
       <div className="w-full h-auto flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2 t:p-4 gap-4 t:gap-8">
-        <Tabs
-          activeTab={activeTab}
-          path={currentPath ?? ""}
-          tabs={["balances", "requests"]}
-        />
+        <Tabs activeTab={activeTab} tabs={["balances", "requests"]} />
 
         <div className="w-full flex flex-col items-center justify-center gap-4 t:gap-8 ">
           <Filter

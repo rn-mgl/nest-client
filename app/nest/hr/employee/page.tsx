@@ -56,7 +56,6 @@ import axios, { isAxiosError } from "axios";
 import Input from "@/src/components/form/Input";
 import { AttendanceInterface } from "@/src/interface/AttendanceInterface";
 import { useSession } from "next-auth/react";
-import { usePathname } from "next/navigation";
 import React from "react";
 import { IoCheckmark, IoClose } from "react-icons/io5";
 
@@ -143,7 +142,6 @@ const HRUser = ({
   const user = data?.user;
 
   const params = React.use(searchParams);
-  const currentPath = usePathname();
   const tab = params.tab;
 
   const handleActiveUserSeeMore = (id: number) => {
@@ -556,7 +554,6 @@ const HRUser = ({
       <div className="gap-4 t:gap-8 w-full min-h-full h-auto flex flex-col items-start justify-start max-w-(--breakpoint-l-l) p-2 t:p-4">
         <Tabs
           activeTab={tab ?? "users"}
-          path={currentPath ?? ""}
           tabs={[
             "users",
             "attendances",
