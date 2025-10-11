@@ -3,7 +3,6 @@ import { Metadata } from "next";
 import {
   IoApps,
   IoArrowUndo,
-  IoCalendar,
   IoFileTray,
   IoFolder,
   IoPeople,
@@ -25,11 +24,6 @@ const NAV_LINKS = [
     label: "Employees",
     url: "/employee",
     icon: <IoPeople />,
-  },
-  {
-    label: "Attendance",
-    url: "/attendance",
-    icon: <IoCalendar />,
   },
   {
     label: "Onboardings",
