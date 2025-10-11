@@ -4,8 +4,8 @@ import { HiMiniArrowTopRightOnSquare } from "react-icons/hi2";
 const Hero = () => {
   return (
     <div
-      className="w-full min-h-screen h-screen flex flex-col items-center justify-start 
-                bg-accent-purple"
+      id="hero"
+      className="w-full min-h-screen h-screen flex flex-col items-center justify-start bg-accent-blue"
     >
       <div
         className="w-full h-full flex flex-col items-start justify-center max-w-(--breakpoint-l-s) text-left p-4 gap-8
@@ -34,8 +34,6 @@ const Hero = () => {
             Start Now <HiMiniArrowTopRightOnSquare />
           </Link>
         </div>
-
-        <div className="aspect-video w-full bg-white rounded-t-md t:max-w-(--breakpoint-t)"></div>
       </div>
     </div>
   );

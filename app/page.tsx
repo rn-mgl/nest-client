@@ -1,6 +1,9 @@
 import { Metadata } from "next";
 import Hero from "@/src/components/landing/Hero";
 import Nav from "@/src/components/landing/Nav";
+import About from "@/src/components/landing/About";
+import Action from "@/src/components/landing/Action";
+import Offers from "@/src/components/landing/Offers";
 
 export const metadata: Metadata = {
   title: "Nest",
@@ -9,9 +12,12 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <div className="w-full h-full flex flex-col items-center justify-start relative">
+    <div className="w-full h-screen flex flex-col items-center justify-start relative overflow-y-auto scroll-smooth">
       <Nav />
       <Hero />
+      <About />
+      <Offers />
+      <Action />
     </div>
   );
 }
