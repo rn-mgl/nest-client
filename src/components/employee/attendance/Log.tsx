@@ -79,7 +79,7 @@ const Log: React.FC<ModalInterface> = (props) => {
 
       return false;
     }
-  }, [url, user?.token, addToast, refetchIndex, toggleModal]);
+  }, [url, user?.token, user?.role, addToast, refetchIndex, toggleModal]);
 
   const submitLogOut = React.useCallback(async () => {
     try {
