@@ -160,7 +160,7 @@ const AdminHR = () => {
               ? `url(${hr.image.url})`
               : "",
           }}
-          className="w-12 h-12 min-w-12 min-h-12 bg-linear-to-b from-accent-yellow to-accent-blue rounded-full"
+          className="w-12 h-12 min-w-12 min-h-12 bg-linear-to-b from-accent-yellow to-accent-blue rounded-full bg-cover bg-center"
         />
 
         <div className="flex flex-col items-start justify-center gap-1 w-full overflow-hidden">
