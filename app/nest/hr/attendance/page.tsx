@@ -1,46 +1,85 @@
 "use client";
 
+import Log from "@/src/components/employee/attendance/Log";
 import Input from "@/src/components/form/Input";
 import Select from "@/src/components/form/Select";
-import ShowAttendance from "@/src/components/hr/attendance/ShowAttendance";
 import { useToasts } from "@/src/context/ToastContext";
-import { AttendanceStatisticsInterface } from "@/src/interface/AttendanceInterface";
-import axios, { isAxiosError } from "axios";
-
+import useIsLoading from "@/src/hooks/useIsLoading";
+import { AttendanceInterface } from "@/src/interface/AttendanceInterface";
+import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
-import { IoArrowForward, IoCalendar, IoCalendarNumber } from "react-icons/io5";
+import { IoCalendar } from "react-icons/io5";
 
-const HRAttendance = () => {
-  const [attendanceStatistics, setAttendanceStatistics] =
-    React.useState<AttendanceStatisticsInterface>({
-      ins: 0,
-      outs: 0,
-      lates: 0,
-      absents: 0,
-    });
+const Attendance = () => {
+  const [canLog, setCanLog] = React.useState(false);
+  const [activeMonth, setActiveMonth] = React.useState({
+    label: new Date().toLocaleDateString("default", { month: "long" }),
+    value: new Date().getMonth(),
+  });
   const [activeDate, setActiveDate] = React.useState(new Date().getDate());
   const [activeYear, setActiveYear] = React.useState<number | string>(
     new Date().getFullYear()
   );
-  const [activeMonth, setActiveMonth] = React.useState({
-    label: new Date().toLocaleString("default", { month: "long" }),
-    value: new Date().getMonth(),
-  });
   const [activeSelect, setActiveSelect] = React.useState(false);
-  const [activeSeeMore, setActiveSeeMore] = React.useState(0);
+
+  const [attendance, setAttendance] =
+    React.useState<AttendanceInterface | null>(null);
+
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const { addToast } = useToasts();
 
+  const { data: session } = useSession({ required: true });
+  const user = session?.user;
   const url = process.env.URL;
-  const { data } = useSession({ required: true });
-  const user = data?.user;
 
-  const daysOfWeek = React.useMemo(
+  const today = React.useMemo(() => {
+    const d = new Date();
+
+    return {
+      date: d.getDate(),
+      month: d.getMonth(),
+      year: d.getFullYear(),
+    };
+  }, []);
+
+  const activeDateEqualToCurrentDate = React.useMemo(() => {
+    return (
+      activeDate === today.date &&
+      activeMonth.value === today.month &&
+      activeYear === today.year
+    );
+  }, [
+    today.date,
+    today.month,
+    today.year,
+    activeDate,
+    activeMonth,
+    activeYear,
+  ]);
+
+  const activeDateGreaterThanCurrentDate = React.useMemo(() => {
+    return (
+      (activeDate > today.date &&
+        (activeMonth.value >= today.month ||
+          Number(activeYear) >= today.year)) ||
+      activeMonth.value > today.month ||
+      Number(activeYear) > today.year
+    );
+  }, [
+    today.date,
+    today.month,
+    today.year,
+    activeDate,
+    activeMonth,
+    activeYear,
+  ]);
+
+  const daysOfTheWeek = React.useMemo(
     () => ["S", "M", "T", "W", "T", "F", "S"],
     []
   );
-
   const monthOptions = React.useMemo(
     () => [
       { label: "January", value: 0 },
@@ -59,82 +98,44 @@ const HRAttendance = () => {
     []
   );
 
-  const startDay = React.useMemo(
+  const daysInMonth = React.useMemo(
     () => new Date(Number(activeYear), activeMonth.value + 1, 0).getDate(),
     [activeYear, activeMonth.value]
   );
 
-  const daysInMonth = React.useMemo(
+  const startDay = React.useMemo(
     () => new Date(Number(activeYear), activeMonth.value, 1).getDay(),
     [activeYear, activeMonth.value]
   );
 
-  const handleCurrentMonth = (month: number, label: string) => {
-    setActiveMonth({ value: month, label: label });
+  const handleCanLog = () => {
+    setCanLog((prev) => !prev);
+  };
+
+  const handleActiveMonth = (month: number, label: string) => {
+    setActiveMonth({ label: label, value: month });
+  };
+
+  const handleActiveYear = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setActiveYear(value === "" ? "" : Number(value));
+  };
+
+  const handleActiveDate = (date: number) => {
+    setActiveDate(date);
   };
 
   const handleActiveSelect = () => {
     setActiveSelect((prev) => !prev);
   };
 
-  const handleCurrentYear = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setActiveYear(value === "" ? "" : Number(value));
-  };
-
-  const handleCurrentDate = (date: number) => {
-    setActiveDate(date);
-  };
-
-  const handleActiveSeeMore = (date: number) => {
-    setActiveSeeMore((prev) => (date === prev ? 0 : date));
-  };
-
-  const getAttendanceStatistics = React.useCallback(
-    async (controller: AbortController) => {
-      try {
-        if (user?.token) {
-          const { data: statistics } = await axios.get(`${url}/hr/attendance`, {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-            withCredentials: true,
-            params: {
-              activeDate,
-              activeMonth: activeMonth.value + 1,
-              activeYear: Number(activeYear),
-            },
-            signal: controller.signal,
-          });
-
-          if (statistics) {
-            setAttendanceStatistics(statistics.attendances);
-          }
-        }
-      } catch (error) {
-        console.log(error);
-
-        if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
-          const message =
-            error.response?.data.message ??
-            error.message ??
-            "An error occurred when the attendance data is being retrieved";
-          addToast("Attendance Error", message, "error");
-        }
-      }
-    },
-    [url, user?.token, activeDate, activeMonth, activeYear, addToast]
-  );
-
   const calendar = Array(startDay).fill(null);
 
-  // map the dates of the month in their respective days
-  // daysInMonth + startDay to get the total days in the month
-  for (let i = startDay, j = 1; i < daysInMonth + startDay; i++, j++) {
+  for (let i = startDay, j = 1; j < daysInMonth; j++, i++) {
     calendar[i] = j;
   }
 
-  const mappedDaysOfWeek = daysOfWeek.map((day, index) => {
+  const mappedDaysOfWeek = daysOfTheWeek.map((date, index) => {
     return (
       <div
         key={index}
@@ -142,73 +143,127 @@ const HRAttendance = () => {
                   flex flex-col items-center justify-center rounded-sm t:rounded-md bg-neutral-200 font-semibold
                   text-xs t:text-sm"
       >
-        {day}
+        {date}
       </div>
     );
   });
 
   const mappedCalendar = calendar.map((date, index) => {
-    const selectedDate = activeDate === date;
-    return selectedDate ? (
+    return date === activeDate ? (
       <div
         key={index}
-        className="w-full h-full aspect-square l-l:aspect-video flex flex-col 
-              items-center justify-center rounded-sm t:rounded-md text-xs t:text-sm 
-              bg-accent-blue text-accent-yellow border-0 font-bold animate-fade
-              relative l-s:text-lg"
+        className={`w-full h-full aspect-square l-l:aspect-video flex flex-col 
+          items-center justify-center rounded-sm t:rounded-md text-xs t:text-sm 
+          border-accent-blue border-2 bg-accent-blue text-accent-yellow font-bold animate-fade
+          relative l-s:text-lg`}
       >
         {date}
-
-        <button
-          onClick={() => handleActiveSeeMore(date)}
-          className="absolute hidden bottom-2 t:flex text-xs font-light text-white gap-1 
-                  items-center justify-center hover:border-b-[0.5px] transition-all"
-        >
-          See More <IoArrowForward />
-        </button>
       </div>
+    ) : date === null ? (
+      <div
+        key={index}
+        className={`w-full h-full aspect-square l-l:aspect-video flex flex-col 
+        items-center justify-center rounded-sm t:rounded-md text-xs t:text-sm 
+        border-2 font-bold animate-fade
+        relative l-s:text-lg`}
+      />
     ) : (
       <button
         key={index}
-        onClick={() => handleCurrentDate(Number(date))}
-        disabled={date === null}
-        className="w-full h-full aspect-square l-l:aspect-video border-2 flex flex-col bg-white 
-                 items-center justify-center rounded-sm t:rounded-md text-xs t:text-sm l-s:text-lg"
+        onClick={() => handleActiveDate(date)}
+        className={`w-full h-full aspect-square l-l:aspect-video flex flex-col 
+        items-center justify-center rounded-sm t:rounded-md text-xs t:text-sm 
+        border-2 animate-fade relative l-s:text-lg hover:bg-neutral-100 ${
+          date === today.date &&
+          today.month === activeMonth.value &&
+          today.year === activeYear
+            ? "border-accent-blue/50"
+            : ""
+        }`}
       >
         {date}
       </button>
     );
   });
 
+  const getAttendance = React.useCallback(
+    async (abort?: AbortController) => {
+      handleIsLoading(true);
+      setAttendance(null);
+
+      if (activeDateGreaterThanCurrentDate) {
+        return;
+      }
+
+      try {
+        const stringDate = `${activeYear}-${
+          activeMonth.value + 1
+        }-${activeDate}`;
+
+        if (user?.token) {
+          const { data: responseData } = await axios.get<{
+            attendance: AttendanceInterface;
+          }>(`${url}/hr/attendance/${stringDate}`, {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+            signal: abort?.signal,
+            withCredentials: true,
+          });
+
+          if (responseData.attendance) {
+            setAttendance(responseData.attendance);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+
+        if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
+          const message =
+            error.response?.data.message ??
+            error.message ??
+            "An error occurred when the attendance data is being retrieved.";
+          addToast("Attendance Error", message, "error");
+        }
+      } finally {
+        handleIsLoading(false);
+      }
+    },
+    [
+      url,
+      user?.token,
+      activeYear,
+      activeMonth,
+      activeDate,
+      activeDateGreaterThanCurrentDate,
+      addToast,
+      handleIsLoading,
+    ]
+  );
+
   React.useEffect(() => {
     const controller = new AbortController();
 
-    getAttendanceStatistics(controller);
+    getAttendance(controller);
 
-    return () => {
-      controller.abort();
-    };
-  }, [getAttendanceStatistics]);
+    return () => controller.abort();
+  }, [getAttendance]);
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
-      {activeSeeMore ? (
-        <ShowAttendance
-          id={activeSeeMore}
-          date={activeDate}
-          month={activeMonth.value}
-          year={Number(activeYear)}
-          toggleModal={() => handleActiveSeeMore(0)}
+      {canLog ? (
+        <Log
+          id={attendance?.id ?? 0}
+          toggleModal={handleCanLog}
+          refetchIndex={getAttendance}
         />
       ) : null}
+
       <div
         className="w-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2
           t:items-start t:p-4 gap-4 t:gap-8"
       >
-        <div
-          className="w-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2
-              t:items-start t:p-4 gap-4 t:gap-8"
-        >
+        <div className="flex flex-col w-full items-center justify-center gap-4 t:gap-8 t:flex-row t:justify-between">
           <div className="w-full flex flex-row items-start justify-between gap-2 t:gap-4 t:w-96 t:max-w-96 t:min-w-96">
             <Select
               id="month"
@@ -216,7 +271,7 @@ const HRAttendance = () => {
               options={monthOptions}
               placeholder="Month"
               value={activeMonth.value}
-              onChange={handleCurrentMonth}
+              onChange={handleActiveMonth}
               required={false}
               icon={<IoCalendar />}
               label={activeMonth.label}
@@ -231,56 +286,71 @@ const HRAttendance = () => {
               required={false}
               type="number"
               value={activeYear}
-              onChange={handleCurrentYear}
-              icon={<IoCalendarNumber />}
+              onChange={handleActiveYear}
+              icon={<IoCalendar />}
               min={2000}
             />
           </div>
 
-          <div className="w-full flex flex-col items-center justify-center t:hidden">
-            <button
-              onClick={() => handleActiveSeeMore(activeDate)}
-              className="w-full p-2 rounded-md bg-accent-blue text-accent-yellow font-bold"
-            >
-              View Attendance Details
-            </button>
+          {!isLoading && attendance && activeDateEqualToCurrentDate ? (
+            !attendance?.login_time ? (
+              <button
+                onClick={handleCanLog}
+                className="bg-accent-blue text-accent-yellow w-full p-2 rounded-md font-bold flex flex-row items-center justify-center 
+                          gap-2 t:w-fit t:px-4 transition-all animate-fade"
+              >
+                Log In
+                <IoCalendar className="text-lg" />
+              </button>
+            ) : !attendance?.logout_time ? (
+              <button
+                onClick={handleCanLog}
+                className="bg-red-600 text-white w-full p-2 rounded-md font-bold flex flex-row items-center justify-center 
+                          gap-2 t:w-fit t:px-4 transition-all animate-fade"
+              >
+                Log Out
+                <IoCalendar className="text-lg" />
+              </button>
+            ) : (
+              <div
+                className="w-full flex flex-col items-center justify-center p-2 rounded-md animate-fade
+                      text-accent-blue border-accent-blue border-2 font-bold t:w-fit t:px-4"
+              >
+                Attendance Completed
+              </div>
+            )
+          ) : null}
+        </div>
+
+        <div className="w-full flex flex-col items-center justify-center text-xs t:text-sm">
+          <div
+            className="w-full grid grid-cols-4 items-center justify-center *:flex *:flex-col *:items-center 
+                      *:justify-center bg-neutral-200 p-2 rounded-t-sm font-bold t:rounded-t-md t:p-4"
+          >
+            <p>Log In</p>
+            <p>Log Out</p>
+            <p>Late</p>
+            <p>Absent</p>
           </div>
 
-          <div className="w-full flex flex-row items-start justify-between gap-2">
-            <div className="w-full aspect-video bg-accent-blue text-accent-yellow p-2 rounded-md flex flex-col items-center justify-center max-h-32">
-              <p className="text-xs t:text-sm">Ins</p>
-              <p className="text-xl t:text-3xl font-bold">
-                {attendanceStatistics.ins}
-              </p>
-            </div>
-            <div className="w-full aspect-video bg-accent-yellow text-neutral-900 p-2 rounded-md flex flex-col items-center justify-center max-h-32">
-              <p className="text-xs t:text-sm">Outs</p>
-              <p className="text-xl t:text-3xl font-bold">
-                {attendanceStatistics.outs}
-              </p>
-            </div>
-            <div className="w-full aspect-video  bg-accent-green text-neutral-900 p-2 rounded-md flex flex-col items-center justify-center max-h-32">
-              <p className="text-xs t:text-sm">Lates</p>
-              <p className="text-xl t:text-3xl font-bold">
-                {attendanceStatistics.lates}
-              </p>
-            </div>
-            <div className="w-full aspect-video  bg-accent-purple text-neutral-100 p-2 rounded-md flex flex-col items-center justify-center max-h-32">
-              <p className="text-xs t:text-sm">Absents</p>
-              <p className="text-xl t:text-3xl font-bold">
-                {attendanceStatistics.absents}
-              </p>
-            </div>
+          <div
+            className="w-full grid grid-cols-4 items-center justify-center *:flex *:flex-col *:items-center 
+                      *:justify-center bg-white p-2 rounded-b-sm border-[1px] border-t-0 *:text-center t:rounded-b-md t:p-4"
+          >
+            <p>{attendance?.login_time ?? "-"}</p>
+            <p>{attendance?.logout_time ?? "-"}</p>
+            <p>{attendance?.absent ? "-" : attendance?.late ? "Yes" : "No"}</p>
+            <p>{attendance?.absent ? "Yes" : "No"}</p>
           </div>
+        </div>
 
-          <div className="w-full grid grid-cols-7 gap-1 t:gap-2">
-            {mappedDaysOfWeek}
-            {mappedCalendar}
-          </div>
+        <div className="grid grid-cols-7 w-full gap-1 t:gap-2">
+          {mappedDaysOfWeek}
+          {mappedCalendar}
         </div>
       </div>
     </div>
   );
 };
 
-export default HRAttendance;
+export default Attendance;

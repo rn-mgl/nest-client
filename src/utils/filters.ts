@@ -89,6 +89,45 @@ export const HR_EMPLOYEE_SEARCH: SearchPairsInterface[] = [
   },
 ];
 
+// for hr to filter employee attendance
+export const HR_EMPLOYEE_ATTENDANCE_SORT: SortPairsInterface[] = [
+  {
+    key: "first_name",
+    label: "First Name",
+  },
+  {
+    key: "last_name",
+    label: "Last Name",
+  },
+  {
+    key: "email",
+    label: "Email",
+  },
+  {
+    key: "login_time",
+    label: "In",
+  },
+  {
+    key: "logout_time",
+    label: "Out",
+  },
+];
+
+export const HR_EMPLOYEE_ATTENDANCE_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "first_name",
+    label: "First Name",
+  },
+  {
+    key: "last_name",
+    label: "Last Name",
+  },
+  {
+    key: "email",
+    label: "Email",
+  },
+];
+
 // for hr to filter employee onboardings
 export const HR_EMPLOYEE_ONBOARDING_CATEGORY: CategoryPairsInterface[] = [
   {

@@ -42,7 +42,7 @@ const Log: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: responseData } = await axios.post(
-          `${url}/employee/attendance`,
+          `${url}/${user.role}/attendance`,
           {},
           {
             headers: {

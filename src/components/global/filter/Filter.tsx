@@ -61,7 +61,7 @@ const Filter: React.FC<FilterInterface> = ({
     });
 
   return (
-    <div className="w-full flex flex-row items-start gap-4 p-1 relative">
+    <div className="w-full flex flex-row items-start gap-4 p-1 px-0 relative">
       {search && search.canSeeSearchDropDown ? (
         <div
           className="w-full max-h-90 t:w-6/12 l-l:w-4/12 absolute top-2 left-0 flex flex-col items-center justify-start translate-y-14 z-20

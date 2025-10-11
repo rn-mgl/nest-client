@@ -5,8 +5,8 @@ import BaseActions from "@/src/components/global/base/BaseActions";
 import Table from "@/src/components/global/field/Table";
 import Filter from "@/src/components/global/filter/Filter";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
-import EmployeeCard from "@/src/components/hr/employee/EmployeeCard";
-import ShowEmployee from "@/src/components/hr/employee/ShowEmployee";
+import ShowUser from "@/src/components/hr/user/ShowUser";
+import UserCard from "@/src/components/hr/user/UserCard";
 import { useAlert } from "@/src/context/AlertContext";
 import { useToasts } from "@/src/context/ToastContext";
 import useCategory from "@/src/hooks/useCategory";
@@ -21,6 +21,8 @@ import { UserPerformanceReviewInterface } from "@/src/interface/PerformanceRevie
 import { UserTrainingInterface } from "@/src/interface/TrainingInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import {
+  HR_EMPLOYEE_ATTENDANCE_SEARCH,
+  HR_EMPLOYEE_ATTENDANCE_SORT,
   HR_EMPLOYEE_CATEGORY,
   HR_EMPLOYEE_LEAVE_CATEGORY,
   HR_EMPLOYEE_LEAVE_TYPE_SEARCH,
@@ -51,17 +53,22 @@ import {
 } from "@/src/utils/utils";
 import axios, { isAxiosError } from "axios";
 
+import Input from "@/src/components/form/Input";
+import { AttendanceInterface } from "@/src/interface/AttendanceInterface";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import React from "react";
 import { IoCheckmark, IoClose } from "react-icons/io5";
 
-const HREmployee = ({
+const HRUser = ({
   searchParams,
 }: {
   searchParams: Promise<{ tab?: string }>;
 }) => {
-  const [employees, setEmployees] = React.useState<UserInterface[]>([]);
+  const [users, setUsers] = React.useState<UserInterface[]>([]);
+  const [attendances, setAttedances] = React.useState<
+    (UserInterface & { attendance: AttendanceInterface })[]
+  >([]);
   const [onboardings, setOnboardings] = React.useState<
     UserOnboardingInterface[]
   >([]);
@@ -70,13 +77,17 @@ const HREmployee = ({
     UserPerformanceReviewInterface[]
   >([]);
   const [trainings, setTrainings] = React.useState<UserTrainingInterface[]>([]);
-  const [activeEmployeeSeeMore, setActiveEmployeeSeeMore] = React.useState(0);
-  const [activeTab, setActiveTab] = React.useState("employees");
+  const [activeUserSeeMore, setActiveUserSeeMore] = React.useState(0);
+  const [date, setDate] = React.useState(
+    new Date().toISOString().split("T")[0]
+  );
+  const [activeTab, setActiveTab] = React.useState("users");
 
   const { isLoading, handleIsLoading } = useIsLoading();
 
   const searchFilters = {
-    employees: HR_EMPLOYEE_SEARCH,
+    users: HR_EMPLOYEE_SEARCH,
+    attendances: HR_EMPLOYEE_ATTENDANCE_SEARCH,
     onboardings: HR_EMPLOYEE_ONBOARDING_SEARCH,
     leaves: HR_EMPLOYEE_LEAVE_TYPE_SEARCH,
     performances: HR_EMPLOYEE_PERFORMANCE_SEARCH,
@@ -84,7 +95,8 @@ const HREmployee = ({
   };
 
   const sortFilters = {
-    employees: HR_EMPLOYEE_SORT,
+    users: HR_EMPLOYEE_SORT,
+    attendances: HR_EMPLOYEE_ATTENDANCE_SORT,
     onboardings: HR_EMPLOYEE_ONBOARDING_SORT,
     leaves: HR_EMPLOYEE_LEAVE_TYPE_SORT,
     performances: HR_EMPLOYEE_PERFORMANCE_SORT,
@@ -92,7 +104,7 @@ const HREmployee = ({
   };
 
   const categoryFilters = {
-    employees: HR_EMPLOYEE_CATEGORY,
+    users: HR_EMPLOYEE_CATEGORY,
     onboardings: HR_EMPLOYEE_ONBOARDING_CATEGORY,
     leaves: HR_EMPLOYEE_LEAVE_CATEGORY,
     performances: HR_EMPLOYEE_PERFORMANCE_CATEGORY,
@@ -134,15 +146,20 @@ const HREmployee = ({
   const currentPath = usePathname();
   const tab = params.tab;
 
-  const handleActiveEmployeeSeeMore = (id: number) => {
-    setActiveEmployeeSeeMore((prev) => (prev === id ? 0 : id));
+  const handleActiveUserSeeMore = (id: number) => {
+    setActiveUserSeeMore((prev) => (prev === id ? 0 : id));
   };
 
   const sendMail = (email: string) => {
     window.location.href = `mailto:${email}`;
   };
 
-  const getEmployeeData = React.useCallback(
+  const handleDate = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setDate(value);
+  };
+
+  const getUserData = React.useCallback(
     async (tab: string, controller?: AbortController) => {
       handleIsLoading(true);
       try {
@@ -152,14 +169,17 @@ const HREmployee = ({
               Authorization: `Bearer ${user.token}`,
             },
             signal: controller?.signal,
-            params: { tab },
+            params: { tab, date },
             withCredentials: true,
           });
 
           if (responseData[tab]) {
             switch (tab) {
-              case "employees":
-                setEmployees(responseData.employees);
+              case "users":
+                setUsers(responseData.users);
+                break;
+              case "attendances":
+                setAttedances(responseData.attendances);
                 break;
               case "onboardings":
                 setOnboardings(responseData.onboardings);
@@ -190,7 +210,7 @@ const HREmployee = ({
         handleIsLoading(false);
       }
     },
-    [url, user?.token, addToast, handleIsLoading]
+    [url, user?.token, date, addToast, handleIsLoading]
   );
 
   const handleLeaveRequestStatus = async (
@@ -214,7 +234,7 @@ const HREmployee = ({
         );
 
         if (responseData.success) {
-          await getEmployeeData("leaves");
+          await getUserData("leaves");
         }
       }
     } catch (error) {
@@ -230,25 +250,74 @@ const HREmployee = ({
     }
   };
 
-  const mappedEmployees = useFilterAndSort(
-    employees,
+  const mappedUsers = useFilterAndSort(users, search, sort, category).map(
+    (user, index) => {
+      return (
+        <UserCard
+          key={index}
+          //
+          user={{ ...user }}
+          sendMail={() => sendMail(user.email)}
+        >
+          <BaseActions
+            handleActiveSeeMore={() => handleActiveUserSeeMore(user.id)}
+          />
+        </UserCard>
+      );
+    }
+  );
+
+  const attendanceRows = attendances.map((userAttendance) => {
+    const userImage = isCloudFileSummary(userAttendance.image)
+      ? userAttendance.image.url
+      : "";
+
+    const login =
+      typeof userAttendance.attendance.login_time === "string"
+        ? normalizeDate(userAttendance.attendance.login_time)
+        : "-";
+
+    const logout =
+      typeof userAttendance.attendance.logout_time === "string"
+        ? normalizeDate(userAttendance.attendance.logout_time)
+        : "-";
+
+    const late =
+      userAttendance.attendance.late === null
+        ? "-"
+        : userAttendance.attendance.late
+        ? "Yes"
+        : "No";
+
+    const absent = userAttendance.attendance.absent ? "Yes" : "No";
+
+    return {
+      image: (
+        <div
+          style={{ backgroundImage: `url(${userImage})` }}
+          className={`flex flex-col bg-center bg-cover items-center justify-center rounded-full overflow-clip relative max-w-10 aspect-square ${
+            userImage ? "bg-accent-blue/30" : "bg-accent-blue"
+          }`}
+        />
+      ),
+      first_name: userAttendance.first_name,
+      last_name: userAttendance.last_name,
+      email: userAttendance.email,
+      login_time: login,
+      logout_time: logout,
+      late: late,
+      absent: absent,
+    };
+  });
+
+  const mappedAttendances = useFilterAndSort(
+    attendanceRows,
     search,
     sort,
     category
-  ).map((employee, index) => {
-    return (
-      <EmployeeCard
-        key={index}
-        //
-        user={{ ...employee }}
-        sendMail={() => sendMail(employee.email)}
-      >
-        <BaseActions
-          handleActiveSeeMore={() => handleActiveEmployeeSeeMore(employee.id)}
-        />
-      </EmployeeCard>
-    );
-  });
+  );
+
+  console.log(attendanceRows);
 
   const onboardingRows = onboardings.map((onboarding) => {
     const assignedOn = normalizeDate(onboarding.created_at);
@@ -466,32 +535,35 @@ const HREmployee = ({
   React.useEffect(() => {
     const controller = new AbortController();
 
-    getEmployeeData(activeTab, controller);
+    getUserData(activeTab, controller);
 
     return () => {
       controller.abort();
     };
-  }, [getEmployeeData, activeTab]);
+  }, [getUserData, activeTab]);
 
   React.useEffect(() => {
-    setActiveTab(tab ?? "employees");
+    setActiveTab(tab ?? "users");
   }, [setActiveTab, tab]);
+
+  console.log(date);
 
   return (
     <div className="w-full min-h-full h-auto flex flex-col items-center justify-start">
-      {activeEmployeeSeeMore ? (
-        <ShowEmployee
-          toggleModal={() => handleActiveEmployeeSeeMore(activeEmployeeSeeMore)}
-          id={activeEmployeeSeeMore}
+      {activeUserSeeMore ? (
+        <ShowUser
+          toggleModal={() => handleActiveUserSeeMore(activeUserSeeMore)}
+          id={activeUserSeeMore}
         />
       ) : null}
 
       <div className="gap-4 t:gap-8 w-full min-h-full h-auto flex flex-col items-start justify-start max-w-(--breakpoint-l-l) p-2 t:p-4">
         <Tabs
-          activeTab={tab ?? "employees"}
+          activeTab={tab ?? "users"}
           path={currentPath ?? ""}
           tabs={[
-            "employees",
+            "users",
+            "attendances",
             "onboardings",
             "leaves",
             "performances",
@@ -499,46 +571,77 @@ const HREmployee = ({
           ]}
         />
 
-        <div className="w-full flex flex-col items-center justify-start gap-4 t:gap-8">
-          <Filter
-            searchKeyLabelPairs={searchFilters[activeTab as keyof object]}
-            search={{
-              searchKey: search.searchKey,
-              searchLabel: search.searchLabel,
-              searchValue: search.searchValue,
-              canSeeSearchDropDown: canSeeSearchDropDown,
-              selectSearch: handleSelectSearch,
-              toggleCanSeeSearchDropDown: handleCanSeeSearchDropDown,
-              onChange: handleSearch,
-            }}
-            //
-            categoryKeyValuePairs={categoryFilters[activeTab as keyof object]}
-            category={{
-              categoryKey: category.categoryKey,
-              categoryValue: category.categoryValue,
-              canSeeCategoryDropDown: canSeeCategoryDropDown,
-              toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
-              selectCategory: handleSelectCategory,
-            }}
-            //
-            sortKeyLabelPairs={sortFilters[activeTab as keyof object]}
-            sort={{
-              sortKey: sort.sortKey,
-              sortLabel: sort.sortLabel,
-              isAsc: sort.isAsc,
-              canSeeSortDropDown: canSeeSortDropDown,
-              toggleAsc: handleToggleAsc,
-              selectSort: handleSelectSort,
-              toggleCanSeeSortDropDown: handleCanSeeSortDropDown,
-            }}
-          />
+        <div className="w-full flex flex-col items-start justify-start gap-4 t:gap-8">
+          <div className="w-full flex flex-col items-start justify-start t:flex-row t:items-center t:justify-center t:gap-2">
+            <Filter
+              searchKeyLabelPairs={searchFilters[activeTab as keyof object]}
+              search={{
+                searchKey: search.searchKey,
+                searchLabel: search.searchLabel,
+                searchValue: search.searchValue,
+                canSeeSearchDropDown: canSeeSearchDropDown,
+                selectSearch: handleSelectSearch,
+                toggleCanSeeSearchDropDown: handleCanSeeSearchDropDown,
+                onChange: handleSearch,
+              }}
+              //
+              categoryKeyValuePairs={categoryFilters[activeTab as keyof object]}
+              category={{
+                categoryKey: category.categoryKey,
+                categoryValue: category.categoryValue,
+                canSeeCategoryDropDown: canSeeCategoryDropDown,
+                toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
+                selectCategory: handleSelectCategory,
+              }}
+              //
+              sortKeyLabelPairs={sortFilters[activeTab as keyof object]}
+              sort={{
+                sortKey: sort.sortKey,
+                sortLabel: sort.sortLabel,
+                isAsc: sort.isAsc,
+                canSeeSortDropDown: canSeeSortDropDown,
+                toggleAsc: handleToggleAsc,
+                selectSort: handleSelectSort,
+                toggleCanSeeSortDropDown: handleCanSeeSortDropDown,
+              }}
+            />
+
+            {activeTab === "attendances" ? (
+              <div className="w-full t:w-48">
+                <Input
+                  id="year"
+                  name="year"
+                  placeholder="Year"
+                  required={false}
+                  type="date"
+                  value={date}
+                  onChange={handleDate}
+                />
+              </div>
+            ) : null}
+          </div>
 
           {isLoading ? (
             <PageSkeletonLoader />
-          ) : activeTab === "employees" ? (
+          ) : activeTab === "users" ? (
             <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">
-              {mappedEmployees}
+              {mappedUsers}
             </div>
+          ) : activeTab === "attendances" ? (
+            <Table
+              headers={[
+                "Image",
+                "First Name",
+                "Last Name",
+                "Email",
+                "In",
+                "Out",
+                "Late",
+                "Absent",
+              ]}
+              color="blue"
+              contents={mappedAttendances}
+            />
           ) : activeTab === "onboardings" ? (
             <Table
               headers={[
@@ -608,4 +711,4 @@ const HREmployee = ({
   );
 };
 
-export default HREmployee;
+export default HRUser;

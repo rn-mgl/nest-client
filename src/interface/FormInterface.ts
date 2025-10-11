@@ -6,7 +6,7 @@ export interface InputInterface {
   value: string | number;
   placeholder: string;
   required: boolean;
-  type: "text" | "email" | "password" | "number" | "datetime-local";
+  type: "text" | "email" | "password" | "number" | "datetime-local" | "date";
   onChange: (
     e: React.ChangeEvent<HTMLInputElement>,
     field?: string,

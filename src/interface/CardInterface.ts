@@ -19,7 +19,7 @@ export interface HRActionsInterface {
   handleActiveDelete?: () => void;
 }
 
-export interface EmployeeCardInterface {
+export interface UserCardInterface {
   user: UserInterface;
   children: React.ReactNode;
   sendMail: () => void;

@@ -22,8 +22,8 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose, IoMail } from "react-icons/io5";
 
-const ShowEmployee: React.FC<ModalInterface> = (props) => {
-  const [employee, setEmployee] = React.useState<UserInterface>({
+const ShowUser: React.FC<ModalInterface> = (props) => {
+  const [employee, setUser] = React.useState<UserInterface>({
     email: "",
     verification_status: "Deactivated",
     email_verified_at: "",
@@ -52,7 +52,7 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
   const user = session?.user;
   const url = process.env.URL;
 
-  const getEmployee = React.useCallback(async () => {
+  const getUser = React.useCallback(async () => {
     try {
       if (user?.token) {
         const { data: responseData } = await axios.get(
@@ -66,7 +66,7 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
         );
 
         if (responseData) {
-          setEmployee(responseData.employee);
+          setUser(responseData.employee);
           setOnboardings(responseData.onboardings);
           setLeaveBalances(responseData.leave_balances);
           setLeaveRequests(responseData.leave_requests);
@@ -82,7 +82,7 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
           error.response?.data.message ??
           error.message ??
           "An error occurred when the employee data is being retrieved";
-        addToast("Employee Error", message, "error");
+        addToast("User Error", message, "error");
       }
     }
   }, [user?.token, url, props.id, addToast]);
@@ -172,8 +172,8 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
   });
 
   React.useEffect(() => {
-    getEmployee();
-  }, [getEmployee]);
+    getUser();
+  }, [getUser]);
 
   return (
     <div
@@ -182,7 +182,7 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
     >
       <div className="w-full my-auto h-full max-w-(--breakpoint-l-l) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-purple rounded-t-lg font-bold text-neutral-100">
-          {props.label ?? "Employee Details"}
+          {props.label ?? "User Details"}
           <button
             onClick={props.toggleModal}
             className="p-2 rounded-full hover:bg-accent-yellow/20 transition-all text-xl"
@@ -328,4 +328,4 @@ const ShowEmployee: React.FC<ModalInterface> = (props) => {
   );
 };
 
-export default ShowEmployee;
+export default ShowUser;

@@ -1,12 +1,9 @@
-import { EmployeeCardInterface } from "@/src/interface/CardInterface";
+import { UserCardInterface } from "@/src/interface/CardInterface";
 import { isCloudFileSummary } from "@/src/utils/utils";
 import React from "react";
 import { IoShieldCheckmark } from "react-icons/io5";
 
-const EmployeeCard: React.FC<EmployeeCardInterface> = ({
-  children,
-  ...props
-}) => {
+const UserCard: React.FC<UserCardInterface> = ({ children, ...props }) => {
   return (
     <div className="w-full p-4 rounded-md bg-neutral-100 flex flex-col items-center justify-center gap-4">
       <div className="w-full flex flex-row items-start justify-start gap-4 relative">
@@ -48,4 +45,4 @@ const EmployeeCard: React.FC<EmployeeCardInterface> = ({
   );
 };
 
-export default EmployeeCard;
+export default UserCard;
