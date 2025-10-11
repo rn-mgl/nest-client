@@ -23,20 +23,7 @@ const Log: React.FC<ModalInterface> = (props) => {
   const url = process.env.URL;
   const logType = id === 0 ? "in" : "out";
 
-  const handleHold = () => {
-    timerRef.current = setInterval(() => {
-      setPercentage((prev) => (prev + 1 >= 100 ? 100 : prev + 1));
-    }, 50);
-  };
-
-  const removeHold = () => {
-    clearInterval(timerRef.current);
-    if (percentage !== 100) {
-      setPercentage(0);
-    }
-  };
-
-  const submitLogIn = React.useCallback(async () => {
+  const submitLogIn = async () => {
     try {
       const { token } = await getCSRFToken();
 
@@ -79,15 +66,15 @@ const Log: React.FC<ModalInterface> = (props) => {
 
       return false;
     }
-  }, [url, user?.token, user?.role, addToast, refetchIndex, toggleModal]);
+  };
 
-  const submitLogOut = React.useCallback(async () => {
+  const submitLogOut = async () => {
     try {
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
         const { data: responseData } = await axios.patch(
-          `${url}/employee/attendance/${id}`,
+          `${url}/${user.role}/attendance/${id}`,
           {},
           {
             headers: {
@@ -124,34 +111,7 @@ const Log: React.FC<ModalInterface> = (props) => {
 
       return false;
     }
-  }, [url, user?.token, id, addToast, refetchIndex, toggleModal]);
-
-  const submitLog = React.useCallback(async () => {
-    setStatus("logging");
-
-    switch (logType) {
-      case "in":
-        await submitLogIn();
-        break;
-      case "out":
-        await submitLogOut();
-        break;
-      default:
-        break;
-    }
-  }, [logType, submitLogIn, submitLogOut]);
-
-  React.useEffect(() => {
-    if (percentage >= 100) {
-      const timeout = setTimeout(() => {
-        clearInterval(timerRef.current);
-        setPercentage(100);
-        submitLog();
-      }, 300);
-
-      return () => clearTimeout(timeout);
-    }
-  }, [percentage, submitLog]);
+  };
 
   return (
     <div
@@ -188,12 +148,7 @@ const Log: React.FC<ModalInterface> = (props) => {
 
           {status === "base" ? (
             <button
-              onMouseDown={handleHold}
-              onTouchStart={handleHold}
-              onMouseUp={removeHold}
-              onMouseLeave={removeHold}
-              onTouchEnd={removeHold}
-              onTouchCancel={removeHold}
+              onClick={logType === "in" ? submitLogIn : submitLogOut}
               className={`w-full font-bold text-center rounded-md p-2 mt-2 capitalize
                  ${
                    logType === "in"
