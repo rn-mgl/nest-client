@@ -11,10 +11,7 @@ export interface HRDashboardInterface extends BaseDashboardInterface {
     late: number;
     absent: number;
   };
-  users: {
-    hr: number;
-    employee: number;
-  };
+  users: number;
 }
 
 export interface EmployeeDashboardInterface extends BaseDashboardInterface {
