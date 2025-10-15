@@ -11,11 +11,20 @@ export default withAuth(
 
     const pathname = req.nextUrl.pathname;
 
-    if (pathname.includes("/nest/admin")) {
+    if (
+      pathname.includes("/nest/admin") &&
+      !req.nextauth.token.user.role.includes("admin")
+    ) {
       return response;
-    } else if (pathname.includes("/nest/employee")) {
+    } else if (
+      pathname.includes("/nest/employee") &&
+      !req.nextauth.token.user.role.includes("employee")
+    ) {
       return response;
-    } else if (pathname.includes("/nest/hr")) {
+    } else if (
+      pathname.includes("/nest/hr") &&
+      !req.nextauth.token.user.role.includes("hr")
+    ) {
       return response;
     }
   },
