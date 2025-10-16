@@ -19,7 +19,7 @@ const Action = () => {
             Take control of your organization&apos;s HR operations.
           </p>
 
-          <Logo type="light" url="/#hero" />
+          <LogoNav type="light" url="/#hero" />
         </div>
       </div>
     </div>

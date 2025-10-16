@@ -1,7 +1,7 @@
 "use client";
 
 import Input from "@/src/components/form/Input";
-import Logo from "@/global/navigation/Logo";
+import LogoNav from "@/global/navigation/LogoNav";
 import useShowPassword from "@/src/hooks/useShowPassword";
 import { RegisterInterface } from "@/src/interface/AuthInterface";
 import { getCSRFToken } from "@/src/utils/token";
@@ -70,7 +70,7 @@ const Register = () => {
           className="w-full h-full flex flex-col items-start justify-start gap-8 t:mx-auto l-s:max-w-full
                     l-s:justify-start l-s:items-start"
         >
-          <Logo url="/" type="dark" />
+          <LogoNav url="/" type="dark" />
 
           <div className="w-full h-full flex flex-col items-start  gap-8 max-w-(--breakpoint-m-l) justify-center t:mx-auto l-s:my-auto pb-10">
             <p className="font-bold text-2xl">Create your account</p>
