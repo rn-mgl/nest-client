@@ -25,7 +25,7 @@ const Log: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: responseData } = await axios.post(
-          `${url}/${user.role}/attendance`,
+          `${url}/attendance`,
           {},
           {
             headers: {
@@ -66,7 +66,7 @@ const Log: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: responseData } = await axios.patch(
-          `${url}/${user.role}/attendance/${id}`,
+          `${url}/attendance/${id}`,
           {},
           {
             headers: {
