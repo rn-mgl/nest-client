@@ -1,15 +1,15 @@
 "use client";
 
+import LogoNav from "@/global/navigation/LogoNav";
 import Input from "@/src/components/form/Input";
 import IconLoader from "@/src/components/global/loader/IconLoader";
-import LogoNav from "@/global/navigation/LogoNav";
 import { useToasts } from "@/src/context/ToastContext";
 import useIsLoading from "@/src/hooks/useIsLoading";
 import useShowPassword from "@/src/hooks/useShowPassword";
 import { LoginInterface } from "@/src/interface/AuthInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios, { AxiosError } from "axios";
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -24,11 +24,6 @@ const Login = () => {
   const { showPassword, handleShowPassword } = useShowPassword();
   const { isLoading, handleIsLoading } = useIsLoading();
   const { addToast } = useToasts();
-
-  const { data: session } = useSession();
-  const user = session?.user;
-
-  console.log(user);
 
   const url = process.env.URL;
 

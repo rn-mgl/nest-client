@@ -30,7 +30,7 @@ const Nav: React.FC<{ children: React.ReactNode }> = (props) => {
 
       if (token) {
         const { data: loggedOut } = await axios.post(
-          `${url}/${user?.role}/auth/logout`,
+          `${url}/auth/logout`,
           {},
           {
             headers: {
@@ -97,7 +97,7 @@ const Nav: React.FC<{ children: React.ReactNode }> = (props) => {
   });
 
   React.useEffect(() => {
-    setActiveProfile(path === `/nest/${user?.role}/profile`);
+    setActiveProfile(path === `/nest/profile`);
   }, [path, user?.role]);
 
   return (
@@ -175,7 +175,7 @@ const Nav: React.FC<{ children: React.ReactNode }> = (props) => {
           </button>
 
           <Link
-            href={`/nest/${user?.role}/profile`}
+            href={`/nest/profile`}
             className={`ml-auto rounded-full transition-all ${
               activeProfile &&
               "outline-3 -outline-offset-2 outline-accent-yellow"
