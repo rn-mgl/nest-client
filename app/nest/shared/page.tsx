@@ -76,11 +76,11 @@ const Employee = () => {
     return <PageSkeletonLoader />;
   }
 
-  return user?.role.includes("admin") && dashboard && "hrs" in dashboard ? (
+  return user?.roles.includes("admin") && dashboard && "hrs" in dashboard ? (
     <AdminDashboard dashboard={dashboard} />
-  ) : user?.role.includes("hr") && dashboard && "users" in dashboard ? (
+  ) : user?.roles.includes("hr") && dashboard && "users" in dashboard ? (
     <HRDashboard dashboard={dashboard} />
-  ) : user?.role.includes("employee") &&
+  ) : user?.roles.includes("employee") &&
     dashboard &&
     "attendances" in dashboard &&
     !("users" in dashboard) ? (

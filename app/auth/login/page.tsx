@@ -61,7 +61,7 @@ const Login = () => {
         if (login?.isVerified) {
           const data = await signIn("base-credentials", {
             token: login?.token,
-            role: login.role,
+            roles: login.roles,
             current: login?.current,
             image: login?.image ?? null,
             redirect: false,

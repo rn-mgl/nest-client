@@ -32,7 +32,7 @@ const ShowDocument: React.FC<ModalInterface> = (props) => {
   const { data } = useSession({ required: true });
   const user = data?.user;
   const url = process.env.URL;
-  const role = user?.role;
+  const role = user?.roles;
 
   const getDocumentDetails = React.useCallback(async () => {
     try {

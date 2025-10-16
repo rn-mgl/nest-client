@@ -9,7 +9,7 @@ export const authOptions: AuthOptions = {
 
       credentials: {
         token: { label: "Token", type: "text" },
-        role: { label: "Role", type: "array" },
+        roles: { label: "Roles", type: "array" },
         current: { label: "Current", type: "text" },
         image: { label: "Image", type: "text" },
       },
@@ -19,7 +19,7 @@ export const authOptions: AuthOptions = {
         try {
           const user = {
             token: credentials?.token ?? "",
-            role: credentials?.role.split(",") ?? [],
+            roles: credentials?.roles.split(",") ?? [],
             current: credentials?.current ? parseInt(credentials?.current) : 0,
             image: credentials?.image === "null" ? null : credentials?.image,
           };

@@ -21,8 +21,8 @@ const Nav: React.FC<{ children: React.ReactNode }> = (props) => {
   const user = data?.user;
 
   const navLinks = React.useMemo(() => {
-    return buildNavigation(user?.role ?? []);
-  }, [user?.role]);
+    return buildNavigation(user?.roles ?? []);
+  }, [user?.roles]);
 
   const submitLogOut = async () => {
     try {
@@ -98,7 +98,7 @@ const Nav: React.FC<{ children: React.ReactNode }> = (props) => {
 
   React.useEffect(() => {
     setActiveProfile(path === `/nest/profile`);
-  }, [path, user?.role]);
+  }, [path, user?.roles]);
 
   return (
     <div className="w-full h-full flex flex-row items-start justify-start">

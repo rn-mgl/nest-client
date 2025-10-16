@@ -203,7 +203,7 @@ const Attendance = () => {
         if (user?.token) {
           const { data: responseData } = await axios.get<{
             attendance: AttendanceInterface;
-          }>(`${url}/employee/attendance/${stringDate}`, {
+          }>(`${url}/attendance/${stringDate}`, {
             headers: {
               Authorization: `Bearer ${user.token}`,
             },
