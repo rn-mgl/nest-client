@@ -1,7 +1,7 @@
 "use client";
 
-import Logo from "@/global/navigation/Logo";
-import { SideNavInterface } from "@/interface/NavInterface";
+import LogoNav from "@/global/navigation/LogoNav";
+import { buildNavigation } from "@/src/utils/navigation";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
@@ -11,15 +11,18 @@ import { usePathname } from "next/navigation";
 import React from "react";
 import { IoLogOut, IoMenu } from "react-icons/io5";
 
-const Nav: React.FC<SideNavInterface & { children: React.ReactNode }> = (
-  props
-) => {
+const Nav: React.FC<{ children: React.ReactNode }> = (props) => {
   const [sideNavVisible, setSideNavVisible] = React.useState(false);
   const [activeProfile, setActiveProfile] = React.useState(false);
+
   const path = usePathname();
   const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
+
+  const navLinks = React.useMemo(() => {
+    return buildNavigation(user?.roles ?? []);
+  }, [user?.roles]);
 
   const submitLogOut = async () => {
     try {
@@ -27,7 +30,7 @@ const Nav: React.FC<SideNavInterface & { children: React.ReactNode }> = (
 
       if (token) {
         const { data: loggedOut } = await axios.post(
-          `${url}/${user?.role}/auth/logout`,
+          `${url}/auth/logout`,
           {},
           {
             headers: {
@@ -59,17 +62,17 @@ const Nav: React.FC<SideNavInterface & { children: React.ReactNode }> = (
     });
   };
 
-  const mappedLinks = props.navLinks.map((link) => {
+  const mappedLinks = navLinks.map((link) => {
     const mainPath = link.url.split("/")[1];
 
     const activeLink =
-      link.url === "" ? path === props.home : path?.includes(mainPath);
+      link.url === "" ? path === "/nest/shared" : path?.includes(mainPath);
 
     return (
       <Link
         onClick={() => handleSideNavVisible("link")}
         key={link.label}
-        href={`${props.home}${link.url}`}
+        href={`/nest/shared/${link.url}`}
         className={`p-4 rounded-md w-full flex flex-row items-center transition-all
                      gap-2 h-14 ${
                        activeLink
@@ -80,7 +83,7 @@ const Nav: React.FC<SideNavInterface & { children: React.ReactNode }> = (
         <span
           className={`${activeLink ? "text-accent-blue" : "text-neutral-500"}`}
         >
-          {link.icon}
+          <link.icon />
         </span>
         <span
           className={`${activeLink ? "text-accent-blue" : "text-neutral-950"} ${
@@ -94,8 +97,8 @@ const Nav: React.FC<SideNavInterface & { children: React.ReactNode }> = (
   });
 
   React.useEffect(() => {
-    setActiveProfile(path === `/nest/${user?.role}/profile`);
-  }, [path, user?.role]);
+    setActiveProfile(path === `/nest/profile`);
+  }, [path, user?.roles]);
 
   return (
     <div className="w-full h-full flex flex-row items-start justify-start">
@@ -125,7 +128,7 @@ const Nav: React.FC<SideNavInterface & { children: React.ReactNode }> = (
               sideNavVisible ? "visible" : "hidden"
             } transition-all`}
           >
-            <Logo url={props.home} type="dark" />
+            <LogoNav url="/nest/shared" type="dark" />
           </div>
         </div>
 
@@ -172,7 +175,7 @@ const Nav: React.FC<SideNavInterface & { children: React.ReactNode }> = (
           </button>
 
           <Link
-            href={`/nest/${user?.role}/profile`}
+            href={`/nest/profile`}
             className={`ml-auto rounded-full transition-all ${
               activeProfile &&
               "outline-3 -outline-offset-2 outline-accent-yellow"

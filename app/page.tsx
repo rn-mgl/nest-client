@@ -1,6 +1,7 @@
+import LogoNav from "@/src/components/global/navigation/LogoNav";
 import Hero from "@/src/components/landing/Hero";
-import Nav from "@/src/components/landing/Nav";
 import { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Nest",
@@ -10,7 +11,18 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <div className="w-full h-screen flex flex-col items-center justify-start relative overflow-y-auto scroll-smooth">
-      <Nav />
+      <div className="w-full p-2 bg-neutral-50/70 flex flex-row items-center justify-center fixed top-0 t:p-4 backdrop-blur-xs">
+        <div className="w-full flex flex-row items-center justify-between gap-8 max-w-(--breakpoint-l-l)">
+          <LogoNav url="#hero" type="dark" />
+          <Link
+            href="/auth/login"
+            className="font-medium p-1.5 rounded-md px-2 bg-neutral-900 text-neutral-50 text-xs t:text-sm t:p-2 t:px-4
+                    hover:brightness-90 active:brightness-90 text-nowrap"
+          >
+            Log In
+          </Link>
+        </div>
+      </div>
       <Hero />
     </div>
   );

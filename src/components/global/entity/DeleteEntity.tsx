@@ -17,7 +17,7 @@ const DeleteEntity: React.FC<ModalInterface & DeleteModalInterface> = (
   const { data: session } = useSession({ required: true });
   const user = session?.user;
   const url = process.env.URL;
-  const role = user?.role ?? "";
+  const role = user?.roles ?? "";
 
   const submitDeleteEntity = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

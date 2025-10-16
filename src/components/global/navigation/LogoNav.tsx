@@ -2,9 +2,9 @@ import darklogo from "@/public/global/logo-dark.svg";
 import logo from "@/public/global/logo.svg";
 import Image from "next/image";
 import Link from "next/link";
-import { LogoInterface } from "@/interface/NavInterface";
+import { LogoNavInterface } from "@/interface/NavInterface";
 
-const Logo: React.FC<LogoInterface> = (props) => {
+const LogoNav: React.FC<LogoNavInterface> = (props) => {
   const type = props.type === "dark" ? darklogo : logo;
   const url = props.url ?? "/";
 
@@ -17,4 +17,4 @@ const Logo: React.FC<LogoInterface> = (props) => {
   );
 };
 
-export default Logo;
+export default LogoNav;

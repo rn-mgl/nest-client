@@ -5,7 +5,7 @@ const Hero = () => {
   return (
     <div
       id="hero"
-      className="w-full min-h-screen h-screen flex flex-col items-center justify-start bg-accent-blue"
+      className="w-full min-h-screen h-screen flex flex-col items-center justify-start bg-gradient-to-b from-accent-purple to-accent-blue"
     >
       <div
         className="w-full h-full flex flex-col items-start justify-center max-w-(--breakpoint-l-s) text-left p-4 gap-8

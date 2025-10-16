@@ -9,14 +9,22 @@ export default withAuth(
       return response;
     }
 
-    const role = req.nextauth.token.user.role;
     const pathname = req.nextUrl.pathname;
 
-    if (pathname.includes("/nest/admin") && role !== "admin") {
+    if (
+      pathname.includes("/nest/admin") &&
+      !req.nextauth.token.user.role.includes("admin")
+    ) {
       return response;
-    } else if (pathname.includes("/nest/employee") && role !== "employee") {
+    } else if (
+      pathname.includes("/nest/employee") &&
+      !req.nextauth.token.user.role.includes("employee")
+    ) {
       return response;
-    } else if (pathname.includes("/nest/hr") && role !== "hr") {
+    } else if (
+      pathname.includes("/nest/hr") &&
+      !req.nextauth.token.user.role.includes("hr")
+    ) {
       return response;
     }
   },

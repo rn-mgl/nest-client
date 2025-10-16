@@ -1,7 +1,7 @@
 "use client";
 
 import Input from "@/src/components/form/Input";
-import Logo from "@/global/navigation/Logo";
+import LogoNav from "@/global/navigation/LogoNav";
 import useShowPassword from "@/src/hooks/useShowPassword";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
@@ -61,7 +61,7 @@ const Reset = () => {
         className="w-full flex flex-col items-start justify-center h-full gap-8
             max-w-(--breakpoint-l-l) rounded-lg t:shadow-lg t:p-4 t:bg-neutral-50 relative"
       >
-        <Logo url="/" type="dark" />
+        <LogoNav url="/" type="dark" />
 
         <form
           onSubmit={(e) => submitResetPassword(e)}

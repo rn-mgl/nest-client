@@ -3,7 +3,7 @@
 import approved from "@/public/auth/approved.svg";
 import error from "@/public/auth/error.svg";
 import processing from "@/public/auth/processing.svg";
-import Logo from "@/global/navigation/Logo";
+import LogoNav from "@/global/navigation/LogoNav";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";
 
@@ -48,7 +48,7 @@ const Verify = () => {
   return (
     <div className="w-full h-dvh flex flex-col items-center justify-start bg-linear-to-b from-accent-blue/40 to-accent-yellow/40">
       <div className="w-full h-full flex flex-col items-start justify-between max-w-(--breakpoint-l-l) gap-4 p-4 t:p-8">
-        <Logo url="/" type="dark" />
+        <LogoNav url="/" type="dark" />
         <div className="w-full h-full flex flex-col items-center justify-center gap-8">
           <div className="w-full max-w-96 animate-float">
             {status === "error" ? (

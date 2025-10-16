@@ -1,8 +1,8 @@
 "use client";
 
+import LogoNav from "@/global/navigation/LogoNav";
 import Input from "@/src/components/form/Input";
 import IconLoader from "@/src/components/global/loader/IconLoader";
-import Logo from "@/global/navigation/Logo";
 import { useToasts } from "@/src/context/ToastContext";
 import useIsLoading from "@/src/hooks/useIsLoading";
 import useShowPassword from "@/src/hooks/useShowPassword";
@@ -61,15 +61,14 @@ const Login = () => {
         if (login?.isVerified) {
           const data = await signIn("base-credentials", {
             token: login?.token,
-            role: login.role,
+            roles: login.roles,
             current: login?.current,
             image: login?.image ?? null,
             redirect: false,
           });
 
           if (data?.ok) {
-            const role = login?.role;
-            router.push(`/nest/${role}`);
+            router.push(`/nest/shared`);
           }
         } else {
           router.push("/auth/sending?type=verification");
@@ -102,14 +101,14 @@ const Login = () => {
             max-w-(--breakpoint-l-l) rounded-lg t:shadow-lg t:p-4 t:bg-neutral-50"
       >
         <div className="hidden l-s:flex w-full h-full bg-accent-purple rounded-lg flex-col items-start justify-start p-4">
-          <Logo url="/" type="dark" />
+          <LogoNav url="/" type="dark" />
         </div>
         <div
           className="w-full h-full flex flex-col items-start justify-start gap-8 t:mx-auto l-s:max-w-full
                 l-s:justify-start l-s:items-start"
         >
           <div className="l-s:hidden">
-            <Logo url="/" type="dark" />
+            <LogoNav url="/" type="dark" />
           </div>
 
           <div className="w-full flex flex-col items-start justify-center gap-8 max-w-(--breakpoint-m-l) t:justify-center t:mx-auto my-auto">

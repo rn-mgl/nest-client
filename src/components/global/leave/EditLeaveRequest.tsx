@@ -24,7 +24,7 @@ const EditLeaveRequest: React.FC<ModalInterface> = (props) => {
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
   const user = session?.user;
-  const role = user?.role ?? "";
+  const role = user?.roles ?? "";
 
   const handleLeaveRequest = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
