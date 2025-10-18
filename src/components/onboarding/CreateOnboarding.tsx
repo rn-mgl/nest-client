@@ -158,7 +158,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: createdOnboarding } = await axios.post(
-          `${url}/hr/onboarding`,
+          `${url}/onboarding/resource`,
           {
             ...onboarding,
             required_documents: requiredDocuments,

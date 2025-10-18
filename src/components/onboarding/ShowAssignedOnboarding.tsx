@@ -21,7 +21,7 @@ import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
 import { IoCheckmark, IoClose } from "react-icons/io5";
 
-const ShowOnboarding: React.FC<ModalInterface> = (props) => {
+const ShowAssignedOnboarding: React.FC<ModalInterface> = (props) => {
   const [onboarding, setOnboarding] =
     React.useState<UserOnboardingInterface | null>(null);
 
@@ -61,7 +61,7 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
               })[];
             };
           };
-        }>(`${url}/employee/employee_onboarding/${props.id}`, {
+        }>(`${url}/onboarding/assigned/${props.id}`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
@@ -493,4 +493,4 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
   );
 };
 
-export default ShowOnboarding;
+export default ShowAssignedOnboarding;

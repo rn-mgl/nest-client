@@ -1,15 +1,16 @@
 "use client";
-import ShowOnboarding from "@/src/components/employee/onboarding/ShowOnboarding";
-import BaseActions from "@/src/components/global/resource/BaseActions";
-import BaseCard from "@/src/components/global/resource/BaseCard";
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import Filter from "@/src/components/global/filter/Filter";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import PageTabs from "@/src/components/global/navigation/PageTabs";
+import BaseActions from "@/src/components/global/resource/BaseActions";
+import BaseCard from "@/src/components/global/resource/BaseCard";
 import ResourceActions from "@/src/components/global/resource/ResourceActions";
 import AssignOnboarding from "@/src/components/onboarding/AssignOnboarding";
 import CreateOnboarding from "@/src/components/onboarding/CreateOnboarding";
 import EditOnboarding from "@/src/components/onboarding/EditOnboarding";
+import ShowAssignedOnboarding from "@/src/components/onboarding/ShowAssignedOnboarding";
+import ShowResourceOnboarding from "@/src/components/onboarding/ShowResourceOnboarding";
 import { useToasts } from "@/src/context/ToastContext";
 import useCategory from "@/src/hooks/useCategory";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
@@ -43,7 +44,7 @@ const Onboarding = ({
   const [onboardings, setOnboardings] = React.useState<
     (UserOnboardingInterface | OnboardingInterface)[]
   >([]);
-  const [activeTab, setActiveTab] = React.useState<string>("assignments");
+  const [activeTab, setActiveTab] = React.useState<string>("assigned");
   const [canCreateOnboarding, setCanCreateOnboarding] = React.useState(false);
   const [activeEditOnboarding, setActiveEditOnboarding] = React.useState(0);
   const [activeDeleteOnboarding, setActiveDeleteOnboarding] = React.useState(0);
@@ -59,6 +60,13 @@ const Onboarding = ({
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
   const user = session?.user;
+
+  // permissions to check if a user can manage the record
+  const canEdit = user?.permissions.includes("update.onboarding_resource");
+  const canAssign = user?.permissions.includes("assign.onboarding_resource");
+  const canDelete = user?.permissions.includes("delete.onboarding_resource");
+
+  const canManage = canEdit || canAssign || canDelete;
 
   const {
     search,
@@ -109,8 +117,8 @@ const Onboarding = ({
 
       try {
         const endpoints = {
-          assignments: "assigned",
-          records: "resource",
+          assigned: "assigned",
+          resource: "resource",
         };
 
         const endpoint: string =
@@ -185,13 +193,6 @@ const Onboarding = ({
         ? onboarding.created_by.first_name
         : null;
 
-    // permissions to check if a user can manage the record
-    const canEdit = user?.permissions.includes("update.onboarding_resource");
-    const canAssign = user?.permissions.includes("assign.onboarding_resource");
-    const canDelete = user?.permissions.includes("delete.onboarding_resource");
-
-    const canManage = canEdit || canAssign || canDelete;
-
     const actions = [
       <BaseActions
         key={`base-action-${onboardingId}`}
@@ -201,8 +202,8 @@ const Onboarding = ({
       />,
     ];
 
-    // push resource actions if can manage
-    if (canManage) {
+    // push resource actions if resource view and can manage
+    if (isResourceOnboarding && canManage) {
       actions.push(
         <ResourceActions
           key={`resource-action-${onboardingId}`}
@@ -247,16 +248,29 @@ const Onboarding = ({
   }, [getOnboardings]);
 
   React.useEffect(() => {
-    setActiveTab(tab ?? "assignments");
+    setActiveTab(tab ?? "assigned");
   }, [tab]);
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
+      {/* separately render assigned onboarding and resource onboarding */}
       {activeOnboardingSeeMore ? (
-        <ShowOnboarding
-          id={activeOnboardingSeeMore}
-          toggleModal={() => handleActiveOnboardingSeeMore(0)}
-        />
+        activeTab === "assigned" ? (
+          <ShowAssignedOnboarding
+            id={activeOnboardingSeeMore}
+            toggleModal={() =>
+              handleActiveOnboardingSeeMore(activeOnboardingSeeMore)
+            }
+          />
+        ) : activeTab === "resource" &&
+          user?.permissions.includes("read.onboarding_resource") ? (
+          <ShowResourceOnboarding
+            id={activeOnboardingSeeMore}
+            toggleModal={() =>
+              handleActiveOnboardingSeeMore(activeOnboardingSeeMore)
+            }
+          />
+        ) : null
       ) : null}
 
       {canCreateOnboarding &&
@@ -289,7 +303,8 @@ const Onboarding = ({
         />
       ) : null}
 
-      {activeAssignOnboarding ? (
+      {activeAssignOnboarding &&
+      user?.permissions.includes("assign.onboarding_resource") ? (
         <AssignOnboarding
           id={activeAssignOnboarding}
           toggleModal={() =>
@@ -302,8 +317,9 @@ const Onboarding = ({
         className="w-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2
       t:items-start t:p-4 gap-4 t:gap-8"
       >
+        {/* display tabs if the user can see onboarding resource */}
         {user?.permissions.includes("read.onboarding_resource") ? (
-          <PageTabs activeTab={activeTab} tabs={["assignments", "records"]} />
+          <PageTabs activeTab={activeTab} tabs={["assigned", "resource"]} />
         ) : null}
 
         <Filter
@@ -339,8 +355,9 @@ const Onboarding = ({
           }}
         />
 
+        {/* display create button on resource page and if user can create resource */}
         {user?.permissions.includes("create.onboarding_resource") &&
-        activeTab === "records" ? (
+        activeTab === "resource" ? (
           <button
             onClick={handleCanCreateOnboarding}
             className="bg-accent-blue text-accent-yellow w-full p-2 rounded-md font-bold flex flex-row items-center justify-center 

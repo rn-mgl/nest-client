@@ -29,7 +29,13 @@ export const isUserSummary = (value: unknown): value is UserInterface => {
 export const isOnboardingSummary = (
   value: unknown
 ): value is OnboardingInterface => {
-  return typeof value === "object" && value !== null;
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "title" in value &&
+    "description" in value &&
+    "created_by" in value
+  );
 };
 
 export const isUserOnboardingSummary = (

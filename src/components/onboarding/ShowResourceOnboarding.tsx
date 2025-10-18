@@ -17,19 +17,19 @@ import React from "react";
 import { IoClose } from "react-icons/io5";
 import { useToasts } from "@/src/context/ToastContext";
 
-const ShowOnboarding: React.FC<ModalInterface> = (props) => {
-  const [onboarding, setOnboarding] = React.useState<
-    OnboardingInterface & {
-      required_documents: OnboardingRequiredDocumentsInterface[];
-      policy_acknowledgements: OnboardingPolicyAcknowledgemenInterface[];
-    }
-  >({
+const ShowResourceOnboarding: React.FC<ModalInterface> = (props) => {
+  const [onboarding, setOnboarding] = React.useState<OnboardingInterface>({
     title: "",
     description: "",
     created_by: 0,
-    required_documents: [],
-    policy_acknowledgements: [],
   });
+
+  const [requiredDocuments, setRequiredDocuments] = React.useState<
+    OnboardingRequiredDocumentsInterface[]
+  >([]);
+  const [policyAcknowledgements, setPolicyAcknowledgements] = React.useState<
+    OnboardingRequiredDocumentsInterface[]
+  >([]);
 
   const { addToast } = useToasts();
 
@@ -42,20 +42,25 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
   const getOnboarding = React.useCallback(async () => {
     try {
       if (user?.token) {
-        const { data } = await axios.get<{
+        const { data: responseData } = await axios.get<{
           onboarding: OnboardingInterface & {
             required_documents: OnboardingRequiredDocumentsInterface[];
             policy_acknowledgements: OnboardingPolicyAcknowledgemenInterface[];
           };
-        }>(`${url}/hr/onboarding/${props.id}`, {
+        }>(`${url}/onboarding/resource/${props.id}`, {
           headers: {
             Authorization: `Bearer ${user?.token}`,
           },
           withCredentials: true,
         });
 
-        if (data) {
-          setOnboarding(data.onboarding);
+        if (responseData.onboarding) {
+          const { policy_acknowledgements, required_documents, ...onboarding } =
+            responseData.onboarding;
+
+          setOnboarding(onboarding);
+          setPolicyAcknowledgements(policy_acknowledgements);
+          setRequiredDocuments(required_documents);
         }
       }
     } catch (error) {
@@ -71,24 +76,19 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
     }
   }, [url, user?.token, props.id, addToast]);
 
-  const mappedRequiredDocuments = onboarding.required_documents.map(
-    (req, index) => {
-      return (
-        <div
-          key={index}
-          className="w-full flex flex-col items-center justify-start rounded-md gap-2"
-        >
-          <TextField
-            label={`Required Document ${index + 1}`}
-            value={req.title}
-          />
-          <TextBlock label="" value={req.description} />
-        </div>
-      );
-    }
-  );
+  const mappedRequiredDocuments = requiredDocuments.map((req, index) => {
+    return (
+      <div
+        key={index}
+        className="w-full flex flex-col items-center justify-start rounded-md gap-2"
+      >
+        <TextField label={`Required Document ${index + 1}`} value={req.title} />
+        <TextBlock label="" value={req.description} />
+      </div>
+    );
+  });
 
-  const mappedPolicyAcknowledgements = onboarding.policy_acknowledgements.map(
+  const mappedPolicyAcknowledgements = policyAcknowledgements.map(
     (ack, index) => {
       return (
         <div
@@ -159,4 +159,4 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
   );
 };
 
-export default ShowOnboarding;
+export default ShowResourceOnboarding;

@@ -71,7 +71,7 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
             required_documents: OnboardingRequiredDocumentsInterface[];
             policy_acknowledgements: OnboardingPolicyAcknowledgemenInterface[];
           };
-        }>(`${url}/hr/onboarding/${props.id}`, {
+        }>(`${url}/onboarding/resource/${props.id}`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
