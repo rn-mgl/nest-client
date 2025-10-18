@@ -22,9 +22,11 @@ import {
   UserOnboardingInterface,
 } from "@/src/interface/OnboardingInterface";
 import {
-  EMPLOYEE_ONBOARDING_CATEGORY,
-  EMPLOYEE_ONBOARDING_SEARCH,
-  EMPLOYEE_ONBOARDING_SORT,
+  ASSIGNED_ONBOARDING_CATEGORY,
+  ASSIGNED_ONBOARDING_SEARCH,
+  ASSIGNED_ONBOARDING_SORT,
+  RESOURCE_ONBOARDING_SEARCH,
+  RESOURCE_ONBOARDING_SORT,
 } from "@/src/utils/filters";
 import {
   isOnboardingSummary,
@@ -51,10 +53,9 @@ const Onboarding = ({
   const [activeAssignOnboarding, setActiveAssignOnboarding] = React.useState(0);
   const [activeOnboardingSeeMore, setActiveOnboardingSeeMore] =
     React.useState(0);
+
   const { isLoading, handleIsLoading } = useIsLoading();
-
   const { addToast } = useToasts();
-
   const { tab } = React.use(searchParams);
 
   const url = process.env.URL;
@@ -62,11 +63,42 @@ const Onboarding = ({
   const user = session?.user;
 
   // permissions to check if a user can manage the record
-  const canEdit = user?.permissions.includes("update.onboarding_resource");
-  const canAssign = user?.permissions.includes("assign.onboarding_resource");
-  const canDelete = user?.permissions.includes("delete.onboarding_resource");
+  const canEdit = React.useMemo(() => {
+    return user?.permissions.includes("update.onboarding_resource");
+  }, [user?.permissions]);
 
-  const canManage = canEdit || canAssign || canDelete;
+  const canAssign = React.useMemo(() => {
+    return user?.permissions.includes("assign.onboarding_resource");
+  }, [user?.permissions]);
+
+  const canDelete = React.useMemo(() => {
+    return user?.permissions.includes("delete.onboarding_resource");
+  }, [user?.permissions]);
+
+  const canManage = React.useMemo(() => {
+    return canEdit || canAssign || canDelete;
+  }, [canEdit, canAssign, canDelete]);
+
+  // render filters based on tab
+  const SEARCH_FILTERS = React.useMemo(() => {
+    return {
+      assigned: ASSIGNED_ONBOARDING_SEARCH,
+      resource: RESOURCE_ONBOARDING_SEARCH,
+    };
+  }, []);
+
+  const SORT_FILTERS = React.useMemo(() => {
+    return {
+      assigned: ASSIGNED_ONBOARDING_SORT,
+      resource: RESOURCE_ONBOARDING_SORT,
+    };
+  }, []);
+
+  const CATEGORY_FILTERS = React.useMemo(() => {
+    return {
+      assigned: ASSIGNED_ONBOARDING_CATEGORY,
+    };
+  }, []);
 
   const {
     search,
@@ -111,18 +143,42 @@ const Onboarding = ({
     setActiveAssignOnboarding((prev) => (id === prev ? 0 : id));
   };
 
+  const handleFilters = React.useCallback(
+    (tab: string) => {
+      switch (tab) {
+        case "assigned":
+          handleSelectSearch("onboarding.title", "Title");
+          handleSelectSort("onboarding.title", "Assigned At");
+          handleSelectCategory("status", "All");
+          break;
+        case "resource":
+          handleSelectSearch("title", "Title");
+          handleSelectSort("title", "Title");
+          if (canSeeCategoryDropDown) {
+            handleCanSeeCategoryDropDown();
+          }
+          break;
+        default:
+          break;
+      }
+    },
+    [
+      canSeeCategoryDropDown,
+      handleSelectSearch,
+      handleSelectSort,
+      handleSelectCategory,
+      handleCanSeeCategoryDropDown,
+    ]
+  );
+
   const getOnboardings = React.useCallback(
-    async (controller?: AbortController) => {
+    async (tab: string, controller?: AbortController) => {
       handleIsLoading(true);
 
       try {
-        const endpoints = {
-          assigned: "assigned",
-          resource: "resource",
-        };
-
-        const endpoint: string =
-          endpoints[activeTab as keyof object] ?? "assigned";
+        const endpoint = ["assigned", "resource"].includes(tab)
+          ? tab
+          : "assigned";
 
         if (user?.token) {
           const { data: responseData } = await axios.get(
@@ -154,7 +210,7 @@ const Onboarding = ({
         handleIsLoading(false);
       }
     },
-    [url, user?.token, activeTab, addToast, handleIsLoading]
+    [url, user?.token, addToast, handleIsLoading]
   );
 
   const mappedOnboardings = useFilterAndSort(
@@ -240,12 +296,16 @@ const Onboarding = ({
   React.useEffect(() => {
     const controller = new AbortController();
 
-    getOnboardings(controller);
+    getOnboardings(activeTab, controller);
 
     return () => {
       controller.abort();
     };
-  }, [getOnboardings]);
+  }, [activeTab, getOnboardings]);
+
+  React.useEffect(() => {
+    handleFilters(activeTab ?? "assigned");
+  }, [activeTab, handleFilters]);
 
   React.useEffect(() => {
     setActiveTab(tab ?? "assigned");
@@ -253,7 +313,8 @@ const Onboarding = ({
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
-      {/* separately render assigned onboarding and resource onboarding */}
+      {/* separately render assigned onboarding and resource onboarding based on tab, 
+      with permission checking on resource view*/}
       {activeOnboardingSeeMore ? (
         activeTab === "assigned" ? (
           <ShowAssignedOnboarding
@@ -273,23 +334,26 @@ const Onboarding = ({
         ) : null
       ) : null}
 
+      {/* show create modal if has permission */}
       {canCreateOnboarding &&
       user?.permissions.includes("create.onboarding_resource") ? (
         <CreateOnboarding
-          refetchIndex={getOnboardings}
+          refetchIndex={() => getOnboardings(activeTab)}
           toggleModal={handleCanCreateOnboarding}
         />
       ) : null}
 
+      {/* show edit modal if has permission */}
       {activeEditOnboarding &&
       user?.permissions.includes("update.onboarding_resource") ? (
         <EditOnboarding
           id={activeEditOnboarding}
-          refetchIndex={getOnboardings}
+          refetchIndex={() => getOnboardings(activeTab)}
           toggleModal={() => handleActiveEditOnboarding(activeEditOnboarding)}
         />
       ) : null}
 
+      {/* show delete modal if has permission */}
       {activeDeleteOnboarding &&
       user?.permissions.includes("delete.onboarding_resource") ? (
         <DeleteEntity
@@ -299,10 +363,11 @@ const Onboarding = ({
           toggleModal={() =>
             handleActiveDeleteOnboarding(activeDeleteOnboarding)
           }
-          refetchIndex={getOnboardings}
+          refetchIndex={() => getOnboardings(activeTab)}
         />
       ) : null}
 
+      {/* show assign modal if has permission */}
       {activeAssignOnboarding &&
       user?.permissions.includes("assign.onboarding_resource") ? (
         <AssignOnboarding
@@ -323,7 +388,7 @@ const Onboarding = ({
         ) : null}
 
         <Filter
-          categoryKeyValuePairs={EMPLOYEE_ONBOARDING_CATEGORY}
+          categoryKeyValuePairs={CATEGORY_FILTERS[activeTab as keyof object]}
           category={{
             categoryKey: category.categoryKey,
             categoryValue: category.categoryValue,
@@ -332,7 +397,7 @@ const Onboarding = ({
             toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
           }}
           //
-          sortKeyLabelPairs={EMPLOYEE_ONBOARDING_SORT}
+          sortKeyLabelPairs={SORT_FILTERS[activeTab as keyof object]}
           sort={{
             sortKey: sort.sortKey,
             sortLabel: sort.sortLabel,
@@ -343,7 +408,7 @@ const Onboarding = ({
             canSeeSortDropDown: canSeeSortDropDown,
           }}
           //
-          searchKeyLabelPairs={EMPLOYEE_ONBOARDING_SEARCH}
+          searchKeyLabelPairs={SEARCH_FILTERS[activeTab as keyof object]}
           search={{
             onChange: handleSearch,
             searchKey: search.searchKey,

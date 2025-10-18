@@ -652,3 +652,58 @@ export const EMPLOYEE_FOLDERS_SEARCH: SearchPairsInterface[] = [
     label: "Title",
   },
 ];
+
+// NEW //
+
+// for user to filter resource onboarding
+export const RESOURCE_ONBOARDING_SORT: SortPairsInterface[] = [
+  {
+    key: "title",
+    label: "Title",
+  },
+  {
+    key: "created_at",
+    label: "Created At",
+  },
+];
+
+export const RESOURCE_ONBOARDING_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "title",
+    label: "Title",
+  },
+  {
+    key: "description",
+    label: "Description",
+  },
+];
+
+// for user to filter assigned onboarding
+export const ASSIGNED_ONBOARDING_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "onboarding.title",
+    label: "Title",
+  },
+  {
+    key: "onboarding.description",
+    label: "Description",
+  },
+];
+
+export const ASSIGNED_ONBOARDING_SORT: SortPairsInterface[] = [
+  {
+    key: "onboarding.title",
+    label: "Title",
+  },
+  {
+    key: "created_at",
+    label: "Assigned At",
+  },
+];
+
+export const ASSIGNED_ONBOARDING_CATEGORY: CategoryPairsInterface[] = [
+  {
+    key: "status",
+    values: ["All", "Pending", "In Progress", "Done"],
+  },
+];
