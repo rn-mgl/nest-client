@@ -24,7 +24,6 @@ const EditLeaveRequest: React.FC<ModalInterface> = (props) => {
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
   const user = session?.user;
-  const role = user?.roles ?? "";
 
   const handleLeaveRequest = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -43,7 +42,7 @@ const EditLeaveRequest: React.FC<ModalInterface> = (props) => {
     try {
       if (user?.token) {
         const { data: responseData } = await axios.get(
-          `${url}/${role}/leave_request/${props.id}`,
+          `${url}/leave-request/resource/${props.id}`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
@@ -67,7 +66,7 @@ const EditLeaveRequest: React.FC<ModalInterface> = (props) => {
         addToast("Leave Request Error", message, "error");
       }
     }
-  }, [url, user?.token, role, props.id, addToast]);
+  }, [url, user?.token, props.id, addToast]);
 
   const submitUpdateLeaveRequest = async (
     e: React.FormEvent<HTMLFormElement>
@@ -78,7 +77,7 @@ const EditLeaveRequest: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: responseData } = await axios.patch(
-          `${url}/${role}/leave_request/${props.id}`,
+          `${url}/leave-request/resource/${props.id}`,
           { ...leaveRequest },
           {
             headers: {

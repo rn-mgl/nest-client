@@ -8,6 +8,11 @@ import EditLeaveRequest from "@/src/components/global/leave/EditLeaveRequest";
 import LeaveBalanceCard from "@/src/components/global/leave/LeaveBalanceCard";
 import LeaveRequestForm from "@/src/components/global/leave/LeaveRequestForm";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
+import BaseCard from "@/src/components/global/resource/BaseCard";
+import ResourceActions from "@/src/components/global/resource/ResourceActions";
+import AssignLeaveType from "@/src/components/hr/leave/AssignLeaveType";
+import CreateLeaveType from "@/src/components/hr/leave/CreateLeaveType";
+import EditLeaveType from "@/src/components/hr/leave/EditLeaveType";
 import { useToasts } from "@/src/context/ToastContext";
 import useCategory from "@/src/hooks/useCategory";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
@@ -17,6 +22,7 @@ import useSort from "@/src/hooks/useSort";
 import {
   LeaveBalanceInterface,
   LeaveRequestInterface,
+  LeaveTypeInterface,
 } from "@/src/interface/LeaveInterface";
 import {
   EMPLOYEE_LEAVE_BALANCE_SEARCH,
@@ -25,7 +31,11 @@ import {
   EMPLOYEE_LEAVE_REQUEST_SEARCH,
   EMPLOYEE_LEAVE_REQUEST_SORT,
 } from "@/src/utils/filters";
-import { normalizeDate, normalizeString } from "@/src/utils/utils";
+import {
+  isUserSummary,
+  normalizeDate,
+  normalizeString,
+} from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
@@ -36,6 +46,7 @@ const Leave = ({
 }: {
   searchParams: Promise<{ tab?: string }>;
 }) => {
+  const [leaveTypes, setLeaveTypes] = React.useState<LeaveTypeInterface[]>([]);
   const [leaveBalances, setLeaveBalances] = React.useState<
     LeaveBalanceInterface[]
   >([]);
@@ -43,31 +54,51 @@ const Leave = ({
     LeaveRequestInterface[]
   >([]);
   const [selectedLeaveRequest, setSelectedLeaveRequest] = React.useState(0);
+  const [canCreateLeaveType, setCanCreateLeaveType] = React.useState(false);
+  const [activeEditLeaveType, setActiveEditLeaveType] = React.useState(0);
+  const [activeDeleteLeaveType, setActiveDeleteLeaveType] = React.useState(0);
+  const [activeAssignLeaveType, setActiveAssignLeaveType] = React.useState(0);
   const [canEditLeaveRequest, setCanEditLeaveRequest] = React.useState(0);
   const [canDeleteLeaveRequest, setCanDeleteLeaveRequest] = React.useState(0);
-  const [activeTab, setActiveTab] = React.useState("balances");
-  const { isLoading, handleIsLoading } = useIsLoading();
+  const [activeTab, setActiveTab] = React.useState("balance");
 
+  const { isLoading, handleIsLoading } = useIsLoading();
   const { addToast } = useToasts();
+  const { tab } = React.use(searchParams);
 
   const { data: session } = useSession({ required: true });
   const user = session?.user;
   const url = process.env.URL;
 
-  const { tab } = React.use(searchParams);
+  // permissions to check if a user can manage the record
+  const canEditLeaveType = React.useMemo(() => {
+    return user?.permissions.includes("update.leave_type_resource");
+  }, [user?.permissions]);
+
+  const canAssignLeaveType = React.useMemo(() => {
+    return user?.permissions.includes("assign.leave_type_resource");
+  }, [user?.permissions]);
+
+  const canDeleteLeaveType = React.useMemo(() => {
+    return user?.permissions.includes("delete.leave_type_resource");
+  }, [user?.permissions]);
+
+  const canManageLeaveType = React.useMemo(() => {
+    return canEditLeaveType || canAssignLeaveType || canDeleteLeaveType;
+  }, [canEditLeaveType, canAssignLeaveType, canDeleteLeaveType]);
 
   const searchFilter = {
-    balances: EMPLOYEE_LEAVE_BALANCE_SEARCH,
-    requests: EMPLOYEE_LEAVE_REQUEST_SEARCH,
+    balance: EMPLOYEE_LEAVE_BALANCE_SEARCH,
+    request: EMPLOYEE_LEAVE_REQUEST_SEARCH,
   };
 
   const sortFilter = {
-    balances: EMPLOYEE_LEAVE_BALANCE_SORT,
-    requests: EMPLOYEE_LEAVE_REQUEST_SORT,
+    balance: EMPLOYEE_LEAVE_BALANCE_SORT,
+    request: EMPLOYEE_LEAVE_REQUEST_SORT,
   };
 
   const categoryFilter = {
-    requests: EMPLOYEE_LEAVE_REQUEST_CATEGORY,
+    request: EMPLOYEE_LEAVE_REQUEST_CATEGORY,
   };
 
   const {
@@ -93,13 +124,102 @@ const Leave = ({
     handleSelectCategory,
   } = useCategory("status", "All");
 
+  const handleActiveEditLeaveType = (id: number) => {
+    setActiveEditLeaveType((prev) => (id === prev ? 0 : id));
+  };
+
+  const handleActiveDeleteLeaveType = (id: number) => {
+    setActiveDeleteLeaveType((prev) => (id === prev ? 0 : id));
+  };
+
+  const handleActiveAssignLeaveType = (id: number) => {
+    setActiveAssignLeaveType((prev) => (id === prev ? 0 : id));
+  };
+
+  const handleCanCreateLeaveType = () => {
+    setCanCreateLeaveType((prev) => !prev);
+  };
+
+  const handleSelectedLeaveRequest = (leave_type_id: number) => {
+    setSelectedLeaveRequest((prev) =>
+      prev === leave_type_id ? 0 : leave_type_id
+    );
+  };
+
+  const handleCanEditLeaveRequest = (id: number) => {
+    setCanEditLeaveRequest((prev) => (prev === id ? 0 : id));
+  };
+
+  const handleCanDeleteLeaveRequest = (id: number) => {
+    setCanDeleteLeaveRequest((prev) => (prev === id ? 0 : id));
+  };
+
+  const handleFilters = React.useCallback(
+    (tab: string) => {
+      switch (tab) {
+        case "balance":
+          handleSelectSearch("leave.type", "Leave Type");
+          handleSelectSort("leave.type", "Leave Type");
+          handleSelectCategory("", "");
+          if (canSeeCategoryDropDown) {
+            handleCanSeeCategoryDropDown();
+          }
+          break;
+        case "request":
+          handleSelectSearch("type", "Leave Type");
+          handleSelectSort("type", "Leave Type");
+          handleSelectCategory("status", "All");
+          break;
+      }
+    },
+    [
+      canSeeCategoryDropDown,
+      handleSelectSearch,
+      handleSelectSort,
+      handleSelectCategory,
+      handleCanSeeCategoryDropDown,
+    ]
+  );
+
+  const getLeaveTypes = React.useCallback(
+    async (controller?: AbortController) => {
+      try {
+        if (user?.token) {
+          const { data: responseData } = await axios.get(
+            `${url}/leave-type/resource`,
+            {
+              headers: { Authorization: `Bearer ${user.token}` },
+              withCredentials: true,
+              signal: controller?.signal,
+            }
+          );
+
+          if (responseData.leaves) {
+            setLeaveTypes(responseData.leaves);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+
+        if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
+          const message =
+            error.response?.data.message ??
+            error.message ??
+            "An error occurred when the leave types are being retrieved.";
+          addToast("Leave Balance Error", message, "error");
+        }
+      }
+    },
+    [user?.token, url, addToast]
+  );
+
   const getLeaveBalances = React.useCallback(
     async (controller?: AbortController) => {
       handleIsLoading(true);
       try {
         if (user?.token) {
           const { data: responseData } = await axios.get(
-            `${url}/employee/leave_balance`,
+            `${url}/leave-type/assigned`,
             {
               headers: {
                 Authorization: `Bearer ${user.token}`,
@@ -136,7 +256,7 @@ const Leave = ({
       try {
         if (user?.token) {
           const { data: responseData } = await axios.get(
-            `${url}/employee/leave_request`,
+            `${url}/leave-request/resource`,
             {
               headers: {
                 Authorization: `Bearer ${user.token}`,
@@ -172,10 +292,13 @@ const Leave = ({
     async (tab: string, controller: AbortController) => {
       try {
         switch (tab) {
-          case "balances":
+          case "resource":
+            getLeaveTypes(controller);
+            break;
+          case "balance":
             getLeaveBalances(controller);
             break;
-          case "requests":
+          case "request":
             getLeaveRequests(controller);
             break;
         }
@@ -183,48 +306,44 @@ const Leave = ({
         console.log(error);
       }
     },
-    [getLeaveBalances, getLeaveRequests]
+    [getLeaveTypes, getLeaveBalances, getLeaveRequests]
   );
 
-  const handleSelectedLeaveRequest = (leave_type_id: number) => {
-    setSelectedLeaveRequest((prev) =>
-      prev === leave_type_id ? 0 : leave_type_id
-    );
-  };
-
-  const handleCanEditLeaveRequest = (id: number) => {
-    setCanEditLeaveRequest((prev) => (prev === id ? 0 : id));
-  };
-
-  const handleCanDeleteLeaveRequest = (id: number) => {
-    setCanDeleteLeaveRequest((prev) => (prev === id ? 0 : id));
-  };
-
-  const handleFilters = React.useCallback(
-    (tab: string) => {
-      switch (tab) {
-        case "balances":
-          handleSelectSearch("leave.type", "Leave Type");
-          handleSelectSort("leave.type", "Leave Type");
-          handleSelectCategory("", "");
-          if (canSeeCategoryDropDown) {
-            handleCanSeeCategoryDropDown();
-          }
-          break;
-        case "requests":
-          handleSelectSearch("type", "Leave Type");
-          handleSelectSort("type", "Leave Type");
-          handleSelectCategory("status", "All");
-          break;
-      }
-    },
-    [
-      canSeeCategoryDropDown,
-      handleSelectSearch,
-      handleSelectSort,
-      handleSelectCategory,
-      handleCanSeeCategoryDropDown,
-    ]
+  const mappedLeaves = useFilterAndSort(leaveTypes, search, sort).map(
+    (leave, index) => {
+      const leaveId = leave.id ?? 0; // leave ids in this page have leaveids (from db)
+      const createdBy = isUserSummary(leave.created_by)
+        ? leave.created_by.first_name
+        : null;
+      return (
+        <BaseCard
+          key={index}
+          title={leave.type}
+          description={leave.description}
+          createdBy={createdBy}
+        >
+          {canManageLeaveType ? (
+            <ResourceActions
+              handleActiveAssign={
+                canAssignLeaveType
+                  ? () => handleActiveAssignLeaveType(leaveId)
+                  : undefined
+              }
+              handleActiveEdit={
+                canEditLeaveType
+                  ? () => handleActiveEditLeaveType(leaveId)
+                  : undefined
+              }
+              handleActiveDelete={
+                canDeleteLeaveType
+                  ? () => handleActiveDeleteLeaveType(leaveId)
+                  : undefined
+              }
+            />
+          ) : null}
+        </BaseCard>
+      );
+    }
   );
 
   const mappedLeaveBalances = useFilterAndSort(
@@ -305,7 +424,7 @@ const Leave = ({
   }, [getPageData, activeTab]);
 
   React.useEffect(() => {
-    setActiveTab(tab ?? "balances");
+    setActiveTab(tab ?? "balance");
   }, [setActiveTab, tab]);
 
   React.useEffect(() => {
@@ -314,17 +433,53 @@ const Leave = ({
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
+      {canCreateLeaveType &&
+      user?.permissions.includes("create.leave_type_resource") ? (
+        <CreateLeaveType
+          toggleModal={handleCanCreateLeaveType}
+          refetchIndex={getLeaveTypes}
+        />
+      ) : null}
+
+      {activeEditLeaveType &&
+      user?.permissions.includes("update.leave_type_resource") ? (
+        <EditLeaveType
+          id={activeEditLeaveType}
+          refetchIndex={getLeaveTypes}
+          toggleModal={() => handleActiveEditLeaveType(activeEditLeaveType)}
+        />
+      ) : null}
+
+      {activeDeleteLeaveType &&
+      user?.permissions.includes("delete.leave_type_resource") ? (
+        <DeleteEntity
+          route="leave-type/resource"
+          label="Leave"
+          id={activeDeleteLeaveType}
+          refetchIndex={getLeaveTypes}
+          toggleModal={() => handleActiveDeleteLeaveType(activeDeleteLeaveType)}
+        />
+      ) : null}
+
+      {activeAssignLeaveType &&
+      user?.permissions.includes("assign.leave_type_resource") ? (
+        <AssignLeaveType
+          id={activeAssignLeaveType}
+          toggleModal={() => handleActiveAssignLeaveType(activeAssignLeaveType)}
+        />
+      ) : null}
+
       {selectedLeaveRequest ? (
         <LeaveRequestForm
           id={selectedLeaveRequest}
-          toggleModal={() => handleSelectedLeaveRequest(0)}
+          toggleModal={() => handleSelectedLeaveRequest(selectedLeaveRequest)}
           refetchIndex={getLeaveBalances}
         />
       ) : null}
 
       {canEditLeaveRequest ? (
         <EditLeaveRequest
-          toggleModal={() => handleCanEditLeaveRequest(0)}
+          toggleModal={() => handleCanEditLeaveRequest(canEditLeaveRequest)}
           refetchIndex={getLeaveRequests}
           id={canEditLeaveRequest}
         />
@@ -332,8 +487,8 @@ const Leave = ({
 
       {canDeleteLeaveRequest ? (
         <DeleteEntity
-          route="leave_request"
-          toggleModal={() => handleCanDeleteLeaveRequest(0)}
+          route="leave-request/resource"
+          toggleModal={() => handleCanDeleteLeaveRequest(canDeleteLeaveRequest)}
           refetchIndex={getLeaveRequests}
           id={canDeleteLeaveRequest}
           label="Leave Request"
@@ -341,7 +496,14 @@ const Leave = ({
       ) : null}
 
       <div className="w-full h-auto flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2 t:p-4 gap-4 t:gap-8">
-        <PageTabs activeTab={activeTab} tabs={["balances", "requests"]} />
+        <PageTabs
+          activeTab={activeTab}
+          tabs={
+            user?.permissions.includes("read.leave_type_resource")
+              ? ["balance", "request", "resource"]
+              : ["balance", "request"]
+          }
+        />
 
         <div className="w-full flex flex-col items-center justify-center gap-4 t:gap-8 ">
           <Filter
@@ -380,11 +542,11 @@ const Leave = ({
 
           {isLoading ? (
             <PageSkeletonLoader />
-          ) : activeTab === "balances" ? (
+          ) : activeTab === "balance" ? (
             <div className="grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3 w-full h-auto">
               {mappedLeaveBalances}
             </div>
-          ) : activeTab === "requests" ? (
+          ) : activeTab === "request" ? (
             <div className="flex flex-col items-center justify-start w-full">
               <Table
                 color="blue"
@@ -399,6 +561,11 @@ const Leave = ({
                 ]}
                 contents={mappedLeaveRequests}
               />
+            </div>
+          ) : activeTab === "resource" &&
+            user?.permissions.includes("read.leave_type_resource") ? (
+            <div className="grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3 w-full h-auto">
+              {mappedLeaves}
             </div>
           ) : null}
         </div>

@@ -28,11 +28,7 @@ import {
   RESOURCE_ONBOARDING_SEARCH,
   RESOURCE_ONBOARDING_SORT,
 } from "@/src/utils/filters";
-import {
-  isOnboardingSummary,
-  isUserOnboardingSummary,
-  isUserSummary,
-} from "@/src/utils/utils";
+import { isUserSummary } from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
@@ -43,8 +39,11 @@ const Onboarding = ({
 }: {
   searchParams: Promise<{ tab?: string }>;
 }) => {
-  const [onboardings, setOnboardings] = React.useState<
-    (UserOnboardingInterface | OnboardingInterface)[]
+  const [resourceOnboardings, setResourceOnboardings] = React.useState<
+    OnboardingInterface[]
+  >([]);
+  const [assignedOnboardings, setAssignedOnboardings] = React.useState<
+    UserOnboardingInterface[]
   >([]);
   const [activeTab, setActiveTab] = React.useState<string>("assigned");
   const [canCreateOnboarding, setCanCreateOnboarding] = React.useState(false);
@@ -172,12 +171,12 @@ const Onboarding = ({
   );
 
   const getOnboardings = React.useCallback(
-    async (tab: string, controller?: AbortController) => {
+    async (controller?: AbortController) => {
       handleIsLoading(true);
 
       try {
-        let endpoint = ["assigned", "resource"].includes(tab)
-          ? tab
+        let endpoint = ["assigned", "resource"].includes(activeTab)
+          ? activeTab
           : "assigned";
 
         if (
@@ -200,7 +199,11 @@ const Onboarding = ({
           );
 
           if (responseData.onboardings) {
-            setOnboardings(responseData.onboardings);
+            if (activeTab === "assigned") {
+              setAssignedOnboardings(responseData.onboardings);
+            } else if (activeTab === "resource") {
+              setResourceOnboardings(responseData.onboardings);
+            }
           }
         }
       } catch (error) {
@@ -217,102 +220,109 @@ const Onboarding = ({
         handleIsLoading(false);
       }
     },
-    [url, user?.token, user?.permissions, addToast, handleIsLoading]
+    [url, user?.token, user?.permissions, activeTab, addToast, handleIsLoading]
   );
 
-  const mappedOnboardings = useFilterAndSort(
-    onboardings,
+  const mappedAssignedOnboardings = useFilterAndSort(
+    assignedOnboardings,
     search,
     sort,
     category
   ).map((onboarding, index) => {
     // if the onboarding is an OnboardingInterface, it is from the Resource view
-    const isResourceOnboarding = isOnboardingSummary(onboarding);
 
-    // if the onboarding is a UserOnboardingInterface, it is from the Assigned view
-    const isAssignedOnboarding = isUserOnboardingSummary(onboarding);
+    const assignedBy = isUserSummary(onboarding.assigned_by)
+      ? onboarding.assigned_by.first_name
+      : null;
 
-    if (activeTab === "assigned" && isAssignedOnboarding) {
-      const assignedBy = isUserSummary(onboarding.assigned_by)
-        ? onboarding.assigned_by.first_name
-        : null;
+    return (
+      <BaseCard
+        key={index}
+        title={onboarding.onboarding.title}
+        description={onboarding.onboarding.description}
+        assignedBy={assignedBy}
+      >
+        <BaseActions
+          key={`base-action-${onboarding.onboarding.id}`}
+          handleActiveSeeMore={
+            () => handleActiveOnboardingSeeMore(onboarding.id ?? 0) // user_onboarding id
+          }
+        />
+      </BaseCard>
+    );
+  });
 
-      return (
-        <BaseCard
-          key={index}
-          title={onboarding.onboarding.title}
-          description={onboarding.onboarding.description}
-          assignedBy={assignedBy}
-        >
-          <BaseActions
-            key={`base-action-${onboarding.onboarding.id}`}
-            handleActiveSeeMore={
-              () => handleActiveOnboardingSeeMore(onboarding.id ?? 0) // user_onboarding id
+  const mappedResourceOnboardings = useFilterAndSort(
+    resourceOnboardings,
+    search,
+    sort,
+    category
+  ).map((onboarding, index) => {
+    // if the onboarding is an OnboardingInterface, it is from the Resource view
+    const createdBy = isUserSummary(onboarding.created_by)
+      ? onboarding.created_by.first_name
+      : null;
+
+    return (
+      <BaseCard
+        key={index}
+        title={onboarding.title}
+        description={onboarding.description}
+        assignedBy={createdBy}
+      >
+        <BaseActions
+          key={`base-action-${onboarding.id}`}
+          handleActiveSeeMore={
+            () => handleActiveOnboardingSeeMore(onboarding.id ?? 0) // onboarding id
+          }
+        />
+        {canManage ? (
+          <ResourceActions
+            key={`resource-action-${onboarding.id}`}
+            handleActiveEdit={
+              canEdit
+                ? () => handleActiveEditOnboarding(onboarding.id ?? 0)
+                : undefined
+            }
+            handleActiveDelete={
+              canDelete
+                ? () => handleActiveDeleteOnboarding(onboarding.id ?? 0)
+                : undefined
+            }
+            handleActiveAssign={
+              canAssign
+                ? () => handleActiveAssignOnboarding(onboarding.id ?? 0)
+                : undefined
             }
           />
-        </BaseCard>
-      );
-    }
-
-    if (activeTab === "resource" && isResourceOnboarding) {
-      const createdBy = isUserSummary(onboarding.created_by)
-        ? onboarding.created_by.first_name
-        : null;
-
-      return (
-        <BaseCard
-          key={index}
-          title={onboarding.title}
-          description={onboarding.description}
-          assignedBy={createdBy}
-        >
-          <BaseActions
-            key={`base-action-${onboarding.id}`}
-            handleActiveSeeMore={
-              () => handleActiveOnboardingSeeMore(onboarding.id ?? 0) // onboarding id
-            }
-          />
-          {canManage ? (
-            <ResourceActions
-              key={`resource-action-${onboarding.id}`}
-              handleActiveEdit={
-                canEdit
-                  ? () => handleActiveEditOnboarding(onboarding.id ?? 0)
-                  : undefined
-              }
-              handleActiveDelete={
-                canDelete
-                  ? () => handleActiveDeleteOnboarding(onboarding.id ?? 0)
-                  : undefined
-              }
-              handleActiveAssign={
-                canAssign
-                  ? () => handleActiveAssignOnboarding(onboarding.id ?? 0)
-                  : undefined
-              }
-            />
-          ) : null}
-        </BaseCard>
-      );
-    }
+        ) : null}
+      </BaseCard>
+    );
   });
 
   React.useEffect(() => {
     const controller = new AbortController();
 
-    getOnboardings(activeTab, controller);
+    getOnboardings(controller);
 
     return () => {
       controller.abort();
     };
-  }, [activeTab, getOnboardings]);
+  }, [getOnboardings]);
 
   React.useEffect(() => {
     handleFilters(activeTab ?? "assigned");
   }, [activeTab, handleFilters]);
 
   React.useEffect(() => {
-    setActiveTab(tab ?? "assigned");
+    if (!tab) {
+      setActiveTab("assigned");
+      return;
+    }
+
+    const newTab = ["assigned", "resource"].includes(tab) ? tab : "assigned";
+
+    setActiveTab(newTab);
   }, [tab]);
 
   return (
@@ -342,7 +352,7 @@ const Onboarding = ({
       {canCreateOnboarding &&
       user?.permissions.includes("create.onboarding_resource") ? (
         <CreateOnboarding
-          refetchIndex={() => getOnboardings(activeTab)}
+          refetchIndex={() => getOnboardings()}
           toggleModal={handleCanCreateOnboarding}
         />
       ) : null}
@@ -352,7 +362,7 @@ const Onboarding = ({
       user?.permissions.includes("update.onboarding_resource") ? (
         <EditOnboarding
           id={activeEditOnboarding}
-          refetchIndex={() => getOnboardings(activeTab)}
+          refetchIndex={() => getOnboardings()}
           toggleModal={() => handleActiveEditOnboarding(activeEditOnboarding)}
         />
       ) : null}
@@ -361,13 +371,13 @@ const Onboarding = ({
       {activeDeleteOnboarding &&
       user?.permissions.includes("delete.onboarding_resource") ? (
         <DeleteEntity
-          route="onboarding"
+          route="onboarding/resource"
           label="Onboarding"
           id={activeDeleteOnboarding}
           toggleModal={() =>
             handleActiveDeleteOnboarding(activeDeleteOnboarding)
           }
-          refetchIndex={() => getOnboardings(activeTab)}
+          refetchIndex={() => getOnboardings()}
         />
       ) : null}
 
@@ -440,7 +450,11 @@ const Onboarding = ({
           <PageSkeletonLoader />
         ) : (
           <div className="grid grid-cols-1 w-full gap-4 t:grid-cols-2 l-l:grid-cols-3">
-            {mappedOnboardings}
+            {activeTab === "assigned"
+              ? mappedAssignedOnboardings
+              : activeTab === "resource"
+              ? mappedResourceOnboardings
+              : null}
           </div>
         )}
       </div>

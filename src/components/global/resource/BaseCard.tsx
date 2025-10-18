@@ -4,8 +4,8 @@ import React from "react";
 const BaseCard: React.FC<BaseCardInterface> = ({ children, ...props }) => {
   return (
     <div
-      className="w-full min-h-[17rem] p-4 rounded-md bg-neutral-100 flex 
-                         flex-col items-center justify-start gap-4 relative max-w-full transition-all"
+      className="w-full p-4 rounded-md bg-neutral-100 flex 
+                flex-col items-center justify-start gap-4 relative max-w-full transition-all"
     >
       <div className="flex flex-row items-start justify-between w-full">
         <div className="flex flex-col items-start justify-start">
