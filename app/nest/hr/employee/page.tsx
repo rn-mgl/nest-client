@@ -1,7 +1,7 @@
 "use client";
 
-import Tabs from "@/global/navigation/Tabs";
-import BaseActions from "@/src/components/global/base/BaseActions";
+import PageTabs from "@/global/navigation/PageTabs";
+import BaseActions from "@/src/components/global/resource/BaseActions";
 import Table from "@/src/components/global/field/Table";
 import Filter from "@/src/components/global/filter/Filter";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
@@ -552,7 +552,7 @@ const HRUser = ({
       ) : null}
 
       <div className="gap-4 t:gap-8 w-full min-h-full h-auto flex flex-col items-start justify-start max-w-(--breakpoint-l-l) p-2 t:p-4">
-        <Tabs
+        <PageTabs
           activeTab={tab ?? "users"}
           tabs={[
             "users",

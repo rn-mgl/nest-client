@@ -1,7 +1,7 @@
 "use client";
 
-import BaseActions from "@/src/components/global/base/BaseActions";
-import BaseCard from "@/src/components/global/base/BaseCard";
+import BaseActions from "@/src/components/global/resource/BaseActions";
+import BaseCard from "@/src/components/global/resource/BaseCard";
 import FolderCard from "@/src/components/global/document/FolderCard";
 import ShowDocument from "@/src/components/global/document/ShowDocument";
 import Filter from "@/src/components/global/filter/Filter";

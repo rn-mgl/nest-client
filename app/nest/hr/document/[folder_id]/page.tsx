@@ -23,11 +23,11 @@ import {
 } from "@/src/utils/filters";
 import axios, { isAxiosError } from "axios";
 
-import BaseActions from "@/src/components/global/base/BaseActions";
-import BaseCard from "@/src/components/global/base/BaseCard";
+import BaseActions from "@/src/components/global/resource/BaseActions";
+import BaseCard from "@/src/components/global/resource/BaseCard";
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
-import HRActions from "@/src/components/hr/global/HRActions";
+import ResourceActions from "@/src/components/global/resource/ResourceActions";
 import { useToasts } from "@/src/context/ToastContext";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
 import {
@@ -220,7 +220,7 @@ const HRDocument = () => {
             handleActiveDocumentSeeMore(document.id ?? 0)
           }
         />
-        <HRActions
+        <ResourceActions
           handleActiveEdit={() => handleActiveEditDocument(document.id ?? 0)}
           handleActiveDelete={() =>
             handleActiveDeleteDocument(document.id ?? 0)

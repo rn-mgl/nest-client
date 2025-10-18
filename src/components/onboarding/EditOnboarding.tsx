@@ -1,7 +1,9 @@
+"use client";
+
 import Input from "@/components/form/Input";
 import TextArea from "@/components/form/TextArea";
 import useDynamicFields from "@/src/hooks/useDynamicFields";
-import useModalNav from "@/src/hooks/useModalNav";
+import useModalTab from "@/src/hooks/useModalTab";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
   OnboardingInterface,
@@ -11,43 +13,89 @@ import {
 import { getCSRFToken } from "@/src/utils/token";
 import axios, { isAxiosError } from "axios";
 
-import { useToasts } from "@/src/context/ToastContext";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd, IoClose, IoReader, IoText, IoTrash } from "react-icons/io5";
-import ModalNav from "@/global/navigation/ModalNav";
+import ModalTabs from "@/global/navigation/ModalTabs";
+import { useToasts } from "@/src/context/ToastContext";
 
-const CreateOnboarding: React.FC<ModalInterface> = (props) => {
+const EditOnboarding: React.FC<ModalInterface> = (props) => {
   const [onboarding, setOnboarding] = React.useState<OnboardingInterface>({
     title: "",
     description: "",
     created_by: 0,
   });
+  const [documentsToDelete, setDocumentsToDelete] = React.useState<number[]>(
+    []
+  );
+  const [policiesToDelete, setPoliciesToDelete] = React.useState<number[]>([]);
 
-  const {
-    fields: requiredDocuments,
-    addField: addDocumentField,
-    handleField: handleDocumentField,
-    removeField: removeDocumentField,
-  } = useDynamicFields<OnboardingRequiredDocumentsInterface>([
-    { title: "", description: "" },
-  ]);
-
-  const {
-    fields: policyAcknowledgements,
-    addField: addPolicyField,
-    handleField: handlePolicyField,
-    removeField: removePolicyField,
-  } = useDynamicFields<OnboardingPolicyAcknowledgemenInterface>([
-    { title: "", description: "" },
-  ]);
-
-  const { activeFormPage, handleActiveFormPage } = useModalNav("information");
   const { addToast } = useToasts();
+
+  const {
+    fields: required_documents,
+    addField: addDocumentField,
+    removeField: removeDocumentField,
+    handleField: handleDocumentField,
+    populateFields: populateDocumentFields,
+  } = useDynamicFields<OnboardingRequiredDocumentsInterface>([
+    {
+      title: "",
+      description: "",
+    },
+  ]);
+
+  const {
+    fields: policy_acknowledgements,
+    addField: addPolicyField,
+    removeField: removePolicyField,
+    handleField: handlePolicyField,
+    populateFields: populatePolicyFields,
+  } = useDynamicFields<OnboardingPolicyAcknowledgemenInterface>([
+    {
+      title: "",
+      description: "",
+    },
+  ]);
+  const { activeTab, handleActiveTab } = useModalTab("information");
 
   const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
+
+  const getOnboarding = React.useCallback(async () => {
+    try {
+      if (user?.token) {
+        const { data: responseData } = await axios.get<{
+          onboarding: OnboardingInterface & {
+            required_documents: OnboardingRequiredDocumentsInterface[];
+            policy_acknowledgements: OnboardingPolicyAcknowledgemenInterface[];
+          };
+        }>(`${url}/hr/onboarding/${props.id}`, {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+          withCredentials: true,
+        });
+
+        if (responseData.onboarding) {
+          const { required_documents, policy_acknowledgements, ...onboarding } =
+            responseData.onboarding;
+          setOnboarding(onboarding);
+          populateDocumentFields(required_documents);
+          populatePolicyFields(policy_acknowledgements);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, [
+    url,
+    user?.token,
+    props.id,
+    populateDocumentFields,
+    populatePolicyFields,
+  ]);
 
   const handleOnboarding = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -62,13 +110,77 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
     });
   };
 
-  const mappedRequiredDocuments = requiredDocuments.map((req, index) => {
+  const handleDocumentsToDelete = (id: number | undefined) => {
+    if (!id) return;
+
+    setDocumentsToDelete((prev) => [...prev, id]);
+  };
+
+  const handlePoliciesToDelete = (id: number | undefined) => {
+    if (!id) return;
+
+    setPoliciesToDelete((prev) => [...prev, id]);
+  };
+
+  const submitUpdateOnboarding = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
+    e.preventDefault();
+
+    try {
+      const { token } = await getCSRFToken();
+
+      if (token && user?.token) {
+        const { data: updatedOnboarding } = await axios.patch(
+          `${url}/hr/onboarding/${props.id}`,
+          {
+            ...onboarding,
+            required_documents,
+            policy_acknowledgements,
+            documents_to_delete: documentsToDelete,
+            policies_to_delete: policiesToDelete,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              "X-CSRF-TOKEN": token,
+            },
+            withCredentials: true,
+          }
+        );
+
+        if (updatedOnboarding.success) {
+          if (props.refetchIndex) {
+            props.refetchIndex();
+          }
+          addToast(
+            "Onboarding Updated",
+            `${onboarding.title} has been successfully created.`,
+            "success"
+          );
+          props.toggleModal();
+        }
+      }
+    } catch (error) {
+      console.log(error);
+
+      if (isAxiosError(error)) {
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          `An error occurred when the onboarding is being updated.`;
+        addToast("Onboarding Error", message, "error");
+      }
+    }
+  };
+
+  const mappedRequiredDocuments = required_documents.map((req, index) => {
     return (
       <div
         key={index}
         className="w-full flex flex-col gap-2 items-end justify-center"
       >
-        <div className="flex flex-col items-center justify-center gap-2 w-full">
+        <div className="w-full flex flex-col items-center justify-center gap-2">
           <Input
             id={`required_document_title-${index}`}
             name="required_document_title"
@@ -95,7 +207,10 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
 
         <button
           type="button"
-          onClick={() => removeDocumentField(index)}
+          onClick={() => {
+            removeDocumentField(index);
+            handleDocumentsToDelete(req.id);
+          }}
           className="p-2 border-2 border-neutral-100 rounded-md bg-neutral-100"
         >
           <IoTrash />
@@ -104,14 +219,14 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
     );
   });
 
-  const mappedPolicyAcknowledgements = policyAcknowledgements.map(
+  const mappedPolicyAcknowledgements = policy_acknowledgements.map(
     (ack, index) => {
       return (
         <div
           key={index}
           className="w-full flex flex-col gap-2 items-end justify-center"
         >
-          <div className="flex flex-col items-center justify-center gap-2 w-full">
+          <div className="w-full flex flex-col items-center justify-center gap-2">
             <Input
               id={`policy_acknowledgement_title-${index}`}
               name="policy_acknowledgement_title"
@@ -138,8 +253,11 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
 
           <button
             type="button"
-            onClick={() => removePolicyField(index)}
-            className="p-3 border-2 border-neutral-100 rounded-md bg-neutral-100"
+            onClick={() => {
+              removePolicyField(index);
+              handlePoliciesToDelete(ack.id);
+            }}
+            className="p-2 border-2 border-neutral-100 rounded-md bg-neutral-100"
           >
             <IoTrash />
           </button>
@@ -148,64 +266,18 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
     }
   );
 
-  const submitCreateOnboarding = async (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
-    e.preventDefault();
-
-    try {
-      const { token } = await getCSRFToken();
-
-      if (token && user?.token) {
-        const { data: createdOnboarding } = await axios.post(
-          `${url}/hr/onboarding`,
-          {
-            ...onboarding,
-            required_documents: requiredDocuments,
-            policy_acknowledgements: policyAcknowledgements,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${user?.token}`,
-              "X-CSRF-TOKEN": token,
-            },
-            withCredentials: true,
-          }
-        );
-
-        if (createdOnboarding.success) {
-          if (props.refetchIndex) {
-            props.refetchIndex();
-          }
-          addToast(
-            "Onboarding Created",
-            `${onboarding.title} has been successfully created.`,
-            "success"
-          );
-          props.toggleModal();
-        }
-      }
-    } catch (error) {
-      console.log(error);
-
-      if (isAxiosError(error)) {
-        const message =
-          error.response?.data.message ??
-          error.message ??
-          `An error occurred when the onboarding is being created.`;
-        addToast("Onboarding Error", message, "error");
-      }
-    }
-  };
+  React.useEffect(() => {
+    getOnboarding();
+  }, [getOnboarding]);
 
   return (
     <div
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
-        p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
+    p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
       <div className="w-full my-auto h-full max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
-        <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-blue rounded-t-lg font-bold text-accent-yellow">
-          Create Onboarding
+        <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-yellow rounded-t-lg font-bold text-accent-blue">
+          Edit Onboarding
           <button
             onClick={props.toggleModal}
             className="p-2 rounded-full hover:bg-accent-yellow/20 transition-all text-xl"
@@ -213,19 +285,18 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
             <IoClose />
           </button>
         </div>
-
         <form
-          onSubmit={(e) => submitCreateOnboarding(e)}
-          className="w-full h-full p-2 flex flex-col items-center justify-center gap-4 overflow-hidden t:p-4"
+          onSubmit={(e) => submitUpdateOnboarding(e)}
+          className="w-full h-full p-2 flex flex-col items-center justify-start gap-4 overflow-hidden t:p-4"
         >
-          <ModalNav
-            activeFormPage={activeFormPage}
-            pages={["information", "documents", "acknowledgements"]}
-            handleActiveFormPage={handleActiveFormPage}
+          <ModalTabs
+            activeTab={activeTab}
+            tabs={["information", "documents", "acknowledgements"]}
+            handleActiveTab={handleActiveTab}
           />
 
-          {activeFormPage === "information" ? (
-            <div className="w-full h-full flex flex-col items-center justify-start gap-2 p-2">
+          {activeTab === "information" ? (
+            <div className="w-full h-full flex flex-col items-center justify-start gap-4">
               <Input
                 label={true}
                 id="title"
@@ -250,9 +321,9 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
                 icon={<IoReader />}
               />
             </div>
-          ) : activeFormPage === "documents" ? (
-            <div className="w-full h-full flex flex-col items-center justify-start gap-4 l-s:items-start l-s:justify-center overflow-y-hidden t:flex-row">
-              <div className="w-full flex flex-col items-center justify-start h-full gap-2 overflow-hidden">
+          ) : activeTab === "documents" ? (
+            <div className="w-full h-full flex flex-col items-center justify-start gap-4 l-s:items-start l-s:justify-center t:flex-row overflow-hidden">
+              <div className="w-full flex flex-col items-center justify-start gap-2 h-full overflow-hidden">
                 <div className="w-full flex flex-row items-center justify-between">
                   <button
                     type="button"
@@ -266,14 +337,14 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
                   </button>
                 </div>
 
-                <div className="w-full flex flex-col items-center justify-start gap-2 overflow-y-auto">
+                <div className="w-full flex flex-col items-center justify-start gap-2 h-full overflow-y-auto">
                   {mappedRequiredDocuments}
                 </div>
               </div>
             </div>
-          ) : activeFormPage === "acknowledgements" ? (
-            <div className="w-full h-full flex flex-col items-center justify-start gap-4 l-s:items-start l-s:justify-center overflow-y-hidden t:flex-row">
-              <div className="w-full flex flex-col items-center justify-start h-full gap-2 overflow-hidden">
+          ) : activeTab === "acknowledgements" ? (
+            <div className="w-full h-full flex flex-col items-center justify-start gap-4 l-s:items-start l-s:justify-center t:flex-row overflow-hidden">
+              <div className="w-full flex flex-col items-center justify-start gap-2 h-full overflow-hidden">
                 <div className="w-full flex flex-row items-center justify-between">
                   <button
                     type="button"
@@ -287,15 +358,15 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
                   </button>
                 </div>
 
-                <div className="w-full flex flex-col items-center justify-start gap-2 overflow-y-auto">
+                <div className="w-full flex flex-col items-center justify-start gap-2 h-full overflow-y-auto">
                   {mappedPolicyAcknowledgements}
                 </div>
               </div>
             </div>
           ) : null}
 
-          <button className="w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2">
-            Create
+          <button className="t:col-span-2 w-full font-bold text-center rounded-md p-2 bg-accent-yellow text-accent-blue mt-2">
+            Update
           </button>
         </form>
       </div>
@@ -303,4 +374,4 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
   );
 };
 
-export default CreateOnboarding;
+export default EditOnboarding;

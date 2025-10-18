@@ -13,7 +13,7 @@ export interface BaseActionsInterface {
   handleActiveSeeMore?: () => void;
 }
 
-export interface HRActionsInterface {
+export interface ResourceActionsInterface {
   handleActiveEdit?: () => void;
   handleActiveAssign?: () => void;
   handleActiveDelete?: () => void;

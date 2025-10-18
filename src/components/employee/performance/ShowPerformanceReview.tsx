@@ -3,9 +3,9 @@
 import TextArea from "@/form/TextArea";
 import TextBlock from "@/global/field/TextBlock";
 import TextField from "@/global/field/TextField";
-import ModalNav from "@/global/navigation/ModalNav";
+import ModalTabs from "@/global/navigation/ModalTabs";
 import { useToasts } from "@/src/context/ToastContext";
-import useModalNav from "@/src/hooks/useModalNav";
+import useModalTab from "@/src/hooks/useModalTab";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
   PerformanceReviewInterface,
@@ -35,7 +35,7 @@ const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
   const user = session?.user;
   const url = process.env.URL;
 
-  const { activeFormPage, handleActiveFormPage } = useModalNav("Information");
+  const { activeTab, handleActiveTab } = useModalTab("Information");
 
   const handleSurvey = (
     e: React.ChangeEvent<HTMLTextAreaElement>,
@@ -210,13 +210,13 @@ const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
           </button>
         </div>
         <div className="w-full h-full p-2 flex flex-col items-center justify-start gap-4 overflow-hidden t:p-4">
-          <ModalNav
-            activeFormPage={activeFormPage}
-            handleActiveFormPage={handleActiveFormPage}
-            pages={["Information", "Survey"]}
+          <ModalTabs
+            activeTab={activeTab}
+            handleActiveTab={handleActiveTab}
+            tabs={["Information", "Survey"]}
           />
 
-          {activeFormPage === "Information" ? (
+          {activeTab === "Information" ? (
             <div className="w-full h-full flex flex-col items-center justify-start gap-4">
               <TextField
                 label="Title"

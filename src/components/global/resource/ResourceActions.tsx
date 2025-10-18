@@ -1,8 +1,8 @@
-import { HRActionsInterface } from "@/src/interface/CardInterface";
+import { ResourceActionsInterface } from "@/src/interface/CardInterface";
 import React from "react";
 import { IoPencil, IoPersonAdd, IoTrash } from "react-icons/io5";
 
-const HRActions: React.FC<HRActionsInterface> = (props) => {
+const ResourceActions: React.FC<ResourceActionsInterface> = (props) => {
   return (
     <div className="flex flex-row items-center justify-between gap-2 w-full">
       {props.handleActiveEdit ? (
@@ -38,4 +38,4 @@ const HRActions: React.FC<HRActionsInterface> = (props) => {
   );
 };
 
-export default HRActions;
+export default ResourceActions;

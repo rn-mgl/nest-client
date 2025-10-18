@@ -1,11 +1,11 @@
 "use client";
 
-import BaseActions from "@/src/components/global/base/BaseActions";
-import BaseCard from "@/src/components/global/base/BaseCard";
+import BaseActions from "@/src/components/global/resource/BaseActions";
+import BaseCard from "@/src/components/global/resource/BaseCard";
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import Filter from "@/src/components/global/filter/Filter";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
-import HRActions from "@/src/components/hr/global/HRActions";
+import ResourceActions from "@/src/components/global/resource/ResourceActions";
 import AssignPerformanceReview from "@/src/components/hr/performance/AssignPerformanceReview";
 import CreatePerformanceReview from "@/src/components/hr/performance/CreatePerformanceReview";
 import EditPerformanceReview from "@/src/components/hr/performance/EditPerformanceReview";
@@ -145,7 +145,7 @@ const PerformanceReview = () => {
             handleActivePerformanceReviewSeeMore(performanceReviewId)
           }
         />
-        <HRActions
+        <ResourceActions
           handleActiveAssign={() =>
             handleActiveAssignPerformanceReview(performanceReviewId)
           }

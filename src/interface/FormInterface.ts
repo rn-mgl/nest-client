@@ -47,12 +47,6 @@ export interface SelectInterface {
   icon?: React.ReactNode;
 }
 
-export interface ModalNavInterface {
-  activeFormPage: string;
-  pages: Array<string>;
-  handleActiveFormPage: (page: string) => void;
-}
-
 export interface CheckBoxInterface {
   isChecked: boolean;
   onClick: () => void;

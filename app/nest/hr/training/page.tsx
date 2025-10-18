@@ -10,10 +10,10 @@ import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import Filter from "@/src/components/global/filter/Filter";
 import AssignTraining from "@/src/components/hr/training/AssignTraining";
 
-import BaseActions from "@/src/components/global/base/BaseActions";
-import BaseCard from "@/src/components/global/base/BaseCard";
+import BaseActions from "@/src/components/global/resource/BaseActions";
+import BaseCard from "@/src/components/global/resource/BaseCard";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
-import HRActions from "@/src/components/hr/global/HRActions";
+import ResourceActions from "@/src/components/global/resource/ResourceActions";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
@@ -125,7 +125,7 @@ const HRTraining = () => {
           <BaseActions
             handleActiveSeeMore={() => handleActiveTrainingSeeMore(trainingId)}
           />
-          <HRActions
+          <ResourceActions
             handleActiveAssign={() => handleActiveAssignTraining(trainingId)}
             handleActiveDelete={() => handleActiveDeleteTraining(trainingId)}
             handleActiveEdit={() => handleActiveEditTraining(trainingId)}

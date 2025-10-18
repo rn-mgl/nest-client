@@ -3,7 +3,7 @@ import { ModalInterface } from "@/src/interface/ModalInterface";
 import Input from "@/components/form/Input";
 import TextArea from "@/components/form/TextArea";
 import useDynamicFields from "@/src/hooks/useDynamicFields";
-import useModalNav from "@/src/hooks/useModalNav";
+import useModalTab from "@/src/hooks/useModalTab";
 import {
   PerformanceReviewInterface,
   PerformanceReviewSurveyInterface,
@@ -14,7 +14,7 @@ import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd, IoClose, IoReader, IoText, IoTrash } from "react-icons/io5";
-import ModalNav from "@/global/navigation/ModalNav";
+import ModalTabs from "@/global/navigation/ModalTabs";
 import { useToasts } from "@/src/context/ToastContext";
 
 const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
@@ -34,7 +34,7 @@ const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
         survey: "",
       },
     ]);
-  const { activeFormPage, handleActiveFormPage } = useModalNav("information");
+  const { activeTab, handleActiveTab } = useModalTab("information");
 
   const url = process.env.URL;
   const { data } = useSession({ required: true });
@@ -192,13 +192,13 @@ const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
           onSubmit={(e) => submitUpdatePerformanceReview(e)}
           className="w-full h-full p-2 flex flex-col items-center justify-start gap-4 overflow-hidden t:p-4"
         >
-          <ModalNav
-            activeFormPage={activeFormPage}
-            pages={["information", "surveys"]}
-            handleActiveFormPage={handleActiveFormPage}
+          <ModalTabs
+            activeTab={activeTab}
+            tabs={["information", "surveys"]}
+            handleActiveTab={handleActiveTab}
           />
 
-          {activeFormPage === "information" ? (
+          {activeTab === "information" ? (
             <div className="w-full h-full flex flex-col items-center justify-start gap-4">
               <Input
                 id="title"

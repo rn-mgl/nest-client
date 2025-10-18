@@ -1,6 +1,6 @@
 "use client";
 
-import Tabs from "@/global/navigation/Tabs";
+import PageTabs from "@/global/navigation/PageTabs";
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import Table from "@/src/components/global/field/Table";
 import Filter from "@/src/components/global/filter/Filter";
@@ -341,7 +341,7 @@ const Leave = ({
       ) : null}
 
       <div className="w-full h-auto flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2 t:p-4 gap-4 t:gap-8">
-        <Tabs activeTab={activeTab} tabs={["balances", "requests"]} />
+        <PageTabs activeTab={activeTab} tabs={["balances", "requests"]} />
 
         <div className="w-full flex flex-col items-center justify-center gap-4 t:gap-8 ">
           <Filter

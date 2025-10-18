@@ -1,6 +1,6 @@
 "use client";
 
-import useModalNav from "@/src/hooks/useModalNav";
+import useModalTab from "@/src/hooks/useModalTab";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
   OnboardingInterface,
@@ -9,7 +9,7 @@ import {
 } from "@/src/interface/OnboardingInterface";
 import axios, { isAxiosError } from "axios";
 
-import ModalNav from "@/global/navigation/ModalNav";
+import ModalTabs from "@/global/navigation/ModalTabs";
 import TextBlock from "@/global/field/TextBlock";
 import TextField from "@/global/field/TextField";
 import { useSession } from "next-auth/react";
@@ -33,7 +33,7 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
 
   const { addToast } = useToasts();
 
-  const { activeFormPage, handleActiveFormPage } = useModalNav("information");
+  const { activeTab, handleActiveTab } = useModalTab("information");
 
   const url = process.env.URL;
   const { data } = useSession({ required: true });
@@ -125,18 +125,18 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
           </button>
         </div>
         <div className="w-full h-full p-2 gap-4 flex flex-col items-center justify-start overflow-hidden t:p-4">
-          <ModalNav
-            activeFormPage={activeFormPage}
-            pages={["information", "documents", "acknowledgements"]}
-            handleActiveFormPage={handleActiveFormPage}
+          <ModalTabs
+            activeTab={activeTab}
+            tabs={["information", "documents", "acknowledgements"]}
+            handleActiveTab={handleActiveTab}
           />
 
-          {activeFormPage === "information" ? (
+          {activeTab === "information" ? (
             <div className="w-full h-full flex flex-col items-center justify-start gap-4">
               <TextField label="Title" value={onboarding.title} />
               <TextBlock label="Description" value={onboarding.description} />
             </div>
-          ) : activeFormPage === "documents" ? (
+          ) : activeTab === "documents" ? (
             <div className="w-full h-full flex flex-col items-start justify-start gap-4 overflow-hidden t:flex-row">
               <div className="w-full h-full flex flex-col items-start justify-start gap-2 rounded-md overflow-hidden">
                 <div className="w-full flex flex-col gap-2 items-center justify-start overflow-y-auto h-full">
@@ -144,7 +144,7 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
                 </div>
               </div>
             </div>
-          ) : activeFormPage === "acknowledgements" ? (
+          ) : activeTab === "acknowledgements" ? (
             <div className="w-full h-full flex flex-col items-start justify-start gap-4 overflow-hidden t:flex-row">
               <div className="w-full h-full flex flex-col items-start justify-start gap-2 rounded-md overflow-hidden">
                 <div className="w-full flex flex-col gap-2 items-center justify-start overflow-y-auto h-full">

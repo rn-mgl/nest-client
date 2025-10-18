@@ -16,10 +16,10 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd } from "react-icons/io5";
 
-import BaseCard from "@/src/components/global/base/BaseCard";
+import BaseCard from "@/src/components/global/resource/BaseCard";
 import LeaveRequestForm from "@/src/components/global/leave/LeaveRequestForm";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
-import HRActions from "@/src/components/hr/global/HRActions";
+import ResourceActions from "@/src/components/global/resource/ResourceActions";
 import { useToasts } from "@/src/context/ToastContext";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
 import useIsLoading from "@/src/hooks/useIsLoading";
@@ -128,7 +128,7 @@ const HRLeave = () => {
           description={leave.description}
           createdBy={createdBy}
         >
-          <HRActions
+          <ResourceActions
             handleActiveAssign={() => handleActiveAssignLeaveType(leaveId)}
             handleActiveEdit={() => handleActiveEditLeaveType(leaveId)}
             handleActiveDelete={() => handleActiveDeleteLeaveType(leaveId)}

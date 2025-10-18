@@ -1,17 +1,17 @@
-import { ModalNavInterface } from "@/src/interface/FormInterface";
+import { ModalTabsInterface } from "@/src/interface/NavInterface";
 import React from "react";
 
-const ModalNav: React.FC<ModalNavInterface> = (props) => {
-  const mappedNavs = props.pages.map((page, index) => {
+const ModalTabs: React.FC<ModalTabsInterface> = (props) => {
+  const mappedTabs = props.tabs.map((page, index) => {
     return (
       <button
         key={index}
         className={`min-w-full t:w-full t:min-w-fit p-2 t:px-4 text-sm transition-all capitalize ${
-          props.activeFormPage === page
+          props.activeTab === page
             ? " text-accent-blue font-bold border-b-2 border-accent-blue"
             : "border-b-2"
         }`}
-        onClick={() => props.handleActiveFormPage(page)}
+        onClick={() => props.handleActiveTab(page)}
         type="button"
       >
         {page}
@@ -22,10 +22,10 @@ const ModalNav: React.FC<ModalNavInterface> = (props) => {
   return (
     <div className="w-full flex flex-col items-center justify-center">
       <div className="w-full flex flex-row items-center justify-between overflow-x-auto overflow-y-hidden">
-        {mappedNavs}
+        {mappedTabs}
       </div>
     </div>
   );
 };
 
-export default ModalNav;
+export default ModalTabs;

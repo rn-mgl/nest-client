@@ -1,7 +1,7 @@
 "use client";
 import ShowOnboarding from "@/src/components/employee/onboarding/ShowOnboarding";
-import BaseActions from "@/src/components/global/base/BaseActions";
-import BaseCard from "@/src/components/global/base/BaseCard";
+import BaseActions from "@/src/components/global/resource/BaseActions";
+import BaseCard from "@/src/components/global/resource/BaseCard";
 import Filter from "@/src/components/global/filter/Filter";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import { useToasts } from "@/src/context/ToastContext";

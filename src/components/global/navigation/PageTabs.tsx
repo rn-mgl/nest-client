@@ -1,10 +1,8 @@
+import { PageTabsInterface } from "@/src/interface/NavInterface";
 import Link from "next/link";
 import React from "react";
 
-const Tabs: React.FC<{
-  tabs: string[];
-  activeTab: string;
-}> = (props) => {
+const PageTabs: React.FC<PageTabsInterface> = (props) => {
   const mappedTabs = props.tabs.map((tab, index) => {
     return (
       <Link
@@ -22,7 +20,7 @@ const Tabs: React.FC<{
   });
 
   return (
-    <div className="w-full p-2 t:p-4">
+    <div className="w-full">
       <div className="w-full flex flex-row items-center justify-start overflow-x-auto">
         {mappedTabs}
       </div>
@@ -30,4 +28,4 @@ const Tabs: React.FC<{
   );
 };
 
-export default Tabs;
+export default PageTabs;
