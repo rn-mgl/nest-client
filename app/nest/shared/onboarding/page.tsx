@@ -176,9 +176,16 @@ const Onboarding = ({
       handleIsLoading(true);
 
       try {
-        const endpoint = ["assigned", "resource"].includes(tab)
+        let endpoint = ["assigned", "resource"].includes(tab)
           ? tab
           : "assigned";
+
+        if (
+          endpoint === "resource" &&
+          !user?.permissions.includes("read.onboarding_resource")
+        ) {
+          endpoint = "assigned";
+        }
 
         if (user?.token) {
           const { data: responseData } = await axios.get(
@@ -210,7 +217,7 @@ const Onboarding = ({
         handleIsLoading(false);
       }
     },
-    [url, user?.token, addToast, handleIsLoading]
+    [url, user?.token, user?.permissions, addToast, handleIsLoading]
   );
 
   const mappedOnboardings = useFilterAndSort(
@@ -225,72 +232,69 @@ const Onboarding = ({
     // if the onboarding is a UserOnboardingInterface, it is from the Assigned view
     const isAssignedOnboarding = isUserOnboardingSummary(onboarding);
 
-    const onboardingId = onboarding.id ?? 0;
-
-    const title = isResourceOnboarding
-      ? onboarding.title
-      : isAssignedOnboarding
-      ? onboarding.onboarding.title
-      : "";
-
-    const description = isResourceOnboarding
-      ? onboarding.description
-      : isAssignedOnboarding
-      ? onboarding.onboarding.description
-      : "";
-
-    const assignedBy =
-      isAssignedOnboarding && isUserSummary(onboarding.assigned_by)
+    if (activeTab === "assigned" && isAssignedOnboarding) {
+      const assignedBy = isUserSummary(onboarding.assigned_by)
         ? onboarding.assigned_by.first_name
         : null;
 
-    const createdBy =
-      isResourceOnboarding && isUserSummary(onboarding.created_by)
-        ? onboarding.created_by.first_name
-        : null;
-
-    const actions = [
-      <BaseActions
-        key={`base-action-${onboardingId}`}
-        handleActiveSeeMore={() =>
-          handleActiveOnboardingSeeMore(onboarding.id ?? 0)
-        }
-      />,
-    ];
-
-    // push resource actions if resource view and can manage
-    if (isResourceOnboarding && canManage) {
-      actions.push(
-        <ResourceActions
-          key={`resource-action-${onboardingId}`}
-          handleActiveEdit={
-            canEdit ? () => handleActiveEditOnboarding(onboardingId) : undefined
-          }
-          handleActiveDelete={
-            canDelete
-              ? () => handleActiveDeleteOnboarding(onboardingId)
-              : undefined
-          }
-          handleActiveAssign={
-            canAssign
-              ? () => handleActiveAssignOnboarding(onboardingId)
-              : undefined
-          }
-        />
+      return (
+        <BaseCard
+          key={index}
+          title={onboarding.onboarding.title}
+          description={onboarding.onboarding.description}
+          assignedBy={assignedBy}
+        >
+          <BaseActions
+            key={`base-action-${onboarding.onboarding.id}`}
+            handleActiveSeeMore={
+              () => handleActiveOnboardingSeeMore(onboarding.id ?? 0) // user_onboarding id
+            }
+          />
+        </BaseCard>
       );
     }
 
-    return (
-      <BaseCard
-        key={index}
-        title={title}
-        description={description}
-        assignedBy={assignedBy}
-        createdBy={createdBy}
-      >
-        {actions}
-      </BaseCard>
-    );
+    if (activeTab === "resource" && isResourceOnboarding) {
+      const createdBy = isUserSummary(onboarding.created_by)
+        ? onboarding.created_by.first_name
+        : null;
+
+      return (
+        <BaseCard
+          key={index}
+          title={onboarding.title}
+          description={onboarding.description}
+          assignedBy={createdBy}
+        >
+          <BaseActions
+            key={`base-action-${onboarding.id}`}
+            handleActiveSeeMore={
+              () => handleActiveOnboardingSeeMore(onboarding.id ?? 0) // onboarding id
+            }
+          />
+          {canManage ? (
+            <ResourceActions
+              key={`resource-action-${onboarding.id}`}
+              handleActiveEdit={
+                canEdit
+                  ? () => handleActiveEditOnboarding(onboarding.id ?? 0)
+                  : undefined
+              }
+              handleActiveDelete={
+                canDelete
+                  ? () => handleActiveDeleteOnboarding(onboarding.id ?? 0)
+                  : undefined
+              }
+              handleActiveAssign={
+                canAssign
+                  ? () => handleActiveAssignOnboarding(onboarding.id ?? 0)
+                  : undefined
+              }
+            />
+          ) : null}
+        </BaseCard>
+      );
+    }
   });
 
   React.useEffect(() => {
