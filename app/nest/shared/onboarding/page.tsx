@@ -21,6 +21,7 @@ import {
   OnboardingInterface,
   UserOnboardingInterface,
 } from "@/src/interface/OnboardingInterface";
+import { ONBOARDING_ENDPOINT } from "@/src/utils/endpoint";
 import {
   ASSIGNED_ONBOARDING_CATEGORY,
   ASSIGNED_ONBOARDING_SEARCH,
@@ -175,34 +176,36 @@ const Onboarding = ({
       handleIsLoading(true);
 
       try {
-        let endpoint = ["assigned", "resource"].includes(activeTab)
-          ? activeTab
-          : "assigned";
+        const tabEndpoint =
+          ONBOARDING_ENDPOINT[activeTab as keyof object] ??
+          ONBOARDING_ENDPOINT.assigned;
 
-        if (
-          endpoint === "resource" &&
-          !user?.permissions.includes("read.onboarding_resource")
-        ) {
-          endpoint = "assigned";
-        }
+        const hasPermission =
+          !tabEndpoint.requiredPermission ||
+          user?.permissions.includes(tabEndpoint.requiredPermission);
+
+        const endpoint = hasPermission
+          ? tabEndpoint.url
+          : ONBOARDING_ENDPOINT.assigned.url;
 
         if (user?.token) {
-          const { data: responseData } = await axios.get(
-            `${url}/onboarding/${endpoint}`,
-            {
-              headers: {
-                Authorization: `Bearer ${user.token}`,
-              },
-              withCredentials: true,
-              signal: controller?.signal,
-            }
-          );
+          const { data: responseData } = await axios.get(`${url}/${endpoint}`, {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+            withCredentials: true,
+            signal: controller?.signal,
+          });
 
           if (responseData.onboardings) {
-            if (activeTab === "assigned") {
-              setAssignedOnboardings(responseData.onboardings);
-            } else if (activeTab === "resource") {
-              setResourceOnboardings(responseData.onboardings);
+            switch (activeTab) {
+              case "assigned":
+                setAssignedOnboardings(responseData.onboardings);
+                break;
+              case "resource":
+                setResourceOnboardings(responseData.onboardings);
+              default:
+                break;
             }
           }
         }

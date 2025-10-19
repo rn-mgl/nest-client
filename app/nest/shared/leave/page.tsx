@@ -24,6 +24,7 @@ import {
   LeaveRequestInterface,
   LeaveTypeInterface,
 } from "@/src/interface/LeaveInterface";
+import { LEAVE_ENDPOINT } from "@/src/utils/endpoint";
 import {
   ASSIGNED_LEAVE_TYPE_SEARCH,
   ASSIGNED_LEAVE_TYPE_SORT,
@@ -192,21 +193,43 @@ const Leave = ({
     ]
   );
 
-  const getLeaveTypes = React.useCallback(
+  const getLeaves = React.useCallback(
     async (controller?: AbortController) => {
       try {
+        handleIsLoading(true);
+
+        const tabEndpoint =
+          LEAVE_ENDPOINT[activeTab as keyof object] ?? LEAVE_ENDPOINT.balance;
+
+        const hasPermission =
+          !tabEndpoint.requiredPermission ||
+          user?.permissions.includes(tabEndpoint.requiredPermission);
+
+        const endpoint = hasPermission
+          ? tabEndpoint.url
+          : LEAVE_ENDPOINT.balance.url;
+
         if (user?.token) {
-          const { data: responseData } = await axios.get(
-            `${url}/leave-type/resource`,
-            {
-              headers: { Authorization: `Bearer ${user.token}` },
-              withCredentials: true,
-              signal: controller?.signal,
-            }
-          );
+          const { data: responseData } = await axios.get(`${url}/${endpoint}`, {
+            headers: { Authorization: `Bearer ${user.token}` },
+            withCredentials: true,
+            signal: controller?.signal,
+          });
 
           if (responseData.leaves) {
-            setLeaveTypes(responseData.leaves);
+            switch (activeTab) {
+              case "balance":
+                setLeaveBalances(responseData.leaves);
+                break;
+              case "request":
+                setLeaveRequests(responseData.leaves);
+                break;
+              case "resource":
+                setLeaveTypes(responseData.leaves);
+                break;
+              default:
+                break;
+            }
           }
         }
       } catch (error) {
@@ -217,107 +240,13 @@ const Leave = ({
             error.response?.data.message ??
             error.message ??
             "An error occurred when the leave types are being retrieved.";
-          addToast("Leave Balance Error", message, "error");
-        }
-      }
-    },
-    [user?.token, url, addToast]
-  );
-
-  const getLeaveBalances = React.useCallback(
-    async (controller?: AbortController) => {
-      handleIsLoading(true);
-      try {
-        if (user?.token) {
-          const { data: responseData } = await axios.get(
-            `${url}/leave-type/assigned`,
-            {
-              headers: {
-                Authorization: `Bearer ${user.token}`,
-              },
-              withCredentials: true,
-              signal: controller?.signal,
-            }
-          );
-
-          if (responseData.leave_balances) {
-            setLeaveBalances(responseData.leave_balances);
-          }
-        }
-      } catch (error) {
-        console.log(error);
-
-        if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
-          const message =
-            error.response?.data.message ??
-            error.message ??
-            "An error occurred when the leave balances are being retrieved.";
-          addToast("Leave Balance Error", message, "error");
+          addToast("Leave Error", message, "error");
         }
       } finally {
         handleIsLoading(false);
       }
     },
-    [user?.token, url, addToast, handleIsLoading]
-  );
-
-  const getLeaveRequests = React.useCallback(
-    async (controller?: AbortController) => {
-      handleIsLoading(true);
-      try {
-        if (user?.token) {
-          const { data: responseData } = await axios.get(
-            `${url}/leave-request/resource`,
-            {
-              headers: {
-                Authorization: `Bearer ${user.token}`,
-              },
-              withCredentials: true,
-              signal: controller?.signal,
-            }
-          );
-
-          if (responseData.requests) {
-            setLeaveRequests(responseData.requests);
-          }
-        }
-      } catch (error) {
-        console.log(error);
-
-        let message =
-          "An error occurred when the leave requests are being retrieved.";
-
-        if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
-          message = error.response?.data.message ?? error.message;
-        }
-
-        addToast("Leave Request Error", message, "error");
-      } finally {
-        handleIsLoading(false);
-      }
-    },
-    [url, user?.token, addToast, handleIsLoading]
-  );
-
-  const getPageData = React.useCallback(
-    async (tab: string, controller: AbortController) => {
-      try {
-        switch (tab) {
-          case "resource":
-            getLeaveTypes(controller);
-            break;
-          case "balance":
-            getLeaveBalances(controller);
-            break;
-          case "request":
-            getLeaveRequests(controller);
-            break;
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    [getLeaveTypes, getLeaveBalances, getLeaveRequests]
+    [url, user?.permissions, user?.token, activeTab, addToast, handleIsLoading]
   );
 
   const mappedLeaves = useFilterAndSort(leaveTypes, search, sort).map(
@@ -427,15 +356,24 @@ const Leave = ({
   React.useEffect(() => {
     const controller = new AbortController();
 
-    getPageData(activeTab, controller);
+    getLeaves(controller);
 
     return () => {
       controller.abort();
     };
-  }, [getPageData, activeTab]);
+  }, [getLeaves, activeTab]);
 
   React.useEffect(() => {
-    setActiveTab(tab ?? "balance");
+    if (!tab) {
+      setActiveTab("balance");
+      return;
+    }
+
+    const newTab = ["balance", "request", "resource"].includes(tab)
+      ? tab
+      : "balance";
+
+    setActiveTab(newTab);
   }, [setActiveTab, tab]);
 
   React.useEffect(() => {
@@ -448,7 +386,7 @@ const Leave = ({
       user?.permissions.includes("create.leave_type_resource") ? (
         <CreateLeaveType
           toggleModal={handleCanCreateLeaveType}
-          refetchIndex={getLeaveTypes}
+          refetchIndex={getLeaves}
         />
       ) : null}
 
@@ -456,7 +394,7 @@ const Leave = ({
       user?.permissions.includes("update.leave_type_resource") ? (
         <EditLeaveType
           id={activeEditLeaveType}
-          refetchIndex={getLeaveTypes}
+          refetchIndex={getLeaves}
           toggleModal={() => handleActiveEditLeaveType(activeEditLeaveType)}
         />
       ) : null}
@@ -467,7 +405,7 @@ const Leave = ({
           route="leave-type/resource"
           label="Leave"
           id={activeDeleteLeaveType}
-          refetchIndex={getLeaveTypes}
+          refetchIndex={getLeaves}
           toggleModal={() => handleActiveDeleteLeaveType(activeDeleteLeaveType)}
         />
       ) : null}
@@ -484,14 +422,14 @@ const Leave = ({
         <LeaveRequestForm
           id={selectedLeaveRequest}
           toggleModal={() => handleSelectedLeaveRequest(selectedLeaveRequest)}
-          refetchIndex={getLeaveBalances}
+          refetchIndex={getLeaves}
         />
       ) : null}
 
       {canEditLeaveRequest ? (
         <EditLeaveRequest
           toggleModal={() => handleCanEditLeaveRequest(canEditLeaveRequest)}
-          refetchIndex={getLeaveRequests}
+          refetchIndex={getLeaves}
           id={canEditLeaveRequest}
         />
       ) : null}
@@ -500,7 +438,7 @@ const Leave = ({
         <DeleteEntity
           route="leave-request/resource"
           toggleModal={() => handleCanDeleteLeaveRequest(canDeleteLeaveRequest)}
-          refetchIndex={getLeaveRequests}
+          refetchIndex={getLeaves}
           id={canDeleteLeaveRequest}
           label="Leave Request"
         />
