@@ -707,3 +707,78 @@ export const ASSIGNED_ONBOARDING_CATEGORY: CategoryPairsInterface[] = [
     values: ["All", "Pending", "In Progress", "Done"],
   },
 ];
+
+// for user to filter assigned leave types
+
+export const ASSIGNED_LEAVE_TYPE_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "leave.type",
+    label: "Leave Type",
+  },
+];
+
+export const ASSIGNED_LEAVE_TYPE_SORT: SortPairsInterface[] = [
+  {
+    key: "leave.type",
+    label: "Leave Type",
+  },
+  {
+    key: "leave.balance",
+    label: "Balance",
+  },
+];
+
+// for user to filter resource leave type
+
+export const RESOURCE_LEAVE_TYPE_SORT: SortPairsInterface[] = [
+  {
+    key: "type",
+    label: "Leave Type",
+  },
+  {
+    key: "created_at",
+    label: "Created At",
+  },
+];
+
+export const RESOURCE_LEAVE_TYPE_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "type",
+    label: "Leave Type",
+  },
+  {
+    key: "description",
+    label: "Description",
+  },
+];
+
+// for user to filter resource leave requests
+
+export const RESOURCE_LEAVE_REQUEST_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "type",
+    label: "Type",
+  },
+];
+
+export const RESOURCE_LEAVE_REQUEST_SORT: SortPairsInterface[] = [
+  {
+    key: "start_date",
+    label: "Start Date",
+  },
+  {
+    key: "end_date",
+    label: "End Date",
+  },
+  {
+    key: "created_at",
+    label: "Requested At",
+  },
+];
+
+export const RESOURCE_LEAVE_REQUEST_CATEGORY: CategoryPairsInterface[] = [
+  {
+    key: "status",
+    values: ["All", "Pending", "In Progress", "Done", "Approved", "Rejected"],
+  },
+];

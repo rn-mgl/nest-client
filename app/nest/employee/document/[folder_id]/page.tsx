@@ -64,7 +64,7 @@ const Document = () => {
   const {
     category,
     canSeeCategoryDropDown,
-    handleCanSeeCategoryDropDown,
+    toggleCanSeeCategoryDropDown,
     handleSelectCategory,
   } = useCategory("", "All");
 
@@ -236,7 +236,7 @@ const Document = () => {
             categoryKey: category.categoryKey,
             categoryValue: category.categoryValue,
             canSeeCategoryDropDown: canSeeCategoryDropDown,
-            toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
+            toggleCanSeeCategoryDropDown: toggleCanSeeCategoryDropDown,
             selectCategory: handleSelectCategory,
           }}
           //

@@ -76,7 +76,7 @@ const HRDocument = () => {
   const {
     category,
     canSeeCategoryDropDown,
-    handleCanSeeCategoryDropDown,
+    toggleCanSeeCategoryDropDown,
     handleSelectCategory,
   } = useCategory("type", "All");
   const {
@@ -351,7 +351,7 @@ const HRDocument = () => {
             categoryKey: category.categoryKey,
             categoryValue: category.categoryValue,
             canSeeCategoryDropDown: canSeeCategoryDropDown,
-            toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
+            toggleCanSeeCategoryDropDown: toggleCanSeeCategoryDropDown,
             selectCategory: handleSelectCategory,
           }}
           //

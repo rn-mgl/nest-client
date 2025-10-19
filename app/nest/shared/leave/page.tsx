@@ -25,11 +25,13 @@ import {
   LeaveTypeInterface,
 } from "@/src/interface/LeaveInterface";
 import {
-  EMPLOYEE_LEAVE_BALANCE_SEARCH,
-  EMPLOYEE_LEAVE_BALANCE_SORT,
-  EMPLOYEE_LEAVE_REQUEST_CATEGORY,
-  EMPLOYEE_LEAVE_REQUEST_SEARCH,
-  EMPLOYEE_LEAVE_REQUEST_SORT,
+  ASSIGNED_LEAVE_TYPE_SEARCH,
+  ASSIGNED_LEAVE_TYPE_SORT,
+  RESOURCE_LEAVE_REQUEST_CATEGORY,
+  RESOURCE_LEAVE_REQUEST_SEARCH,
+  RESOURCE_LEAVE_REQUEST_SORT,
+  RESOURCE_LEAVE_TYPE_SEARCH,
+  RESOURCE_LEAVE_TYPE_SORT,
 } from "@/src/utils/filters";
 import {
   isUserSummary,
@@ -88,17 +90,19 @@ const Leave = ({
   }, [canEditLeaveType, canAssignLeaveType, canDeleteLeaveType]);
 
   const searchFilter = {
-    balance: EMPLOYEE_LEAVE_BALANCE_SEARCH,
-    request: EMPLOYEE_LEAVE_REQUEST_SEARCH,
+    balance: ASSIGNED_LEAVE_TYPE_SEARCH,
+    request: RESOURCE_LEAVE_REQUEST_SEARCH,
+    resource: RESOURCE_LEAVE_TYPE_SEARCH,
   };
 
   const sortFilter = {
-    balance: EMPLOYEE_LEAVE_BALANCE_SORT,
-    request: EMPLOYEE_LEAVE_REQUEST_SORT,
+    balance: ASSIGNED_LEAVE_TYPE_SORT,
+    request: RESOURCE_LEAVE_REQUEST_SORT,
+    resource: RESOURCE_LEAVE_TYPE_SORT,
   };
 
   const categoryFilter = {
-    request: EMPLOYEE_LEAVE_REQUEST_CATEGORY,
+    request: RESOURCE_LEAVE_REQUEST_CATEGORY,
   };
 
   const {
@@ -120,7 +124,7 @@ const Leave = ({
   const {
     category,
     canSeeCategoryDropDown,
-    handleCanSeeCategoryDropDown,
+    toggleCanSeeCategoryDropDown,
     handleSelectCategory,
   } = useCategory("status", "All");
 
@@ -162,13 +166,20 @@ const Leave = ({
           handleSelectSort("leave.type", "Leave Type");
           handleSelectCategory("", "");
           if (canSeeCategoryDropDown) {
-            handleCanSeeCategoryDropDown();
+            toggleCanSeeCategoryDropDown();
           }
           break;
         case "request":
           handleSelectSearch("type", "Leave Type");
           handleSelectSort("type", "Leave Type");
           handleSelectCategory("status", "All");
+          break;
+        case "resource":
+          handleSelectSearch("type", "Leave Type");
+          handleSelectSort("type", "Leave Type");
+          if (canSeeCategoryDropDown) {
+            toggleCanSeeCategoryDropDown();
+          }
           break;
       }
     },
@@ -177,7 +188,7 @@ const Leave = ({
       handleSelectSearch,
       handleSelectSort,
       handleSelectCategory,
-      handleCanSeeCategoryDropDown,
+      toggleCanSeeCategoryDropDown,
     ]
   );
 
@@ -536,7 +547,7 @@ const Leave = ({
               categoryValue: category.categoryValue,
               canSeeCategoryDropDown: canSeeCategoryDropDown,
               selectCategory: handleSelectCategory,
-              toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
+              toggleCanSeeCategoryDropDown: toggleCanSeeCategoryDropDown,
             }}
           />
 

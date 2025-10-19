@@ -43,7 +43,7 @@ const Training = () => {
   const {
     category,
     canSeeCategoryDropDown,
-    handleCanSeeCategoryDropDown,
+    toggleCanSeeCategoryDropDown,
     handleSelectCategory,
   } = useCategory("status", "All");
 
@@ -151,7 +151,7 @@ const Training = () => {
             categoryKey: category.categoryKey,
             categoryValue: category.categoryValue,
             canSeeCategoryDropDown: canSeeCategoryDropDown,
-            toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
+            toggleCanSeeCategoryDropDown: toggleCanSeeCategoryDropDown,
             selectCategory: handleSelectCategory,
           }}
           //

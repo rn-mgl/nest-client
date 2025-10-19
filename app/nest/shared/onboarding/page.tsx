@@ -118,7 +118,7 @@ const Onboarding = ({
   const {
     category,
     canSeeCategoryDropDown,
-    handleCanSeeCategoryDropDown,
+    toggleCanSeeCategoryDropDown,
     handleSelectCategory,
   } = useCategory("status", "All");
 
@@ -154,7 +154,7 @@ const Onboarding = ({
           handleSelectSearch("title", "Title");
           handleSelectSort("title", "Title");
           if (canSeeCategoryDropDown) {
-            handleCanSeeCategoryDropDown();
+            toggleCanSeeCategoryDropDown();
           }
           break;
         default:
@@ -166,7 +166,7 @@ const Onboarding = ({
       handleSelectSearch,
       handleSelectSort,
       handleSelectCategory,
-      handleCanSeeCategoryDropDown,
+      toggleCanSeeCategoryDropDown,
     ]
   );
 
@@ -408,7 +408,7 @@ const Onboarding = ({
             categoryValue: category.categoryValue,
             canSeeCategoryDropDown: canSeeCategoryDropDown,
             selectCategory: handleSelectCategory,
-            toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
+            toggleCanSeeCategoryDropDown: toggleCanSeeCategoryDropDown,
           }}
           //
           sortKeyLabelPairs={SORT_FILTERS[activeTab as keyof object]}

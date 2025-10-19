@@ -56,7 +56,7 @@ const AdminHR = () => {
   const {
     canSeeCategoryDropDown,
     category,
-    handleCanSeeCategoryDropDown,
+    toggleCanSeeCategoryDropDown,
     handleSelectCategory,
   } = useCategory("email_verified_at", "All");
 
@@ -281,7 +281,7 @@ const AdminHR = () => {
             categoryKey: category.categoryKey,
             categoryValue: category.categoryValue,
             canSeeCategoryDropDown: canSeeCategoryDropDown,
-            toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
+            toggleCanSeeCategoryDropDown: toggleCanSeeCategoryDropDown,
             selectCategory: handleSelectCategory,
           }}
         />

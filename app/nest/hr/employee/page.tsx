@@ -133,7 +133,7 @@ const HRUser = ({
   const {
     canSeeCategoryDropDown,
     category,
-    handleCanSeeCategoryDropDown,
+    toggleCanSeeCategoryDropDown,
     handleSelectCategory,
   } = useCategory("verification_status", "All");
 
@@ -583,7 +583,7 @@ const HRUser = ({
                 categoryKey: category.categoryKey,
                 categoryValue: category.categoryValue,
                 canSeeCategoryDropDown: canSeeCategoryDropDown,
-                toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
+                toggleCanSeeCategoryDropDown: toggleCanSeeCategoryDropDown,
                 selectCategory: handleSelectCategory,
               }}
               //

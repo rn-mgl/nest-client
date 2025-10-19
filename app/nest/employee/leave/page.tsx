@@ -89,7 +89,7 @@ const Leave = ({
   const {
     category,
     canSeeCategoryDropDown,
-    handleCanSeeCategoryDropDown,
+    toggleCanSeeCategoryDropDown,
     handleSelectCategory,
   } = useCategory("status", "All");
 
@@ -208,7 +208,7 @@ const Leave = ({
           handleSelectSort("leave.type", "Leave Type");
           handleSelectCategory("", "");
           if (canSeeCategoryDropDown) {
-            handleCanSeeCategoryDropDown();
+            toggleCanSeeCategoryDropDown();
           }
           break;
         case "requests":
@@ -223,7 +223,7 @@ const Leave = ({
       handleSelectSearch,
       handleSelectSort,
       handleSelectCategory,
-      handleCanSeeCategoryDropDown,
+      toggleCanSeeCategoryDropDown,
     ]
   );
 
@@ -374,7 +374,7 @@ const Leave = ({
               categoryValue: category.categoryValue,
               canSeeCategoryDropDown: canSeeCategoryDropDown,
               selectCategory: handleSelectCategory,
-              toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
+              toggleCanSeeCategoryDropDown: toggleCanSeeCategoryDropDown,
             }}
           />
 
