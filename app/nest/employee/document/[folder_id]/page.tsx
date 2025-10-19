@@ -20,7 +20,7 @@ import {
   EMPLOYEE_DOCUMENTS_CATEGORY,
   EMPLOYEE_DOCUMENTS_SEARCH,
   EMPLOYEE_DOCUMENTS_SORT,
-} from "@/src/utils/filters";
+} from "@/src/configs/filters";
 import {
   isDocumentSummary,
   isFolderSummary,

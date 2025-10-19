@@ -20,7 +20,7 @@ import {
   HR_DOCUMENTS_SEARCH,
   HR_DOCUMENTS_SORT,
   HR_FOLDERS_SEARCH,
-} from "@/src/utils/filters";
+} from "@/src/configs/filters";
 import axios, { isAxiosError } from "axios";
 
 import BaseActions from "@/src/components/global/resource/BaseActions";

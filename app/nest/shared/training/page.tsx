@@ -14,7 +14,7 @@ import {
   EMPLOYEE_TRAINING_CATEGORY,
   EMPLOYEE_TRAINING_SEARCH,
   EMPLOYEE_TRAINING_SORT,
-} from "@/src/utils/filters";
+} from "@/src/configs/filters";
 import { isUserSummary } from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";

@@ -15,7 +15,7 @@ import {
   EMPLOYEE_ONBOARDING_CATEGORY,
   EMPLOYEE_ONBOARDING_SEARCH,
   EMPLOYEE_ONBOARDING_SORT,
-} from "@/src/utils/filters";
+} from "@/src/configs/filters";
 import { isUserSummary } from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";

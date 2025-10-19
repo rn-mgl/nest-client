@@ -24,7 +24,7 @@ import {
   EMPLOYEE_LEAVE_REQUEST_CATEGORY,
   EMPLOYEE_LEAVE_REQUEST_SEARCH,
   EMPLOYEE_LEAVE_REQUEST_SORT,
-} from "@/src/utils/filters";
+} from "@/src/configs/filters";
 import { normalizeDate, normalizeString } from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";

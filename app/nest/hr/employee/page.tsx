@@ -38,7 +38,7 @@ import {
   HR_EMPLOYEE_TRAINING_CATEGORY,
   HR_EMPLOYEE_TRAINING_SEARCH,
   HR_EMPLOYEE_TRAINING_SORT,
-} from "@/src/utils/filters";
+} from "@/src/configs/filters";
 import { getCSRFToken } from "@/src/utils/token";
 import {
   isCloudFileSummary,

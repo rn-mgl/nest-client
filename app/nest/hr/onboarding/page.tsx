@@ -9,7 +9,10 @@ import ShowOnboarding from "@/src/components/onboarding/ShowOnboarding";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { OnboardingInterface } from "@/src/interface/OnboardingInterface";
-import { HR_ONBOARDING_SEARCH, HR_ONBOARDING_SORT } from "@/src/utils/filters";
+import {
+  HR_ONBOARDING_SEARCH,
+  HR_ONBOARDING_SORT,
+} from "@/src/configs/filters";
 import axios, { isAxiosError } from "axios";
 
 import BaseActions from "@/src/components/global/resource/BaseActions";

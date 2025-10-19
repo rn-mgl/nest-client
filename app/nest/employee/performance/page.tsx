@@ -12,7 +12,7 @@ import { UserPerformanceReviewInterface } from "@/src/interface/PerformanceRevie
 import {
   EMPLOYEE_PERFORMANCE_REVIEW_SEARCH,
   EMPLOYEE_PERFORMANCE_REVIEW_SORT,
-} from "@/src/utils/filters";
+} from "@/src/configs/filters";
 import { isUserSummary } from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";

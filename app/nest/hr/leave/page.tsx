@@ -9,7 +9,10 @@ import EditLeaveType from "@/src/components/hr/leave/EditLeaveType";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { LeaveTypeInterface } from "@/src/interface/LeaveInterface";
-import { HR_LEAVE_TYPE_SEARCH, HR_LEAVE_TYPE_SORT } from "@/src/utils/filters";
+import {
+  HR_LEAVE_TYPE_SEARCH,
+  HR_LEAVE_TYPE_SORT,
+} from "@/src/configs/filters";
 import axios, { isAxiosError } from "axios";
 
 import { useSession } from "next-auth/react";

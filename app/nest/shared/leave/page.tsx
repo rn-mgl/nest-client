@@ -24,7 +24,7 @@ import {
   LeaveRequestInterface,
   LeaveTypeInterface,
 } from "@/src/interface/LeaveInterface";
-import { LEAVE_ENDPOINT } from "@/src/utils/endpoint";
+import { LEAVE_ENDPOINT } from "@/src/configs/endpoint";
 import {
   ASSIGNED_LEAVE_TYPE_SEARCH,
   ASSIGNED_LEAVE_TYPE_SORT,
@@ -33,7 +33,7 @@ import {
   RESOURCE_LEAVE_REQUEST_SORT,
   RESOURCE_LEAVE_TYPE_SEARCH,
   RESOURCE_LEAVE_TYPE_SORT,
-} from "@/src/utils/filters";
+} from "@/src/configs/filters";
 import {
   isUserSummary,
   normalizeDate,

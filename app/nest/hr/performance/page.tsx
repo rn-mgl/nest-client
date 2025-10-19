@@ -20,7 +20,7 @@ import { PerformanceReviewInterface } from "@/src/interface/PerformanceReviewInt
 import {
   HR_PERFORMANCE_SEARCH,
   HR_PERFORMANCE_SORT,
-} from "@/src/utils/filters";
+} from "@/src/configs/filters";
 import { isUserSummary } from "@/src/utils/utils";
 import axios, { isAxiosError } from "axios";
 

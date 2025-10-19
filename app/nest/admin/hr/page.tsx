@@ -15,7 +15,7 @@ import {
   ADMIN_HR_CATEGORY,
   ADMIN_HR_SEARCH,
   ADMIN_HR_SORT,
-} from "@/src/utils/filters";
+} from "@/src/configs/filters";
 import { getCSRFToken } from "@/src/utils/token";
 import { isCloudFileSummary } from "@/src/utils/utils";
 import axios, { isAxiosError } from "axios";

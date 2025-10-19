@@ -21,14 +21,14 @@ import {
   OnboardingInterface,
   UserOnboardingInterface,
 } from "@/src/interface/OnboardingInterface";
-import { ONBOARDING_ENDPOINT } from "@/src/utils/endpoint";
+import { ONBOARDING_ENDPOINT } from "@/src/configs/endpoint";
 import {
   ASSIGNED_ONBOARDING_CATEGORY,
   ASSIGNED_ONBOARDING_SEARCH,
   ASSIGNED_ONBOARDING_SORT,
   RESOURCE_ONBOARDING_SEARCH,
   RESOURCE_ONBOARDING_SORT,
-} from "@/src/utils/filters";
+} from "@/src/configs/filters";
 import { isUserSummary } from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";
