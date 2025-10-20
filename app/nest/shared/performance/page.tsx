@@ -13,10 +13,13 @@ import ShowAssignedPerformanceReview from "@/src/components/performance/ShowAssi
 import ShowResourcePerformanceReview from "@/src/components/performance/ShowResourcePerformanceReview";
 import { PERFORMANCE_REVIEW_ENDPOINT } from "@/src/configs/endpoint";
 import {
-  EMPLOYEE_PERFORMANCE_REVIEW_SEARCH,
-  EMPLOYEE_PERFORMANCE_REVIEW_SORT,
+  ASSIGNED_PERFORMANCE_REVIEW_SEARCH,
+  ASSIGNED_PERFORMANCE_REVIEW_SORT,
+  RESOURCE_PERFORMANCE_REVIEW_SEARCH,
+  RESOURCE_PERFORMANCE_REVIEW_SORT,
 } from "@/src/configs/filters";
 import { useToasts } from "@/src/context/ToastContext";
+import useFilterAndSort from "@/src/hooks/useFilterAndSort";
 import useIsLoading from "@/src/hooks/useIsLoading";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
@@ -81,6 +84,16 @@ const Performance = ({
     return canCreate || canEdit || canDelete;
   }, [canCreate, canEdit, canDelete]);
 
+  const SEARCH_FILTER = {
+    assigned: ASSIGNED_PERFORMANCE_REVIEW_SEARCH,
+    resource: RESOURCE_PERFORMANCE_REVIEW_SEARCH,
+  };
+
+  const SORT_FILTER = {
+    assigned: ASSIGNED_PERFORMANCE_REVIEW_SORT,
+    resource: RESOURCE_PERFORMANCE_REVIEW_SORT,
+  };
+
   const {
     search,
     canSeeSearchDropDown,
@@ -116,6 +129,23 @@ const Performance = ({
   const handleActiveAssignPerformanceReview = (id: number) => {
     setActiveAssignPerformanceReview((prev) => (prev === id ? 0 : id));
   };
+
+  const handleFilters = React.useCallback(
+    (tab: string) => {
+      switch (tab) {
+        case "assigned":
+          handleSelectSearch("performance_review.title", "Title");
+          handleSelectSort("performance_review.title", "Title");
+          break;
+
+        case "resource":
+          handleSelectSearch("title", "Title");
+          handleSelectSort("title", "Title");
+          break;
+      }
+    },
+    [handleSelectSearch, handleSelectSort]
+  );
 
   const getPerformanceReviews = React.useCallback(
     async (controller?: AbortController) => {
@@ -172,72 +202,74 @@ const Performance = ({
     [url, user?.token, activeTab, user?.permissions, addToast, handleIsLoading]
   );
 
-  const mappedAssignedPerformanceReviews = assignedPerformanceReviews.map(
-    (performance) => {
-      const assignedBy = isUserSummary(performance.assigned_by)
-        ? performance.assigned_by.first_name
-        : null;
+  const mappedAssignedPerformanceReviews = useFilterAndSort(
+    assignedPerformanceReviews,
+    search,
+    sort
+  ).map((performance) => {
+    const assignedBy = isUserSummary(performance.assigned_by)
+      ? performance.assigned_by.first_name
+      : null;
 
-      return (
-        <BaseCard
-          key={`assigned-${performance.id}`}
-          title={performance.performance_review.title}
-          description={performance.performance_review.description}
-          assignedBy={assignedBy}
-        >
-          <BaseActions
-            handleActiveSeeMore={() =>
-              handleActivePerformanceReviewSeeMore(performance.id ?? 0)
+    return (
+      <BaseCard
+        key={`assigned-${performance.id}`}
+        title={performance.performance_review.title}
+        description={performance.performance_review.description}
+        assignedBy={assignedBy}
+      >
+        <BaseActions
+          handleActiveSeeMore={() =>
+            handleActivePerformanceReviewSeeMore(performance.id ?? 0)
+          }
+        />
+      </BaseCard>
+    );
+  });
+
+  const mappedResourcePerformanceReviews = useFilterAndSort(
+    resourcePerformanceReviews,
+    search,
+    sort
+  ).map((performance) => {
+    const createdBy = isUserSummary(performance.created_by)
+      ? performance.created_by.first_name
+      : null;
+
+    return (
+      <BaseCard
+        key={`resource-${performance.id}`}
+        title={performance.title}
+        description={performance.description}
+        createdBy={createdBy}
+      >
+        <BaseActions
+          handleActiveSeeMore={() =>
+            handleActivePerformanceReviewSeeMore(performance.id ?? 0)
+          }
+        />
+        {canManage ? (
+          <ResourceActions
+            handleActiveAssign={
+              canAssign
+                ? () => handleActiveAssignPerformanceReview(performance.id ?? 0)
+                : null
+            }
+            handleActiveDelete={
+              canDelete
+                ? () => handleActiveDeletePerformanceReview(performance.id ?? 0)
+                : null
+            }
+            handleActiveEdit={
+              canEdit
+                ? () => handleActiveEditPerformanceReview(performance.id ?? 0)
+                : null
             }
           />
-        </BaseCard>
-      );
-    }
-  );
-
-  const mappedResourcePerformanceReviews = resourcePerformanceReviews.map(
-    (performance) => {
-      const createdBy = isUserSummary(performance.created_by)
-        ? performance.created_by.first_name
-        : null;
-
-      return (
-        <BaseCard
-          key={`resource-${performance.id}`}
-          title={performance.title}
-          description={performance.description}
-          createdBy={createdBy}
-        >
-          <BaseActions
-            handleActiveSeeMore={() =>
-              handleActivePerformanceReviewSeeMore(performance.id ?? 0)
-            }
-          />
-          {canManage ? (
-            <ResourceActions
-              handleActiveAssign={
-                canAssign
-                  ? () =>
-                      handleActiveAssignPerformanceReview(performance.id ?? 0)
-                  : null
-              }
-              handleActiveDelete={
-                canDelete
-                  ? () =>
-                      handleActiveDeletePerformanceReview(performance.id ?? 0)
-                  : null
-              }
-              handleActiveEdit={
-                canEdit
-                  ? () => handleActiveEditPerformanceReview(performance.id ?? 0)
-                  : null
-              }
-            />
-          ) : null}
-        </BaseCard>
-      );
-    }
-  );
+        ) : null}
+      </BaseCard>
+    );
+  });
 
   React.useEffect(() => {
     const controller = new AbortController();
@@ -259,6 +291,10 @@ const Performance = ({
 
     setActiveTab(newTab);
   }, [tab]);
+
+  React.useEffect(() => {
+    handleFilters(activeTab);
+  }, [activeTab, handleFilters]);
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
@@ -331,7 +367,7 @@ const Performance = ({
         ) : null}
 
         <Filter
-          searchKeyLabelPairs={EMPLOYEE_PERFORMANCE_REVIEW_SEARCH}
+          searchKeyLabelPairs={SEARCH_FILTER[activeTab as keyof object]}
           search={{
             searchKey: search.searchKey,
             searchLabel: search.searchLabel,
@@ -342,7 +378,7 @@ const Performance = ({
             toggleCanSeeSearchDropDown: handleCanSeeSearchDropDown,
           }}
           //
-          sortKeyLabelPairs={EMPLOYEE_PERFORMANCE_REVIEW_SORT}
+          sortKeyLabelPairs={SORT_FILTER[activeTab as keyof object]}
           sort={{
             sortKey: sort.sortKey,
             isAsc: sort.isAsc,

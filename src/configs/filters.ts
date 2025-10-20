@@ -782,3 +782,45 @@ export const RESOURCE_LEAVE_REQUEST_CATEGORY: CategoryPairsInterface[] = [
     values: ["All", "Pending", "In Progress", "Done", "Approved", "Rejected"],
   },
 ];
+
+// for user to filter resource performance reviews
+export const RESOURCE_PERFORMANCE_REVIEW_SORT: SortPairsInterface[] = [
+  {
+    key: "title",
+    label: "Title",
+  },
+  {
+    key: "created_at",
+    label: "Created At",
+  },
+];
+
+export const RESOURCE_PERFORMANCE_REVIEW_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "title",
+    label: "Title",
+  },
+  {
+    key: "description",
+    label: "Description",
+  },
+];
+
+// for user to filter assigned performance review
+export const ASSIGNED_PERFORMANCE_REVIEW_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "performance_review.title",
+    label: "Title",
+  },
+  {
+    key: "performance_review.description",
+    label: "Description",
+  },
+];
+
+export const ASSIGNED_PERFORMANCE_REVIEW_SORT: SortPairsInterface[] = [
+  {
+    key: "performance_review.title",
+    label: "Title",
+  },
+];
