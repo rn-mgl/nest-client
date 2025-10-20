@@ -62,7 +62,7 @@ const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
     try {
       if (user?.token) {
         const { data: responseData } = await axios.get<{
-          performance: PerformanceReviewInterface & {
+          performance_review: PerformanceReviewInterface & {
             surveys: PerformanceReviewSurveyInterface[];
           };
         }>(`${url}/performance-review/resource/${props.id}`, {
@@ -72,8 +72,8 @@ const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
           withCredentials: true,
         });
 
-        if (responseData.performance) {
-          const { surveys, ...performance } = responseData.performance;
+        if (responseData.performance_review) {
+          const { surveys, ...performance } = responseData.performance_review;
           populateFields(surveys);
           setPerformanceReview(performance);
         }

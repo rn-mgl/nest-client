@@ -142,17 +142,13 @@ const Performance = ({
             signal: controller?.signal,
           });
 
-          if (responseData.performance_review_resources) {
+          if (responseData.performance_reviews) {
             switch (activeTab) {
               case "assigned":
-                setAssignedPerformanceReviews(
-                  responseData.performance_review_resources
-                );
+                setAssignedPerformanceReviews(responseData.performance_reviews);
                 break;
               case "resource":
-                setResourcePerformanceReviews(
-                  responseData.performance_review_resources
-                );
+                setResourcePerformanceReviews(responseData.performance_reviews);
                 break;
               default:
                 break;
@@ -306,7 +302,7 @@ const Performance = ({
       {activeDeletePerformanceReview &&
       user?.permissions.includes("delete.performance_review_resource") ? (
         <DeleteEntity
-          route="performance_review"
+          route="performance-review/resource"
           label="Performance Review"
           id={activeDeletePerformanceReview}
           toggleModal={() =>
