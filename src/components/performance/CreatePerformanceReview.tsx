@@ -1,9 +1,9 @@
 import Input from "@/components/form/Input";
 import TextArea from "@/components/form/TextArea";
-import ModalNav from "@/global/navigation/ModalNav";
+import ModalTabs from "@/global/navigation/ModalTabs";
 import { useToasts } from "@/src/context/ToastContext";
 import useDynamicFields from "@/src/hooks/useDynamicFields";
-import useModalNav from "@/src/hooks/useModalNav";
+import useModalTab from "@/src/hooks/useModalTab";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
   PerformanceReviewInterface,
@@ -34,7 +34,7 @@ const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
       { survey: "", created_by: user?.current ?? 0 },
     ]);
 
-  const { activeFormPage, handleActiveFormPage } = useModalNav("information");
+  const { activeTab, handleActiveTab } = useModalTab("information");
 
   const handlePerformanceReview = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -61,7 +61,7 @@ const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: createdPerformanceReview } = await axios.post(
-          `${url}/hr/performance_review`,
+          `${url}/performance-review/resource`,
           { ...performance, surveys: fields },
           {
             headers: {
@@ -146,13 +146,13 @@ const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
           onSubmit={(e) => submitCreatePerformanceReview(e)}
           className="w-full h-full p-2 flex flex-col items-center justify-start gap-4 t:p-4 overflow-hidden"
         >
-          <ModalNav
-            activeFormPage={activeFormPage}
-            pages={["information", "survey"]}
-            handleActiveFormPage={handleActiveFormPage}
+          <ModalTabs
+            activeTab={activeTab}
+            tabs={["information", "survey"]}
+            handleActiveTab={handleActiveTab}
           />
 
-          {activeFormPage === "information" ? (
+          {activeTab === "information" ? (
             <div className="w-full h-full flex flex-col items-center justify-start gap-4">
               <Input
                 id="title"

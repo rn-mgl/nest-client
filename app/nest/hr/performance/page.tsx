@@ -1,15 +1,15 @@
 "use client";
 
-import BaseActions from "@/src/components/global/base/BaseActions";
-import BaseCard from "@/src/components/global/base/BaseCard";
+import BaseActions from "@/src/components/global/resource/BaseActions";
+import BaseCard from "@/src/components/global/resource/BaseCard";
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import Filter from "@/src/components/global/filter/Filter";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
-import HRActions from "@/src/components/hr/global/HRActions";
-import AssignPerformanceReview from "@/src/components/hr/performance/AssignPerformanceReview";
-import CreatePerformanceReview from "@/src/components/hr/performance/CreatePerformanceReview";
-import EditPerformanceReview from "@/src/components/hr/performance/EditPerformanceReview";
-import ShowPerformanceReview from "@/src/components/hr/performance/ShowPerformanceReview";
+import ResourceActions from "@/src/components/global/resource/ResourceActions";
+import AssignPerformanceReview from "@/src/components/performance/AssignPerformanceReview";
+import CreatePerformanceReview from "@/src/components/performance/CreatePerformanceReview";
+import EditPerformanceReview from "@/src/components/performance/EditPerformanceReview";
+import ShowPerformanceReview from "@/src/components/performance/ShowResourcePerformanceReview";
 import { useToasts } from "@/src/context/ToastContext";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
 import useIsLoading from "@/src/hooks/useIsLoading";
@@ -20,7 +20,7 @@ import { PerformanceReviewInterface } from "@/src/interface/PerformanceReviewInt
 import {
   HR_PERFORMANCE_SEARCH,
   HR_PERFORMANCE_SORT,
-} from "@/src/utils/filters";
+} from "@/src/configs/filters";
 import { isUserSummary } from "@/src/utils/utils";
 import axios, { isAxiosError } from "axios";
 
@@ -145,7 +145,7 @@ const PerformanceReview = () => {
             handleActivePerformanceReviewSeeMore(performanceReviewId)
           }
         />
-        <HRActions
+        <ResourceActions
           handleActiveAssign={() =>
             handleActiveAssignPerformanceReview(performanceReviewId)
           }

@@ -2,24 +2,27 @@
 
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import Filter from "@/src/components/global/filter/Filter";
-import AssignLeaveType from "@/src/components/hr/leave/AssignLeaveType";
-import CreateLeaveType from "@/src/components/hr/leave/CreateLeaveType";
-import EditLeaveType from "@/src/components/hr/leave/EditLeaveType";
+import AssignLeaveType from "@/src/components/leave/AssignLeaveType";
+import CreateLeaveType from "@/src/components/leave/CreateLeaveType";
+import EditLeaveType from "@/src/components/leave/EditLeaveType";
 
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { LeaveTypeInterface } from "@/src/interface/LeaveInterface";
-import { HR_LEAVE_TYPE_SEARCH, HR_LEAVE_TYPE_SORT } from "@/src/utils/filters";
+import {
+  HR_LEAVE_TYPE_SEARCH,
+  HR_LEAVE_TYPE_SORT,
+} from "@/src/configs/filters";
 import axios, { isAxiosError } from "axios";
 
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd } from "react-icons/io5";
 
-import BaseCard from "@/src/components/global/base/BaseCard";
-import LeaveRequestForm from "@/src/components/global/leave/LeaveRequestForm";
+import BaseCard from "@/src/components/global/resource/BaseCard";
+import LeaveRequestForm from "@/src/components/leave/LeaveRequestForm";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
-import HRActions from "@/src/components/hr/global/HRActions";
+import ResourceActions from "@/src/components/global/resource/ResourceActions";
 import { useToasts } from "@/src/context/ToastContext";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
 import useIsLoading from "@/src/hooks/useIsLoading";
@@ -128,7 +131,7 @@ const HRLeave = () => {
           description={leave.description}
           createdBy={createdBy}
         >
-          <HRActions
+          <ResourceActions
             handleActiveAssign={() => handleActiveAssignLeaveType(leaveId)}
             handleActiveEdit={() => handleActiveEditLeaveType(leaveId)}
             handleActiveDelete={() => handleActiveDeleteLeaveType(leaveId)}

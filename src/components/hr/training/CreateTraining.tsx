@@ -1,8 +1,8 @@
 import Input from "@/components/form/Input";
 import TextArea from "@/components/form/TextArea";
-import ModalNav from "@/global/navigation/ModalNav";
+import ModalTabs from "@/global/navigation/ModalTabs";
 import useDynamicFields from "@/src/hooks/useDynamicFields";
-import useModalNav from "@/src/hooks/useModalNav";
+import useModalTab from "@/src/hooks/useModalTab";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
   TrainingContentInterface,
@@ -41,7 +41,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
 
   const { addToast } = useToasts();
 
-  const { activeFormPage, handleActiveFormPage } = useModalNav("information");
+  const { activeTab, handleActiveTab } = useModalTab("information");
 
   const {
     fields: contents,
@@ -416,14 +416,14 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
           onSubmit={(e) => submitCreateTraining(e)}
           className="w-full h-full p-2 flex flex-col gap-4 overflow-hidden items-center justify-start t:p-4"
         >
-          <ModalNav
-            activeFormPage={activeFormPage}
-            pages={["information", "contents", "reviews"]}
-            handleActiveFormPage={handleActiveFormPage}
+          <ModalTabs
+            activeTab={activeTab}
+            tabs={["information", "contents", "reviews"]}
+            handleActiveTab={handleActiveTab}
           />
 
           <div className="w-full h-full flex flex-col items-center justify-start overflow-y-auto">
-            {activeFormPage === "information" ? (
+            {activeTab === "information" ? (
               <div className="w-full h-full flex flex-col items-center justify-start gap-4">
                 <Input
                   id="title"
@@ -477,7 +477,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
                   removeSelectedFile={removeSelectedCertificate}
                 />
               </div>
-            ) : activeFormPage === "contents" ? (
+            ) : activeTab === "contents" ? (
               <div className="w-full h-full flex flex-col items-center justify-start t:items-start">
                 <div className="w-full flex flex-row items-center justify-between t:w-60 overflow-hidden">
                   <button
@@ -549,7 +549,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
                   {mappedContents}
                 </div>
               </div>
-            ) : activeFormPage === "reviews" ? (
+            ) : activeTab === "reviews" ? (
               <div className="w-full flex flex-col items-center justify-start gap-2 overflow-hidden">
                 <div className="w-full">
                   <button

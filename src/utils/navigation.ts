@@ -13,6 +13,7 @@ import {
   IoTrendingUp,
 } from "react-icons/io5";
 
+// determine navigation based on role
 export const buildNavigation = (
   roles: string[]
 ): {
@@ -20,10 +21,12 @@ export const buildNavigation = (
   url: string;
   icon: IconType;
 }[] => {
+  // only handle the mappable roles (currently employee, hr, and admin)
   const validRoles = roles.filter((role) => role in ADDITIONAL_NAVIGATION);
 
   if (validRoles.length === 0) return BASE_NAVIGATION;
 
+  // combine the navigations per roles if a user has multiple roles
   const combinedNavigation = [
     ...BASE_NAVIGATION,
     ...validRoles.flatMap(
@@ -34,6 +37,7 @@ export const buildNavigation = (
   return combinedNavigation;
 };
 
+// the navigation that every role should have
 const BASE_NAVIGATION = [
   {
     label: "Dashboard",
@@ -72,6 +76,7 @@ const BASE_NAVIGATION = [
   },
 ];
 
+// the additional navigation per role
 const ADDITIONAL_NAVIGATION = {
   super_admin: [
     {

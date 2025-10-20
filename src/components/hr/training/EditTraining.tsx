@@ -1,9 +1,9 @@
 import Input from "@/components/form/Input";
 import Radio from "@/components/form/Radio";
 import TextArea from "@/components/form/TextArea";
-import ModalNav from "@/global/navigation/ModalNav";
+import ModalTabs from "@/global/navigation/ModalTabs";
 import useDynamicFields from "@/src/hooks/useDynamicFields";
-import useModalNav from "@/src/hooks/useModalNav";
+import useModalTab from "@/src/hooks/useModalTab";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
   TrainingContentInterface,
@@ -48,7 +48,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
 
   const { addToast } = useToasts();
 
-  const { activeFormPage, handleActiveFormPage } = useModalNav("information");
+  const { activeTab, handleActiveTab } = useModalTab("information");
 
   const {
     fields: contents,
@@ -613,13 +613,13 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
           onSubmit={(e) => submitUpdateTraining(e)}
           className="w-full h-full p-2 flex flex-col items-center justify-start gap-4 overflow-hidden t:p-4"
         >
-          <ModalNav
-            activeFormPage={activeFormPage}
-            handleActiveFormPage={handleActiveFormPage}
-            pages={["information", "contents", "reviews"]}
+          <ModalTabs
+            activeTab={activeTab}
+            handleActiveTab={handleActiveTab}
+            tabs={["information", "contents", "reviews"]}
           />
 
-          {activeFormPage === "information" ? (
+          {activeTab === "information" ? (
             <div className="w-full h-full flex flex-col items-center justify-start gap-4 overflow-y-auto p-2">
               <Input
                 id="title"
@@ -703,7 +703,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
                 )}
               </div>
             </div>
-          ) : activeFormPage === "contents" ? (
+          ) : activeTab === "contents" ? (
             <div className="w-full h-full flex flex-col items-center justify-start overflow-hidden gap-4 p-2">
               <div className="w-full h-full flex flex-col items-center justify-start t:items-start">
                 <div className="w-full flex flex-row items-center justify-between t:w-60">
@@ -777,7 +777,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
                 </div>
               </div>
             </div>
-          ) : activeFormPage === "reviews" ? (
+          ) : activeTab === "reviews" ? (
             <div className="w-full h-full flex flex-col items-center justify-start gap-4 overflow-y-auto">
               <div className="w-full">
                 <button

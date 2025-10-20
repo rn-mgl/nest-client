@@ -22,7 +22,6 @@ const LeaveRequestForm: React.FC<ModalInterface> = (props) => {
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
   const user = session?.user;
-  const role = user?.roles;
 
   const handleLeaveRequest = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -44,7 +43,7 @@ const LeaveRequestForm: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: responseData } = await axios.post(
-          `${url}/${role}/leave_request`,
+          `${url}/leave-request/resource`,
           { ...leaveRequest, user_id: user.current, leave_type_id: props.id },
           {
             headers: {

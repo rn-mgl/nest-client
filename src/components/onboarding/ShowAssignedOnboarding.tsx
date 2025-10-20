@@ -1,9 +1,9 @@
 import File from "@/form/File";
 import TextBlock from "@/global/field/TextBlock";
 import TextField from "@/global/field/TextField";
-import ModalNav from "@/global/navigation/ModalNav";
+import ModalTabs from "@/global/navigation/ModalTabs";
 import { useToasts } from "@/src/context/ToastContext";
-import useModalNav from "@/src/hooks/useModalNav";
+import useModalTab from "@/src/hooks/useModalTab";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
   OnboardingPolicyAcknowledgemenInterface,
@@ -21,7 +21,7 @@ import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
 import { IoCheckmark, IoClose } from "react-icons/io5";
 
-const ShowOnboarding: React.FC<ModalInterface> = (props) => {
+const ShowAssignedOnboarding: React.FC<ModalInterface> = (props) => {
   const [onboarding, setOnboarding] =
     React.useState<UserOnboardingInterface | null>(null);
 
@@ -41,7 +41,7 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
 
   const { addToast } = useToasts();
 
-  const { activeFormPage, handleActiveFormPage } = useModalNav("information");
+  const { activeTab, handleActiveTab } = useModalTab("information");
 
   const { data: session } = useSession({ required: true });
   const user = session?.user;
@@ -61,7 +61,7 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
               })[];
             };
           };
-        }>(`${url}/employee/employee_onboarding/${props.id}`, {
+        }>(`${url}/onboarding/assigned/${props.id}`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
@@ -452,13 +452,13 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
           </button>
         </div>
         <div className="w-full h-full flex flex-col items-center justify-start gap-4 p-2 overflow-y-hidden t:p-4">
-          <ModalNav
-            activeFormPage={activeFormPage}
-            handleActiveFormPage={handleActiveFormPage}
-            pages={["information", "documents", "policies"]}
+          <ModalTabs
+            activeTab={activeTab}
+            handleActiveTab={handleActiveTab}
+            tabs={["information", "documents", "policies"]}
           />
 
-          {activeFormPage === "information" ? (
+          {activeTab === "information" ? (
             <div className="w-full flex flex-col items-center justify-start gap-4 h-full">
               <TextField
                 label="Title"
@@ -470,7 +470,7 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
                 value={onboarding?.onboarding.description as string}
               />
             </div>
-          ) : activeFormPage === "documents" ? (
+          ) : activeTab === "documents" ? (
             <div className="w-full h-full flex flex-col items-start justify-start gap-4 overflow-y-hidden">
               <label className="text-xs">Required Documents</label>
 
@@ -478,7 +478,7 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
                 {mappedRequiredDocuments}
               </div>
             </div>
-          ) : activeFormPage === "policies" ? (
+          ) : activeTab === "policies" ? (
             <div className="w-full h-full flex flex-col items-start justify-start gap-4 overflow-y-hidden">
               <label className="text-xs">Policy Acknowledgements</label>
 
@@ -493,4 +493,4 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
   );
 };
 
-export default ShowOnboarding;
+export default ShowAssignedOnboarding;

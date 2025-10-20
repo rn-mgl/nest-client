@@ -1,6 +1,6 @@
 "use client";
 
-import useModalNav from "@/src/hooks/useModalNav";
+import useModalTab from "@/src/hooks/useModalTab";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
   OnboardingInterface,
@@ -9,7 +9,7 @@ import {
 } from "@/src/interface/OnboardingInterface";
 import axios, { isAxiosError } from "axios";
 
-import ModalNav from "@/global/navigation/ModalNav";
+import ModalTabs from "@/global/navigation/ModalTabs";
 import TextBlock from "@/global/field/TextBlock";
 import TextField from "@/global/field/TextField";
 import { useSession } from "next-auth/react";
@@ -17,23 +17,23 @@ import React from "react";
 import { IoClose } from "react-icons/io5";
 import { useToasts } from "@/src/context/ToastContext";
 
-const ShowOnboarding: React.FC<ModalInterface> = (props) => {
-  const [onboarding, setOnboarding] = React.useState<
-    OnboardingInterface & {
-      required_documents: OnboardingRequiredDocumentsInterface[];
-      policy_acknowledgements: OnboardingPolicyAcknowledgemenInterface[];
-    }
-  >({
+const ShowResourceOnboarding: React.FC<ModalInterface> = (props) => {
+  const [onboarding, setOnboarding] = React.useState<OnboardingInterface>({
     title: "",
     description: "",
     created_by: 0,
-    required_documents: [],
-    policy_acknowledgements: [],
   });
+
+  const [requiredDocuments, setRequiredDocuments] = React.useState<
+    OnboardingRequiredDocumentsInterface[]
+  >([]);
+  const [policyAcknowledgements, setPolicyAcknowledgements] = React.useState<
+    OnboardingRequiredDocumentsInterface[]
+  >([]);
 
   const { addToast } = useToasts();
 
-  const { activeFormPage, handleActiveFormPage } = useModalNav("information");
+  const { activeTab, handleActiveTab } = useModalTab("information");
 
   const url = process.env.URL;
   const { data } = useSession({ required: true });
@@ -42,20 +42,25 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
   const getOnboarding = React.useCallback(async () => {
     try {
       if (user?.token) {
-        const { data } = await axios.get<{
+        const { data: responseData } = await axios.get<{
           onboarding: OnboardingInterface & {
             required_documents: OnboardingRequiredDocumentsInterface[];
             policy_acknowledgements: OnboardingPolicyAcknowledgemenInterface[];
           };
-        }>(`${url}/hr/onboarding/${props.id}`, {
+        }>(`${url}/onboarding/resource/${props.id}`, {
           headers: {
             Authorization: `Bearer ${user?.token}`,
           },
           withCredentials: true,
         });
 
-        if (data) {
-          setOnboarding(data.onboarding);
+        if (responseData.onboarding) {
+          const { policy_acknowledgements, required_documents, ...onboarding } =
+            responseData.onboarding;
+
+          setOnboarding(onboarding);
+          setPolicyAcknowledgements(policy_acknowledgements);
+          setRequiredDocuments(required_documents);
         }
       }
     } catch (error) {
@@ -71,24 +76,19 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
     }
   }, [url, user?.token, props.id, addToast]);
 
-  const mappedRequiredDocuments = onboarding.required_documents.map(
-    (req, index) => {
-      return (
-        <div
-          key={index}
-          className="w-full flex flex-col items-center justify-start rounded-md gap-2"
-        >
-          <TextField
-            label={`Required Document ${index + 1}`}
-            value={req.title}
-          />
-          <TextBlock label="" value={req.description} />
-        </div>
-      );
-    }
-  );
+  const mappedRequiredDocuments = requiredDocuments.map((req, index) => {
+    return (
+      <div
+        key={index}
+        className="w-full flex flex-col items-center justify-start rounded-md gap-2"
+      >
+        <TextField label={`Required Document ${index + 1}`} value={req.title} />
+        <TextBlock label="" value={req.description} />
+      </div>
+    );
+  });
 
-  const mappedPolicyAcknowledgements = onboarding.policy_acknowledgements.map(
+  const mappedPolicyAcknowledgements = policyAcknowledgements.map(
     (ack, index) => {
       return (
         <div
@@ -125,18 +125,18 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
           </button>
         </div>
         <div className="w-full h-full p-2 gap-4 flex flex-col items-center justify-start overflow-hidden t:p-4">
-          <ModalNav
-            activeFormPage={activeFormPage}
-            pages={["information", "documents", "acknowledgements"]}
-            handleActiveFormPage={handleActiveFormPage}
+          <ModalTabs
+            activeTab={activeTab}
+            tabs={["information", "documents", "acknowledgements"]}
+            handleActiveTab={handleActiveTab}
           />
 
-          {activeFormPage === "information" ? (
+          {activeTab === "information" ? (
             <div className="w-full h-full flex flex-col items-center justify-start gap-4">
               <TextField label="Title" value={onboarding.title} />
               <TextBlock label="Description" value={onboarding.description} />
             </div>
-          ) : activeFormPage === "documents" ? (
+          ) : activeTab === "documents" ? (
             <div className="w-full h-full flex flex-col items-start justify-start gap-4 overflow-hidden t:flex-row">
               <div className="w-full h-full flex flex-col items-start justify-start gap-2 rounded-md overflow-hidden">
                 <div className="w-full flex flex-col gap-2 items-center justify-start overflow-y-auto h-full">
@@ -144,7 +144,7 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
                 </div>
               </div>
             </div>
-          ) : activeFormPage === "acknowledgements" ? (
+          ) : activeTab === "acknowledgements" ? (
             <div className="w-full h-full flex flex-col items-start justify-start gap-4 overflow-hidden t:flex-row">
               <div className="w-full h-full flex flex-col items-start justify-start gap-2 rounded-md overflow-hidden">
                 <div className="w-full flex flex-col gap-2 items-center justify-start overflow-y-auto h-full">
@@ -159,4 +159,4 @@ const ShowOnboarding: React.FC<ModalInterface> = (props) => {
   );
 };
 
-export default ShowOnboarding;
+export default ShowResourceOnboarding;

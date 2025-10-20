@@ -652,3 +652,175 @@ export const EMPLOYEE_FOLDERS_SEARCH: SearchPairsInterface[] = [
     label: "Title",
   },
 ];
+
+// NEW //
+
+// for user to filter resource onboarding
+export const RESOURCE_ONBOARDING_SORT: SortPairsInterface[] = [
+  {
+    key: "title",
+    label: "Title",
+  },
+  {
+    key: "created_at",
+    label: "Created At",
+  },
+];
+
+export const RESOURCE_ONBOARDING_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "title",
+    label: "Title",
+  },
+  {
+    key: "description",
+    label: "Description",
+  },
+];
+
+// for user to filter assigned onboarding
+export const ASSIGNED_ONBOARDING_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "onboarding.title",
+    label: "Title",
+  },
+  {
+    key: "onboarding.description",
+    label: "Description",
+  },
+];
+
+export const ASSIGNED_ONBOARDING_SORT: SortPairsInterface[] = [
+  {
+    key: "onboarding.title",
+    label: "Title",
+  },
+  {
+    key: "created_at",
+    label: "Assigned At",
+  },
+];
+
+export const ASSIGNED_ONBOARDING_CATEGORY: CategoryPairsInterface[] = [
+  {
+    key: "status",
+    values: ["All", "Pending", "In Progress", "Done"],
+  },
+];
+
+// for user to filter assigned leave types
+
+export const ASSIGNED_LEAVE_TYPE_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "leave.type",
+    label: "Leave Type",
+  },
+];
+
+export const ASSIGNED_LEAVE_TYPE_SORT: SortPairsInterface[] = [
+  {
+    key: "leave.type",
+    label: "Leave Type",
+  },
+  {
+    key: "leave.balance",
+    label: "Balance",
+  },
+];
+
+// for user to filter resource leave type
+
+export const RESOURCE_LEAVE_TYPE_SORT: SortPairsInterface[] = [
+  {
+    key: "type",
+    label: "Leave Type",
+  },
+  {
+    key: "created_at",
+    label: "Created At",
+  },
+];
+
+export const RESOURCE_LEAVE_TYPE_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "type",
+    label: "Leave Type",
+  },
+  {
+    key: "description",
+    label: "Description",
+  },
+];
+
+// for user to filter resource leave requests
+
+export const RESOURCE_LEAVE_REQUEST_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "type",
+    label: "Type",
+  },
+];
+
+export const RESOURCE_LEAVE_REQUEST_SORT: SortPairsInterface[] = [
+  {
+    key: "start_date",
+    label: "Start Date",
+  },
+  {
+    key: "end_date",
+    label: "End Date",
+  },
+  {
+    key: "created_at",
+    label: "Requested At",
+  },
+];
+
+export const RESOURCE_LEAVE_REQUEST_CATEGORY: CategoryPairsInterface[] = [
+  {
+    key: "status",
+    values: ["All", "Pending", "In Progress", "Done", "Approved", "Rejected"],
+  },
+];
+
+// for user to filter resource performance reviews
+export const RESOURCE_PERFORMANCE_REVIEW_SORT: SortPairsInterface[] = [
+  {
+    key: "title",
+    label: "Title",
+  },
+  {
+    key: "created_at",
+    label: "Created At",
+  },
+];
+
+export const RESOURCE_PERFORMANCE_REVIEW_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "title",
+    label: "Title",
+  },
+  {
+    key: "description",
+    label: "Description",
+  },
+];
+
+// for user to filter assigned performance review
+export const ASSIGNED_PERFORMANCE_REVIEW_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "performance_review.title",
+    label: "Title",
+  },
+  {
+    key: "performance_review.description",
+    label: "Description",
+  },
+];
+
+export const ASSIGNED_PERFORMANCE_REVIEW_SORT: SortPairsInterface[] = [
+  {
+    key: "performance_review.title",
+    label: "Title",
+  },
+];

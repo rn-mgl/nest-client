@@ -15,7 +15,7 @@ import {
   ADMIN_HR_CATEGORY,
   ADMIN_HR_SEARCH,
   ADMIN_HR_SORT,
-} from "@/src/utils/filters";
+} from "@/src/configs/filters";
 import { getCSRFToken } from "@/src/utils/token";
 import { isCloudFileSummary } from "@/src/utils/utils";
 import axios, { isAxiosError } from "axios";
@@ -56,7 +56,7 @@ const AdminHR = () => {
   const {
     canSeeCategoryDropDown,
     category,
-    handleCanSeeCategoryDropDown,
+    toggleCanSeeCategoryDropDown,
     handleSelectCategory,
   } = useCategory("email_verified_at", "All");
 
@@ -281,7 +281,7 @@ const AdminHR = () => {
             categoryKey: category.categoryKey,
             categoryValue: category.categoryValue,
             canSeeCategoryDropDown: canSeeCategoryDropDown,
-            toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
+            toggleCanSeeCategoryDropDown: toggleCanSeeCategoryDropDown,
             selectCategory: handleSelectCategory,
           }}
         />

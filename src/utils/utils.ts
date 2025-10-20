@@ -3,7 +3,10 @@ import {
   LeaveRequestInterface,
   LeaveTypeInterface,
 } from "@/interface/LeaveInterface";
-import { OnboardingInterface } from "@/interface/OnboardingInterface";
+import {
+  OnboardingInterface,
+  UserOnboardingInterface,
+} from "@/interface/OnboardingInterface";
 import { PerformanceReviewInterface } from "@/interface/PerformanceReviewInterface";
 import { UserInterface } from "@/interface/UserInterface";
 import {
@@ -26,7 +29,25 @@ export const isUserSummary = (value: unknown): value is UserInterface => {
 export const isOnboardingSummary = (
   value: unknown
 ): value is OnboardingInterface => {
-  return typeof value === "object" && value !== null;
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "title" in value &&
+    "description" in value &&
+    "created_by" in value
+  );
+};
+
+export const isUserOnboardingSummary = (
+  value: unknown
+): value is UserOnboardingInterface => {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "onboarding_id" in value &&
+    "onboarding" in value &&
+    isOnboardingSummary(value.onboarding)
+  );
 };
 
 export const isLeaveTypeSummary = (

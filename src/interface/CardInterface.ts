@@ -13,10 +13,10 @@ export interface BaseActionsInterface {
   handleActiveSeeMore?: () => void;
 }
 
-export interface HRActionsInterface {
-  handleActiveEdit?: () => void;
-  handleActiveAssign?: () => void;
-  handleActiveDelete?: () => void;
+export interface ResourceActionsInterface {
+  handleActiveEdit?: (() => void) | null;
+  handleActiveAssign?: (() => void) | null;
+  handleActiveDelete?: (() => void) | null;
 }
 
 export interface UserCardInterface {

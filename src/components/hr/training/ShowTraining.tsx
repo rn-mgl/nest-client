@@ -1,4 +1,4 @@
-import useModalNav from "@/src/hooks/useModalNav";
+import useModalTab from "@/src/hooks/useModalTab";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
   TrainingContentInterface,
@@ -13,7 +13,7 @@ import Link from "next/link";
 import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
 import { IoClose } from "react-icons/io5";
-import ModalNav from "@/global/navigation/ModalNav";
+import ModalTabs from "@/global/navigation/ModalTabs";
 import TextBlock from "@/global/field/TextBlock";
 import TextField from "@/global/field/TextField";
 import { isCloudFileSummary } from "@/src/utils/utils";
@@ -35,7 +35,7 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
 
   const { addToast } = useToasts();
 
-  const { activeFormPage, handleActiveFormPage } = useModalNav("information");
+  const { activeTab, handleActiveTab } = useModalTab("information");
 
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -205,14 +205,14 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
           </button>
         </div>
         <div className="w-full h-full p-2 flex flex-col items-center justify-start gap-4 overflow-hidden t:p-4">
-          <ModalNav
-            activeFormPage={activeFormPage}
-            pages={["information", "contents", "reviews"]}
-            handleActiveFormPage={handleActiveFormPage}
+          <ModalTabs
+            activeTab={activeTab}
+            tabs={["information", "contents", "reviews"]}
+            handleActiveTab={handleActiveTab}
           />
 
           <div className="w-full h-full flex flex-col items-center justify-start overflow-y-auto">
-            {activeFormPage === "information" ? (
+            {activeTab === "information" ? (
               <div className="w-full h-full flex flex-col items-center justify-start gap-4">
                 <TextField label="Title" value={training.title} />
                 <TextField
@@ -241,11 +241,11 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
                   </div>
                 </div>
               </div>
-            ) : activeFormPage === "contents" ? (
+            ) : activeTab === "contents" ? (
               <div className="w-full flex flex-col items-center justify-start p-2 gap-4">
                 {mappedContents}
               </div>
-            ) : activeFormPage === "reviews" ? (
+            ) : activeTab === "reviews" ? (
               <div className="w-full flex flex-col items-center justify-start p-2 gap-4">
                 {mappedReviews}
               </div>

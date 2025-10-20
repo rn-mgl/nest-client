@@ -45,7 +45,7 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
           users: (UserInterface & {
             assigned_onboarding: null | UserOnboardingInterface;
           })[];
-        }>(`${url}/hr/user_onboarding`, {
+        }>(`${url}/onboarding/assignment`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },

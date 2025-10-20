@@ -3,9 +3,9 @@
 import Radio from "@/form/Radio";
 import TextBlock from "@/global/field/TextBlock";
 import TextField from "@/global/field/TextField";
-import ModalNav from "@/global/navigation/ModalNav";
+import ModalTabs from "@/global/navigation/ModalTabs";
 import { useToasts } from "@/src/context/ToastContext";
-import useModalNav from "@/src/hooks/useModalNav";
+import useModalTab from "@/src/hooks/useModalTab";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
   TrainingContentInterface,
@@ -44,7 +44,7 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
   const { addToast } = useToasts();
 
   const { data: session } = useSession({ required: true });
-  const { activeFormPage, handleActiveFormPage } = useModalNav("information");
+  const { activeTab, handleActiveTab } = useModalTab("information");
   const user = session?.user;
   const url = process.env.URL;
 
@@ -347,12 +347,12 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
           </button>
         </div>
         <div className="w-full h-full p-2 flex flex-col items-center justify-start gap-4 overflow-hidden t:p-4">
-          <ModalNav
-            activeFormPage={activeFormPage}
-            handleActiveFormPage={handleActiveFormPage}
-            pages={["information", "contents", "reviews"]}
+          <ModalTabs
+            activeTab={activeTab}
+            handleActiveTab={handleActiveTab}
+            tabs={["information", "contents", "reviews"]}
           />
-          {activeFormPage === "information" ? (
+          {activeTab === "information" ? (
             <div className="w-full flex flex-col items-center justify-start gap-4 h-full">
               <TextField
                 label="Title"
@@ -368,11 +368,11 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
                 value={training?.training?.description ?? ""}
               />
             </div>
-          ) : activeFormPage === "contents" ? (
+          ) : activeTab === "contents" ? (
             <div className="w-full h-full flex flex-col items-center justify-start gap-4 overflow-y-auto">
               {mappedContents}
             </div>
-          ) : activeFormPage === "reviews" ? (
+          ) : activeTab === "reviews" ? (
             <form
               onSubmit={(e) => submitReview(e)}
               className="w-full h-full flex flex-col items-start justify-start gap-2 overflow-y-auto"

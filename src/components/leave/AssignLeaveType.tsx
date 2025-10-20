@@ -77,7 +77,8 @@ const AssignLeaveType: React.FC<ModalInterface> = (props) => {
         ...leaves[index],
         assigned_leave_balance: {
           ...(leaves[index].assigned_leave_balance ?? FALSE_LEAVE_BALANCE_DATA),
-          balance: Number(leaves[index].assigned_leave_balance?.balance) + 1,
+          balance:
+            Number(leaves[index].assigned_leave_balance?.balance ?? 0) + 1,
         },
       };
 
@@ -93,9 +94,9 @@ const AssignLeaveType: React.FC<ModalInterface> = (props) => {
         assigned_leave_balance: {
           ...(leaves[index].assigned_leave_balance ?? FALSE_LEAVE_BALANCE_DATA),
           balance:
-            Number(leaves[index].assigned_leave_balance?.balance) - 1 < 0
+            Number(leaves[index].assigned_leave_balance?.balance ?? 0) - 1 < 0
               ? 0
-              : Number(leaves[index].assigned_leave_balance?.balance) - 1,
+              : Number(leaves[index].assigned_leave_balance?.balance ?? 0) - 1,
         },
       };
 
@@ -108,7 +109,7 @@ const AssignLeaveType: React.FC<ModalInterface> = (props) => {
       if (user?.token) {
         const { data: responseData } = await axios.get<{
           users: AssignedLeaveBalance[];
-        }>(`${url}/hr/user_leave_balance`, {
+        }>(`${url}/leave-type/assignment`, {
           headers: {
             Authorization: `Bearer ${user?.token}`,
           },

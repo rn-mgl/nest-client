@@ -1,7 +1,7 @@
 "use client";
 import ShowOnboarding from "@/src/components/employee/onboarding/ShowOnboarding";
-import BaseActions from "@/src/components/global/base/BaseActions";
-import BaseCard from "@/src/components/global/base/BaseCard";
+import BaseActions from "@/src/components/global/resource/BaseActions";
+import BaseCard from "@/src/components/global/resource/BaseCard";
 import Filter from "@/src/components/global/filter/Filter";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import { useToasts } from "@/src/context/ToastContext";
@@ -15,7 +15,7 @@ import {
   EMPLOYEE_ONBOARDING_CATEGORY,
   EMPLOYEE_ONBOARDING_SEARCH,
   EMPLOYEE_ONBOARDING_SORT,
-} from "@/src/utils/filters";
+} from "@/src/configs/filters";
 import { isUserSummary } from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";
@@ -54,7 +54,7 @@ const Onboarding = () => {
   const {
     category,
     canSeeCategoryDropDown,
-    handleCanSeeCategoryDropDown,
+    toggleCanSeeCategoryDropDown,
     handleSelectCategory,
   } = useCategory("status", "All");
 
@@ -155,7 +155,7 @@ const Onboarding = () => {
             categoryValue: category.categoryValue,
             canSeeCategoryDropDown: canSeeCategoryDropDown,
             selectCategory: handleSelectCategory,
-            toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
+            toggleCanSeeCategoryDropDown: toggleCanSeeCategoryDropDown,
           }}
           //
           sortKeyLabelPairs={EMPLOYEE_ONBOARDING_SORT}

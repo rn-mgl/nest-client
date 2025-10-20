@@ -13,7 +13,7 @@ export default function useCategory(
     categoryValue: initialCategoryValue,
   });
 
-  const handleCanSeeCategoryDropDown = React.useCallback(() => {
+  const toggleCanSeeCategoryDropDown = React.useCallback(() => {
     setCanShowCategories((prev) => !prev);
   }, []);
 
@@ -30,7 +30,7 @@ export default function useCategory(
   return {
     canSeeCategoryDropDown,
     category,
-    handleCanSeeCategoryDropDown,
+    toggleCanSeeCategoryDropDown,
     handleSelectCategory,
   };
 }

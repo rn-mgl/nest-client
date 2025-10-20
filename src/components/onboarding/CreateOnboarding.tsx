@@ -1,7 +1,7 @@
 import Input from "@/components/form/Input";
 import TextArea from "@/components/form/TextArea";
 import useDynamicFields from "@/src/hooks/useDynamicFields";
-import useModalNav from "@/src/hooks/useModalNav";
+import useModalTab from "@/src/hooks/useModalTab";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import {
   OnboardingInterface,
@@ -15,7 +15,7 @@ import { useToasts } from "@/src/context/ToastContext";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd, IoClose, IoReader, IoText, IoTrash } from "react-icons/io5";
-import ModalNav from "@/global/navigation/ModalNav";
+import ModalTabs from "@/global/navigation/ModalTabs";
 
 const CreateOnboarding: React.FC<ModalInterface> = (props) => {
   const [onboarding, setOnboarding] = React.useState<OnboardingInterface>({
@@ -42,7 +42,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
     { title: "", description: "" },
   ]);
 
-  const { activeFormPage, handleActiveFormPage } = useModalNav("information");
+  const { activeTab, handleActiveTab } = useModalTab("information");
   const { addToast } = useToasts();
 
   const url = process.env.URL;
@@ -158,7 +158,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: createdOnboarding } = await axios.post(
-          `${url}/hr/onboarding`,
+          `${url}/onboarding/resource`,
           {
             ...onboarding,
             required_documents: requiredDocuments,
@@ -218,13 +218,13 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
           onSubmit={(e) => submitCreateOnboarding(e)}
           className="w-full h-full p-2 flex flex-col items-center justify-center gap-4 overflow-hidden t:p-4"
         >
-          <ModalNav
-            activeFormPage={activeFormPage}
-            pages={["information", "documents", "acknowledgements"]}
-            handleActiveFormPage={handleActiveFormPage}
+          <ModalTabs
+            activeTab={activeTab}
+            tabs={["information", "documents", "acknowledgements"]}
+            handleActiveTab={handleActiveTab}
           />
 
-          {activeFormPage === "information" ? (
+          {activeTab === "information" ? (
             <div className="w-full h-full flex flex-col items-center justify-start gap-2 p-2">
               <Input
                 label={true}
@@ -250,7 +250,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
                 icon={<IoReader />}
               />
             </div>
-          ) : activeFormPage === "documents" ? (
+          ) : activeTab === "documents" ? (
             <div className="w-full h-full flex flex-col items-center justify-start gap-4 l-s:items-start l-s:justify-center overflow-y-hidden t:flex-row">
               <div className="w-full flex flex-col items-center justify-start h-full gap-2 overflow-hidden">
                 <div className="w-full flex flex-row items-center justify-between">
@@ -271,7 +271,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
                 </div>
               </div>
             </div>
-          ) : activeFormPage === "acknowledgements" ? (
+          ) : activeTab === "acknowledgements" ? (
             <div className="w-full h-full flex flex-col items-center justify-start gap-4 l-s:items-start l-s:justify-center overflow-y-hidden t:flex-row">
               <div className="w-full flex flex-col items-center justify-start h-full gap-2 overflow-hidden">
                 <div className="w-full flex flex-row items-center justify-between">

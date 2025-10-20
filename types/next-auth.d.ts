@@ -11,6 +11,7 @@ declare module "next-auth" {
     user: {
       token: string;
       roles: string[];
+      permissions: string[];
       current: number;
       image: null | string;
     };
@@ -19,6 +20,7 @@ declare module "next-auth" {
   interface User {
     token: string;
     roles: string[];
+    permissions: string[];
     current: number;
     image: null | string;
   }
@@ -30,6 +32,7 @@ declare module "next-auth/jwt" {
     user: {
       token: string;
       roles: string[];
+      permissions: string[];
       current: number;
       image: null | string;
     };

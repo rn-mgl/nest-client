@@ -1,7 +1,7 @@
 "use client";
-import ShowPerformanceReview from "@/src/components/employee/performance/ShowPerformanceReview";
-import BaseActions from "@/src/components/global/base/BaseActions";
-import BaseCard from "@/src/components/global/base/BaseCard";
+import ShowPerformanceReview from "@/src/components/performance/ShowAssignedPerformanceReview";
+import BaseActions from "@/src/components/global/resource/BaseActions";
+import BaseCard from "@/src/components/global/resource/BaseCard";
 import Filter from "@/src/components/global/filter/Filter";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import { useToasts } from "@/src/context/ToastContext";
@@ -12,7 +12,7 @@ import { UserPerformanceReviewInterface } from "@/src/interface/PerformanceRevie
 import {
   EMPLOYEE_PERFORMANCE_REVIEW_SEARCH,
   EMPLOYEE_PERFORMANCE_REVIEW_SORT,
-} from "@/src/utils/filters";
+} from "@/src/configs/filters";
 import { isUserSummary } from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";

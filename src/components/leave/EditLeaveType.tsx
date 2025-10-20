@@ -37,7 +37,7 @@ const EditLeaveType: React.FC<ModalInterface> = (props) => {
     try {
       if (user?.token) {
         const { data: leaveData } = await axios.get(
-          `${url}/hr/leave_type/${props.id}`,
+          `${url}/leave-type/resource/${props.id}`,
           {
             headers: {
               Authorization: `Bearer ${user?.token}`,
@@ -68,7 +68,7 @@ const EditLeaveType: React.FC<ModalInterface> = (props) => {
 
       if (token) {
         const { data: updatedLeave } = await axios.patch(
-          `${url}/hr/leave_type/${props.id}`,
+          `${url}/leave-type/resource/${props.id}`,
           { ...leaveType },
           {
             headers: {

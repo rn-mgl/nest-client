@@ -1,12 +1,12 @@
 "use client";
 
-import Tabs from "@/global/navigation/Tabs";
+import PageTabs from "@/global/navigation/PageTabs";
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import Table from "@/src/components/global/field/Table";
 import Filter from "@/src/components/global/filter/Filter";
-import EditLeaveRequest from "@/src/components/global/leave/EditLeaveRequest";
-import LeaveBalanceCard from "@/src/components/global/leave/LeaveBalanceCard";
-import LeaveRequestForm from "@/src/components/global/leave/LeaveRequestForm";
+import EditLeaveRequest from "@/src/components/leave/EditLeaveRequest";
+import LeaveBalanceCard from "@/src/components/leave/LeaveBalanceCard";
+import LeaveRequestForm from "@/src/components/leave/LeaveRequestForm";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import { useToasts } from "@/src/context/ToastContext";
 import useCategory from "@/src/hooks/useCategory";
@@ -24,7 +24,7 @@ import {
   EMPLOYEE_LEAVE_REQUEST_CATEGORY,
   EMPLOYEE_LEAVE_REQUEST_SEARCH,
   EMPLOYEE_LEAVE_REQUEST_SORT,
-} from "@/src/utils/filters";
+} from "@/src/configs/filters";
 import { normalizeDate, normalizeString } from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";
@@ -89,7 +89,7 @@ const Leave = ({
   const {
     category,
     canSeeCategoryDropDown,
-    handleCanSeeCategoryDropDown,
+    toggleCanSeeCategoryDropDown,
     handleSelectCategory,
   } = useCategory("status", "All");
 
@@ -208,7 +208,7 @@ const Leave = ({
           handleSelectSort("leave.type", "Leave Type");
           handleSelectCategory("", "");
           if (canSeeCategoryDropDown) {
-            handleCanSeeCategoryDropDown();
+            toggleCanSeeCategoryDropDown();
           }
           break;
         case "requests":
@@ -223,7 +223,7 @@ const Leave = ({
       handleSelectSearch,
       handleSelectSort,
       handleSelectCategory,
-      handleCanSeeCategoryDropDown,
+      toggleCanSeeCategoryDropDown,
     ]
   );
 
@@ -341,7 +341,7 @@ const Leave = ({
       ) : null}
 
       <div className="w-full h-auto flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2 t:p-4 gap-4 t:gap-8">
-        <Tabs activeTab={activeTab} tabs={["balances", "requests"]} />
+        <PageTabs activeTab={activeTab} tabs={["balances", "requests"]} />
 
         <div className="w-full flex flex-col items-center justify-center gap-4 t:gap-8 ">
           <Filter
@@ -374,7 +374,7 @@ const Leave = ({
               categoryValue: category.categoryValue,
               canSeeCategoryDropDown: canSeeCategoryDropDown,
               selectCategory: handleSelectCategory,
-              toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
+              toggleCanSeeCategoryDropDown: toggleCanSeeCategoryDropDown,
             }}
           />
 

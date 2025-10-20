@@ -1,7 +1,7 @@
 "use client";
 
-import Tabs from "@/global/navigation/Tabs";
-import BaseActions from "@/src/components/global/base/BaseActions";
+import PageTabs from "@/global/navigation/PageTabs";
+import BaseActions from "@/src/components/global/resource/BaseActions";
 import Table from "@/src/components/global/field/Table";
 import Filter from "@/src/components/global/filter/Filter";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
@@ -38,7 +38,7 @@ import {
   HR_EMPLOYEE_TRAINING_CATEGORY,
   HR_EMPLOYEE_TRAINING_SEARCH,
   HR_EMPLOYEE_TRAINING_SORT,
-} from "@/src/utils/filters";
+} from "@/src/configs/filters";
 import { getCSRFToken } from "@/src/utils/token";
 import {
   isCloudFileSummary,
@@ -133,7 +133,7 @@ const HRUser = ({
   const {
     canSeeCategoryDropDown,
     category,
-    handleCanSeeCategoryDropDown,
+    toggleCanSeeCategoryDropDown,
     handleSelectCategory,
   } = useCategory("verification_status", "All");
 
@@ -552,7 +552,7 @@ const HRUser = ({
       ) : null}
 
       <div className="gap-4 t:gap-8 w-full min-h-full h-auto flex flex-col items-start justify-start max-w-(--breakpoint-l-l) p-2 t:p-4">
-        <Tabs
+        <PageTabs
           activeTab={tab ?? "users"}
           tabs={[
             "users",
@@ -583,7 +583,7 @@ const HRUser = ({
                 categoryKey: category.categoryKey,
                 categoryValue: category.categoryValue,
                 canSeeCategoryDropDown: canSeeCategoryDropDown,
-                toggleCanSeeCategoryDropDown: handleCanSeeCategoryDropDown,
+                toggleCanSeeCategoryDropDown: toggleCanSeeCategoryDropDown,
                 selectCategory: handleSelectCategory,
               }}
               //

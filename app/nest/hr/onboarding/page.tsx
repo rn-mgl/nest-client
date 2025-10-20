@@ -1,22 +1,25 @@
 "use client";
 
 import Filter from "@/src/components/global/filter/Filter";
-import AssignOnboarding from "@/src/components/hr/onboarding/AssignOnboarding";
-import CreateOnboarding from "@/src/components/hr/onboarding/CreateOnboarding";
-import EditOnboarding from "@/src/components/hr/onboarding/EditOnboarding";
-import ShowOnboarding from "@/src/components/hr/onboarding/ShowOnboarding";
+import AssignOnboarding from "@/src/components/onboarding/AssignOnboarding";
+import CreateOnboarding from "@/src/components/onboarding/CreateOnboarding";
+import EditOnboarding from "@/src/components/onboarding/EditOnboarding";
+import ShowOnboarding from "@/src/components/onboarding/ShowOnboarding";
 
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { OnboardingInterface } from "@/src/interface/OnboardingInterface";
-import { HR_ONBOARDING_SEARCH, HR_ONBOARDING_SORT } from "@/src/utils/filters";
+import {
+  HR_ONBOARDING_SEARCH,
+  HR_ONBOARDING_SORT,
+} from "@/src/configs/filters";
 import axios, { isAxiosError } from "axios";
 
-import BaseActions from "@/src/components/global/base/BaseActions";
-import BaseCard from "@/src/components/global/base/BaseCard";
+import BaseActions from "@/src/components/global/resource/BaseActions";
+import BaseCard from "@/src/components/global/resource/BaseCard";
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
-import HRActions from "@/src/components/hr/global/HRActions";
+import ResourceActions from "@/src/components/global/resource/ResourceActions";
 import { useToasts } from "@/src/context/ToastContext";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
 import useIsLoading from "@/src/hooks/useIsLoading";
@@ -132,7 +135,7 @@ const HROnboarding = () => {
               handleActiveOnboardingSeeMore(onboardingId)
             }
           />
-          <HRActions
+          <ResourceActions
             handleActiveEdit={() => handleActiveEditOnboarding(onboardingId)}
             handleActiveDelete={() =>
               handleActiveDeleteOnboarding(onboardingId)

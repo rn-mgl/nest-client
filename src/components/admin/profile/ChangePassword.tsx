@@ -41,7 +41,7 @@ const ChangePassword: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: responseData } = await axios.post(
-          `${url}/admin/auth/change_password`,
+          `${url}/admin/auth/change-password`,
           { ...password },
           {
             headers: {
