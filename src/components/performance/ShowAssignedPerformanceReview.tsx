@@ -19,7 +19,7 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import { IoCheckmark, IoClose } from "react-icons/io5";
 
-const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
+const ShowAssignedPerformanceReview: React.FC<ModalInterface> = (props) => {
   const [performanceReview, setPerformanceReview] =
     React.useState<UserPerformanceReviewInterface | null>(null);
 
@@ -76,7 +76,7 @@ const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
               })[];
             };
           };
-        }>(`${url}/employee/employee_performance_review/${props.id}`, {
+        }>(`${url}/performance-review/assigned/${props.id}`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
@@ -238,4 +238,4 @@ const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
   );
 };
 
-export default ShowPerformanceReview;
+export default ShowAssignedPerformanceReview;

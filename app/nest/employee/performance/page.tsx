@@ -1,5 +1,5 @@
 "use client";
-import ShowPerformanceReview from "@/src/components/employee/performance/ShowPerformanceReview";
+import ShowPerformanceReview from "@/src/components/performance/ShowAssignedPerformanceReview";
 import BaseActions from "@/src/components/global/resource/BaseActions";
 import BaseCard from "@/src/components/global/resource/BaseCard";
 import Filter from "@/src/components/global/filter/Filter";

@@ -285,17 +285,17 @@ const Onboarding = ({
             handleActiveEdit={
               canEdit
                 ? () => handleActiveEditOnboarding(onboarding.id ?? 0)
-                : undefined
+                : null
             }
             handleActiveDelete={
               canDelete
                 ? () => handleActiveDeleteOnboarding(onboarding.id ?? 0)
-                : undefined
+                : null
             }
             handleActiveAssign={
               canAssign
                 ? () => handleActiveAssignOnboarding(onboarding.id ?? 0)
-                : undefined
+                : null
             }
           />
         ) : null}

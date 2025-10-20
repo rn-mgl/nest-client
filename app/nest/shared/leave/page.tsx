@@ -4,15 +4,15 @@ import PageTabs from "@/global/navigation/PageTabs";
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import Table from "@/src/components/global/field/Table";
 import Filter from "@/src/components/global/filter/Filter";
-import EditLeaveRequest from "@/src/components/global/leave/EditLeaveRequest";
-import LeaveBalanceCard from "@/src/components/global/leave/LeaveBalanceCard";
-import LeaveRequestForm from "@/src/components/global/leave/LeaveRequestForm";
+import EditLeaveRequest from "@/src/components/leave/EditLeaveRequest";
+import LeaveBalanceCard from "@/src/components/leave/LeaveBalanceCard";
+import LeaveRequestForm from "@/src/components/leave/LeaveRequestForm";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import BaseCard from "@/src/components/global/resource/BaseCard";
 import ResourceActions from "@/src/components/global/resource/ResourceActions";
-import AssignLeaveType from "@/src/components/hr/leave/AssignLeaveType";
-import CreateLeaveType from "@/src/components/hr/leave/CreateLeaveType";
-import EditLeaveType from "@/src/components/hr/leave/EditLeaveType";
+import AssignLeaveType from "@/src/components/leave/AssignLeaveType";
+import CreateLeaveType from "@/src/components/leave/CreateLeaveType";
+import EditLeaveType from "@/src/components/leave/EditLeaveType";
 import { useToasts } from "@/src/context/ToastContext";
 import useCategory from "@/src/hooks/useCategory";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
@@ -267,17 +267,17 @@ const Leave = ({
               handleActiveAssign={
                 canAssignLeaveType
                   ? () => handleActiveAssignLeaveType(leaveId)
-                  : undefined
+                  : null
               }
               handleActiveEdit={
                 canEditLeaveType
                   ? () => handleActiveEditLeaveType(leaveId)
-                  : undefined
+                  : null
               }
               handleActiveDelete={
                 canDeleteLeaveType
                   ? () => handleActiveDeleteLeaveType(leaveId)
-                  : undefined
+                  : null
               }
             />
           ) : null}

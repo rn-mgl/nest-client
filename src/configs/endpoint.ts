@@ -27,3 +27,13 @@ export const ONBOARDING_ENDPOINT: EndpointContent = {
     requiredPermission: "read.onboarding_resource",
   },
 };
+
+export const PERFORMANCE_REVIEW_ENDPOINT: EndpointContent = {
+  assigned: {
+    url: "performance-review/assigned",
+  },
+  resource: {
+    url: "performance-review/resource",
+    requiredPermission: "read.performance_review_resource",
+  },
+};

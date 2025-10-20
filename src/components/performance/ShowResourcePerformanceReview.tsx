@@ -16,7 +16,7 @@ import TextBlock from "@/global/field/TextBlock";
 import TextField from "@/global/field/TextField";
 import { useToasts } from "@/src/context/ToastContext";
 
-const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
+const ShowResourcePerformanceReview: React.FC<ModalInterface> = (props) => {
   const [performanceReview, setPerformanceReview] =
     React.useState<PerformanceReviewInterface>({
       title: "",
@@ -43,7 +43,7 @@ const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
           performance: PerformanceReviewInterface & {
             surveys: PerformanceReviewSurveyInterface[];
           };
-        }>(`${url}/hr/performance_review/${props.id}`, {
+        }>(`${url}/performance-review/resource/${props.id}`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
@@ -126,4 +126,4 @@ const ShowPerformanceReview: React.FC<ModalInterface> = (props) => {
   );
 };
 
-export default ShowPerformanceReview;
+export default ShowResourcePerformanceReview;

@@ -14,9 +14,9 @@ export interface BaseActionsInterface {
 }
 
 export interface ResourceActionsInterface {
-  handleActiveEdit?: () => void;
-  handleActiveAssign?: () => void;
-  handleActiveDelete?: () => void;
+  handleActiveEdit?: (() => void) | null;
+  handleActiveAssign?: (() => void) | null;
+  handleActiveDelete?: (() => void) | null;
 }
 
 export interface UserCardInterface {

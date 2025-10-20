@@ -38,7 +38,7 @@ const AssignPerformanceReview: React.FC<ModalInterface> = (props) => {
       if (user?.token) {
         const { data: responseData } = await axios.get<{
           users: AssignedPerformanceReviewInterface[];
-        }>(`${url}/hr/user_performance_review`, {
+        }>(`${url}/performance-review/assignment`, {
           headers: {
             Authorization: `Bearer ${user?.token}`,
           },
@@ -81,7 +81,7 @@ const AssignPerformanceReview: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: responseData } = await axios.post(
-          `${url}/hr/user_performance_review`,
+          `${url}/performance-review/assignment`,
           { user_ids: assignedUsers, performance_review_id: props.id },
           {
             headers: {

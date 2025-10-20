@@ -2,9 +2,9 @@
 
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import Filter from "@/src/components/global/filter/Filter";
-import AssignLeaveType from "@/src/components/hr/leave/AssignLeaveType";
-import CreateLeaveType from "@/src/components/hr/leave/CreateLeaveType";
-import EditLeaveType from "@/src/components/hr/leave/EditLeaveType";
+import AssignLeaveType from "@/src/components/leave/AssignLeaveType";
+import CreateLeaveType from "@/src/components/leave/CreateLeaveType";
+import EditLeaveType from "@/src/components/leave/EditLeaveType";
 
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
@@ -20,7 +20,7 @@ import React from "react";
 import { IoAdd } from "react-icons/io5";
 
 import BaseCard from "@/src/components/global/resource/BaseCard";
-import LeaveRequestForm from "@/src/components/global/leave/LeaveRequestForm";
+import LeaveRequestForm from "@/src/components/leave/LeaveRequestForm";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import ResourceActions from "@/src/components/global/resource/ResourceActions";
 import { useToasts } from "@/src/context/ToastContext";

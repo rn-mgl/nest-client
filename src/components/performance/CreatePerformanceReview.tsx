@@ -61,7 +61,7 @@ const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: createdPerformanceReview } = await axios.post(
-          `${url}/hr/performance_review`,
+          `${url}/performance-review/resource`,
           { ...performance, surveys: fields },
           {
             headers: {

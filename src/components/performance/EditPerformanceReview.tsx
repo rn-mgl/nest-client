@@ -65,7 +65,7 @@ const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
           performance: PerformanceReviewInterface & {
             surveys: PerformanceReviewSurveyInterface[];
           };
-        }>(`${url}/hr/performance_review/${props.id}`, {
+        }>(`${url}/performance-review/resource/${props.id}`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
@@ -133,7 +133,7 @@ const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: updatedPerformanceReview } = await axios.patch(
-          `${url}/hr/performance_review/${props.id}`,
+          `${url}/performance-review/resource/${props.id}`,
           { ...performance, surveys: fields, surveyToDelete },
           {
             headers: {
