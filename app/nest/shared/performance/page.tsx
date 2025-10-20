@@ -304,7 +304,8 @@ const Performance = ({
             id={activePerformanceReviewSeeMore}
             toggleModal={() => handleActivePerformanceReviewSeeMore(0)}
           />
-        ) : activeTab === "resource" ? (
+        ) : activeTab === "resource" &&
+          user?.permissions.includes("read.performance_review_resource") ? (
           <ShowResourcePerformanceReview
             id={activePerformanceReviewSeeMore}
             toggleModal={() =>
