@@ -1,14 +1,14 @@
 "use client";
 
-import CreateTraining from "@/src/components/hr/training/CreateTraining";
-import EditTraining from "@/src/components/hr/training/EditTraining";
-import ShowTraining from "@/src/components/hr/training/ShowTraining";
+import CreateTraining from "@/src/components/training/CreateTraining";
+import EditTraining from "@/src/components/training/EditTraining";
+import ShowTraining from "@/src/components/training/ShowResourceTraining";
 import { TrainingInterface } from "@/src/interface/TrainingInterface";
 import axios, { isAxiosError } from "axios";
 
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import Filter from "@/src/components/global/filter/Filter";
-import AssignTraining from "@/src/components/hr/training/AssignTraining";
+import AssignTraining from "@/src/components/training/AssignTraining";
 
 import BaseActions from "@/src/components/global/resource/BaseActions";
 import BaseCard from "@/src/components/global/resource/BaseCard";
@@ -18,7 +18,7 @@ import useFilterAndSort from "@/src/hooks/useFilterAndSort";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { isUserSummary } from "@/src/utils/utils";
-import { HR_TRAINING_SEARCH, HR_TRAINING_SORT } from "@/utils/filters";
+import { HR_TRAINING_SEARCH, HR_TRAINING_SORT } from "@/configs/filters";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd } from "react-icons/io5";

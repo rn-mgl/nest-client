@@ -61,8 +61,16 @@ export default function useFilterAndSort<T>(
 
         if (category && category.categoryKey) {
           // if matched by value or category value is All
+
+          const dataCategory = d[category.categoryKey as keyof T]
+            ?.toString()
+            .toLowerCase();
+          const selectedCategory = category.categoryValue
+            .toString()
+            .toLowerCase();
+
           matchedCategory =
-            d[category.categoryKey as keyof T] === category.categoryValue ||
+            dataCategory === selectedCategory ||
             category.categoryValue === "All";
         }
 

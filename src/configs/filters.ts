@@ -824,3 +824,52 @@ export const ASSIGNED_PERFORMANCE_REVIEW_SORT: SortPairsInterface[] = [
     label: "Title",
   },
 ];
+
+// for user to filter resource trianing
+export const RESOURCE_TRAINING_SORT: SortPairsInterface[] = [
+  {
+    key: "title",
+    label: "Title",
+  },
+  {
+    key: "created_at",
+    label: "Created At",
+  },
+];
+
+export const RESOURCE_TRAINING_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "title",
+    label: "Title",
+  },
+  {
+    key: "description",
+    label: "Description",
+  },
+];
+
+// for user to filter assigned training
+export const ASSIGNED_TRAINING_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "training.title",
+    label: "Title",
+  },
+];
+
+export const ASSIGNED_TRAINING_SORT: SortPairsInterface[] = [
+  {
+    key: "training.title",
+    label: "Title",
+  },
+  {
+    key: "deadline",
+    label: "Deadline",
+  },
+];
+
+export const ASSIGNED_TRAINING_CATEGORY: CategoryPairsInterface[] = [
+  {
+    key: "status",
+    values: ["All", "Pending", "In Progress", "Done"],
+  },
+];

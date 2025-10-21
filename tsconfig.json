@@ -30,7 +30,9 @@
       "@/landing/*": ["./src/components/landing/*"],
       "@/hooks/*": ["./src/hooks/*"],
       "@/interface/*": ["./src/interface/*"],
-      "@/utils/*": ["./src/utils/*"]
+      "@/utils/*": ["./src/utils/*"],
+      "@/configs/*": ["./src/configs/*"],
+      "@/context/*": ["./src/context/*"]
     },
     "target": "ES2017"
   },

@@ -95,7 +95,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
             contents: TrainingContentInterface[];
             reviews: TrainingReviewInterface[];
           };
-        }>(`${url}/hr/training/${props.id}`, {
+        }>(`${url}/training/resource/${props.id}`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
