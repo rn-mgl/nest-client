@@ -420,29 +420,32 @@ const Document = ({
           }}
         />
 
-        <div className="w-full flex flex-col items-center justify-start gap-2 t:flex-row">
-          {user?.permissions.includes("create.document_resource") ? (
-            <button
-              onClick={handleCanCreateDocument}
-              className="bg-accent-blue text-accent-yellow w-full p-2 rounded-md font-bold flex flex-row items-center justify-center 
+        {user?.permissions.includes("create.document_resource") ||
+        user?.permissions.includes("create.folder_resource") ? (
+          <div className="w-full flex flex-col items-center justify-start gap-2 t:flex-row">
+            {user?.permissions.includes("create.document_resource") ? (
+              <button
+                onClick={handleCanCreateDocument}
+                className="bg-accent-blue text-accent-yellow w-full p-2 rounded-md font-bold flex flex-row items-center justify-center 
                           gap-2 t:w-fit t:px-4 transition-all"
-            >
-              Create Document
-              <IoAdd className="text-lg" />
-            </button>
-          ) : null}
+              >
+                Create Document
+                <IoAdd className="text-lg" />
+              </button>
+            ) : null}
 
-          {user?.permissions.includes("create.folder_resource") ? (
-            <button
-              onClick={handleCanCreateFolder}
-              className="border-2 border-accent-blue text-accent-blue w-full p-1.75 rounded-md font-bold flex flex-row items-center justify-center 
+            {user?.permissions.includes("create.folder_resource") ? (
+              <button
+                onClick={handleCanCreateFolder}
+                className="border-2 border-accent-blue text-accent-blue w-full p-1.75 rounded-md font-bold flex flex-row items-center justify-center 
                           gap-2 t:w-fit t:px-4 transition-all bg-white"
-            >
-              Create Folder
-              <IoAdd className="text-lg" />
-            </button>
-          ) : null}
-        </div>
+              >
+                Create Folder
+                <IoAdd className="text-lg" />
+              </button>
+            ) : null}
+          </div>
+        ) : null}
 
         {isLoading ? (
           <PageSkeletonLoader />
