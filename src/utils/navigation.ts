@@ -46,32 +46,32 @@ const BASE_NAVIGATION = [
   },
   {
     label: "Attendance",
-    url: "/attendance",
+    url: "attendance",
     icon: IoCalendar,
   },
   {
     label: "Onboardings",
-    url: "/onboarding",
+    url: "onboarding",
     icon: IoFileTray,
   },
   {
     label: "Leaves",
-    url: "/leave",
+    url: "leave",
     icon: IoArrowUndo,
   },
   {
     label: "Performances",
-    url: "/performance",
+    url: "performance",
     icon: IoStar,
   },
   {
     label: "Trainings",
-    url: "/training",
+    url: "training",
     icon: IoTrendingUp,
   },
   {
     label: "Documents",
-    url: "/document?folder=0",
+    url: "document?path=0",
     icon: IoFolder,
   },
 ];
@@ -81,31 +81,31 @@ const ADDITIONAL_NAVIGATION = {
   super_admin: [
     {
       label: "Users",
-      url: "/users",
+      url: "users",
       icon: IoPeople,
     },
     {
       label: "Roles",
-      url: "/roles",
+      url: "roles",
       icon: IoPricetags,
     },
     {
       label: "Permissions",
-      url: "/permissions",
+      url: "permissions",
       icon: IoKey,
     },
   ],
   admin: [
     {
       label: "Human Resources",
-      url: "/hr",
+      url: "hr",
       icon: IoSettings,
     },
   ],
   hr: [
     {
       label: "Employees",
-      url: "/employee",
+      url: "employee",
       icon: IoPeople,
     },
   ],

@@ -20,6 +20,12 @@ const Select: React.FC<SelectInterface> = (props) => {
 
   return (
     <div className="w-full gap-2 relative ">
+      {props.placeholder ? (
+        <label htmlFor={props.id} className="text-xs">
+          {props.placeholder}
+        </label>
+      ) : null}
+
       <button
         type="button"
         onClick={props.toggleSelect}

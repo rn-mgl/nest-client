@@ -63,8 +63,9 @@ const Nav: React.FC<{ children: React.ReactNode }> = (props) => {
   };
 
   const mappedLinks = navLinks.map((link) => {
-    const mainPath = link.url.split("/")[1];
+    const mainPath = link.url;
 
+    console.log(mainPath);
     const activeLink =
       link.url === "" ? path === "/nest/shared" : path?.includes(mainPath);
 

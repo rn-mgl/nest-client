@@ -6,11 +6,11 @@ import Input from "@/form/Input";
 import { getCSRFToken } from "@/src/utils/token";
 import { useSession } from "next-auth/react";
 import axios, { isAxiosError } from "axios";
-
-import { useParams } from "next/navigation";
 import { useToasts } from "@/src/context/ToastContext";
 
-const CreateFolder: React.FC<ModalInterface> = (props) => {
+const CreateFolder: React.FC<ModalInterface & { path: string | number }> = (
+  props
+) => {
   const [folder, setFolder] = React.useState<FolderInterface>({
     title: "",
     created_by: 0,
@@ -21,8 +21,6 @@ const CreateFolder: React.FC<ModalInterface> = (props) => {
   const { data } = useSession({ required: true });
   const user = data?.user;
   const url = process.env.URL;
-  const params = useParams();
-  const folderId = params?.folder_id ?? 0;
 
   const handleFolder = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -45,8 +43,8 @@ const CreateFolder: React.FC<ModalInterface> = (props) => {
         const {
           data: { success },
         } = await axios.post(
-          `${url}/hr/folder`,
-          { ...folder, path: folderId },
+          `${url}/folder/resource`,
+          { ...folder, path: props.path },
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
