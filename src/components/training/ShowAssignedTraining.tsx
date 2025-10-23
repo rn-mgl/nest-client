@@ -154,7 +154,7 @@ const ShowAssignedTraining: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: responseData } = await axios.post(
-          `${url}/employee/employee_training_review_response`,
+          `${url}/training/assigned/review-response`,
           {
             reviews: reviews
               .filter((review) => review.user_response !== null)
