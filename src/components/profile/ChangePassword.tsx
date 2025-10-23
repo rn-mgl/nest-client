@@ -43,7 +43,7 @@ const ChangePassword: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: responseData } = await axios.patch(
-          `${url}/hr/auth/change-password`,
+          `${url}/auth/change-password`,
           { ...password },
           {
             headers: {

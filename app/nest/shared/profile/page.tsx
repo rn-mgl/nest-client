@@ -1,23 +1,22 @@
 "use client";
-
-import ChangePassword from "@/src/components/employee/profile/ChangePassword";
-import EditEmployeeProfile from "@/src/components/employee/profile/EditEmployeeProfile";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
+import ChangePassword from "@/src/components/profile/ChangePassword";
+import EditProfile from "@/src/components/profile/EditProfile";
 import { useToasts } from "@/src/context/ToastContext";
 import useIsLoading from "@/src/hooks/useIsLoading";
 import { UserInterface } from "@/src/interface/UserInterface";
 import { isCloudFileSummary } from "@/src/utils/utils";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoLockClosed, IoMail, IoPencil } from "react-icons/io5";
 
 const Profile = () => {
   const [profile, setProfile] = React.useState<UserInterface>({
-    first_name: "",
-    last_name: "",
     email: "",
     email_verified_at: "",
+    first_name: "",
+    last_name: "",
     id: 0,
     image: null,
     password: "",
@@ -32,7 +31,7 @@ const Profile = () => {
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
   const user = session?.user;
-  const currentUser = user?.current;
+  const currentUser = user?.current ?? 0;
 
   const getProfile = React.useCallback(
     async (controller?: AbortController) => {
@@ -40,7 +39,7 @@ const Profile = () => {
       try {
         if (user?.token) {
           const { data: responseData } = await axios.get(
-            `${url}/employee/profile/${currentUser}`,
+            `${url}/user/${currentUser}`,
             {
               headers: {
                 Authorization: `Bearer ${user.token}`,
@@ -50,14 +49,14 @@ const Profile = () => {
             }
           );
 
-          if (responseData.profile) {
-            setProfile(responseData.profile);
+          if (responseData.user) {
+            setProfile(responseData.user);
           }
         }
       } catch (error) {
         console.log(error);
 
-        if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
+        if (isAxiosError(error) && error.code !== "ERR_CANCELED") {
           const message =
             error.response?.data.message ??
             error.message ??
@@ -95,19 +94,19 @@ const Profile = () => {
 
   return (
     <div className="w-full flex flex-col items-center justify-start h-full">
-      {canChangePassword ? (
-        <ChangePassword toggleModal={handleCanChangePassword} />
-      ) : null}
-
       {canEditProfile ? (
-        <EditEmployeeProfile
+        <EditProfile
           toggleModal={handleCanEditProfile}
           refetchIndex={getProfile}
         />
       ) : null}
-      <div className="w-full min-h-full h-auto flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2 t:p-4 t:items-start">
-        <div className="w-full grid grid-cols-1 t:grid-cols-2 l-l:grid-cols-3 gap-4 items-start justify-start">
-          <div className="w-full rounded-md bg-accent-blue p-4 flex flex-col items-center justify-start gap-2">
+      {canChangePassword ? (
+        <ChangePassword toggleModal={handleCanChangePassword} />
+      ) : null}
+      <div className="w-full h-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2 t:p-4 t:items-start gap-4">
+        {/* profile container */}
+        <div className="w-full grid">
+          <div className="w-full h-auto rounded-md bg-accent-blue p-4 flex flex-col items-center justify-start gap-2">
             {/* image */}
             <div
               style={{
@@ -115,9 +114,9 @@ const Profile = () => {
                   ? `url(${profile.image.url})`
                   : "",
               }}
-              className="w-24 h-24 rounded-full bg-accent-purple border-8 border-white 
-                      flex flex-col items-center justify-center relative overflow-hidden bg-center bg-cover"
+              className="w-24 h-24 rounded-full bg-accent-purple border-8 border-white flex flex-col items-center justify-center relative overflow-hidden bg-center bg-cover"
             />
+
             {/* profile */}
             <div className="w-full flex flex-col items-center justify-start text-white">
               <div className="flex flex-col items-center justify-center gap-2 text-center">

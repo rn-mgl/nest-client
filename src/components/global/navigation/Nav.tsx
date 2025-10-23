@@ -98,7 +98,7 @@ const Nav: React.FC<{ children: React.ReactNode }> = (props) => {
   });
 
   React.useEffect(() => {
-    setActiveProfile(path === `/nest/profile`);
+    setActiveProfile(path === `/nest/shared/profile`);
   }, [path, user?.roles]);
 
   return (
@@ -176,7 +176,7 @@ const Nav: React.FC<{ children: React.ReactNode }> = (props) => {
           </button>
 
           <Link
-            href={`/nest/profile`}
+            href={`/nest/shared/profile`}
             className={`ml-auto rounded-full transition-all ${
               activeProfile &&
               "outline-3 -outline-offset-2 outline-accent-yellow"
