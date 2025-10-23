@@ -104,8 +104,8 @@ const ADDITIONAL_NAVIGATION = {
   ],
   hr: [
     {
-      label: "Employees",
-      url: "employee",
+      label: "Managements",
+      url: "management",
       icon: IoPeople,
     },
   ],
