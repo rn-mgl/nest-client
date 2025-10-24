@@ -154,21 +154,12 @@ const Onboarding = ({
         case "resource":
           handleSelectSearch("title", "Title");
           handleSelectSort("title", "Title");
-          if (canSeeCategoryDropDown) {
-            toggleCanSeeCategoryDropDown();
-          }
           break;
         default:
           break;
       }
     },
-    [
-      canSeeCategoryDropDown,
-      handleSelectSearch,
-      handleSelectSort,
-      handleSelectCategory,
-      toggleCanSeeCategoryDropDown,
-    ]
+    [handleSelectSearch, handleSelectSort, handleSelectCategory]
   );
 
   const getOnboardings = React.useCallback(

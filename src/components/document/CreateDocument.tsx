@@ -1,19 +1,19 @@
-import { DocumentInterface } from "@/src/interface/DocumentInterface";
-import { ModalInterface } from "@/src/interface/ModalInterface";
-import { getCSRFToken } from "@/src/utils/token";
-import axios, { isAxiosError } from "axios";
-
-import { useSession } from "next-auth/react";
-import { useParams } from "next/navigation";
-import React from "react";
-import { IoClose, IoText } from "react-icons/io5";
 import File from "@/form/File";
 import Input from "@/form/Input";
 import TextArea from "@/form/TextArea";
-import { isRawFileSummary } from "@/src/utils/utils";
 import { useToasts } from "@/src/context/ToastContext";
+import { DocumentInterface } from "@/src/interface/DocumentInterface";
+import { ModalInterface } from "@/src/interface/ModalInterface";
+import { getCSRFToken } from "@/src/utils/token";
+import { isRawFileSummary } from "@/src/utils/utils";
+import axios, { isAxiosError } from "axios";
+import { useSession } from "next-auth/react";
+import React from "react";
+import { IoClose, IoText } from "react-icons/io5";
 
-const CreateDocument: React.FC<ModalInterface> = (props) => {
+const CreateDocument: React.FC<ModalInterface & { path: string | number }> = (
+  props
+) => {
   const [document, setDocument] = React.useState<DocumentInterface>({
     title: "",
     description: "",
@@ -26,8 +26,6 @@ const CreateDocument: React.FC<ModalInterface> = (props) => {
   const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
-  const params = useParams();
-  const folderId = params?.folder_id ?? 0;
 
   const documentRef = React.useRef<HTMLInputElement | null>(null);
 
@@ -81,12 +79,12 @@ const CreateDocument: React.FC<ModalInterface> = (props) => {
 
       formData.append("title", document.title);
       formData.append("description", document.description);
-      formData.append("path", folderId.toString());
+      formData.append("path", props.path.toString());
       formData.append("document", attachment);
 
       if (token && user?.token) {
         const { data: createdDocument } = await axios.post(
-          `${url}/hr/document`,
+          `${url}/document/resource`,
           formData,
           {
             headers: {

@@ -174,7 +174,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: createdTraining } = await axios.post(
-          `${url}/hr/training`,
+          `${url}/training/resource`,
           formData,
           {
             headers: {

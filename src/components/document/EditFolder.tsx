@@ -48,32 +48,38 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
   };
 
   const getAvailablePaths = React.useCallback(
-    async (folder: number) => {
+    async (folderId: number, folderPath: number) => {
       try {
         if (user?.token) {
           const { data: folders } = await axios.get<{
             paths: { label: string; value: number }[];
-          }>(`${url}/hr/folder/paths`, {
+          }>(`${url}/folder/resource/paths`, {
             headers: {
               Authorization: `Bearer ${user.token}`,
             },
-            params: { folder },
+            params: { folder: folderId },
             withCredentials: true,
           });
 
           if (folders.paths) {
-            // find the path that the folder currently uses for ui rendering
+            // find the path that the folder currently uses for ui rendering of label and value
             const pathValue = folders.paths.find(
-              (path) => path.value === props.id
+              (path) => path.value === folderPath
             );
 
-            setPaths(folders.paths);
+            // do not include the current folder as another available path
+            const availablePaths = folders.paths.filter(
+              (path) => path.value !== props.id
+            );
+
             setFolder((prev) => {
               return {
                 ...prev,
                 path: pathValue,
               };
             });
+
+            setPaths(availablePaths);
           }
         }
       } catch (error) {
@@ -96,7 +102,7 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
       if (user?.token) {
         const { data: responseData } = await axios.get<{
           folder: FolderInterface;
-        }>(`${url}/hr/folder/${props.id}`, {
+        }>(`${url}/folder/resource/${props.id}`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
@@ -106,12 +112,19 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
         if (responseData.folder) {
           setFolder(responseData.folder);
 
-          const path =
+          // get the paths available if you will move this current folder to another folder
+          const folderId =
             typeof responseData.folder.id === "number"
               ? responseData.folder.id
               : 0;
 
-          await getAvailablePaths(path);
+          // pass the retrieved folder path for rendering
+          const folderPath =
+            typeof responseData.folder.path === "number"
+              ? responseData.folder.path
+              : 0;
+
+          await getAvailablePaths(folderId, folderPath);
         }
       }
     } catch (error) {
@@ -139,7 +152,7 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: updatedFolder } = await axios.patch(
-          `${url}/hr/folder/${props.id}`,
+          `${url}/folder/resource/${props.id}`,
           {
             title: folder.title,
             path:
@@ -193,7 +206,7 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex items-center justify-center 
             p-4 t:p-8 z-50 bg-linear-to-b from-accent-yellow/30 to-accent-purple/30 animate-fade"
     >
-      <div className="w-full h-auto max-w-(--breakpoint-t) bg-neutral-100 shadow-md rounded-lg ">
+      <div className="w-full h-auto max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg ">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-yellow rounded-t-lg font-bold text-accent-blue">
           Update Folder
           <button

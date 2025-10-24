@@ -37,3 +37,13 @@ export const PERFORMANCE_REVIEW_ENDPOINT: EndpointContent = {
     requiredPermission: "read.performance_review_resource",
   },
 };
+
+export const TRAINING_ENDPOINT: EndpointContent = {
+  assigned: {
+    url: "training/assigned",
+  },
+  resource: {
+    url: "training/resource",
+    requiredPermission: "read.training_resource",
+  },
+};

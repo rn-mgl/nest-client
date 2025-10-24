@@ -11,7 +11,7 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose, IoImage, IoText, IoTrash } from "react-icons/io5";
 
-const EditHRProfile: React.FC<ModalInterface> = (props) => {
+const EditProfile: React.FC<ModalInterface> = (props) => {
   const [profile, setProfile] = React.useState<UserInterface>({
     email: "",
     first_name: "",
@@ -71,15 +71,15 @@ const EditHRProfile: React.FC<ModalInterface> = (props) => {
     try {
       if (token) {
         const { data: responseData } = await axios.get(
-          `${url}/hr/profile/${current}`,
+          `${url}/user/${current}`,
           {
             headers: { Authorization: `Bearer ${token}` },
             withCredentials: true,
           }
         );
 
-        if (responseData.profile) {
-          setProfile(responseData.profile);
+        if (responseData.user) {
+          setProfile(responseData.user);
         }
       }
     } catch (error) {
@@ -121,7 +121,7 @@ const EditHRProfile: React.FC<ModalInterface> = (props) => {
         formData.set("_method", "PATCH");
 
         const { data: responseData } = await axios.post(
-          `${url}/hr/profile/${user.current}`,
+          `${url}/user/${user.current}`,
           formData,
           {
             headers: {
@@ -250,4 +250,4 @@ const EditHRProfile: React.FC<ModalInterface> = (props) => {
   );
 };
 
-export default EditHRProfile;
+export default EditProfile;

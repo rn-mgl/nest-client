@@ -104,7 +104,7 @@ const ShowAssignedOnboarding: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: responseData } = await axios.post(
-          `${url}/employee/employee_onboarding_policy_acknowledgement`,
+          `${url}/onboarding/assigned/policy-acknowledgement`,
           { policy_acknowledged: true, policy_acknowledgement_id },
           {
             headers: {
@@ -160,7 +160,7 @@ const ShowAssignedOnboarding: React.FC<ModalInterface> = (props) => {
         );
 
         const { data: responseData } = await axios.post(
-          `${url}/employee/employee_onboarding_required_documents`,
+          `${url}/onboarding/assigned/required-document`,
           formData,
           {
             headers: {
@@ -215,7 +215,7 @@ const ShowAssignedOnboarding: React.FC<ModalInterface> = (props) => {
         formData.set("_method", "PATCH");
 
         const { data: responseData } = await axios.post(
-          `${url}/employee/employee_onboarding_required_documents/${documentId}`,
+          `${url}/onboarding/assigned/required-document/${documentId}`,
           formData,
           {
             headers: {
@@ -248,7 +248,7 @@ const ShowAssignedOnboarding: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: responseData } = await axios.delete(
-          `${url}/employee/employee_onboarding_required_documents/${documentId}`,
+          `${url}/onboarding/assigned/required-document/${documentId}`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,

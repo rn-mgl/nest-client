@@ -43,7 +43,7 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
         if (user?.token) {
           const { data: responseData } = await axios.get<{
             paths: { label: string; value: number }[];
-          }>(`${url}/hr/folder/paths`, {
+          }>(`${url}/folder/resource/paths`, {
             headers: {
               Authorization: `Bearer ${user.token}`,
             },
@@ -84,7 +84,7 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
       if (user?.token) {
         const { data: responseData } = await axios.get<{
           document: DocumentInterface;
-        }>(`${url}/hr/document/${props.id}`, {
+        }>(`${url}/document/resource/${props.id}`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
@@ -144,7 +144,7 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: updatedDocument } = await axios.post(
-          `${url}/hr/document/${props.id}`,
+          `${url}/document/resource/${props.id}`,
           formData,
           {
             headers: {

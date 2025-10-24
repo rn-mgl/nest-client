@@ -166,9 +166,7 @@ const Leave = ({
           handleSelectSearch("leave.type", "Leave Type");
           handleSelectSort("leave.type", "Leave Type");
           handleSelectCategory("", "");
-          if (canSeeCategoryDropDown) {
-            toggleCanSeeCategoryDropDown();
-          }
+
           break;
         case "request":
           handleSelectSearch("type", "Leave Type");
@@ -178,19 +176,11 @@ const Leave = ({
         case "resource":
           handleSelectSearch("type", "Leave Type");
           handleSelectSort("type", "Leave Type");
-          if (canSeeCategoryDropDown) {
-            toggleCanSeeCategoryDropDown();
-          }
+
           break;
       }
     },
-    [
-      canSeeCategoryDropDown,
-      handleSelectSearch,
-      handleSelectSort,
-      handleSelectCategory,
-      toggleCanSeeCategoryDropDown,
-    ]
+    [handleSelectSearch, handleSelectSort, handleSelectCategory]
   );
 
   const getLeaves = React.useCallback(

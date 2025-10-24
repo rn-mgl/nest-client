@@ -19,7 +19,7 @@ import TextField from "@/global/field/TextField";
 import { isCloudFileSummary } from "@/src/utils/utils";
 import { useToasts } from "@/src/context/ToastContext";
 
-const ShowTraining: React.FC<ModalInterface> = (props) => {
+const ShowResourceTraining: React.FC<ModalInterface> = (props) => {
   const [training, setTraining] = React.useState<TrainingInterface>({
     title: "",
     description: "",
@@ -49,7 +49,7 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
             contents: TrainingContentInterface[];
             reviews: TrainingReviewInterface[];
           };
-        }>(`${url}/hr/training/${props.id}`, {
+        }>(`${url}/training/resource/${props.id}`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
@@ -257,4 +257,4 @@ const ShowTraining: React.FC<ModalInterface> = (props) => {
   );
 };
 
-export default ShowTraining;
+export default ShowResourceTraining;

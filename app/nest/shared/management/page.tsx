@@ -1,44 +1,45 @@
 "use client";
 
 import PageTabs from "@/global/navigation/PageTabs";
-import BaseActions from "@/src/components/global/resource/BaseActions";
+import Input from "@/src/components/form/Input";
 import Table from "@/src/components/global/field/Table";
 import Filter from "@/src/components/global/filter/Filter";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
-import ShowUser from "@/src/components/hr/user/ShowUser";
-import UserCard from "@/src/components/hr/user/UserCard";
+import BaseActions from "@/src/components/global/resource/BaseActions";
+import ShowUser from "@/src/components/management/ShowUser";
+import UserCard from "@/src/components/management/UserCard";
+import {
+  MANAMGENT_ATTENDANCE_SEARCH,
+  MANAMGENT_ATTENDANCE_SORT,
+  MANAMGENT_CATEGORY,
+  MANAMGENT_LEAVE_CATEGORY,
+  MANAMGENT_LEAVE_TYPE_SEARCH,
+  MANAMGENT_LEAVE_TYPE_SORT,
+  MANAMGENT_ONBOARDING_CATEGORY,
+  MANAMGENT_ONBOARDING_SEARCH,
+  MANAMGENT_ONBOARDING_SORT,
+  MANAMGENT_PERFORMANCE_CATEGORY,
+  MANAMGENT_PERFORMANCE_SEARCH,
+  MANAMGENT_PERFORMANCE_SORT,
+  MANAMGENT_SEARCH,
+  MANAMGENT_SORT,
+  MANAMGENT_TRAINING_CATEGORY,
+  MANAMGENT_TRAINING_SEARCH,
+  MANAMGENT_TRAINING_SORT,
+} from "@/src/configs/filters";
 import { useAlert } from "@/src/context/AlertContext";
 import { useToasts } from "@/src/context/ToastContext";
 import useCategory from "@/src/hooks/useCategory";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
 import useIsLoading from "@/src/hooks/useIsLoading";
-
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
+import { AttendanceInterface } from "@/src/interface/AttendanceInterface";
 import { LeaveRequestInterface } from "@/src/interface/LeaveInterface";
 import { UserOnboardingInterface } from "@/src/interface/OnboardingInterface";
 import { UserPerformanceReviewInterface } from "@/src/interface/PerformanceReviewInterface";
 import { UserTrainingInterface } from "@/src/interface/TrainingInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
-import {
-  HR_EMPLOYEE_ATTENDANCE_SEARCH,
-  HR_EMPLOYEE_ATTENDANCE_SORT,
-  HR_EMPLOYEE_CATEGORY,
-  HR_EMPLOYEE_LEAVE_CATEGORY,
-  HR_EMPLOYEE_LEAVE_TYPE_SEARCH,
-  HR_EMPLOYEE_LEAVE_TYPE_SORT,
-  HR_EMPLOYEE_ONBOARDING_CATEGORY,
-  HR_EMPLOYEE_ONBOARDING_SEARCH,
-  HR_EMPLOYEE_ONBOARDING_SORT,
-  HR_EMPLOYEE_PERFORMANCE_CATEGORY,
-  HR_EMPLOYEE_PERFORMANCE_SEARCH,
-  HR_EMPLOYEE_PERFORMANCE_SORT,
-  HR_EMPLOYEE_SEARCH,
-  HR_EMPLOYEE_SORT,
-  HR_EMPLOYEE_TRAINING_CATEGORY,
-  HR_EMPLOYEE_TRAINING_SEARCH,
-  HR_EMPLOYEE_TRAINING_SORT,
-} from "@/src/configs/filters";
 import { getCSRFToken } from "@/src/utils/token";
 import {
   isCloudFileSummary,
@@ -52,14 +53,11 @@ import {
   normalizeString,
 } from "@/src/utils/utils";
 import axios, { isAxiosError } from "axios";
-
-import Input from "@/src/components/form/Input";
-import { AttendanceInterface } from "@/src/interface/AttendanceInterface";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoCheckmark, IoClose } from "react-icons/io5";
 
-const HRUser = ({
+const Management = ({
   searchParams,
 }: {
   searchParams: Promise<{ tab?: string }>;
@@ -85,29 +83,29 @@ const HRUser = ({
   const { isLoading, handleIsLoading } = useIsLoading();
 
   const searchFilters = {
-    users: HR_EMPLOYEE_SEARCH,
-    attendances: HR_EMPLOYEE_ATTENDANCE_SEARCH,
-    onboardings: HR_EMPLOYEE_ONBOARDING_SEARCH,
-    leaves: HR_EMPLOYEE_LEAVE_TYPE_SEARCH,
-    performances: HR_EMPLOYEE_PERFORMANCE_SEARCH,
-    trainings: HR_EMPLOYEE_TRAINING_SEARCH,
+    users: MANAMGENT_SEARCH,
+    attendances: MANAMGENT_ATTENDANCE_SEARCH,
+    onboardings: MANAMGENT_ONBOARDING_SEARCH,
+    leaves: MANAMGENT_LEAVE_TYPE_SEARCH,
+    performances: MANAMGENT_PERFORMANCE_SEARCH,
+    trainings: MANAMGENT_TRAINING_SEARCH,
   };
 
   const sortFilters = {
-    users: HR_EMPLOYEE_SORT,
-    attendances: HR_EMPLOYEE_ATTENDANCE_SORT,
-    onboardings: HR_EMPLOYEE_ONBOARDING_SORT,
-    leaves: HR_EMPLOYEE_LEAVE_TYPE_SORT,
-    performances: HR_EMPLOYEE_PERFORMANCE_SORT,
-    trainings: HR_EMPLOYEE_TRAINING_SORT,
+    users: MANAMGENT_SORT,
+    attendances: MANAMGENT_ATTENDANCE_SORT,
+    onboardings: MANAMGENT_ONBOARDING_SORT,
+    leaves: MANAMGENT_LEAVE_TYPE_SORT,
+    performances: MANAMGENT_PERFORMANCE_SORT,
+    trainings: MANAMGENT_TRAINING_SORT,
   };
 
   const categoryFilters = {
-    users: HR_EMPLOYEE_CATEGORY,
-    onboardings: HR_EMPLOYEE_ONBOARDING_CATEGORY,
-    leaves: HR_EMPLOYEE_LEAVE_CATEGORY,
-    performances: HR_EMPLOYEE_PERFORMANCE_CATEGORY,
-    trainings: HR_EMPLOYEE_TRAINING_CATEGORY,
+    users: MANAMGENT_CATEGORY,
+    onboardings: MANAMGENT_ONBOARDING_CATEGORY,
+    leaves: MANAMGENT_LEAVE_CATEGORY,
+    performances: MANAMGENT_PERFORMANCE_CATEGORY,
+    trainings: MANAMGENT_TRAINING_CATEGORY,
   };
 
   const { addToast } = useToasts();
@@ -161,8 +159,8 @@ const HRUser = ({
     async (tab: string, controller?: AbortController) => {
       handleIsLoading(true);
       try {
-        if (user?.token) {
-          const { data: responseData } = await axios.get(`${url}/hr/user`, {
+        if (user?.token && user.permissions.includes("read.management")) {
+          const { data: responseData } = await axios.get(`${url}/management`, {
             headers: {
               Authorization: `Bearer ${user.token}`,
             },
@@ -208,7 +206,7 @@ const HRUser = ({
         handleIsLoading(false);
       }
     },
-    [url, user?.token, date, addToast, handleIsLoading]
+    [url, user?.token, user?.permissions, date, addToast, handleIsLoading]
   );
 
   const handleLeaveRequestStatus = async (
@@ -218,9 +216,13 @@ const HRUser = ({
     try {
       const { token } = await getCSRFToken();
 
-      if (token && user?.token) {
+      if (
+        token &&
+        user?.token &&
+        user.permissions.includes("update.leave_request_resource")
+      ) {
         const { data: responseData } = await axios.patch(
-          `${url}/hr/user_leave_request/${leaveRequestId}`,
+          `${url}/leave-request/assigned/${leaveRequestId}`,
           { approved },
           {
             headers: {
@@ -361,9 +363,17 @@ const HRUser = ({
       ? leave.requested_by
       : null;
 
-    const actionedBy = isUserSummary(leave.actioned_by)
-      ? `${leave.actioned_by.first_name} ${leave.actioned_by.last_name}`
-      : null;
+    const actionedBy = isUserSummary(leave.actioned_by) ? (
+      <div
+        style={{
+          backgroundImage: isCloudFileSummary(leave.actioned_by.image)
+            ? `url(${leave.actioned_by.image.url})`
+            : "",
+        }}
+        title={`${leave.actioned_by.first_name} ${leave.actioned_by.last_name}`}
+        className="flex flex-col items-center justify-center rounded-full overflow-clip relative max-w-10 bg-center bg-cover aspect-square bg-accent-green/30"
+      />
+    ) : null;
 
     const leaveType = isLeaveTypeSummary(leave.leave) ? leave.leave : null;
     const leaveBalance = isLeaveBalanceSummary(leave.leave_balance)
@@ -395,7 +405,9 @@ const HRUser = ({
       status: normalizeString(leave.status),
       reason: leave.reason,
       balance: leaveBalance?.balance ?? 0,
-      action: actionedBy ?? (
+      action: actionedBy ? (
+        actionedBy
+      ) : user?.permissions.includes("update.leave_request_resource") ? (
         <div className="w-full flex flex-row flex-wrap items-center justify-start gap-2">
           <button
             onClick={() =>
@@ -428,7 +440,7 @@ const HRUser = ({
             </span>
           </button>
         </div>
-      ),
+      ) : null,
     };
   });
 
@@ -542,7 +554,7 @@ const HRUser = ({
     setActiveTab(tab ?? "users");
   }, [setActiveTab, tab]);
 
-  return (
+  return user?.permissions.includes("read.management") ? (
     <div className="w-full min-h-full h-auto flex flex-col items-center justify-start">
       {activeUserSeeMore ? (
         <ShowUser
@@ -701,7 +713,14 @@ const HRUser = ({
         </div>
       </div>
     </div>
+  ) : (
+    <div
+      className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br 
+                from-accent-green/50 via-accent-purple/30 to-accent-blue/50"
+    >
+      <p className="text-xl animate-fade font-bold">You have no access here.</p>
+    </div>
   );
 };
 
-export default HRUser;
+export default Management;

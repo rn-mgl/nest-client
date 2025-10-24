@@ -117,7 +117,7 @@ const ShowAssignedPerformanceReview: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: responseData } = await axios.post(
-          `${url}/employee/employee_performance_review_response`,
+          `${url}/performance-review/assigned/review-response`,
           {
             response: survey.user_response?.response,
             survey_id: survey.id,

@@ -56,7 +56,7 @@ const ShowUser: React.FC<ModalInterface> = (props) => {
     try {
       if (user?.token) {
         const { data: responseData } = await axios.get(
-          `${url}/hr/user/${props.id}`,
+          `${url}/management/${props.id}`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,

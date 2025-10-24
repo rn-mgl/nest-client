@@ -63,7 +63,8 @@ const Nav: React.FC<{ children: React.ReactNode }> = (props) => {
   };
 
   const mappedLinks = navLinks.map((link) => {
-    const mainPath = link.url.split("/")[1];
+    // dont get the url param if present
+    const mainPath = link.url.includes("?") ? link.url.split("?")[0] : link.url;
 
     const activeLink =
       link.url === "" ? path === "/nest/shared" : path?.includes(mainPath);
@@ -97,7 +98,7 @@ const Nav: React.FC<{ children: React.ReactNode }> = (props) => {
   });
 
   React.useEffect(() => {
-    setActiveProfile(path === `/nest/profile`);
+    setActiveProfile(path === `/nest/shared/profile`);
   }, [path, user?.roles]);
 
   return (
@@ -175,7 +176,7 @@ const Nav: React.FC<{ children: React.ReactNode }> = (props) => {
           </button>
 
           <Link
-            href={`/nest/profile`}
+            href={`/nest/shared/profile`}
             className={`ml-auto rounded-full transition-all ${
               activeProfile &&
               "outline-3 -outline-offset-2 outline-accent-yellow"

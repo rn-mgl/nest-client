@@ -52,14 +52,14 @@ export const ADMIN_HR_SEARCH: SearchPairsInterface[] = [
 ];
 
 // for hr to filter employee
-export const HR_EMPLOYEE_CATEGORY: CategoryPairsInterface[] = [
+export const MANAMGENT_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "verification_status",
     values: ["All", "Verified", "Deactivated"],
   },
 ];
 
-export const HR_EMPLOYEE_SORT: SortPairsInterface[] = [
+export const MANAMGENT_SORT: SortPairsInterface[] = [
   {
     key: "first_name",
     label: "First Name",
@@ -74,7 +74,7 @@ export const HR_EMPLOYEE_SORT: SortPairsInterface[] = [
   },
 ];
 
-export const HR_EMPLOYEE_SEARCH: SearchPairsInterface[] = [
+export const MANAMGENT_SEARCH: SearchPairsInterface[] = [
   {
     key: "first_name",
     label: "First Name",
@@ -90,7 +90,7 @@ export const HR_EMPLOYEE_SEARCH: SearchPairsInterface[] = [
 ];
 
 // for hr to filter employee attendance
-export const HR_EMPLOYEE_ATTENDANCE_SORT: SortPairsInterface[] = [
+export const MANAMGENT_ATTENDANCE_SORT: SortPairsInterface[] = [
   {
     key: "first_name",
     label: "First Name",
@@ -113,7 +113,7 @@ export const HR_EMPLOYEE_ATTENDANCE_SORT: SortPairsInterface[] = [
   },
 ];
 
-export const HR_EMPLOYEE_ATTENDANCE_SEARCH: SearchPairsInterface[] = [
+export const MANAMGENT_ATTENDANCE_SEARCH: SearchPairsInterface[] = [
   {
     key: "first_name",
     label: "First Name",
@@ -129,14 +129,14 @@ export const HR_EMPLOYEE_ATTENDANCE_SEARCH: SearchPairsInterface[] = [
 ];
 
 // for hr to filter employee onboardings
-export const HR_EMPLOYEE_ONBOARDING_CATEGORY: CategoryPairsInterface[] = [
+export const MANAMGENT_ONBOARDING_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "status",
     values: ["All", "Pending", "In Progress", "Done"],
   },
 ];
 
-export const HR_EMPLOYEE_ONBOARDING_SORT: SortPairsInterface[] = [
+export const MANAMGENT_ONBOARDING_SORT: SortPairsInterface[] = [
   {
     key: "first_name",
     label: "First Name",
@@ -155,7 +155,7 @@ export const HR_EMPLOYEE_ONBOARDING_SORT: SortPairsInterface[] = [
   },
 ];
 
-export const HR_EMPLOYEE_ONBOARDING_SEARCH: SearchPairsInterface[] = [
+export const MANAMGENT_ONBOARDING_SEARCH: SearchPairsInterface[] = [
   {
     key: "first_name",
     label: "First Name",
@@ -175,7 +175,7 @@ export const HR_EMPLOYEE_ONBOARDING_SEARCH: SearchPairsInterface[] = [
 ];
 
 // for hr to filter employee leave
-export const HR_EMPLOYEE_LEAVE_TYPE_SEARCH: SearchPairsInterface[] = [
+export const MANAMGENT_LEAVE_TYPE_SEARCH: SearchPairsInterface[] = [
   {
     key: "first_name",
     label: "First Name",
@@ -194,7 +194,7 @@ export const HR_EMPLOYEE_LEAVE_TYPE_SEARCH: SearchPairsInterface[] = [
   },
 ];
 
-export const HR_EMPLOYEE_LEAVE_TYPE_SORT: SortPairsInterface[] = [
+export const MANAMGENT_LEAVE_TYPE_SORT: SortPairsInterface[] = [
   {
     key: "start_date",
     label: "Start Date",
@@ -209,7 +209,7 @@ export const HR_EMPLOYEE_LEAVE_TYPE_SORT: SortPairsInterface[] = [
   },
 ];
 
-export const HR_EMPLOYEE_LEAVE_CATEGORY: CategoryPairsInterface[] = [
+export const MANAMGENT_LEAVE_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "status",
     values: ["All", "Pending", "In Progress", "Done", "Rejected", "Approved"],
@@ -217,7 +217,7 @@ export const HR_EMPLOYEE_LEAVE_CATEGORY: CategoryPairsInterface[] = [
 ];
 
 // for hr to filter employee performances
-export const HR_EMPLOYEE_PERFORMANCE_SEARCH: SearchPairsInterface[] = [
+export const MANAMGENT_PERFORMANCE_SEARCH: SearchPairsInterface[] = [
   {
     key: "first_name",
     label: "First Name",
@@ -236,7 +236,7 @@ export const HR_EMPLOYEE_PERFORMANCE_SEARCH: SearchPairsInterface[] = [
   },
 ];
 
-export const HR_EMPLOYEE_PERFORMANCE_SORT: SortPairsInterface[] = [
+export const MANAMGENT_PERFORMANCE_SORT: SortPairsInterface[] = [
   {
     key: "title",
     label: "Title",
@@ -247,7 +247,7 @@ export const HR_EMPLOYEE_PERFORMANCE_SORT: SortPairsInterface[] = [
   },
 ];
 
-export const HR_EMPLOYEE_PERFORMANCE_CATEGORY: CategoryPairsInterface[] = [
+export const MANAMGENT_PERFORMANCE_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "status",
     values: ["All", "Pending", "In Progress", "Done"],
@@ -255,7 +255,7 @@ export const HR_EMPLOYEE_PERFORMANCE_CATEGORY: CategoryPairsInterface[] = [
 ];
 
 // for hr to filter employee trainings
-export const HR_EMPLOYEE_TRAINING_SEARCH: SearchPairsInterface[] = [
+export const MANAMGENT_TRAINING_SEARCH: SearchPairsInterface[] = [
   {
     key: "first_name",
     label: "First Name",
@@ -274,7 +274,7 @@ export const HR_EMPLOYEE_TRAINING_SEARCH: SearchPairsInterface[] = [
   },
 ];
 
-export const HR_EMPLOYEE_TRAINING_SORT: SortPairsInterface[] = [
+export const MANAMGENT_TRAINING_SORT: SortPairsInterface[] = [
   {
     key: "created_at",
     label: "Assigned On",
@@ -289,7 +289,7 @@ export const HR_EMPLOYEE_TRAINING_SORT: SortPairsInterface[] = [
   },
 ];
 
-export const HR_EMPLOYEE_TRAINING_CATEGORY: CategoryPairsInterface[] = [
+export const MANAMGENT_TRAINING_CATEGORY: CategoryPairsInterface[] = [
   {
     key: "status",
     values: ["All", "Pending", "In Progress", "Done"],
@@ -822,5 +822,54 @@ export const ASSIGNED_PERFORMANCE_REVIEW_SORT: SortPairsInterface[] = [
   {
     key: "performance_review.title",
     label: "Title",
+  },
+];
+
+// for user to filter resource trianing
+export const RESOURCE_TRAINING_SORT: SortPairsInterface[] = [
+  {
+    key: "title",
+    label: "Title",
+  },
+  {
+    key: "created_at",
+    label: "Created At",
+  },
+];
+
+export const RESOURCE_TRAINING_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "title",
+    label: "Title",
+  },
+  {
+    key: "description",
+    label: "Description",
+  },
+];
+
+// for user to filter assigned training
+export const ASSIGNED_TRAINING_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "training.title",
+    label: "Title",
+  },
+];
+
+export const ASSIGNED_TRAINING_SORT: SortPairsInterface[] = [
+  {
+    key: "training.title",
+    label: "Title",
+  },
+  {
+    key: "deadline",
+    label: "Deadline",
+  },
+];
+
+export const ASSIGNED_TRAINING_CATEGORY: CategoryPairsInterface[] = [
+  {
+    key: "status",
+    values: ["All", "Pending", "In Progress", "Done"],
   },
 ];

@@ -43,7 +43,7 @@ const CreateHR: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: createHR } = await axios.post(
-          `${url}/admin/hr/register`,
+          `${url}/hr`,
           { ...credentials, role: "hr" },
           {
             headers: {
