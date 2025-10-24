@@ -69,7 +69,7 @@ const Login = () => {
           });
 
           if (data?.ok) {
-            router.push(`/nest/shared`);
+            router.push(`/nest`);
           }
         } else {
           router.push("/auth/sending?type=verification");

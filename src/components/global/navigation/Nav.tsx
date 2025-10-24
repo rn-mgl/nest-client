@@ -67,13 +67,13 @@ const Nav: React.FC<{ children: React.ReactNode }> = (props) => {
     const mainPath = link.url.includes("?") ? link.url.split("?")[0] : link.url;
 
     const activeLink =
-      link.url === "" ? path === "/nest/shared" : path?.includes(mainPath);
+      link.url === "" ? path === "/nest" : path?.includes(mainPath);
 
     return (
       <Link
         onClick={() => handleSideNavVisible("link")}
         key={link.label}
-        href={`/nest/shared/${link.url}`}
+        href={`/nest/${link.url}`}
         className={`p-4 rounded-md w-full flex flex-row items-center transition-all
                      gap-2 h-14 ${
                        activeLink
@@ -98,7 +98,7 @@ const Nav: React.FC<{ children: React.ReactNode }> = (props) => {
   });
 
   React.useEffect(() => {
-    setActiveProfile(path === `/nest/shared/profile`);
+    setActiveProfile(path === `/nest/profile`);
   }, [path, user?.roles]);
 
   return (
@@ -129,7 +129,7 @@ const Nav: React.FC<{ children: React.ReactNode }> = (props) => {
               sideNavVisible ? "visible" : "hidden"
             } transition-all`}
           >
-            <LogoNav url="/nest/shared" type="dark" />
+            <LogoNav url="/nest" type="dark" />
           </div>
         </div>
 
@@ -176,7 +176,7 @@ const Nav: React.FC<{ children: React.ReactNode }> = (props) => {
           </button>
 
           <Link
-            href={`/nest/shared/profile`}
+            href={`/nest/profile`}
             className={`ml-auto rounded-full transition-all ${
               activeProfile &&
               "outline-3 -outline-offset-2 outline-accent-yellow"
