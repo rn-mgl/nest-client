@@ -1,7 +1,8 @@
+import React from "react";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Trainings | HR",
+  title: "Permission",
 };
 
 export default function RootLayout({
