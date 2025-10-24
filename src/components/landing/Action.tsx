@@ -1,4 +1,4 @@
-import Logo from "../global/navigation/Logo";
+import LogoNav from "../global/navigation/LogoNav";
 
 const Action = () => {
   return (
