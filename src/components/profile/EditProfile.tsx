@@ -158,6 +158,8 @@ const EditProfile: React.FC<ModalInterface> = (props) => {
     getUser();
   }, [getUser]);
 
+  console.log(profile);
+
   return (
     <div
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex items-center justify-center 
@@ -181,12 +183,13 @@ const EditProfile: React.FC<ModalInterface> = (props) => {
             <div
               style={{
                 backgroundImage: isRawFileSummary(profile.image)
-                  ? profile.image.fileURL
+                  ? `url(${profile.image.fileURL})`
                   : isCloudFileSummary(profile.image)
-                  ? profile.image.url
+                  ? `url(${profile.image.url})`
                   : "",
               }}
-              className="w-40 aspect-square bg-accent-blue rounded-full border-8 border-accent-yellow flex flex-col items-center justify-center relative overflow-hidden"
+              className="w-40 aspect-square bg-accent-blue rounded-full border-8 border-accent-yellow flex flex-col 
+              items-center justify-center relative overflow-hidden bg-center bg-cover"
             />
           </div>
 
