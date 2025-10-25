@@ -279,7 +279,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: updated } = await axios.post(
-          `${url}/hr/training/${props.id}`,
+          `${url}/training/resource/${props.id}`,
           formData,
           {
             headers: {

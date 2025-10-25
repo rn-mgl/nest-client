@@ -132,7 +132,7 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: updatedOnboarding } = await axios.patch(
-          `${url}/hr/onboarding/${props.id}`,
+          `${url}/onboarding/resource/${props.id}`,
           {
             ...onboarding,
             required_documents,

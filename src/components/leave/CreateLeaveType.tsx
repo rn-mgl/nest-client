@@ -41,7 +41,7 @@ const CreateLeaveType: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: createdLeave } = await axios.post(
-          `${url}/hr/leave_type`,
+          `${url}/leave-type/resource`,
           { ...leaveType },
           {
             headers: {

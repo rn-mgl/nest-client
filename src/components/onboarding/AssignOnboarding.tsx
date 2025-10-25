@@ -114,7 +114,7 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
         // const userIds = userOnboardings.filter(user => user.)
 
         const { data: responseData } = await axios.post(
-          `${url}/hr/user_onboarding`,
+          `${url}/onboarding/assignment`,
           { user_ids: assignedUsers, onboarding_id: props.id },
           {
             headers: {

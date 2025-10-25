@@ -150,7 +150,7 @@ const AssignLeaveType: React.FC<ModalInterface> = (props) => {
 
       if (token && user?.token) {
         const { data: responseData } = await axios.post(
-          `${url}/hr/user_leave_balance`,
+          `${url}/leave-type/assignment`,
           {
             user_leaves: userLeaves,
             user_ids: assignedUsers,
