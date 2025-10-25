@@ -18,11 +18,13 @@ const BaseCard: React.FC<BaseCardInterface> = ({ children, ...props }) => {
         </div>
       </div>
 
-      <div className="w-full h-40 max-h-40 min-h-40 flex flex-col items-center justify-start overflow-y-auto bg-neutral-200 p-2 rounded-xs">
-        <p className="text-sm w-full text-wrap break-words">
-          {props.description}
-        </p>
-      </div>
+      {props.description ? (
+        <div className="w-full h-40 max-h-40 min-h-40 flex flex-col items-center justify-start overflow-y-auto bg-neutral-200 p-2 rounded-xs">
+          <p className="text-sm w-full text-wrap break-words">
+            {props.description}
+          </p>
+        </div>
+      ) : null}
 
       {children}
     </div>

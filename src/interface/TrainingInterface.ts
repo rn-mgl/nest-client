@@ -18,14 +18,6 @@ export interface TrainingContentInterface {
   type: "text" | "image" | "video" | "application" | "audio";
 }
 
-export interface EmployeeTrainingInterface {
-  user_training_id?: number;
-  status: string;
-  deadline: string;
-  score: number | null;
-  created_at?: string;
-}
-
 export interface TrainingReviewInterface {
   id?: number;
   question: string;
@@ -34,12 +26,6 @@ export interface TrainingReviewInterface {
   choice_2: string;
   choice_3: string;
   choice_4: string;
-}
-
-export interface EmployeeTrainingReviewResponseInterface {
-  user_training_review_response_id?: number;
-  user_answer: number;
-  is_correct: boolean;
 }
 
 export interface AssignedTrainingInterface extends UserInterface {

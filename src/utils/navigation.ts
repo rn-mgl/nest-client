@@ -81,17 +81,17 @@ const ADDITIONAL_NAVIGATION = {
   super_admin: [
     {
       label: "Users",
-      url: "users",
+      url: "user",
       icon: IoPeople,
     },
     {
       label: "Roles",
-      url: "roles",
+      url: "role",
       icon: IoPricetags,
     },
     {
       label: "Permissions",
-      url: "permissions",
+      url: "permission",
       icon: IoKey,
     },
   ],

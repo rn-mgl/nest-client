@@ -13,17 +13,6 @@ export interface PerformanceReviewSurveyInterface {
   survey: string;
 }
 
-export interface EmployeePerformanceReviewInterface {
-  user_performance_review_id?: number;
-  status: string;
-  created_at?: string;
-}
-
-export interface EmployeePerformanceReviewResponseInterface {
-  user_performance_review_response_id?: number;
-  response: string | null;
-}
-
 export interface AssignedPerformanceReviewInterface extends UserInterface {
   assigned_performance_review: null | UserPerformanceReviewInterface;
 }
