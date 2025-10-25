@@ -73,6 +73,7 @@ const Role = () => {
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
+      {activeRoleSeeMore}
       <div className="w-full h-full flex flex-col items-center justify-start max-w-(--breakpoint-l-l) p-2 t:p-4">
         <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">
           {mappedRoles}

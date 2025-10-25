@@ -42,7 +42,7 @@ import {
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
-import { IoPencil, IoTrash } from "react-icons/io5";
+import { IoAdd, IoPencil, IoTrash } from "react-icons/io5";
 
 const Leave = ({
   searchParams,
@@ -444,7 +444,7 @@ const Leave = ({
           }
         />
 
-        <div className="w-full flex flex-col items-center justify-center gap-4 t:gap-8 ">
+        <div className="w-full flex flex-col items-start justify-center gap-4 t:gap-8 ">
           <Filter
             //
             searchKeyLabelPairs={searchFilter[activeTab as keyof object]}
@@ -478,6 +478,18 @@ const Leave = ({
               toggleCanSeeCategoryDropDown: toggleCanSeeCategoryDropDown,
             }}
           />
+
+          {activeTab === "resource" &&
+          user?.permissions.includes("create.leave_type_resource") ? (
+            <button
+              onClick={handleCanCreateLeaveType}
+              className="bg-accent-blue text-accent-yellow w-full p-2 rounded-md font-bold flex flex-row items-center justify-center 
+                  gap-2 t:w-40 transition-all"
+            >
+              Create Leave
+              <IoAdd className="text-lg" />
+            </button>
+          ) : null}
 
           {isLoading ? (
             <PageSkeletonLoader />
