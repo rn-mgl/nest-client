@@ -50,10 +50,22 @@ const Role = () => {
     sort,
   } = useSort("role", "Role");
 
+  const canEdit = React.useMemo(() => {
+    return user?.permissions.includes("update.role_resource");
+  }, [user?.permissions]);
+
+  const canDelete = React.useMemo(() => {
+    return user?.permissions.includes("delete.role_resource");
+  }, [user?.permissions]);
+
+  const canManage = React.useMemo(() => {
+    return canEdit || canDelete;
+  }, [canEdit, canDelete]);
+
   const getRoles = React.useCallback(
     async (controller?: AbortController) => {
       try {
-        if (user?.token) {
+        if (user?.token && user.permissions.includes("read.role_resource")) {
           const { data: responseData } = await axios.get(
             `${url}/role/resource`,
             {
@@ -80,7 +92,7 @@ const Role = () => {
         }
       }
     },
-    [url, user?.token, addToast]
+    [url, user?.token, user?.permissions, addToast]
   );
 
   const handleActiveEditRole = (id: number) => {
@@ -95,39 +107,59 @@ const Role = () => {
     setCanCreateRole((prev) => !prev);
   };
 
-  const mappedRoles = useFilterAndSort(roles, search, sort).map((role) => {
-    const createdBy = isUserSummary(role.created_by)
-      ? role.created_by.first_name
-      : null;
+  // format role first
+  const formattedRoles = roles.map((role) => {
+    const formattedRow = normalizeString(role.role);
 
-    const mappedPermissions = role.permissions?.map((permission) => {
-      return (
-        <div
-          key={`permission-${permission.name}-${permission.id}`}
-          className="bg-neutral-300 text-xs rounded-sm p-1 text-center break-inside-avoid"
-        >
-          {permission.name}
-        </div>
-      );
-    });
-    return (
-      <BaseCard
-        key={`role-${role.role}-${role.id}`}
-        title={normalizeString(role.role)}
-        createdBy={createdBy}
-      >
-        <div className="max-h-40 overflow-y-auto w-full min-h-40 h-full bg-neutral-200 rounded-md p-2">
-          <div className="w-full columns-3 space-y-2 gap-2">
-            {mappedPermissions}
-          </div>
-        </div>
-        <ResourceActions
-          handleActiveEdit={() => handleActiveEditRole(role.id ?? 0)}
-          handleActiveDelete={() => handleActiveDeleteRole(role.id ?? 0)}
-        />
-      </BaseCard>
-    );
+    return {
+      id: role.id,
+      role: formattedRow,
+      created_by: role.created_by,
+      permissions: role.permissions,
+    };
   });
+
+  const mappedRoles = useFilterAndSort(formattedRoles, search, sort).map(
+    (role) => {
+      const createdBy = isUserSummary(role.created_by)
+        ? role.created_by.first_name
+        : null;
+
+      const mappedPermissions = role.permissions?.map((permission) => {
+        return (
+          <div
+            key={`permission-${permission.name}-${permission.id}`}
+            className="bg-neutral-300 text-xs rounded-sm p-1 text-center break-inside-avoid"
+          >
+            {permission.name}
+          </div>
+        );
+      });
+      return (
+        <BaseCard
+          key={`role-${role.role}-${role.id}`}
+          title={normalizeString(role.role)}
+          createdBy={createdBy}
+        >
+          <div className="max-h-40 overflow-y-auto w-full min-h-40 h-full bg-neutral-200 rounded-md p-2">
+            <div className="w-full columns-3 space-y-2 gap-2">
+              {mappedPermissions}
+            </div>
+          </div>
+          {canManage ? (
+            <ResourceActions
+              handleActiveEdit={
+                canEdit ? () => handleActiveEditRole(role.id ?? 0) : null
+              }
+              handleActiveDelete={
+                canDelete ? () => handleActiveDeleteRole(role.id ?? 0) : null
+              }
+            />
+          ) : null}
+        </BaseCard>
+      );
+    }
+  );
 
   React.useEffect(() => {
     const controller = new AbortController();
@@ -139,13 +171,13 @@ const Role = () => {
     };
   }, [getRoles]);
 
-  return (
+  return user?.permissions.includes("read.role_resource") ? (
     <div className="w-full h-full flex flex-col items-center justify-start">
-      {canCreateRole ? (
+      {canCreateRole && user?.permissions.includes("create.role_resource") ? (
         <CreateRole toggleModal={handleCanCreateRole} refetchIndex={getRoles} />
       ) : null}
 
-      {activeEditRole ? (
+      {activeEditRole && user?.permissions.includes("update.role_resource") ? (
         <EditRole
           toggleModal={() => handleActiveEditRole(activeEditRole)}
           id={activeEditRole}
@@ -153,7 +185,8 @@ const Role = () => {
         />
       ) : null}
 
-      {activeDeleteRole ? (
+      {activeDeleteRole &&
+      user?.permissions.includes("delete.role_resource") ? (
         <DeleteEntity
           route="role/resource"
           toggleModal={() => handleActiveDeleteRole(activeDeleteRole)}
@@ -187,18 +220,27 @@ const Role = () => {
           }}
         />
 
-        <button
-          onClick={handleCanCreateRole}
-          className="bg-accent-blue text-accent-yellow w-full p-2 rounded-md font-bold flex flex-row items-center justify-center 
+        {user?.permissions.includes("create.role_resource") ? (
+          <button
+            onClick={handleCanCreateRole}
+            className="bg-accent-blue text-accent-yellow w-full p-2 rounded-md font-bold flex flex-row items-center justify-center 
                                   gap-2 t:w-fit t:px-4 transition-all"
-        >
-          Create Role <IoAdd />
-        </button>
+          >
+            Create Role <IoAdd />
+          </button>
+        ) : null}
 
         <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">
           {mappedRoles}
         </div>
       </div>
+    </div>
+  ) : (
+    <div
+      className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br 
+                from-accent-green/50 via-accent-purple/30 to-accent-blue/50"
+    >
+      <p className="text-xl animate-fade font-bold">You have no access here.</p>
     </div>
   );
 };
