@@ -1,7 +1,7 @@
 import { ModalInterface } from "@/src/interface/ModalInterface";
 
-import Input from "@/components/form/Input";
-import TextArea from "@/components/form/TextArea";
+import Input from "@/src/components/global/form/Input";
+import TextArea from "@/src/components/global/form/TextArea";
 import useDynamicFields from "@/src/hooks/useDynamicFields";
 import useModalTab from "@/src/hooks/useModalTab";
 import {

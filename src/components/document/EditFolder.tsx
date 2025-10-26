@@ -7,8 +7,8 @@ import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose, IoText } from "react-icons/io5";
-import Input from "@/form/Input";
-import Select from "@/form/Select";
+import Input from "@/src/components/global/form/Input";
+import Select from "@/src/components/global/form/Select";
 import { useToasts } from "@/src/context/ToastContext";
 
 const EditFolder: React.FC<ModalInterface> = (props) => {

@@ -1,9 +1,9 @@
-import Input from "@/components/form/Input";
+import Input from "@/src/components/global/form/Input";
 import { ModalInterface } from "@/interface/ModalInterface";
 import { LeaveTypeInterface } from "@/src/interface/LeaveInterface";
 import React from "react";
 import { IoClose, IoOptions, IoReader } from "react-icons/io5";
-import TextArea from "@/form/TextArea";
+import TextArea from "@/src/components/global/form/TextArea";
 import { getCSRFToken } from "@/src/utils/token";
 import { useSession } from "next-auth/react";
 import axios, { isAxiosError } from "axios";

@@ -7,11 +7,11 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
 import { IoAdd, IoClose, IoText } from "react-icons/io5";
-import Input from "@/form/Input";
-import TextArea from "@/form/TextArea";
+import Input from "@/src/components/global/form/Input";
+import TextArea from "@/src/components/global/form/TextArea";
 import Link from "next/link";
 import useSelect from "@/src/hooks/useSelect";
-import Select from "@/form/Select";
+import Select from "@/src/components/global/form/Select";
 import { isCloudFileSummary, isRawFileSummary } from "@/src/utils/utils";
 import { useToasts } from "@/src/context/ToastContext";
 

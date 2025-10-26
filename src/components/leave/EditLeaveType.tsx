@@ -6,8 +6,8 @@ import { getCSRFToken } from "@/src/utils/token";
 import { useSession } from "next-auth/react";
 import axios, { isAxiosError } from "axios";
 
-import Input from "@/components/form/Input";
-import TextArea from "@/components/form/TextArea";
+import Input from "@/src/components/global/form/Input";
+import TextArea from "@/src/components/global/form/TextArea";
 import { useToasts } from "@/src/context/ToastContext";
 
 const EditLeaveType: React.FC<ModalInterface> = (props) => {

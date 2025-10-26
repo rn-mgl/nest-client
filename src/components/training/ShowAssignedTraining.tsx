@@ -1,6 +1,6 @@
 "use client";
 
-import Radio from "@/form/Radio";
+import Radio from "@/src/components/global/form/Radio";
 import TextBlock from "@/global/field/TextBlock";
 import TextField from "@/global/field/TextField";
 import ModalTabs from "@/global/navigation/ModalTabs";

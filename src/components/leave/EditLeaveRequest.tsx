@@ -1,7 +1,7 @@
 "use client";
 
-import Input from "@/form/Input";
-import TextArea from "@/form/TextArea";
+import Input from "@/src/components/global/form/Input";
+import TextArea from "@/src/components/global/form/TextArea";
 import { useToasts } from "@/src/context/ToastContext";
 import { LeaveRequestFormInterface } from "@/src/interface/LeaveInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";

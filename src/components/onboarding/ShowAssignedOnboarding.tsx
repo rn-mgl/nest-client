@@ -1,4 +1,4 @@
-import File from "@/form/File";
+import File from "@/src/components/global/form/File";
 import TextBlock from "@/global/field/TextBlock";
 import TextField from "@/global/field/TextField";
 import ModalTabs from "@/global/navigation/ModalTabs";

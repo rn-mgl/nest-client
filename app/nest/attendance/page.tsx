@@ -1,8 +1,8 @@
 "use client";
 
 import Log from "@/src/components/employee/attendance/Log";
-import Input from "@/src/components/form/Input";
-import Select from "@/src/components/form/Select";
+import Input from "@/src/components/global/form/Input";
+import Select from "@/src/components/global/form/Select";
 import { useToasts } from "@/src/context/ToastContext";
 import useIsLoading from "@/src/hooks/useIsLoading";
 import { AttendanceInterface } from "@/src/interface/AttendanceInterface";

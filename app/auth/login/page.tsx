@@ -1,7 +1,7 @@
 "use client";
 
 import LogoNav from "@/global/navigation/LogoNav";
-import Input from "@/src/components/form/Input";
+import Input from "@/src/components/global/form/Input";
 import IconLoader from "@/src/components/global/loader/IconLoader";
 import { useToasts } from "@/src/context/ToastContext";
 import useIsLoading from "@/src/hooks/useIsLoading";

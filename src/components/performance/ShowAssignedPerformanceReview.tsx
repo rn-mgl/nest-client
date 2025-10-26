@@ -1,6 +1,6 @@
 "use client";
 
-import TextArea from "@/form/TextArea";
+import TextArea from "@/src/components/global/form/TextArea";
 import TextBlock from "@/global/field/TextBlock";
 import TextField from "@/global/field/TextField";
 import ModalTabs from "@/global/navigation/ModalTabs";

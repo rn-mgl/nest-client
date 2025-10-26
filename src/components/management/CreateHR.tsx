@@ -3,7 +3,7 @@ import React from "react";
 import { IoClose, IoEye, IoEyeOff, IoMail, IoPeople } from "react-icons/io5";
 import { RegisterInterface } from "@/src/interface/AuthInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
-import Input from "@/components/form/Input";
+import Input from "@/src/components/global/form/Input";
 import useShowPassword from "@/src/hooks/useShowPassword";
 import { getCSRFToken } from "@/src/utils/token";
 import axios from "axios";

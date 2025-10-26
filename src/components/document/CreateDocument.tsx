@@ -1,6 +1,6 @@
-import File from "@/form/File";
-import Input from "@/form/Input";
-import TextArea from "@/form/TextArea";
+import File from "@/src/components/global/form/File";
+import Input from "@/src/components/global/form/Input";
+import TextArea from "@/src/components/global/form/TextArea";
 import { useToasts } from "@/src/context/ToastContext";
 import { DocumentInterface } from "@/src/interface/DocumentInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";

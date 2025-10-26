@@ -1,6 +1,6 @@
 "use client";
 
-import CreateHR from "@/src/components/admin/hr/CreateHR";
+import CreateHR from "@/src/components/management/CreateHR";
 import Filter from "@/src/components/global/filter/Filter";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import { useAlert } from "@/src/context/AlertContext";

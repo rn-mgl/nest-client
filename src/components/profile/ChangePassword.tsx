@@ -7,7 +7,7 @@ import axios, { isAxiosError } from "axios";
 import { signOut, useSession } from "next-auth/react";
 import React from "react";
 import { IoClose, IoEye, IoEyeOff } from "react-icons/io5";
-import Input from "@/form/Input";
+import Input from "@/src/components/global/form/Input";
 import { useToasts } from "@/src/context/ToastContext";
 
 const ChangePassword: React.FC<ModalInterface> = (props) => {

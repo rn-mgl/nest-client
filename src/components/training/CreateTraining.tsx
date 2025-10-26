@@ -1,5 +1,5 @@
-import Input from "@/components/form/Input";
-import TextArea from "@/components/form/TextArea";
+import Input from "@/src/components/global/form/Input";
+import TextArea from "@/src/components/global/form/TextArea";
 import ModalTabs from "@/global/navigation/ModalTabs";
 import useDynamicFields from "@/src/hooks/useDynamicFields";
 import useModalTab from "@/src/hooks/useModalTab";
@@ -25,8 +25,8 @@ import {
   IoTrash,
   IoVideocam,
 } from "react-icons/io5";
-import File from "@/form/File";
-import Radio from "@/form/Radio";
+import File from "@/src/components/global/form/File";
+import Radio from "@/src/components/global/form/Radio";
 import { isRawFileSummary } from "@/src/utils/utils";
 import { useToasts } from "@/src/context/ToastContext";
 

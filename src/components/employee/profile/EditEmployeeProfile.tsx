@@ -1,6 +1,6 @@
 "use client";
 
-import Input from "@/form/Input";
+import Input from "@/src/components/global/form/Input";
 import { useToasts } from "@/src/context/ToastContext";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { UserInterface } from "@/src/interface/UserInterface";

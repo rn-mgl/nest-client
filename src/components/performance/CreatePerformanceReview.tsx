@@ -1,5 +1,5 @@
-import Input from "@/components/form/Input";
-import TextArea from "@/components/form/TextArea";
+import Input from "@/src/components/global/form/Input";
+import TextArea from "@/src/components/global/form/TextArea";
 import ModalTabs from "@/global/navigation/ModalTabs";
 import { useToasts } from "@/src/context/ToastContext";
 import useDynamicFields from "@/src/hooks/useDynamicFields";

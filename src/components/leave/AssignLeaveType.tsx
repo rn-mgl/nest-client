@@ -3,7 +3,7 @@ import { ModalInterface } from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios, { isAxiosError } from "axios";
 
-import CheckBox from "@/form/CheckBox";
+import CheckBox from "@/src/components/global/form/CheckBox";
 import Table from "@/global/field/Table";
 import { useSession } from "next-auth/react";
 import React from "react";

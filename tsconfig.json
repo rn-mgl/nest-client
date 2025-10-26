@@ -24,7 +24,7 @@
       "@/components/*": ["./src/components/*"],
       "@/controller/*": ["./src/components/admin/*"],
       "@/employee/*": ["./src/components/employee/*"],
-      "@/form/*": ["./src/components/form/*"],
+      "@/form/*": ["./src/components/global/form/*"],
       "@/global/*": ["./src/components/global/*"],
       "@/hr/*": ["./src/components/hr/*"],
       "@/landing/*": ["./src/components/landing/*"],

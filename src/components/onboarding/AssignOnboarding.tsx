@@ -1,4 +1,4 @@
-import CheckBox from "@/form/CheckBox";
+import CheckBox from "@/src/components/global/form/CheckBox";
 import Table from "@/global/field/Table";
 import { useToasts } from "@/src/context/ToastContext";
 import { ModalInterface } from "@/src/interface/ModalInterface";

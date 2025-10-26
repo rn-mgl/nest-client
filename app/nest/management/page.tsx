@@ -1,7 +1,7 @@
 "use client";
 
 import PageTabs from "@/global/navigation/PageTabs";
-import Input from "@/src/components/form/Input";
+import Input from "@/src/components/global/form/Input";
 import Table from "@/src/components/global/field/Table";
 import Filter from "@/src/components/global/filter/Filter";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";

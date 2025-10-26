@@ -1,6 +1,6 @@
 "use client";
 
-import Input from "@/src/components/form/Input";
+import Input from "@/src/components/global/form/Input";
 import LogoNav from "@/global/navigation/LogoNav";
 import useShowPassword from "@/src/hooks/useShowPassword";
 import { getCSRFToken } from "@/src/utils/token";
