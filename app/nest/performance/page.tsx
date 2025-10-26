@@ -97,7 +97,7 @@ const Performance = ({
   const {
     search,
     canSeeSearchDropDown,
-    handleCanSeeSearchDropDown,
+    toggleCanSeeSearchDropDown,
     handleSearch,
     handleSelectSearch,
   } = useSearch("title", "Title");
@@ -105,9 +105,9 @@ const Performance = ({
   const {
     sort,
     canSeeSortDropDown,
-    handleCanSeeSortDropDown,
+    toggleCanSeeSortDropDown,
     handleSelectSort,
-    handleToggleAsc,
+    toggleAsc,
   } = useSort("title", "Title");
 
   const handleCanCreatePerformanceReview = () => {
@@ -376,7 +376,7 @@ const Performance = ({
             canSeeSearchDropDown: canSeeSearchDropDown,
             selectSearch: handleSelectSearch,
             onChange: handleSearch,
-            toggleCanSeeSearchDropDown: handleCanSeeSearchDropDown,
+            toggleCanSeeSearchDropDown: toggleCanSeeSearchDropDown,
           }}
           //
           sortKeyLabelPairs={SORT_FILTER[activeTab as keyof object]}
@@ -385,8 +385,8 @@ const Performance = ({
             isAsc: sort.isAsc,
             sortLabel: sort.sortLabel,
             canSeeSortDropDown: canSeeSortDropDown,
-            toggleAsc: handleToggleAsc,
-            toggleCanSeeSortDropDown: handleCanSeeSortDropDown,
+            toggleAsc: toggleAsc,
+            toggleCanSeeSortDropDown: toggleCanSeeSortDropDown,
             selectSort: handleSelectSort,
           }}
         />

@@ -58,7 +58,7 @@ const Training = ({
   const {
     canSeeSearchDropDown,
     search,
-    handleCanSeeSearchDropDown,
+    toggleCanSeeSearchDropDown,
     handleSearch,
     handleSelectSearch,
   } = useSearch("title", "Title");
@@ -66,9 +66,9 @@ const Training = ({
   const {
     sort,
     canSeeSortDropDown,
-    handleCanSeeSortDropDown,
+    toggleCanSeeSortDropDown,
     handleSelectSort,
-    handleToggleAsc,
+    toggleAsc,
   } = useSort("deadline", "Deadline");
 
   const {
@@ -365,7 +365,7 @@ const Training = ({
             searchValue: search.searchValue,
             searchLabel: search.searchLabel,
             canSeeSearchDropDown: canSeeSearchDropDown,
-            toggleCanSeeSearchDropDown: handleCanSeeSearchDropDown,
+            toggleCanSeeSearchDropDown: toggleCanSeeSearchDropDown,
             onChange: handleSearch,
             selectSearch: handleSelectSearch,
           }}
@@ -385,8 +385,8 @@ const Training = ({
             sortLabel: sort.sortLabel,
             isAsc: sort.isAsc,
             canSeeSortDropDown: canSeeSortDropDown,
-            toggleCanSeeSortDropDown: handleCanSeeSortDropDown,
-            toggleAsc: handleToggleAsc,
+            toggleCanSeeSortDropDown: toggleCanSeeSortDropDown,
+            toggleAsc: toggleAsc,
             selectSort: handleSelectSort,
           }}
         />

@@ -109,7 +109,7 @@ const Leave = ({
   const {
     search,
     canSeeSearchDropDown,
-    handleCanSeeSearchDropDown,
+    toggleCanSeeSearchDropDown,
     handleSearch,
     handleSelectSearch,
   } = useSearch("leave.type", "Leave Type");
@@ -117,9 +117,9 @@ const Leave = ({
   const {
     sort,
     canSeeSortDropDown,
-    handleCanSeeSortDropDown,
+    toggleCanSeeSortDropDown,
     handleSelectSort,
-    handleToggleAsc,
+    toggleAsc,
   } = useSort("leave.type", "Leave Type");
 
   const {
@@ -453,7 +453,7 @@ const Leave = ({
               searchKey: search.searchKey,
               searchLabel: search.searchLabel,
               searchValue: search.searchValue,
-              toggleCanSeeSearchDropDown: handleCanSeeSearchDropDown,
+              toggleCanSeeSearchDropDown: toggleCanSeeSearchDropDown,
               selectSearch: handleSelectSearch,
               onChange: handleSearch,
             }}
@@ -465,8 +465,8 @@ const Leave = ({
               sortLabel: sort.sortLabel,
               canSeeSortDropDown: canSeeSortDropDown,
               selectSort: handleSelectSort,
-              toggleAsc: handleToggleAsc,
-              toggleCanSeeSortDropDown: handleCanSeeSortDropDown,
+              toggleAsc: toggleAsc,
+              toggleCanSeeSortDropDown: toggleCanSeeSortDropDown,
             }}
             //
             categoryKeyValuePairs={categoryFilter[activeTab as keyof object]}

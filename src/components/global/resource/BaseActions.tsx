@@ -1,6 +1,6 @@
 import { BaseActionsInterface } from "@/src/interface/CardInterface";
 import React from "react";
-import { IoArrowForward } from "react-icons/io5";
+import { IoEye } from "react-icons/io5";
 
 const BaseActions: React.FC<BaseActionsInterface & BaseActionsInterface> = (
   props
@@ -10,9 +10,9 @@ const BaseActions: React.FC<BaseActionsInterface & BaseActionsInterface> = (
       <button
         onClick={props.handleActiveSeeMore}
         title="See More"
-        className="w-full flex flex-row items-center justify-center gap-2 p-2 rounded-sm font-medium text-xs bg-accent-blue text-neutral-100"
+        className="w-full flex flex-row items-center justify-center gap-1 p-1 rounded-sm font-medium text-xs bg-accent-blue text-neutral-100"
       >
-        See More <IoArrowForward />
+        <IoEye />
       </button>
     </div>
   );

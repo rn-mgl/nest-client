@@ -13,10 +13,10 @@ import CreateFolder from "@/src/components/document/CreateFolder";
 import EditDocument from "@/src/components/document/EditDocument";
 import EditFolder from "@/src/components/document/EditFolder";
 import {
-  HR_DOCUMENTS_CATEGORY,
-  HR_DOCUMENTS_SEARCH,
-  HR_DOCUMENTS_SORT,
-  HR_FOLDERS_SEARCH,
+  RESOURCE_DOCUMENTS_CATEGORY,
+  RESOURCE_DOCUMENTS_SEARCH,
+  RESOURCE_DOCUMENTS_SORT,
+  RESOURCE_FOLDERS_SEARCH,
 } from "@/src/configs/filters";
 import { useToasts } from "@/src/context/ToastContext";
 import useCategory from "@/src/hooks/useCategory";
@@ -69,7 +69,7 @@ const Document = ({
   const {
     canSeeSearchDropDown,
     search,
-    handleCanSeeSearchDropDown,
+    toggleCanSeeSearchDropDown,
     handleSearch,
     handleSelectSearch,
   } = useSearch("title", "Title");
@@ -84,9 +84,9 @@ const Document = ({
   const {
     sort,
     canSeeSortDropDown,
-    handleCanSeeSortDropDown,
+    toggleCanSeeSortDropDown,
     handleSelectSort,
-    handleToggleAsc,
+    toggleAsc,
   } = useSort("created_at", "Created At");
 
   const { data } = useSession({ required: true });
@@ -386,8 +386,8 @@ const Document = ({
           searchKeyLabelPairs={
             category.categoryValue === "All" ||
             category.categoryValue === "Documents"
-              ? HR_DOCUMENTS_SEARCH
-              : HR_FOLDERS_SEARCH
+              ? RESOURCE_DOCUMENTS_SEARCH
+              : RESOURCE_FOLDERS_SEARCH
           }
           search={{
             searchKey: search.searchKey,
@@ -395,11 +395,11 @@ const Document = ({
             searchValue: search.searchValue,
             canSeeSearchDropDown: canSeeSearchDropDown,
             selectSearch: handleSelectSearch,
-            toggleCanSeeSearchDropDown: handleCanSeeSearchDropDown,
+            toggleCanSeeSearchDropDown: toggleCanSeeSearchDropDown,
             onChange: handleSearch,
           }}
           //
-          categoryKeyValuePairs={HR_DOCUMENTS_CATEGORY}
+          categoryKeyValuePairs={RESOURCE_DOCUMENTS_CATEGORY}
           category={{
             categoryKey: category.categoryKey,
             categoryValue: category.categoryValue,
@@ -408,15 +408,15 @@ const Document = ({
             selectCategory: handleSelectCategory,
           }}
           //
-          sortKeyLabelPairs={HR_DOCUMENTS_SORT}
+          sortKeyLabelPairs={RESOURCE_DOCUMENTS_SORT}
           sort={{
             sortKey: sort.sortKey,
             sortLabel: sort.sortLabel,
             isAsc: sort.isAsc,
             canSeeSortDropDown: canSeeSortDropDown,
-            toggleAsc: handleToggleAsc,
+            toggleAsc: toggleAsc,
             selectSort: handleSelectSort,
-            toggleCanSeeSortDropDown: handleCanSeeSortDropDown,
+            toggleCanSeeSortDropDown: toggleCanSeeSortDropDown,
           }}
         />
 

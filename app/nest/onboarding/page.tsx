@@ -103,7 +103,7 @@ const Onboarding = ({
   const {
     search,
     canSeeSearchDropDown,
-    handleCanSeeSearchDropDown,
+    toggleCanSeeSearchDropDown,
     handleSearch,
     handleSelectSearch,
   } = useSearch("onboarding.title", "Title");
@@ -111,9 +111,9 @@ const Onboarding = ({
   const {
     sort,
     canSeeSortDropDown,
-    handleToggleAsc,
+    toggleAsc,
     handleSelectSort,
-    handleCanSeeSortDropDown,
+    toggleCanSeeSortDropDown,
   } = useSort("onboarding.title", "Title");
 
   const {
@@ -410,9 +410,9 @@ const Onboarding = ({
             sortKey: sort.sortKey,
             sortLabel: sort.sortLabel,
             selectSort: handleSelectSort,
-            toggleCanSeeSortDropDown: handleCanSeeSortDropDown,
+            toggleCanSeeSortDropDown: toggleCanSeeSortDropDown,
             isAsc: sort.isAsc,
-            toggleAsc: handleToggleAsc,
+            toggleAsc: toggleAsc,
             canSeeSortDropDown: canSeeSortDropDown,
           }}
           //
@@ -423,7 +423,7 @@ const Onboarding = ({
             searchLabel: search.searchLabel,
             searchValue: search.searchValue,
             selectSearch: handleSelectSearch,
-            toggleCanSeeSearchDropDown: handleCanSeeSearchDropDown,
+            toggleCanSeeSearchDropDown: toggleCanSeeSearchDropDown,
             canSeeSearchDropDown: canSeeSearchDropDown,
           }}
         />

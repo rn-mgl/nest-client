@@ -9,7 +9,7 @@ const ResourceActions: React.FC<ResourceActionsInterface> = (props) => {
         <button
           onClick={props.handleActiveEdit}
           title="Edit"
-          className="w-full flex flex-col items-center p-2 rounded-sm font-semibold text-sm bg-accent-yellow text-accent-blue"
+          className="w-full flex flex-col items-center p-1 rounded-sm font-semibold text-xs bg-accent-yellow text-accent-blue"
         >
           <IoPencil />
         </button>
@@ -19,7 +19,7 @@ const ResourceActions: React.FC<ResourceActionsInterface> = (props) => {
         <button
           onClick={props.handleActiveAssign}
           title="Assign"
-          className="w-full flex flex-col items-center p-2 rounded-sm font-semibold text-sm bg-accent-purple text-neutral-100"
+          className="w-full flex flex-col items-center p-1 rounded-sm font-semibold text-xs bg-accent-purple text-neutral-100"
         >
           <IoPersonAdd />
         </button>
@@ -29,7 +29,7 @@ const ResourceActions: React.FC<ResourceActionsInterface> = (props) => {
         <button
           onClick={props.handleActiveDelete}
           title="Delete"
-          className="w-full flex flex-col items-center p-2 rounded-sm font-semibold text-sm bg-red-600 text-white"
+          className="w-full flex flex-col items-center p-1 rounded-sm font-semibold text-xs bg-red-600 text-white"
         >
           <IoTrash />
         </button>

@@ -15,7 +15,7 @@ export default function useSort(
     isAsc: false,
   });
 
-  const handleCanSeeSortDropDown = React.useCallback(() => {
+  const toggleCanSeeSortDropDown = React.useCallback(() => {
     return setCanShowSort((prev) => !prev);
   }, []);
 
@@ -29,7 +29,7 @@ export default function useSort(
     });
   }, []);
 
-  const handleToggleAsc = React.useCallback(() => {
+  const toggleAsc = React.useCallback(() => {
     setSort((prev) => {
       return {
         ...prev,
@@ -41,8 +41,8 @@ export default function useSort(
   return {
     canSeeSortDropDown,
     sort,
-    handleCanSeeSortDropDown,
+    toggleCanSeeSortDropDown,
     handleSelectSort,
-    handleToggleAsc,
+    toggleAsc,
   };
 }

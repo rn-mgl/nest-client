@@ -11,7 +11,7 @@ export default function useSearch(
     searchValue: "",
   });
 
-  const handleCanSeeSearchDropDown = React.useCallback(() => {
+  const toggleCanSeeSearchDropDown = React.useCallback(() => {
     setCanShowSearch((prev) => !prev);
   }, []);
 
@@ -43,7 +43,7 @@ export default function useSearch(
     search,
     canSeeSearchDropDown,
     handleSearch,
-    handleCanSeeSearchDropDown,
+    toggleCanSeeSearchDropDown,
     handleSelectSearch,
   };
 }

@@ -9,23 +9,23 @@ import BaseActions from "@/src/components/global/resource/BaseActions";
 import ShowUser from "@/src/components/management/ShowUser";
 import UserCard from "@/src/components/management/UserCard";
 import {
-  MANAMGENT_ATTENDANCE_SEARCH,
-  MANAMGENT_ATTENDANCE_SORT,
-  MANAMGENT_CATEGORY,
-  MANAMGENT_LEAVE_CATEGORY,
-  MANAMGENT_LEAVE_TYPE_SEARCH,
-  MANAMGENT_LEAVE_TYPE_SORT,
-  MANAMGENT_ONBOARDING_CATEGORY,
-  MANAMGENT_ONBOARDING_SEARCH,
-  MANAMGENT_ONBOARDING_SORT,
-  MANAMGENT_PERFORMANCE_CATEGORY,
-  MANAMGENT_PERFORMANCE_SEARCH,
-  MANAMGENT_PERFORMANCE_SORT,
-  MANAMGENT_SEARCH,
-  MANAMGENT_SORT,
-  MANAMGENT_TRAINING_CATEGORY,
-  MANAMGENT_TRAINING_SEARCH,
-  MANAMGENT_TRAINING_SORT,
+  MANAGEMENT_ATTENDANCE_SEARCH,
+  MANAGEMENT_ATTENDANCE_SORT,
+  MANAGEMENT_CATEGORY,
+  MANAGEMENT_LEAVE_CATEGORY,
+  MANAGEMENT_LEAVE_TYPE_SEARCH,
+  MANAGEMENT_LEAVE_TYPE_SORT,
+  MANAGEMENT_ONBOARDING_CATEGORY,
+  MANAGEMENT_ONBOARDING_SEARCH,
+  MANAGEMENT_ONBOARDING_SORT,
+  MANAGEMENT_PERFORMANCE_CATEGORY,
+  MANAGEMENT_PERFORMANCE_SEARCH,
+  MANAGEMENT_PERFORMANCE_SORT,
+  MANAGEMENT_SEARCH,
+  MANAGEMENT_SORT,
+  MANAGEMENT_TRAINING_CATEGORY,
+  MANAGEMENT_TRAINING_SEARCH,
+  MANAGEMENT_TRAINING_SORT,
 } from "@/src/configs/filters";
 import { useAlert } from "@/src/context/AlertContext";
 import { useToasts } from "@/src/context/ToastContext";
@@ -83,29 +83,29 @@ const Management = ({
   const { isLoading, handleIsLoading } = useIsLoading();
 
   const searchFilters = {
-    users: MANAMGENT_SEARCH,
-    attendances: MANAMGENT_ATTENDANCE_SEARCH,
-    onboardings: MANAMGENT_ONBOARDING_SEARCH,
-    leaves: MANAMGENT_LEAVE_TYPE_SEARCH,
-    performances: MANAMGENT_PERFORMANCE_SEARCH,
-    trainings: MANAMGENT_TRAINING_SEARCH,
+    users: MANAGEMENT_SEARCH,
+    attendances: MANAGEMENT_ATTENDANCE_SEARCH,
+    onboardings: MANAGEMENT_ONBOARDING_SEARCH,
+    leaves: MANAGEMENT_LEAVE_TYPE_SEARCH,
+    performances: MANAGEMENT_PERFORMANCE_SEARCH,
+    trainings: MANAGEMENT_TRAINING_SEARCH,
   };
 
   const sortFilters = {
-    users: MANAMGENT_SORT,
-    attendances: MANAMGENT_ATTENDANCE_SORT,
-    onboardings: MANAMGENT_ONBOARDING_SORT,
-    leaves: MANAMGENT_LEAVE_TYPE_SORT,
-    performances: MANAMGENT_PERFORMANCE_SORT,
-    trainings: MANAMGENT_TRAINING_SORT,
+    users: MANAGEMENT_SORT,
+    attendances: MANAGEMENT_ATTENDANCE_SORT,
+    onboardings: MANAGEMENT_ONBOARDING_SORT,
+    leaves: MANAGEMENT_LEAVE_TYPE_SORT,
+    performances: MANAGEMENT_PERFORMANCE_SORT,
+    trainings: MANAGEMENT_TRAINING_SORT,
   };
 
   const categoryFilters = {
-    users: MANAMGENT_CATEGORY,
-    onboardings: MANAMGENT_ONBOARDING_CATEGORY,
-    leaves: MANAMGENT_LEAVE_CATEGORY,
-    performances: MANAMGENT_PERFORMANCE_CATEGORY,
-    trainings: MANAMGENT_TRAINING_CATEGORY,
+    users: MANAGEMENT_CATEGORY,
+    onboardings: MANAGEMENT_ONBOARDING_CATEGORY,
+    leaves: MANAGEMENT_LEAVE_CATEGORY,
+    performances: MANAGEMENT_PERFORMANCE_CATEGORY,
+    trainings: MANAGEMENT_TRAINING_CATEGORY,
   };
 
   const { addToast } = useToasts();
@@ -116,16 +116,16 @@ const Management = ({
     canSeeSearchDropDown,
     search,
     handleSearch,
-    handleCanSeeSearchDropDown,
+    toggleCanSeeSearchDropDown,
     handleSelectSearch,
   } = useSearch("first_name", "First Name");
 
   const {
     canSeeSortDropDown,
     sort,
-    handleCanSeeSortDropDown,
+    toggleCanSeeSortDropDown,
     handleSelectSort,
-    handleToggleAsc,
+    toggleAsc,
   } = useSort("first_name", "First Name");
 
   const {
@@ -586,7 +586,7 @@ const Management = ({
                 searchValue: search.searchValue,
                 canSeeSearchDropDown: canSeeSearchDropDown,
                 selectSearch: handleSelectSearch,
-                toggleCanSeeSearchDropDown: handleCanSeeSearchDropDown,
+                toggleCanSeeSearchDropDown: toggleCanSeeSearchDropDown,
                 onChange: handleSearch,
               }}
               //
@@ -605,9 +605,9 @@ const Management = ({
                 sortLabel: sort.sortLabel,
                 isAsc: sort.isAsc,
                 canSeeSortDropDown: canSeeSortDropDown,
-                toggleAsc: handleToggleAsc,
+                toggleAsc: toggleAsc,
                 selectSort: handleSelectSort,
-                toggleCanSeeSortDropDown: handleCanSeeSortDropDown,
+                toggleCanSeeSortDropDown: toggleCanSeeSortDropDown,
               }}
             />
 

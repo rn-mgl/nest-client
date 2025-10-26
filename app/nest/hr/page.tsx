@@ -1,8 +1,13 @@
 "use client";
 
-import CreateHR from "@/src/components/management/CreateHR";
 import Filter from "@/src/components/global/filter/Filter";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
+import CreateHR from "@/src/components/management/CreateHR";
+import {
+  MANAGEMENT_CATEGORY,
+  MANAGEMENT_SEARCH,
+  MANAGEMENT_SORT,
+} from "@/src/configs/filters";
 import { useAlert } from "@/src/context/AlertContext";
 import { useToasts } from "@/src/context/ToastContext";
 import useCategory from "@/src/hooks/useCategory";
@@ -11,11 +16,6 @@ import useIsLoading from "@/src/hooks/useIsLoading";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { UserInterface } from "@/src/interface/UserInterface";
-import {
-  ADMIN_HR_CATEGORY,
-  ADMIN_HR_SEARCH,
-  ADMIN_HR_SORT,
-} from "@/src/configs/filters";
 import { getCSRFToken } from "@/src/utils/token";
 import { isCloudFileSummary } from "@/src/utils/utils";
 import axios, { isAxiosError } from "axios";
@@ -41,16 +41,16 @@ const AdminHR = () => {
     canSeeSearchDropDown,
     search,
     handleSearch,
-    handleCanSeeSearchDropDown,
+    toggleCanSeeSearchDropDown,
     handleSelectSearch,
   } = useSearch("first_name", "First Name");
 
   const {
     canSeeSortDropDown,
     sort,
-    handleCanSeeSortDropDown,
+    toggleCanSeeSortDropDown,
     handleSelectSort,
-    handleToggleAsc,
+    toggleAsc,
   } = useSort("first_name", "First Name");
 
   const {
@@ -259,29 +259,29 @@ const AdminHR = () => {
       >
         <Filter
           //
-          searchKeyLabelPairs={ADMIN_HR_SEARCH}
+          searchKeyLabelPairs={MANAGEMENT_SEARCH}
           search={{
             searchKey: search.searchKey,
             searchLabel: search.searchLabel,
             searchValue: search.searchValue,
             canSeeSearchDropDown: canSeeSearchDropDown,
             selectSearch: handleSelectSearch,
-            toggleCanSeeSearchDropDown: handleCanSeeSearchDropDown,
+            toggleCanSeeSearchDropDown: toggleCanSeeSearchDropDown,
             onChange: handleSearch,
           }}
           //
-          sortKeyLabelPairs={ADMIN_HR_SORT}
+          sortKeyLabelPairs={MANAGEMENT_SORT}
           sort={{
             sortKey: sort.sortKey,
             sortLabel: sort.sortLabel,
             isAsc: sort.isAsc,
             canSeeSortDropDown: canSeeSortDropDown,
-            toggleAsc: handleToggleAsc,
+            toggleAsc: toggleAsc,
             selectSort: handleSelectSort,
-            toggleCanSeeSortDropDown: handleCanSeeSortDropDown,
+            toggleCanSeeSortDropDown: toggleCanSeeSortDropDown,
           }}
           //
-          categoryKeyValuePairs={ADMIN_HR_CATEGORY}
+          categoryKeyValuePairs={MANAGEMENT_CATEGORY}
           category={{
             categoryKey: category.categoryKey,
             categoryValue: category.categoryValue,
