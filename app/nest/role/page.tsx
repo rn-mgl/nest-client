@@ -172,7 +172,7 @@ const Role = () => {
   }, [getRoles]);
 
   return user?.permissions.includes("read.role_resource") ? (
-    <div className="w-full h-full flex flex-col items-center justify-start">
+    <div className="w-full flex flex-col items-center justify-start">
       {canCreateRole && user?.permissions.includes("create.role_resource") ? (
         <CreateRole toggleModal={handleCanCreateRole} refetchIndex={getRoles} />
       ) : null}
@@ -196,7 +196,7 @@ const Role = () => {
         />
       ) : null}
 
-      <div className="w-full h-full flex flex-col items-start justify-start  max-w-(--breakpoint-l-l) p-2 t:p-4 gap-4">
+      <div className="w-full flex flex-col items-start justify-start max-w-(--breakpoint-l-l) p-2 t:p-4 gap-4">
         <Filter
           searchKeyLabelPairs={RESOURCE_ROLE_SEARCH}
           search={{

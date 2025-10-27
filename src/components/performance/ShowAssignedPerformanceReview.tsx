@@ -18,6 +18,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoCheckmark, IoClose } from "react-icons/io5";
+import { isUserPerformanceReviewResponse } from "@/src/utils/utils";
 
 const ShowAssignedPerformanceReview: React.FC<ModalInterface> = (props) => {
   const [performanceReview, setPerformanceReview] =
@@ -155,6 +156,8 @@ const ShowAssignedPerformanceReview: React.FC<ModalInterface> = (props) => {
   };
 
   const mappedSurveys = surveys.map((survey, index) => {
+    const hasResponse = isUserPerformanceReviewResponse(survey.user_response);
+
     return (
       <div
         key={index}
@@ -162,16 +165,24 @@ const ShowAssignedPerformanceReview: React.FC<ModalInterface> = (props) => {
       >
         <TextBlock label={`Survey ${index + 1}`} value={survey.survey} />
 
-        <TextArea
-          id={`response_${index}`}
-          name={`response_${index}`}
-          onChange={(e) => handleSurvey(e, index)}
-          placeholder="Survey Response"
-          required={true}
-          value={survey?.user_response?.response ?? ""}
-        />
+        {hasResponse ? (
+          <TextBlock
+            label={`Response ${index + 1}`}
+            value={survey.user_response?.response ?? ""}
+          />
+        ) : (
+          <TextArea
+            id={`response_${index}`}
+            name={`response_${index}`}
+            onChange={(e) => handleSurvey(e, index)}
+            placeholder="Survey Response"
+            required={true}
+            value={survey?.user_response?.response ?? ""}
+            rows={10}
+          />
+        )}
 
-        {survey.user_response?.id ? (
+        {hasResponse ? (
           <div
             className="w-full p-2 rounded-md bg-accent-green text-neutral-100 font-bold 
                                text-center flex flex-row items-center justify-center gap-2"
