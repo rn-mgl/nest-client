@@ -534,3 +534,27 @@ export const RESOURCE_ROLE_SORT: SortPairsInterface[] = [
     label: "Created At",
   },
 ];
+
+// for user to filter permission
+
+export const RESOURCE_PERMISSION_SEARCH: SearchPairsInterface[] = [
+  {
+    key: "name",
+    label: "Name",
+  },
+  {
+    key: "description",
+    label: "Description",
+  },
+];
+
+export const RESOURCE_PERMISSION_SORT: SortPairsInterface[] = [
+  {
+    key: "name",
+    label: "Name",
+  },
+  {
+    key: "created_at",
+    label: "Created At",
+  },
+];

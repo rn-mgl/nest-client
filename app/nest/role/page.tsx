@@ -14,6 +14,7 @@ import { useToasts } from "@/src/context/ToastContext";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
+import { PermissionInterface } from "@/src/interface/PermissionInterface";
 import { RoleInterface } from "@/src/interface/RoleInterface";
 import { isUserSummary, normalizeString } from "@/src/utils/utils";
 import axios from "axios";
@@ -22,7 +23,9 @@ import React from "react";
 import { IoAdd } from "react-icons/io5";
 
 const Role = () => {
-  const [roles, setRoles] = React.useState<RoleInterface[]>([]);
+  const [roles, setRoles] = React.useState<
+    (RoleInterface & { permissions: PermissionInterface[] | null })[]
+  >([]);
   const [activeEditRole, setActiveEditRole] = React.useState(0);
   const [activeDeleteRole, setActiveDeleteRole] = React.useState(0);
   const [canCreateRole, setCanCreateRole] = React.useState(false);
