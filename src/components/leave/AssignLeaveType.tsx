@@ -266,7 +266,7 @@ const AssignLeaveType: React.FC<ModalInterface> = (props) => {
 
         <form
           onSubmit={(e) => submitAssignLeaveType(e)}
-          className="w-full flex flex-col items-center justify-start p-2 gap-4 t:p-4"
+          className="w-full flex flex-col items-center justify-start p-2 gap-4 t:p-4 overflow-hidden"
         >
           <Table
             color="neutral"

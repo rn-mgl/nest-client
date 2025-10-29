@@ -4,6 +4,7 @@ import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import Filter from "@/src/components/global/filter/Filter";
 import BaseCard from "@/src/components/global/resource/BaseCard";
 import ResourceActions from "@/src/components/global/resource/ResourceActions";
+import AssignRole from "@/src/components/role/AssignRole";
 import CreateRole from "@/src/components/role/CreateRole";
 import EditRole from "@/src/components/role/EditRole";
 import {
@@ -28,6 +29,7 @@ const Role = () => {
   >([]);
   const [activeEditRole, setActiveEditRole] = React.useState(0);
   const [activeDeleteRole, setActiveDeleteRole] = React.useState(0);
+  const [activeAssignRole, setActiveAssignRole] = React.useState(0);
   const [canCreateRole, setCanCreateRole] = React.useState(false);
 
   const { data: session } = useSession({ required: true });
@@ -61,9 +63,13 @@ const Role = () => {
     return user?.permissions.includes("delete.role_resource");
   }, [user?.permissions]);
 
+  const canAssign = React.useMemo(() => {
+    return user?.permissions.includes("assign.role_resource");
+  }, [user?.permissions]);
+
   const canManage = React.useMemo(() => {
-    return canEdit || canDelete;
-  }, [canEdit, canDelete]);
+    return canEdit || canDelete || canAssign;
+  }, [canEdit, canDelete, canAssign]);
 
   const getRoles = React.useCallback(
     async (controller?: AbortController) => {
@@ -108,6 +114,10 @@ const Role = () => {
 
   const handleCanCreateRole = () => {
     setCanCreateRole((prev) => !prev);
+  };
+
+  const handleActiveAssignRole = (id: number) => {
+    setActiveAssignRole((prev) => (prev === id ? 0 : id));
   };
 
   // format role first
@@ -157,6 +167,9 @@ const Role = () => {
               handleActiveDelete={
                 canDelete ? () => handleActiveDeleteRole(role.id ?? 0) : null
               }
+              handleActiveAssign={
+                canAssign ? () => handleActiveAssignRole(role.id ?? 0) : null
+              }
             />
           ) : null}
         </BaseCard>
@@ -185,6 +198,13 @@ const Role = () => {
           toggleModal={() => handleActiveEditRole(activeEditRole)}
           id={activeEditRole}
           refetchIndex={getRoles}
+        />
+      ) : null}
+
+      {activeAssignRole && user.permissions.includes("assign.role_resource") ? (
+        <AssignRole
+          toggleModal={() => handleActiveAssignRole(activeAssignRole)}
+          id={activeAssignRole}
         />
       ) : null}
 

@@ -226,7 +226,7 @@ const ShowUser: React.FC<ModalInterface> = (props) => {
             <div className="w-full p-2 rounded-md bg-accent-purple text-center text-neutral-100 font-medium">
               Onboardings
             </div>
-            <div className="w-full">
+            <div className="w-full flex flex-col items-center justify-start overflow-hidden">
               <Table
                 color="neutral"
                 contents={mappedOnboardings}
@@ -246,7 +246,7 @@ const ShowUser: React.FC<ModalInterface> = (props) => {
             <div className="w-full p-2 rounded-md bg-accent-purple font-medium text-neutral-100 text-center">
               Leave Balances
             </div>
-            <div className="w-full overflow-x-auto">
+            <div className="w-full flex flex-col items-center justify-start overflow-hidden">
               <Table
                 color="neutral"
                 contents={mappedLeaveBalances}
@@ -267,7 +267,7 @@ const ShowUser: React.FC<ModalInterface> = (props) => {
               Leave Requests
             </div>
 
-            <div className="w-full overflow-x-auto flex flex-col items-start justify-start">
+            <div className="w-full flex flex-col items-center justify-start overflow-hidden">
               <Table
                 headers={[
                   "Leave Type",
@@ -289,7 +289,7 @@ const ShowUser: React.FC<ModalInterface> = (props) => {
               Performance Reviews
             </div>
 
-            <div className="w-full">
+            <div className="w-full flex flex-col items-center justify-start overflow-hidden">
               <Table
                 color="neutral"
                 contents={mappedPerformanceReviews}
@@ -309,18 +309,20 @@ const ShowUser: React.FC<ModalInterface> = (props) => {
             <div className="w-full p-2 rounded-md bg-accent-purple text-neutral-100 font-medium text-center">
               Trainings
             </div>
-            <Table
-              color="neutral"
-              contents={mappedTrainings}
-              headers={[
-                "Title",
-                "Description",
-                "Status",
-                "Deadline",
-                "Assigned On",
-                "Assigned By",
-              ]}
-            />
+            <div className="w-full flex flex-col items-center justify-start overflow-hidden">
+              <Table
+                color="neutral"
+                contents={mappedTrainings}
+                headers={[
+                  "Title",
+                  "Description",
+                  "Status",
+                  "Deadline",
+                  "Assigned On",
+                  "Assigned By",
+                ]}
+              />
+            </div>
           </div>
         </div>
       </div>

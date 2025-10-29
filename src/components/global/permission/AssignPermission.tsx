@@ -9,6 +9,7 @@ import CheckBox from "../form/CheckBox";
 import Table from "../field/Table";
 import { normalizeString } from "@/src/utils/utils";
 import { getCSRFToken } from "@/src/utils/token";
+import { useToasts } from "@/src/context/ToastContext";
 
 const AssignPermission: React.FC<ModalInterface> = (props) => {
   const [rolePermissions, setRolePermissions] = React.useState<
@@ -19,6 +20,8 @@ const AssignPermission: React.FC<ModalInterface> = (props) => {
   const { data: session } = useSession({ required: true });
   const user = session?.user;
   const url = process.env.URL;
+
+  const { addToast } = useToasts();
 
   const getRolePermissions = React.useCallback(async () => {
     try {
@@ -68,6 +71,12 @@ const AssignPermission: React.FC<ModalInterface> = (props) => {
 
         if (responseData.success) {
           props.toggleModal();
+
+          addToast(
+            "Permission Assigned",
+            "Permission assigned successfully",
+            "success"
+          );
         }
       }
     } catch (error) {
