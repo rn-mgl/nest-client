@@ -2,6 +2,7 @@
 
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import Filter from "@/src/components/global/filter/Filter";
+import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import BaseCard from "@/src/components/global/resource/BaseCard";
 import ResourceActions from "@/src/components/global/resource/ResourceActions";
 import AssignRole from "@/src/components/role/AssignRole";
@@ -13,6 +14,7 @@ import {
 } from "@/src/configs/filters";
 import { useToasts } from "@/src/context/ToastContext";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { PermissionInterface } from "@/src/interface/PermissionInterface";
@@ -38,6 +40,8 @@ const Role = () => {
   const url = process.env.URL;
 
   const { addToast } = useToasts();
+
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const {
     canSeeSearchDropDown,
@@ -74,6 +78,7 @@ const Role = () => {
   const getRoles = React.useCallback(
     async (controller?: AbortController) => {
       try {
+        handleIsLoading(true);
         if (user?.token && user.permissions.includes("read.role_resource")) {
           const { data: responseData } = await axios.get(
             `${url}/role/resource`,
@@ -99,9 +104,11 @@ const Role = () => {
 
           addToast("Role Error", message, "error");
         }
+      } finally {
+        handleIsLoading(false);
       }
     },
-    [url, user?.token, user?.permissions, addToast]
+    [url, user?.token, user?.permissions, addToast, handleIsLoading]
   );
 
   const handleActiveEditRole = (id: number) => {
@@ -253,9 +260,13 @@ const Role = () => {
           </button>
         ) : null}
 
-        <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">
-          {mappedRoles}
-        </div>
+        {isLoading ? (
+          <PageSkeletonLoader />
+        ) : (
+          <div className="w-full grid grid-cols-1 gap-4 t:grid-cols-2 l-l:grid-cols-3">
+            {mappedRoles}
+          </div>
+        )}
       </div>
     </div>
   ) : (

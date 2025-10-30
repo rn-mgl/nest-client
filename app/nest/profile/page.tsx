@@ -39,7 +39,7 @@ const Profile = () => {
       try {
         if (user?.token) {
           const { data: responseData } = await axios.get(
-            `${url}/user/${currentUser}`,
+            `${url}/profile/${currentUser}`,
             {
               headers: {
                 Authorization: `Bearer ${user.token}`,

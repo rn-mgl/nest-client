@@ -71,7 +71,7 @@ const EditProfile: React.FC<ModalInterface> = (props) => {
     try {
       if (token) {
         const { data: responseData } = await axios.get(
-          `${url}/user/${current}`,
+          `${url}/profile/${current}`,
           {
             headers: { Authorization: `Bearer ${token}` },
             withCredentials: true,
@@ -121,7 +121,7 @@ const EditProfile: React.FC<ModalInterface> = (props) => {
         formData.set("_method", "PATCH");
 
         const { data: responseData } = await axios.post(
-          `${url}/user/${user.current}`,
+          `${url}/profile/${user.current}`,
           formData,
           {
             headers: {
@@ -157,8 +157,6 @@ const EditProfile: React.FC<ModalInterface> = (props) => {
   React.useEffect(() => {
     getUser();
   }, [getUser]);
-
-  console.log(profile);
 
   return (
     <div

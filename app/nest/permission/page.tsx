@@ -2,6 +2,7 @@
 
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import Filter from "@/src/components/global/filter/Filter";
+import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
 import AssignPermission from "@/src/components/global/permission/AssignPermission";
 import CreatePermission from "@/src/components/global/permission/CreatePermission";
 import EditPermission from "@/src/components/global/permission/EditPermission";
@@ -12,6 +13,7 @@ import {
   RESOURCE_PERMISSION_SORT,
 } from "@/src/configs/filters";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import useSearch from "@/src/hooks/useSearch";
 import useSort from "@/src/hooks/useSort";
 import { PermissionInterface } from "@/src/interface/PermissionInterface";
@@ -33,6 +35,8 @@ const Permission = () => {
   const { data: session } = useSession({ required: true });
   const user = session?.user;
   const url = process.env.URL;
+
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const {
     canSeeSearchDropDown,
@@ -84,6 +88,7 @@ const Permission = () => {
 
   const getPermissions = React.useCallback(
     async (controller?: AbortController) => {
+      handleIsLoading(true);
       try {
         if (
           user?.token &&
@@ -104,9 +109,11 @@ const Permission = () => {
         }
       } catch (error) {
         console.log(error);
+      } finally {
+        handleIsLoading(false);
       }
     },
-    [url, user?.token, user?.permissions]
+    [url, user?.token, user?.permissions, handleIsLoading]
   );
 
   const mappedPermissions = useFilterAndSort(permissions, search, sort).map(
@@ -156,7 +163,7 @@ const Permission = () => {
     };
   }, [getPermissions]);
 
-  return (
+  return user?.permissions.includes("read.permission_resource") ? (
     <div className="w-full  flex flex-col items-center justify-start">
       {canCreatePermission &&
       user?.permissions.includes("create.permission_resource") ? (
@@ -232,10 +239,21 @@ const Permission = () => {
           </button>
         ) : null}
 
-        <div className="w-full grid grid-cols-1 t:grid-cols-2 l-l:grid-cols-3 gap-4">
-          {mappedPermissions}
-        </div>
+        {isLoading ? (
+          <PageSkeletonLoader />
+        ) : (
+          <div className="w-full grid grid-cols-1 t:grid-cols-2 l-l:grid-cols-3 gap-4">
+            {mappedPermissions}
+          </div>
+        )}
       </div>
+    </div>
+  ) : (
+    <div
+      className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br 
+                from-accent-green/50 via-accent-purple/30 to-accent-blue/50"
+    >
+      <p className="text-xl animate-fade font-bold">You have no access here.</p>
     </div>
   );
 };
