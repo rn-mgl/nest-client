@@ -7,7 +7,10 @@ import {
   OnboardingInterface,
   UserOnboardingInterface,
 } from "@/interface/OnboardingInterface";
-import { PerformanceReviewInterface } from "@/interface/PerformanceReviewInterface";
+import {
+  PerformanceReviewInterface,
+  UserPerformanceReviewSurveyResponseInterface,
+} from "@/interface/PerformanceReviewInterface";
 import { UserInterface } from "@/interface/UserInterface";
 import {
   TrainingInterface,
@@ -72,6 +75,19 @@ export const isPerformanceReviewSummary = (
   value: unknown
 ): value is PerformanceReviewInterface => {
   return typeof value === "object" && value !== null;
+};
+
+export const isUserPerformanceReviewResponse = (
+  value: unknown
+): value is UserPerformanceReviewSurveyResponseInterface => {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "response_from" in value &&
+    "response" in value &&
+    "id" in value &&
+    "performance_review_survey_id" in value
+  );
 };
 
 export const isTrainingSummary = (

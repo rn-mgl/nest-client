@@ -12,7 +12,6 @@ const EditRole: React.FC<ModalInterface> = (props) => {
   const [role, setRole] = React.useState<RoleInterface>({
     created_by: 0,
     role: "",
-    permissions: [],
   });
 
   const { data: session } = useSession({ required: true });

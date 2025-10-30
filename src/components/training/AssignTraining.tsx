@@ -160,7 +160,7 @@ const AssignTraining: React.FC<ModalInterface> = (props) => {
 
         <form
           onSubmit={(e) => submitAssignTraining(e)}
-          className="w-full flex h-full flex-col items-center justify-start p-2 gap-4 t:p-4"
+          className="w-full flex h-full flex-col items-center justify-start p-2 gap-4 t:p-4 overflow-hidden"
         >
           <Table
             color="neutral"

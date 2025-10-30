@@ -98,7 +98,7 @@ const CreateRole: React.FC<ModalInterface> = (props) => {
           onSubmit={(e) => submitCreateRole(e)}
           className="w-full flex flex-col items-center justify-start gap-2 p-2 t:p-4"
         >
-          <div className="flex flex-col items-center justify-center text-xs text-center">
+          <div className="flex flex-col items-center justify-center text-xs text-center t:flex-row t:gap-2">
             <IoBulb />
             <p>
               Roles must be unique and uses the snake case pattern. e.g.{" "}
