@@ -81,6 +81,15 @@ const AssignPermission: React.FC<ModalInterface> = (props) => {
       }
     } catch (error) {
       console.log(error);
+
+      if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          "An error occurred when the permission is being assigned.";
+
+        addToast("Permission Error", message, "error");
+      }
     }
   };
 

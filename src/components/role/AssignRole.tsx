@@ -86,6 +86,15 @@ const AssignRole: React.FC<ModalInterface> = (props) => {
       }
     } catch (error) {
       console.log(error);
+
+      if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
+        const message =
+          error.response?.data.message ??
+          error.message ??
+          "An error occurred when the role is being assigned.";
+
+        addToast("Role Error", message, "error");
+      }
     }
   };
 
