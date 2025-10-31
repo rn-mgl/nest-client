@@ -2,6 +2,7 @@ import File from "@/src/components/global/form/File";
 import Input from "@/src/components/global/form/Input";
 import TextArea from "@/src/components/global/form/TextArea";
 import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import { DocumentInterface } from "@/src/interface/DocumentInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
@@ -10,6 +11,7 @@ import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose, IoText } from "react-icons/io5";
+import LogoLoader from "../global/loader/LogoLoader";
 
 const CreateDocument: React.FC<ModalInterface & { path: string | number }> = (
   props
@@ -22,6 +24,8 @@ const CreateDocument: React.FC<ModalInterface & { path: string | number }> = (
   });
 
   const { addToast } = useToasts();
+
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const url = process.env.URL;
   const { data } = useSession({ required: true });
@@ -67,6 +71,7 @@ const CreateDocument: React.FC<ModalInterface & { path: string | number }> = (
     e.preventDefault();
 
     try {
+      handleIsLoading(true);
       const { token } = await getCSRFToken();
 
       const formData = new FormData();
@@ -117,6 +122,8 @@ const CreateDocument: React.FC<ModalInterface & { path: string | number }> = (
           "An error occurred when the document is being created";
         addToast("Document Error", message, "error");
       }
+    } finally {
+      handleIsLoading(false);
     }
   };
 
@@ -139,6 +146,7 @@ const CreateDocument: React.FC<ModalInterface & { path: string | number }> = (
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex items-center justify-center 
               p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade"
     >
+      {isLoading ? <LogoLoader /> : null}
       <div className="w-full h-full max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-blue rounded-t-lg font-bold text-accent-yellow">
           Create Document
@@ -191,7 +199,10 @@ const CreateDocument: React.FC<ModalInterface & { path: string | number }> = (
             }
           />
 
-          <button className="w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2">
+          <button
+            disabled={isLoading}
+            className="w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2"
+          >
             Create
           </button>
         </form>

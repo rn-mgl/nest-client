@@ -16,6 +16,8 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd, IoClose, IoReader, IoText, IoTrash } from "react-icons/io5";
 import ModalTabs from "@/global/navigation/ModalTabs";
+import useIsLoading from "@/src/hooks/useIsLoading";
+import LogoLoader from "../global/loader/LogoLoader";
 
 const CreateOnboarding: React.FC<ModalInterface> = (props) => {
   const [onboarding, setOnboarding] = React.useState<OnboardingInterface>({
@@ -41,6 +43,8 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
   } = useDynamicFields<OnboardingPolicyAcknowledgemenInterface>([
     { title: "", description: "" },
   ]);
+
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const { activeTab, handleActiveTab } = useModalTab("information");
   const { addToast } = useToasts();
@@ -151,9 +155,9 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
   const submitCreateOnboarding = async (
     e: React.FormEvent<HTMLFormElement>
   ) => {
-    e.preventDefault();
-
     try {
+      e.preventDefault();
+      handleIsLoading(true);
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
@@ -195,6 +199,8 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
           `An error occurred when the onboarding is being created.`;
         addToast("Onboarding Error", message, "error");
       }
+    } finally {
+      handleIsLoading(false);
     }
   };
 
@@ -203,6 +209,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
         p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
+      {isLoading ? <LogoLoader /> : null}
       <div className="w-full my-auto h-full max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-blue rounded-t-lg font-bold text-accent-yellow">
           Create Onboarding

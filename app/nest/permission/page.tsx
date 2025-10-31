@@ -3,9 +3,9 @@
 import DeleteEntity from "@/src/components/global/entity/DeleteEntity";
 import Filter from "@/src/components/global/filter/Filter";
 import PageSkeletonLoader from "@/src/components/global/loader/PageSkeletonLoader";
-import AssignPermission from "@/src/components/global/permission/AssignPermission";
-import CreatePermission from "@/src/components/global/permission/CreatePermission";
-import EditPermission from "@/src/components/global/permission/EditPermission";
+import AssignPermission from "@/src/components/permission/AssignPermission";
+import CreatePermission from "@/src/components/permission/CreatePermission";
+import EditPermission from "@/src/components/permission/EditPermission";
 import BaseCard from "@/src/components/global/resource/BaseCard";
 import ResourceActions from "@/src/components/global/resource/ResourceActions";
 import {

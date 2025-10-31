@@ -18,6 +18,8 @@ import React from "react";
 import { IoAdd, IoClose, IoReader, IoText, IoTrash } from "react-icons/io5";
 import ModalTabs from "@/global/navigation/ModalTabs";
 import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
+import LogoLoader from "../global/loader/LogoLoader";
 
 const EditOnboarding: React.FC<ModalInterface> = (props) => {
   const [onboarding, setOnboarding] = React.useState<OnboardingInterface>({
@@ -31,6 +33,8 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
   const [policiesToDelete, setPoliciesToDelete] = React.useState<number[]>([]);
 
   const { addToast } = useToasts();
+
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const {
     fields: required_documents,
@@ -127,6 +131,7 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
   ) => {
     e.preventDefault();
 
+    handleIsLoading(true);
     try {
       const { token } = await getCSRFToken();
 
@@ -171,6 +176,8 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
           `An error occurred when the onboarding is being updated.`;
         addToast("Onboarding Error", message, "error");
       }
+    } finally {
+      handleIsLoading(false);
     }
   };
 
@@ -275,6 +282,7 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
     p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
+      {isLoading ? <LogoLoader /> : null}
       <div className="w-full my-auto h-full max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-yellow rounded-t-lg font-bold text-accent-blue">
           Edit Onboarding
@@ -365,7 +373,10 @@ const EditOnboarding: React.FC<ModalInterface> = (props) => {
             </div>
           ) : null}
 
-          <button className="t:col-span-2 w-full font-bold text-center rounded-md p-2 bg-accent-yellow text-accent-blue mt-2">
+          <button
+            disabled={isLoading}
+            className="t:col-span-2 w-full font-bold text-center rounded-md p-2 bg-accent-yellow text-accent-blue mt-2"
+          >
             Update
           </button>
         </form>

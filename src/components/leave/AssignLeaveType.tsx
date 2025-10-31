@@ -10,6 +10,8 @@ import React from "react";
 import { IoAdd, IoClose, IoRemove } from "react-icons/io5";
 import { isCloudFileSummary } from "@/src/utils/utils";
 import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
+import LogoLoader from "../global/loader/LogoLoader";
 
 const AssignLeaveType: React.FC<ModalInterface> = (props) => {
   const [userLeaves, setUserLeaves] = React.useState<AssignedLeaveBalance[]>(
@@ -21,6 +23,8 @@ const AssignLeaveType: React.FC<ModalInterface> = (props) => {
   const { data } = useSession({ required: true });
   const user = data?.user;
   const url = process.env.URL;
+
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   // if the user does not have a leave balance yet, make a false data
   // only the balance is necessary
@@ -146,6 +150,7 @@ const AssignLeaveType: React.FC<ModalInterface> = (props) => {
   const submitAssignLeaveType = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      handleIsLoading(true);
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
@@ -187,6 +192,8 @@ const AssignLeaveType: React.FC<ModalInterface> = (props) => {
           "An error occurred when the user leaves are being assigned.";
         addToast("Employee Leaves", message, "error");
       }
+    } finally {
+      handleIsLoading(false);
     }
   };
 
@@ -253,6 +260,7 @@ const AssignLeaveType: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
             p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
+      {isLoading ? <LogoLoader /> : null}
       <div className="w-full max-h-full my-auto max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-green rounded-t-lg font-bold text-neutral-100">
           Assign Leave
@@ -281,7 +289,10 @@ const AssignLeaveType: React.FC<ModalInterface> = (props) => {
             ]}
           />
 
-          <button className="w-full p-2 rounded-md bg-accent-green text-neutral-100 mt-2 font-bold">
+          <button
+            disabled={true}
+            className="w-full p-2 rounded-md bg-accent-green text-neutral-100 mt-2 font-bold"
+          >
             Assign
           </button>
         </form>

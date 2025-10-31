@@ -10,6 +10,8 @@ import Table from "../global/field/Table";
 import CheckBox from "../global/form/CheckBox";
 import { getCSRFToken } from "@/src/utils/token";
 import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
+import LogoLoader from "../global/loader/LogoLoader";
 
 const AssignRole: React.FC<ModalInterface> = (props) => {
   const [userRoles, setUserRoles] = React.useState<
@@ -20,6 +22,8 @@ const AssignRole: React.FC<ModalInterface> = (props) => {
   const { data: session } = useSession({ required: true });
   const user = session?.user;
   const url = process.env.URL;
+
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const { addToast } = useToasts();
 
@@ -61,6 +65,7 @@ const AssignRole: React.FC<ModalInterface> = (props) => {
 
   const submitAssignRoles = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
+      handleIsLoading(true);
       e.preventDefault();
 
       const { token } = await getCSRFToken();
@@ -95,6 +100,8 @@ const AssignRole: React.FC<ModalInterface> = (props) => {
 
         addToast("Role Error", message, "error");
       }
+    } finally {
+      handleIsLoading(false);
     }
   };
 
@@ -130,6 +137,7 @@ const AssignRole: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
                 p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
+      {isLoading ? <LogoLoader /> : null}
       <div className="w-full max-h-full my-auto max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-green rounded-t-lg font-bold text-neutral-100">
           Assign Role
@@ -152,7 +160,10 @@ const AssignRole: React.FC<ModalInterface> = (props) => {
             />
           </div>
 
-          <button className="w-full p-2 rounded-md bg-accent-green text-neutral-100 mt-2 font-bold">
+          <button
+            disabled={isLoading}
+            className="w-full p-2 rounded-md bg-accent-green text-neutral-100 mt-2 font-bold"
+          >
             Assign
           </button>
         </form>

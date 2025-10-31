@@ -14,6 +14,8 @@ import useSelect from "@/src/hooks/useSelect";
 import Select from "@/src/components/global/form/Select";
 import { isCloudFileSummary, isRawFileSummary } from "@/src/utils/utils";
 import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
+import LogoLoader from "../global/loader/LogoLoader";
 
 const EditDocument: React.FC<ModalInterface> = (props) => {
   const [document, setDocument] = React.useState<DocumentInterface>({
@@ -32,6 +34,8 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
 
   const { activeSelect, toggleSelect } = useSelect();
   const documentRef = React.useRef<HTMLInputElement | null>(null);
+
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const url = process.env.URL;
   const { data } = useSession({ required: true });
@@ -118,6 +122,7 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
   const submitUpdateDocument = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      handleIsLoading(true);
       const path =
         document.path && typeof document.path === "number"
           ? document.path.toString()
@@ -178,6 +183,8 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
           "An error occurred when the document data is being updated";
         addToast("Document Error", message, "error");
       }
+    } finally {
+      handleIsLoading(false);
     }
   };
 
@@ -242,6 +249,7 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex items-center justify-center 
               p-4 t:p-8 z-50 bg-linear-to-b from-accent-yellow/30 to-accent-purple/30 animate-fade"
     >
+      {isLoading ? <LogoLoader /> : null}
       <div className="w-full h-full max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-yellow rounded-t-lg font-bold text-accent-blue">
           Update Document
@@ -361,7 +369,10 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
               </label>
             )}
           </div>
-          <button className="w-full font-bold text-center rounded-md p-2 bg-accent-yellow text-accent-blue mt-2">
+          <button
+            disabled={isLoading}
+            className="w-full font-bold text-center rounded-md p-2 bg-accent-yellow text-accent-blue mt-2"
+          >
             Update
           </button>
         </form>

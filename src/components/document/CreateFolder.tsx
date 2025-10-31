@@ -7,6 +7,8 @@ import { getCSRFToken } from "@/src/utils/token";
 import { useSession } from "next-auth/react";
 import axios, { isAxiosError } from "axios";
 import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
+import LogoLoader from "../global/loader/LogoLoader";
 
 const CreateFolder: React.FC<ModalInterface & { path: string | number }> = (
   props
@@ -17,6 +19,8 @@ const CreateFolder: React.FC<ModalInterface & { path: string | number }> = (
   });
 
   const { addToast } = useToasts();
+
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -37,6 +41,7 @@ const CreateFolder: React.FC<ModalInterface & { path: string | number }> = (
     e.preventDefault();
 
     try {
+      handleIsLoading(true);
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
@@ -76,6 +81,8 @@ const CreateFolder: React.FC<ModalInterface & { path: string | number }> = (
           "An error occurred when the folder is being created";
         addToast("Folder Error", message, "error");
       }
+    } finally {
+      handleIsLoading(false);
     }
   };
 
@@ -84,6 +91,7 @@ const CreateFolder: React.FC<ModalInterface & { path: string | number }> = (
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex items-center justify-center 
                 p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade"
     >
+      {isLoading ? <LogoLoader /> : null}
       <div className="w-full h-auto max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg ">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-blue rounded-t-lg font-bold text-accent-yellow">
           Create Folder
@@ -110,7 +118,10 @@ const CreateFolder: React.FC<ModalInterface & { path: string | number }> = (
             icon={<IoText />}
           />
 
-          <button className="w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2">
+          <button
+            disabled={isLoading}
+            className="w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2"
+          >
             Create
           </button>
         </form>

@@ -29,6 +29,8 @@ import File from "@/src/components/global/form/File";
 import Radio from "@/src/components/global/form/Radio";
 import { isRawFileSummary } from "@/src/utils/utils";
 import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
+import LogoLoader from "../global/loader/LogoLoader";
 
 const CreateTraining: React.FC<ModalInterface> = (props) => {
   const [training, setTraining] = React.useState<TrainingInterface>({
@@ -42,6 +44,8 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
   const { addToast } = useToasts();
 
   const { activeTab, handleActiveTab } = useModalTab("information");
+
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const {
     fields: contents,
@@ -137,39 +141,41 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
   const submitCreateTraining = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const formData = new FormData();
+    try {
+      handleIsLoading(true);
 
-    const certificate = isRawFileSummary(training.certificate)
-      ? training.certificate.rawFile
-      : "";
+      const formData = new FormData();
 
-    formData.set("title", training.title);
-    formData.set("description", training.description);
-    formData.set("deadline_days", training.deadline_days.toString());
-    formData.set("certificate", certificate);
-
-    contents.forEach((content, index) => {
-      // ensure training content is using string value for content kvp
-      const trainingContent = {
-        title: content.title,
-        description: content.description,
-        content: typeof content.content === "string" ? content.content : "",
-        type: content.type,
-      };
-      // ensure training file is using rawFile value if it is object
-      const trainingFile = isRawFileSummary(content.content)
-        ? content.content.rawFile
+      const certificate = isRawFileSummary(training.certificate)
+        ? training.certificate.rawFile
         : "";
 
-      formData.append(`contents[${index}]`, JSON.stringify(trainingContent));
-      formData.append(`content_file[${index}]`, trainingFile);
-    });
+      formData.set("title", training.title);
+      formData.set("description", training.description);
+      formData.set("deadline_days", training.deadline_days.toString());
+      formData.set("certificate", certificate);
 
-    reviews.forEach((review, index) => {
-      formData.append(`reviews[${index}]`, JSON.stringify(review));
-    });
+      contents.forEach((content, index) => {
+        // ensure training content is using string value for content kvp
+        const trainingContent = {
+          title: content.title,
+          description: content.description,
+          content: typeof content.content === "string" ? content.content : "",
+          type: content.type,
+        };
+        // ensure training file is using rawFile value if it is object
+        const trainingFile = isRawFileSummary(content.content)
+          ? content.content.rawFile
+          : "";
 
-    try {
+        formData.append(`contents[${index}]`, JSON.stringify(trainingContent));
+        formData.append(`content_file[${index}]`, trainingFile);
+      });
+
+      reviews.forEach((review, index) => {
+        formData.append(`reviews[${index}]`, JSON.stringify(review));
+      });
+
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
@@ -208,6 +214,8 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
           `An error occurred when the training is being created.`;
         addToast("Training Error", message, "error");
       }
+    } finally {
+      handleIsLoading(false);
     }
   };
 
@@ -401,6 +409,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
             p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
+      {isLoading ? <LogoLoader /> : null}
       <div className="w-full my-auto h-full max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start overflow-hidden">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-blue rounded-t-lg font-bold text-accent-yellow">
           Create Training

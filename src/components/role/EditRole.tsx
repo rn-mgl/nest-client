@@ -7,6 +7,8 @@ import { IoBulb, IoClose, IoPricetag } from "react-icons/io5";
 import Input from "../global/form/Input";
 import { getCSRFToken } from "@/src/utils/token";
 import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
+import LogoLoader from "../global/loader/LogoLoader";
 
 const EditRole: React.FC<ModalInterface> = (props) => {
   const [role, setRole] = React.useState<RoleInterface>({
@@ -19,6 +21,8 @@ const EditRole: React.FC<ModalInterface> = (props) => {
   const url = process.env.URL;
 
   const { addToast } = useToasts();
+
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const handleRole = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -61,8 +65,9 @@ const EditRole: React.FC<ModalInterface> = (props) => {
   }, [url, user?.token, props.id, addToast]);
 
   const submitUpdateRole = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     try {
-      e.preventDefault();
+      handleIsLoading(true);
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
@@ -103,6 +108,8 @@ const EditRole: React.FC<ModalInterface> = (props) => {
 
         addToast("Role Error", message, "error");
       }
+    } finally {
+      handleIsLoading(false);
     }
   };
 
@@ -115,6 +122,7 @@ const EditRole: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
       p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
+      {isLoading ? <LogoLoader /> : null}
       <div className="w-full my-auto h-fit max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-yellow rounded-t-lg font-bold text-accent-blue">
           Edit Role
@@ -150,7 +158,10 @@ const EditRole: React.FC<ModalInterface> = (props) => {
             label={true}
           />
 
-          <button className="t:col-span-2 w-full font-bold text-center rounded-md p-2 bg-accent-yellow text-accent-blue mt-2">
+          <button
+            disabled={isLoading}
+            className="t:col-span-2 w-full font-bold text-center rounded-md p-2 bg-accent-yellow text-accent-blue mt-2"
+          >
             Update
           </button>
         </form>

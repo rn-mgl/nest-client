@@ -2,7 +2,7 @@
 
 import LogoNav from "@/global/navigation/LogoNav";
 import Input from "@/src/components/global/form/Input";
-import IconLoader from "@/src/components/global/loader/IconLoader";
+import LogoLoader from "@/src/components/global/loader/LogoLoader";
 import { useToasts } from "@/src/context/ToastContext";
 import useIsLoading from "@/src/hooks/useIsLoading";
 import useShowPassword from "@/src/hooks/useShowPassword";
@@ -95,7 +95,7 @@ const Login = () => {
 
   return (
     <div className="w-full flex flex-col items-center justify-start h-screen bg-neutral-100 t:bg-neutral-200 p-4 l-s:p-8">
-      {isLoading ? <IconLoader /> : null}
+      {isLoading ? <LogoLoader /> : null}
 
       <div
         className="w-full flex flex-col items-start justify-start h-full gap-8 l-s:items-start l-s:flex-row 

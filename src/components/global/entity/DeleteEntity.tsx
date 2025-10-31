@@ -1,4 +1,5 @@
 import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import {
   DeleteModalInterface,
   ModalInterface,
@@ -8,6 +9,7 @@ import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose } from "react-icons/io5";
+import LogoLoader from "../loader/LogoLoader";
 
 const DeleteEntity: React.FC<ModalInterface & DeleteModalInterface> = (
   props
@@ -18,10 +20,13 @@ const DeleteEntity: React.FC<ModalInterface & DeleteModalInterface> = (
   const user = session?.user;
   const url = process.env.URL;
 
+  const { isLoading, handleIsLoading } = useIsLoading();
+
   const submitDeleteEntity = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
+      handleIsLoading(true);
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
@@ -58,6 +63,8 @@ const DeleteEntity: React.FC<ModalInterface & DeleteModalInterface> = (
           `An error occurred when the ${props.label} is being deleted.`;
         addToast("Delete Error", message, "error");
       }
+    } finally {
+      handleIsLoading(false);
     }
   };
 
@@ -66,6 +73,7 @@ const DeleteEntity: React.FC<ModalInterface & DeleteModalInterface> = (
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex items-center justify-center 
                     p-4 t:p-8 z-50 bg-linear-to-b from-accent-yellow/30 to-accent-purple/30 animate-fade"
     >
+      {isLoading ? <LogoLoader /> : null}
       <div className="w-full h-auto max-w-(--breakpoint-t) bg-neutral-100 shadow-md rounded-lg ">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-red-600 rounded-t-lg font-bold text-neutral-100">
           Delete {props.label}
@@ -84,7 +92,10 @@ const DeleteEntity: React.FC<ModalInterface & DeleteModalInterface> = (
             Are you sure you want to delete this {props.label}?
           </p>
 
-          <button className="w-full font-bold text-center rounded-md p-2 bg-red-600 text-neutral-100 mt-2">
+          <button
+            disabled={isLoading}
+            className="w-full font-bold text-center rounded-md p-2 bg-red-600 text-neutral-100 mt-2"
+          >
             Delete
           </button>
         </form>

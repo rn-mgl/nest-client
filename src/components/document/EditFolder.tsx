@@ -10,6 +10,8 @@ import { IoClose, IoText } from "react-icons/io5";
 import Input from "@/src/components/global/form/Input";
 import Select from "@/src/components/global/form/Select";
 import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
+import LogoLoader from "../global/loader/LogoLoader";
 
 const EditFolder: React.FC<ModalInterface> = (props) => {
   const [folder, setFolder] = React.useState<FolderInterface>({
@@ -22,6 +24,8 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
   );
   const { addToast } = useToasts();
   const { activeSelect, toggleSelect } = useSelect();
+
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const url = process.env.URL;
   const { data } = useSession({ required: true });
@@ -144,6 +148,7 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
     e.preventDefault();
 
     try {
+      handleIsLoading(true);
       const { token } = await getCSRFToken();
 
       if (typeof folder.path === "object" && folder.path.value === folder.id) {
@@ -194,6 +199,8 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
 
         addToast("Folder Error", message, "error");
       }
+    } finally {
+      handleIsLoading(false);
     }
   };
 
@@ -206,6 +213,7 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex items-center justify-center 
             p-4 t:p-8 z-50 bg-linear-to-b from-accent-yellow/30 to-accent-purple/30 animate-fade"
     >
+      {isLoading ? <LogoLoader /> : null}
       <div className="w-full h-auto max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg ">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-yellow rounded-t-lg font-bold text-accent-blue">
           Update Folder
