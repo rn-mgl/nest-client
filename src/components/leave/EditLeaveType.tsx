@@ -9,6 +9,8 @@ import axios, { isAxiosError } from "axios";
 import Input from "@/src/components/global/form/Input";
 import TextArea from "@/src/components/global/form/TextArea";
 import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
+import LogoLoader from "../global/loader/LogoLoader";
 
 const EditLeaveType: React.FC<ModalInterface> = (props) => {
   const [leaveType, setLeaveType] = React.useState<LeaveTypeInterface>({
@@ -20,6 +22,8 @@ const EditLeaveType: React.FC<ModalInterface> = (props) => {
   const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
+
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const handleLeaveType = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -64,6 +68,7 @@ const EditLeaveType: React.FC<ModalInterface> = (props) => {
   const submitUpdateLeaveType = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      handleIsLoading(true);
       const { token } = await getCSRFToken();
 
       if (token) {
@@ -101,6 +106,8 @@ const EditLeaveType: React.FC<ModalInterface> = (props) => {
           "An error occurred when the leave types is being updated.";
         addToast("Leave Type Error", message, "error");
       }
+    } finally {
+      handleIsLoading(false);
     }
   };
 
@@ -113,6 +120,7 @@ const EditLeaveType: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex items-center justify-center 
                 p-4 t:p-8 z-50 bg-linear-to-b from-accent-yellow/30 to-accent-purple/30 animate-fade"
     >
+      {isLoading ? <LogoLoader /> : null}
       <div className="w-full h-full max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-yellow rounded-t-lg font-bold text-accent-blue">
           Update Leave Type
@@ -150,7 +158,10 @@ const EditLeaveType: React.FC<ModalInterface> = (props) => {
             icon={<IoReader />}
           />
 
-          <button className="w-full font-bold text-center rounded-md p-2 bg-accent-yellow text-accent-blue mt-2">
+          <button
+            disabled={isLoading}
+            className="w-full font-bold text-center rounded-md p-2 bg-accent-yellow text-accent-blue mt-2"
+          >
             Update
           </button>
         </form>

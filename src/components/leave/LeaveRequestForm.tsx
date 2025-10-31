@@ -1,6 +1,7 @@
 import Input from "@/src/components/global/form/Input";
 import TextArea from "@/src/components/global/form/TextArea";
 import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import { LeaveRequestFormInterface } from "@/src/interface/LeaveInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
@@ -8,6 +9,7 @@ import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose, IoText } from "react-icons/io5";
+import LogoLoader from "../global/loader/LogoLoader";
 
 const LeaveRequestForm: React.FC<ModalInterface> = (props) => {
   const [leaveRequest, setLeaveRequest] =
@@ -22,6 +24,8 @@ const LeaveRequestForm: React.FC<ModalInterface> = (props) => {
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
   const user = session?.user;
+
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const handleLeaveRequest = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -39,6 +43,7 @@ const LeaveRequestForm: React.FC<ModalInterface> = (props) => {
   const submitLeaveRequest = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      handleIsLoading(true);
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
@@ -73,6 +78,8 @@ const LeaveRequestForm: React.FC<ModalInterface> = (props) => {
           "An error occurred when the leave request is being submitted.";
         addToast("Leave Request Error", message, "error");
       }
+    } finally {
+      handleIsLoading(false);
     }
   };
 
@@ -81,6 +88,7 @@ const LeaveRequestForm: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
               p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
+      {isLoading ? <LogoLoader /> : null}
       <div className="w-full max-h-full h-full my-auto max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-blue rounded-t-lg font-bold text-accent-yellow">
           Request Leave

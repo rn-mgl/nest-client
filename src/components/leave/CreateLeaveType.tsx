@@ -8,6 +8,8 @@ import { getCSRFToken } from "@/src/utils/token";
 import { useSession } from "next-auth/react";
 import axios, { isAxiosError } from "axios";
 import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
+import LogoLoader from "../global/loader/LogoLoader";
 
 const CreateLeaveType: React.FC<ModalInterface> = (props) => {
   const [leaveType, setLeaveType] = React.useState<LeaveTypeInterface>({
@@ -19,6 +21,8 @@ const CreateLeaveType: React.FC<ModalInterface> = (props) => {
   const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
+
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const handleLeaveType = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -37,6 +41,7 @@ const CreateLeaveType: React.FC<ModalInterface> = (props) => {
     e.preventDefault();
 
     try {
+      handleIsLoading(true);
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
@@ -73,6 +78,8 @@ const CreateLeaveType: React.FC<ModalInterface> = (props) => {
           "An error occurred when the leave types is being created";
         addToast("Leave Type Error", message, "error");
       }
+    } finally {
+      handleIsLoading(false);
     }
   };
 
@@ -81,6 +88,7 @@ const CreateLeaveType: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex items-center justify-center 
             p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade"
     >
+      {isLoading ? <LogoLoader /> : null}
       <div className="w-full h-full max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-blue rounded-t-lg font-bold text-accent-yellow">
           Create Leave
@@ -118,7 +126,10 @@ const CreateLeaveType: React.FC<ModalInterface> = (props) => {
             icon={<IoReader />}
           />
 
-          <button className="w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2">
+          <button
+            disabled={isLoading}
+            className="w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2"
+          >
             Create
           </button>
         </form>
