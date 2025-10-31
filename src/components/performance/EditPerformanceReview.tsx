@@ -16,6 +16,8 @@ import React from "react";
 import { IoAdd, IoClose, IoReader, IoText, IoTrash } from "react-icons/io5";
 import ModalTabs from "@/global/navigation/ModalTabs";
 import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
+import LogoLoader from "../global/loader/LogoLoader";
 
 const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
   const [performance, setPerformanceReview] =
@@ -39,6 +41,8 @@ const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
   const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
+
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const handlePerformanceReview = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -129,6 +133,7 @@ const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
     e.preventDefault();
 
     try {
+      handleIsLoading(true);
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
@@ -166,6 +171,8 @@ const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
           `An error occurred when the performance is being updated.`;
         addToast("Performance Error", message, "error");
       }
+    } finally {
+      handleIsLoading(false);
     }
   };
 
@@ -178,6 +185,7 @@ const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
       p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
+      {isLoading ? <LogoLoader /> : null}
       <div className="w-full my-auto h-full max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-yellow rounded-t-lg font-bold text-accent-blue">
           Edit Performance Review
@@ -244,7 +252,10 @@ const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
             </div>
           )}
 
-          <button className="t:col-span-2 w-full font-bold text-center rounded-md p-2 bg-accent-yellow text-accent-blue mt-2">
+          <button
+            disabled={isLoading}
+            className="t:col-span-2 w-full font-bold text-center rounded-md p-2 bg-accent-yellow text-accent-blue mt-2"
+          >
             Update
           </button>
         </form>

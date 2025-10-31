@@ -14,6 +14,8 @@ import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoAdd, IoClose, IoReader, IoText, IoTrash } from "react-icons/io5";
+import useIsLoading from "@/src/hooks/useIsLoading";
+import LogoLoader from "../global/loader/LogoLoader";
 
 const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
   const [performance, setPerformanceReview] =
@@ -28,6 +30,8 @@ const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
   const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
+
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const { addField, fields, handleField, removeField } =
     useDynamicFields<PerformanceReviewSurveyInterface>([
@@ -55,6 +59,7 @@ const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
     e.preventDefault();
 
     try {
+      handleIsLoading(true);
       const { token } = await getCSRFToken();
 
       console.log(token);
@@ -94,6 +99,8 @@ const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
           `An error occurred when the performance is being retrieved.`;
         addToast("Performance Error", message, "error");
       }
+    } finally {
+      handleIsLoading(false);
     }
   };
 
@@ -131,6 +138,7 @@ const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
           p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
+      {isLoading ? <LogoLoader /> : null}
       <div className="w-full my-auto h-full max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-blue rounded-t-lg font-bold text-accent-yellow">
           Create Performance Review
@@ -200,7 +208,10 @@ const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
             </div>
           )}
 
-          <button className="w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2">
+          <button
+            disabled={isLoading}
+            className="w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2"
+          >
             Create
           </button>
         </form>
