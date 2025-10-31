@@ -214,6 +214,7 @@ const Management = ({
     approved: boolean
   ) => {
     try {
+      handleIsLoading(true);
       const { token } = await getCSRFToken();
 
       if (
@@ -247,6 +248,8 @@ const Management = ({
           `An error occurred when the leave request is being handled.`;
         addToast("Leave Error", message, "error");
       }
+    } finally {
+      handleIsLoading(false);
     }
   };
 
