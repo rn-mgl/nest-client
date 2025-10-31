@@ -8,6 +8,8 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import { IoBulb, IoClose, IoPricetag } from "react-icons/io5";
 import Input from "../global/form/Input";
+import useIsLoading from "@/src/hooks/useIsLoading";
+import LogoLoader from "../global/loader/LogoLoader";
 
 const CreateRole: React.FC<ModalInterface> = (props) => {
   const [role, setRole] = React.useState<RoleInterface>({
@@ -20,6 +22,8 @@ const CreateRole: React.FC<ModalInterface> = (props) => {
   const url = process.env.URL;
 
   const { addToast } = useToasts();
+
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const handleRole = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -34,6 +38,7 @@ const CreateRole: React.FC<ModalInterface> = (props) => {
 
   const submitCreateRole = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
+      handleIsLoading(true);
       e.preventDefault();
 
       const { token } = await getCSRFToken();
@@ -76,6 +81,8 @@ const CreateRole: React.FC<ModalInterface> = (props) => {
 
         addToast("Role Error", message, "error");
       }
+    } finally {
+      handleIsLoading(false);
     }
   };
 
@@ -84,6 +91,7 @@ const CreateRole: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
           p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
+      {isLoading ? <LogoLoader /> : null}
       <div className="w-full my-auto h-fit max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-blue rounded-t-lg font-bold text-accent-yellow">
           Create Onboarding
@@ -118,7 +126,10 @@ const CreateRole: React.FC<ModalInterface> = (props) => {
             icon={<IoPricetag />}
           />
 
-          <button className="w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2">
+          <button
+            disabled={isLoading}
+            className="w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2"
+          >
             Create
           </button>
         </form>

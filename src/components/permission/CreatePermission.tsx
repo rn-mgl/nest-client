@@ -1,14 +1,17 @@
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { PermissionInterface } from "@/src/interface/PermissionInterface";
-import axios from "axios";
-import { useSession } from "next-auth/react";
 import React from "react";
 import { IoBulb, IoClose, IoKey, IoReader, IoText } from "react-icons/io5";
-import TextArea from "../form/TextArea";
-import Input from "../form/Input";
+import Input from "@/form/Input";
+import TextArea from "@/form/TextArea";
 import { getCSRFToken } from "@/src/utils/token";
+import { useSession } from "next-auth/react";
+import axios from "axios";
+import useIsLoading from "@/src/hooks/useIsLoading";
+import LogoLoader from "../global/loader/LogoLoader";
+import { useToasts } from "@/src/context/ToastContext";
 
-const EditPermission: React.FC<ModalInterface> = (props) => {
+const CreatePermission: React.FC<ModalInterface> = (props) => {
   const [permission, setPermission] = React.useState<PermissionInterface>({
     action: "",
     created_by: 0,
@@ -20,25 +23,9 @@ const EditPermission: React.FC<ModalInterface> = (props) => {
   const user = session?.user;
   const url = process.env.URL;
 
-  const getPermission = React.useCallback(async () => {
-    try {
-      if (user?.token) {
-        const { data: responseData } = await axios.get(
-          `${url}/permission/resource/${props.id}`,
-          {
-            headers: { Authorization: `Bearer ${user.token}` },
-            withCredentials: true,
-          }
-        );
+  const { isLoading, handleIsLoading } = useIsLoading();
 
-        if (responseData.permission) {
-          setPermission(responseData.permission);
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [props.id, user?.token, url]);
+  const { addToast } = useToasts();
 
   const handlePermission = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -53,17 +40,18 @@ const EditPermission: React.FC<ModalInterface> = (props) => {
     });
   };
 
-  const submitUpdatePermission = async (
+  const submitCreatePermission = async (
     e: React.FormEvent<HTMLFormElement>
   ) => {
+    e.preventDefault();
     try {
-      e.preventDefault();
+      handleIsLoading(true);
 
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
-        const { data: responseData } = await axios.patch(
-          `${url}/permission/resource/${props.id}`,
+        const { data: responseData } = await axios.post(
+          `${url}/permission/resource`,
           { ...permission },
           {
             headers: {
@@ -79,26 +67,37 @@ const EditPermission: React.FC<ModalInterface> = (props) => {
             props.refetchIndex();
           }
 
+          addToast(
+            "Permission Created",
+            `${permission.name} has been created successfully`,
+            "success"
+          );
+
           props.toggleModal();
         }
       }
     } catch (error) {
       console.log(error);
+
+      if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
+        const message = error.response?.data.message ?? error.message;
+
+        addToast("Permission Error", message, "error");
+      }
+    } finally {
+      handleIsLoading(false);
     }
   };
-
-  React.useEffect(() => {
-    getPermission();
-  }, [getPermission]);
 
   return (
     <div
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
-    p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
+            p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
+      {isLoading ? <LogoLoader /> : null}
       <div className="w-full my-auto h-full max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
-        <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-yellow rounded-t-lg font-bold text-accent-blue">
-          Edit Permission
+        <div className="w-full  flex flex-row items-center justify-between p-4 bg-accent-blue rounded-t-lg font-bold text-accent-yellow">
+          Create Permission
           <button
             onClick={props.toggleModal}
             className="p-2 rounded-full hover:bg-accent-yellow/20 transition-all text-xl"
@@ -107,8 +106,8 @@ const EditPermission: React.FC<ModalInterface> = (props) => {
           </button>
         </div>
         <form
-          onSubmit={(e) => submitUpdatePermission(e)}
-          className="w-full h-full p-2 flex flex-col items-center justify-start gap-4 t:p-4"
+          onSubmit={(e) => submitCreatePermission(e)}
+          className="w-full h-full flex flex-col items-center justify-start p-2 t:p-4 gap-4"
         >
           <Input
             id="name"
@@ -152,8 +151,12 @@ const EditPermission: React.FC<ModalInterface> = (props) => {
             label={true}
             icon={<IoReader />}
           />
-          <button className="t:col-span-2 w-full font-bold text-center rounded-md p-2 bg-accent-yellow text-accent-blue mt-2">
-            Update
+
+          <button
+            disabled={isLoading}
+            className="w-full font-bold text-center rounded-md p-2 bg-accent-blue text-accent-yellow mt-2"
+          >
+            Create
           </button>
         </form>
       </div>
@@ -161,4 +164,4 @@ const EditPermission: React.FC<ModalInterface> = (props) => {
   );
 };
 
-export default EditPermission;
+export default CreatePermission;
