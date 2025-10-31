@@ -13,6 +13,8 @@ import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose } from "react-icons/io5";
+import useIsLoading from "@/src/hooks/useIsLoading";
+import LogoLoader from "../global/loader/LogoLoader";
 
 const AssignOnboarding: React.FC<ModalInterface> = (props) => {
   const [userOnboardings, setUserOnboardings] = React.useState<
@@ -22,6 +24,8 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
   const { addToast } = useToasts();
 
   const [assignedUsers, setAssignedUsers] = React.useState<number[]>([]);
+
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const { data } = useSession({ required: true });
   const user = data?.user;
@@ -108,6 +112,7 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
   ) => {
     e.preventDefault();
     try {
+      handleIsLoading(true);
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
@@ -147,6 +152,8 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
           `An error occurred when the onboarding is being assigned.`;
         addToast("Onboarding Error", message, "error");
       }
+    } finally {
+      handleIsLoading(false);
     }
   };
 
@@ -159,6 +166,7 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
           p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
+      {isLoading ? <LogoLoader /> : null}
       <div className="w-full max-h-full my-auto max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-green rounded-t-lg font-bold text-neutral-100">
           Assign Onboarding
@@ -178,7 +186,10 @@ const AssignOnboarding: React.FC<ModalInterface> = (props) => {
             contents={mappedUserOnboardings}
             headers={["Image", "First Name", "Last Name", "Email", "Assign"]}
           />
-          <button className="w-full p-2 rounded-md bg-accent-green text-neutral-100 font-bold mt-2">
+          <button
+            disabled={isLoading}
+            className="w-full p-2 rounded-md bg-accent-green text-neutral-100 font-bold mt-2"
+          >
             Assign
           </button>
         </form>
