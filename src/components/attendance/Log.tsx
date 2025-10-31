@@ -1,4 +1,5 @@
 import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios, { AxiosError } from "axios";
@@ -6,6 +7,7 @@ import axios, { AxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose } from "react-icons/io5";
+import LogoLoader from "../global/loader/LogoLoader";
 
 const Log: React.FC<ModalInterface> = (props) => {
   const timerRef = React.useRef<NodeJS.Timeout>();
@@ -17,10 +19,14 @@ const Log: React.FC<ModalInterface> = (props) => {
   const { data } = useSession({ required: true });
   const user = data?.user;
   const url = process.env.URL;
+
+  const { isLoading, handleIsLoading } = useIsLoading();
+
   const logType = id === 0 ? "in" : "out";
 
   const submitLogIn = async () => {
     try {
+      handleIsLoading(true);
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
@@ -57,11 +63,14 @@ const Log: React.FC<ModalInterface> = (props) => {
       addToast("Something went wrong", message, "error");
       clearInterval(timerRef.current);
       return false;
+    } finally {
+      handleIsLoading(false);
     }
   };
 
   const submitLogOut = async () => {
     try {
+      handleIsLoading(true);
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
@@ -99,6 +108,8 @@ const Log: React.FC<ModalInterface> = (props) => {
       clearInterval(timerRef.current);
 
       return false;
+    } finally {
+      handleIsLoading(false);
     }
   };
 
@@ -107,6 +118,7 @@ const Log: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex items-center justify-center 
                 p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade"
     >
+      {isLoading ? <LogoLoader /> : null}
       <div className="w-full h-auto max-w-(--breakpoint-t) bg-neutral-100 shadow-md rounded-lg ">
         <div
           className={`w-full flex flex-row items-center justify-between p-4  rounded-t-lg font-bold 
@@ -136,6 +148,7 @@ const Log: React.FC<ModalInterface> = (props) => {
           </p>
 
           <button
+            disabled={isLoading}
             onClick={logType === "in" ? submitLogIn : submitLogOut}
             className={`w-full font-bold text-center rounded-md p-2 mt-2 capitalize
                  ${

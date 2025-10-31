@@ -1,6 +1,6 @@
 "use client";
 
-import Log from "@/src/components/employee/attendance/Log";
+import Log from "@/src/components/attendance/Log";
 import Input from "@/src/components/global/form/Input";
 import Select from "@/src/components/global/form/Select";
 import { useToasts } from "@/src/context/ToastContext";
@@ -131,7 +131,7 @@ const Attendance = () => {
 
   const calendar = Array(startDay).fill(null);
 
-  for (let i = startDay, j = 1; j < daysInMonth; j++, i++) {
+  for (let i = startDay, j = 1; j <= daysInMonth; j++, i++) {
     calendar[i] = j;
   }
 
@@ -250,7 +250,7 @@ const Attendance = () => {
   }, [getAttendance]);
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-start">
+    <div className="w-full flex flex-col items-center justify-start">
       {canLog ? (
         <Log
           id={attendance?.id ?? 0}

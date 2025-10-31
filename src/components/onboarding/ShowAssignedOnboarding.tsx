@@ -20,6 +20,8 @@ import Link from "next/link";
 import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
 import { IoCheckmark, IoClose } from "react-icons/io5";
+import useIsLoading from "@/src/hooks/useIsLoading";
+import LogoLoader from "../global/loader/LogoLoader";
 
 const ShowAssignedOnboarding: React.FC<ModalInterface> = (props) => {
   const [onboarding, setOnboarding] =
@@ -42,6 +44,8 @@ const ShowAssignedOnboarding: React.FC<ModalInterface> = (props) => {
   const { addToast } = useToasts();
 
   const { activeTab, handleActiveTab } = useModalTab("information");
+
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const { data: session } = useSession({ required: true });
   const user = session?.user;
@@ -98,7 +102,16 @@ const ShowAssignedOnboarding: React.FC<ModalInterface> = (props) => {
 
   const handleAcknowledge = async (policy_acknowledgement_id: number) => {
     try {
-      if (!policy_acknowledgement_id) return;
+      if (!policy_acknowledgement_id) {
+        addToast(
+          "Invalid Acknowledgement",
+          "The policy you tried to acknowledge does not exists",
+          "warning"
+        );
+        return;
+      }
+
+      handleIsLoading(true);
 
       const { token } = await getCSRFToken();
 
@@ -116,16 +129,31 @@ const ShowAssignedOnboarding: React.FC<ModalInterface> = (props) => {
         );
 
         if (responseData.success) {
+          addToast(
+            "Policy Acknowledged",
+            "Policy acknowledged successfully",
+            "success"
+          );
           await getOnboarding();
         }
       }
     } catch (error) {
       console.log(error);
+
+      if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
+        const message = error.response?.data.message ?? error.message;
+
+        addToast("Policy Error", message, "error");
+      }
+    } finally {
+      handleIsLoading(false);
     }
   };
 
   const sendRequiredDocument = async (index: number) => {
     try {
+      handleIsLoading(true);
+
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
@@ -174,15 +202,31 @@ const ShowAssignedOnboarding: React.FC<ModalInterface> = (props) => {
 
         if (responseData.success) {
           await getOnboarding();
+
+          addToast(
+            "Document Submitted",
+            "Document submitted successfully",
+            "success"
+          );
         }
       }
     } catch (error) {
       console.log(error);
+
+      if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
+        const message = error.response?.data.message ?? error.message;
+
+        addToast("Document Error", message, "error");
+      }
+    } finally {
+      handleIsLoading(false);
     }
   };
 
   const updateRequiredDocument = async (index: number) => {
     try {
+      handleIsLoading(true);
+
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
@@ -229,15 +273,31 @@ const ShowAssignedOnboarding: React.FC<ModalInterface> = (props) => {
 
         if (responseData.success) {
           await getOnboarding();
+
+          addToast(
+            "Document Updated",
+            "Document updated successfully",
+            "success"
+          );
         }
       }
     } catch (error) {
       console.log(error);
+
+      if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
+        const message = error.response?.data.message ?? error.message;
+
+        addToast("Document Error", message, "error");
+      }
+    } finally {
+      handleIsLoading(false);
     }
   };
 
   const removeUploadedDocument = async (index: number) => {
     try {
+      handleIsLoading(true);
+
       const { token } = await getCSRFToken();
 
       const targetDocument = requiredDocuments[index];
@@ -263,6 +323,14 @@ const ShowAssignedOnboarding: React.FC<ModalInterface> = (props) => {
       }
     } catch (error) {
       console.log(error);
+
+      if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
+        const message = error.response?.data.message ?? error.message;
+
+        addToast("Document Error", message, "error");
+      }
+    } finally {
+      handleIsLoading(false);
     }
   };
 
@@ -441,6 +509,7 @@ const ShowAssignedOnboarding: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
       p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
+      {isLoading ? <LogoLoader /> : null}
       <div className="w-full my-auto h-full max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-purple rounded-t-lg font-bold text-neutral-100">
           {props.label ?? "Onboarding Details"}
