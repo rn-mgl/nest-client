@@ -26,6 +26,8 @@ import Link from "next/link";
 import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
 import { IoCheckmarkCircle, IoClose, IoCloseCircle } from "react-icons/io5";
+import useIsLoading from "@/src/hooks/useIsLoading";
+import LogoLoader from "../global/loader/LogoLoader";
 
 const ShowAssignedTraining: React.FC<ModalInterface> = (props) => {
   const [training, setTraining] = React.useState<
@@ -42,6 +44,8 @@ const ShowAssignedTraining: React.FC<ModalInterface> = (props) => {
   >([]);
 
   const { addToast } = useToasts();
+
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const { data: session } = useSession({ required: true });
   const { activeTab, handleActiveTab } = useModalTab("information");
@@ -150,6 +154,7 @@ const ShowAssignedTraining: React.FC<ModalInterface> = (props) => {
     e.preventDefault();
 
     try {
+      handleIsLoading(true);
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
@@ -193,6 +198,8 @@ const ShowAssignedTraining: React.FC<ModalInterface> = (props) => {
 
         addToast("Training Error", message, "error");
       }
+    } finally {
+      handleIsLoading(false);
     }
   };
 
@@ -336,6 +343,7 @@ const ShowAssignedTraining: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
         p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
+      {isLoading ? <LogoLoader /> : null}
       <div className="w-full my-auto h-full max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start overflow-hidden">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-purple rounded-t-lg font-bold text-neutral-100">
           {props.label ?? "Training Details"}

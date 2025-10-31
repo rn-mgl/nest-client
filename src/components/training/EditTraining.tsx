@@ -31,6 +31,8 @@ import {
 import File from "@/src/components/global/form/File";
 import { isCloudFileSummary, isRawFileSummary } from "@/src/utils/utils";
 import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
+import LogoLoader from "../global/loader/LogoLoader";
 
 const EditTraining: React.FC<ModalInterface> = (props) => {
   const [training, setTraining] = React.useState<TrainingInterface>({
@@ -49,6 +51,8 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
   const { addToast } = useToasts();
 
   const { activeTab, handleActiveTab } = useModalTab("information");
+
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const {
     fields: contents,
@@ -217,6 +221,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
     e.preventDefault();
 
     try {
+      handleIsLoading(true);
       const formData = new FormData();
       formData.set("title", training.title);
 
@@ -313,6 +318,8 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
           `An error occurred when the training is being updated.`;
         addToast("Training Error", message, "error");
       }
+    } finally {
+      handleIsLoading(false);
     }
   };
 
@@ -599,6 +606,7 @@ const EditTraining: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex flex-col items-center justify-start 
   p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade overflow-y-auto l-s:overflow-hidden"
     >
+      {isLoading ? <LogoLoader /> : null}
       <div className="w-full my-auto h-full max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg flex flex-col items-center justify-start">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-yellow rounded-t-lg font-bold text-accent-blue">
           Edit Training
