@@ -31,16 +31,17 @@ const ShowDocument: React.FC<ModalInterface> = (props) => {
 
   const { data } = useSession({ required: true });
   const user = data?.user;
+  const userToken = user?.token;
   const url = process.env.URL;
 
   const getDocumentDetails = React.useCallback(async () => {
     try {
-      if (user?.token) {
+      if (userToken) {
         const { data: documentDetails } = await axios.get(
           `${url}/document/resource/${props.id}`,
           {
             headers: {
-              Authorization: `Bearer ${user?.token}`,
+              Authorization: `Bearer ${userToken}`,
             },
             withCredentials: true,
           }
@@ -60,7 +61,7 @@ const ShowDocument: React.FC<ModalInterface> = (props) => {
         addToast("Document Error", message, "error");
       }
     }
-  }, [props.id, url, user?.token, addToast]);
+  }, [props.id, url, userToken, addToast]);
 
   React.useEffect(() => {
     getDocumentDetails();

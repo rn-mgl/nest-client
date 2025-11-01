@@ -50,16 +50,17 @@ const ShowUser: React.FC<ModalInterface> = (props) => {
 
   const { data: session } = useSession({ required: true });
   const user = session?.user;
+  const userToken = user?.token;
   const url = process.env.URL;
 
   const getUser = React.useCallback(async () => {
     try {
-      if (user?.token) {
+      if (userToken) {
         const { data: responseData } = await axios.get(
           `${url}/management/${props.id}`,
           {
             headers: {
-              Authorization: `Bearer ${user.token}`,
+              Authorization: `Bearer ${userToken}`,
             },
             withCredentials: true,
           }
@@ -85,7 +86,7 @@ const ShowUser: React.FC<ModalInterface> = (props) => {
         addToast("User Error", message, "error");
       }
     }
-  }, [user?.token, url, props.id, addToast]);
+  }, [userToken, url, props.id, addToast]);
 
   const sendMail = () => {
     location.href = `mailto:${employee.email}`;

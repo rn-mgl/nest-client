@@ -2,6 +2,7 @@
 
 import Input from "@/src/components/global/form/Input";
 import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { UserInterface } from "@/src/interface/UserInterface";
 import { getCSRFToken } from "@/src/utils/token";
@@ -10,6 +11,7 @@ import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoClose, IoImage, IoText, IoTrash } from "react-icons/io5";
+import LogoLoader from "../global/loader/LogoLoader";
 
 const EditProfile: React.FC<ModalInterface> = (props) => {
   const [profile, setProfile] = React.useState<UserInterface>({
@@ -23,6 +25,8 @@ const EditProfile: React.FC<ModalInterface> = (props) => {
   const imageRef = React.useRef<HTMLInputElement>(null);
 
   const { addToast } = useToasts();
+
+  const { isLoading, handleIsLoading } = useIsLoading();
 
   const url = process.env.URL;
   const { data: session } = useSession({ required: true });
@@ -99,6 +103,7 @@ const EditProfile: React.FC<ModalInterface> = (props) => {
     e.preventDefault();
 
     try {
+      handleIsLoading(true);
       const { token } = await getCSRFToken();
 
       if (token && user?.token) {
@@ -151,6 +156,8 @@ const EditProfile: React.FC<ModalInterface> = (props) => {
           "An error occurred when the profile data is being updated";
         addToast("Profile Error", message, "error");
       }
+    } finally {
+      handleIsLoading(false);
     }
   };
 
@@ -163,6 +170,7 @@ const EditProfile: React.FC<ModalInterface> = (props) => {
       className="w-full h-full backdrop-blur-md fixed top-0 left-0 flex items-center justify-center 
                   p-4 t:p-8 z-50 bg-linear-to-b from-accent-blue/30 to-accent-yellow/30 animate-fade"
     >
+      {isLoading ? <LogoLoader /> : null}
       <div className="w-full h-auto max-w-(--breakpoint-l-s) bg-neutral-100 shadow-md rounded-lg ">
         <div className="w-full flex flex-row items-center justify-between p-4 bg-accent-yellow rounded-t-lg font-bold text-accent-blue">
           Edit Profile

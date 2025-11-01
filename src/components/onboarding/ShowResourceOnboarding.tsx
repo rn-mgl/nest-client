@@ -38,10 +38,11 @@ const ShowResourceOnboarding: React.FC<ModalInterface> = (props) => {
   const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
+  const userToken = user?.token;
 
   const getOnboarding = React.useCallback(async () => {
     try {
-      if (user?.token) {
+      if (userToken) {
         const { data: responseData } = await axios.get<{
           onboarding: OnboardingInterface & {
             required_documents: OnboardingRequiredDocumentsInterface[];
@@ -49,7 +50,7 @@ const ShowResourceOnboarding: React.FC<ModalInterface> = (props) => {
           };
         }>(`${url}/onboarding/resource/${props.id}`, {
           headers: {
-            Authorization: `Bearer ${user?.token}`,
+            Authorization: `Bearer ${userToken}`,
           },
           withCredentials: true,
         });
@@ -74,7 +75,7 @@ const ShowResourceOnboarding: React.FC<ModalInterface> = (props) => {
         addToast("Onboarding Error", message, "error");
       }
     }
-  }, [url, user?.token, props.id, addToast]);
+  }, [url, userToken, props.id, addToast]);
 
   const mappedRequiredDocuments = requiredDocuments.map((req, index) => {
     return (

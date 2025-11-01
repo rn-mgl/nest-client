@@ -40,10 +40,11 @@ const ShowResourceTraining: React.FC<ModalInterface> = (props) => {
   const { data } = useSession({ required: true });
   const user = data?.user;
   const url = process.env.URL;
+  const userToken = user?.token;
 
   const getTraining = React.useCallback(async () => {
     try {
-      if (user?.token) {
+      if (userToken) {
         const { data: responseData } = await axios.get<{
           training: TrainingInterface & {
             contents: TrainingContentInterface[];
@@ -51,7 +52,7 @@ const ShowResourceTraining: React.FC<ModalInterface> = (props) => {
           };
         }>(`${url}/training/resource/${props.id}`, {
           headers: {
-            Authorization: `Bearer ${user.token}`,
+            Authorization: `Bearer ${userToken}`,
           },
           withCredentials: true,
         });
@@ -94,7 +95,7 @@ const ShowResourceTraining: React.FC<ModalInterface> = (props) => {
         addToast("Training Error", message, "error");
       }
     }
-  }, [user?.token, props.id, url, addToast]);
+  }, [userToken, props.id, url, addToast]);
 
   const mappedContents = contents.map((content, index) => {
     const currentContent =

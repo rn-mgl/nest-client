@@ -35,17 +35,18 @@ const ShowResourcePerformanceReview: React.FC<ModalInterface> = (props) => {
   const url = process.env.URL;
   const { data } = useSession({ required: true });
   const user = data?.user;
+  const userToken = user?.token;
 
   const getPerformanceReview = React.useCallback(async () => {
     try {
-      if (user?.token) {
+      if (userToken) {
         const { data: responseData } = await axios.get<{
           performance_review: PerformanceReviewInterface & {
             surveys: PerformanceReviewSurveyInterface[];
           };
         }>(`${url}/performance-review/resource/${props.id}`, {
           headers: {
-            Authorization: `Bearer ${user.token}`,
+            Authorization: `Bearer ${userToken}`,
           },
           withCredentials: true,
         });
@@ -67,7 +68,7 @@ const ShowResourcePerformanceReview: React.FC<ModalInterface> = (props) => {
         addToast("Performance Error", message, "error");
       }
     }
-  }, [url, user?.token, props.id, addToast]);
+  }, [url, userToken, props.id, addToast]);
 
   const mappedSurveys = surveys.map((survey, index) => {
     return (

@@ -3,9 +3,10 @@ import Image from "next/image";
 import React from "react";
 import { IoAdd, IoAttach, IoClose, IoFilm } from "react-icons/io5";
 
-const File: React.FC<FileInterface & { ref: React.Ref<HTMLInputElement> }> = (
-  props
-) => {
+const File: React.FC<FileInterface & { ref: React.Ref<HTMLInputElement> }> = ({
+  ref,
+  ...props
+}) => {
   const SELECTED_FILE_RENDER = {
     application: (
       <div className="w-full p-2 flex flex-col items-center justify-center rounded-md border-2 bg-white relative">
@@ -71,7 +72,7 @@ const File: React.FC<FileInterface & { ref: React.Ref<HTMLInputElement> }> = (
           id={props.id}
           name={props.name}
           onChange={props.file ? () => {} : props.onChange}
-          ref={props.ref}
+          ref={ref}
           className="hidden"
         />
         <p className="text-sm">Attach {props.label ?? "File"}</p>
