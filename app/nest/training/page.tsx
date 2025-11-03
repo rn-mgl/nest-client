@@ -29,7 +29,7 @@ import {
   UserTrainingInterface,
 } from "@/interface/TrainingInterface";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
-import { isUserSummary } from "@/utils/utils";
+import { isUserSummary, normalizeString } from "@/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
@@ -224,6 +224,7 @@ const Training = ({
         key={`assigned-${training.id}`}
         title={training.training.title}
         description={training.training.description}
+        status={normalizeString(training.status)}
         assignedBy={assignedBy}
       >
         <BaseActions
