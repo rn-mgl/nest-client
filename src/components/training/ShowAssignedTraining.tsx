@@ -18,6 +18,7 @@ import { getCSRFToken } from "@/src/utils/token";
 import {
   isCloudFileSummary,
   isUserTrainingResponseSummary,
+  normalizeString,
 } from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";
@@ -370,7 +371,10 @@ const ShowAssignedTraining: React.FC<ModalInterface> = (props) => {
                 label="Deadline"
                 value={training?.deadline ?? "No Deadline"}
               />
-              <TextField label="Status" value={training?.status ?? ""} />
+              <TextField
+                label="Status"
+                value={normalizeString(training?.status ?? "")}
+              />
               <TextBlock
                 label="Description"
                 value={training?.training?.description ?? ""}

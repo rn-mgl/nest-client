@@ -13,7 +13,11 @@ import {
   UserOnboardingRequiredDocumentsInterface,
 } from "@/src/interface/OnboardingInterface";
 import { getCSRFToken } from "@/src/utils/token";
-import { isCloudFileSummary, isRawFileSummary } from "@/src/utils/utils";
+import {
+  isCloudFileSummary,
+  isRawFileSummary,
+  normalizeString,
+} from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -532,6 +536,11 @@ const ShowAssignedOnboarding: React.FC<ModalInterface> = (props) => {
               <TextField
                 label="Title"
                 value={onboarding?.onboarding.title as string}
+              />
+
+              <TextField
+                label="Status"
+                value={normalizeString(onboarding?.status ?? "")}
               />
 
               <TextBlock

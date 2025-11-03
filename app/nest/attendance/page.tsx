@@ -335,7 +335,7 @@ const Attendance = () => {
 
           <div
             className="w-full grid grid-cols-4 items-center justify-center *:flex *:flex-col *:items-center 
-                      *:justify-center bg-white p-2 rounded-b-sm border-[1px] border-t-0 *:text-center t:rounded-b-md t:p-4"
+                      *:justify-center bg-white p-2 rounded-b-sm border border-t-0 *:text-center t:rounded-b-md t:p-4"
           >
             <p>{attendance?.login_time ?? "-"}</p>
             <p>{attendance?.logout_time ?? "-"}</p>

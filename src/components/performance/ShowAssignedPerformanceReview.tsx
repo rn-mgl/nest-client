@@ -18,7 +18,10 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { IoCheckmark, IoClose } from "react-icons/io5";
-import { isUserPerformanceReviewResponse } from "@/src/utils/utils";
+import {
+  isUserPerformanceReviewResponse,
+  normalizeString,
+} from "@/src/utils/utils";
 import useIsLoading from "@/src/hooks/useIsLoading";
 import LogoLoader from "../global/loader/LogoLoader";
 
@@ -240,6 +243,10 @@ const ShowAssignedPerformanceReview: React.FC<ModalInterface> = (props) => {
               <TextField
                 label="Title"
                 value={performanceReview?.performance_review?.title ?? ""}
+              />
+              <TextField
+                label="Status"
+                value={normalizeString(performanceReview?.status ?? "")}
               />
               <TextBlock
                 label="Description"
