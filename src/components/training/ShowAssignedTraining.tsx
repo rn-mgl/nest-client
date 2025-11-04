@@ -158,17 +158,30 @@ const ShowAssignedTraining: React.FC<ModalInterface> = (props) => {
       handleIsLoading(true);
       const { token } = await getCSRFToken();
 
+      const userResponse = reviews
+        .filter((review) => review.user_response !== null)
+        .map((review) => ({
+          training_review_id: review.id ?? 0,
+          user_answer: review.user_response?.answer,
+        }));
+
+      if (userResponse.length !== reviews.length) {
+        addToast(
+          "Review Warning",
+          "Finish answering all the reviews first before submitting.",
+          "warning"
+        );
+
+        return;
+      }
+
       if (token && user?.token) {
         const { data: responseData } = await axios.post(
           `${url}/training/assigned/review-response`,
           {
-            reviews: reviews
-              .filter((review) => review.user_response !== null)
-              .map((review) => ({
-                training_review_id: review.id ?? 0,
-                user_answer: review.user_response?.answer,
-              })),
-            training_id: training?.training.id,
+            reviews: userResponse,
+            training_id: training?.training.id ?? 0,
+            assigned_training: training?.id ?? 0,
           },
           {
             headers: {
@@ -287,7 +300,7 @@ const ShowAssignedTraining: React.FC<ModalInterface> = (props) => {
             <div className="p-1 rounded-md bg-white border-2">
               <div
                 className={`p-4 rounded-sm ${
-                  isChoiceSelected ? "bg-accent-green" : "bg-white"
+                  isChoiceSelected ? "bg-accent-purple" : "bg-white"
                 }`}
               ></div>
             </div>
@@ -400,7 +413,7 @@ const ShowAssignedTraining: React.FC<ModalInterface> = (props) => {
               {mappedReviews}
 
               {training?.score === null ? (
-                <button className="w-full p-2 rounded-md bg-accent-purple text-neutral-100 font-bold mt-auto">
+                <button className="w-full p-2 rounded-md bg-accent-purple text-neutral-100 font-bold mt-4">
                   Submit
                 </button>
               ) : null}

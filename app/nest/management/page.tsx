@@ -366,18 +366,6 @@ const Management = ({
       ? leave.requested_by
       : null;
 
-    const actionedBy = isUserSummary(leave.actioned_by) ? (
-      <div
-        style={{
-          backgroundImage: isCloudFileSummary(leave.actioned_by.image)
-            ? `url(${leave.actioned_by.image.url})`
-            : "",
-        }}
-        title={`${leave.actioned_by.first_name} ${leave.actioned_by.last_name}`}
-        className="flex flex-col items-center justify-center rounded-full overflow-clip relative max-w-10 bg-center bg-cover aspect-square bg-accent-green/30"
-      />
-    ) : null;
-
     const leaveType = isLeaveTypeSummary(leave.leave) ? leave.leave : null;
     const leaveBalance = isLeaveBalanceSummary(leave.leave_balance)
       ? leave.leave_balance
@@ -408,9 +396,7 @@ const Management = ({
       status: normalizeString(leave.status),
       reason: leave.reason,
       balance: leaveBalance?.balance ?? 0,
-      action: actionedBy ? (
-        actionedBy
-      ) : user?.permissions.includes("update.leave_request_resource") ? (
+      action: user?.permissions.includes("update.leave_request_resource") ? (
         <div className="w-full flex flex-row flex-wrap items-center justify-start gap-2">
           <button
             onClick={() =>
@@ -718,7 +704,7 @@ const Management = ({
     </div>
   ) : (
     <div
-      className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br 
+      className="w-full h-full flex flex-col items-center justify-center bg-linear-to-br 
                 from-accent-green/50 via-accent-purple/30 to-accent-blue/50"
     >
       <p className="text-xl animate-fade font-bold">You have no access here.</p>

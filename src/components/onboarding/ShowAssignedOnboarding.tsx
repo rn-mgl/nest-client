@@ -122,7 +122,11 @@ const ShowAssignedOnboarding: React.FC<ModalInterface> = (props) => {
       if (token && user?.token) {
         const { data: responseData } = await axios.post(
           `${url}/onboarding/assigned/policy-acknowledgement`,
-          { policy_acknowledged: true, policy_acknowledgement_id },
+          {
+            policy_acknowledged: true,
+            policy_acknowledgement_id,
+            assigned_onboarding: onboarding?.id ?? 0,
+          },
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
@@ -190,6 +194,8 @@ const ShowAssignedOnboarding: React.FC<ModalInterface> = (props) => {
           "onboarding_required_document_id",
           typeof requirement.id === "number" ? requirement.id.toString() : ""
         );
+
+        formData.set("assigned_onboarding", (onboarding?.id ?? 0).toString());
 
         const { data: responseData } = await axios.post(
           `${url}/onboarding/assigned/required-document`,
@@ -319,6 +325,7 @@ const ShowAssignedOnboarding: React.FC<ModalInterface> = (props) => {
               "X-CSRF-TOKEN": token,
             },
             withCredentials: true,
+            params: { assigned_onboarding: onboarding?.id ?? 0 },
           }
         );
         if (responseData.success) {

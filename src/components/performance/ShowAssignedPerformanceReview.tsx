@@ -131,6 +131,7 @@ const ShowAssignedPerformanceReview: React.FC<ModalInterface> = (props) => {
             response: survey.user_response?.response,
             survey_id: survey.id,
             response_id: survey?.user_response?.id ?? null,
+            assigned_performance: performanceReview?.id ?? 0,
           },
           {
             headers: {
