@@ -8,3 +8,7 @@ export interface ModalInterface {
 export interface DeleteModalInterface {
   route: string;
 }
+
+export interface AssignedModalInterface {
+  viewSource?: "assigner" | "assignee";
+}

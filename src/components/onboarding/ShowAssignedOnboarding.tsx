@@ -4,7 +4,10 @@ import TextField from "@/global/field/TextField";
 import ModalTabs from "@/global/navigation/ModalTabs";
 import { useToasts } from "@/src/context/ToastContext";
 import useModalTab from "@/src/hooks/useModalTab";
-import { ModalInterface } from "@/src/interface/ModalInterface";
+import {
+  AssignedModalInterface,
+  ModalInterface,
+} from "@/src/interface/ModalInterface";
 import {
   OnboardingPolicyAcknowledgemenInterface,
   OnboardingRequiredDocumentsInterface,
@@ -23,11 +26,15 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
-import { IoCheckmark, IoClose } from "react-icons/io5";
+import { IoCheckmark, IoChevronDown, IoClose } from "react-icons/io5";
 import useIsLoading from "@/src/hooks/useIsLoading";
 import LogoLoader from "../global/loader/LogoLoader";
+import Select from "../global/form/Select";
+import useSelect from "@/src/hooks/useSelect";
 
-const ShowAssignedOnboarding: React.FC<ModalInterface> = (props) => {
+const ShowAssignedOnboarding: React.FC<
+  ModalInterface & AssignedModalInterface
+> = (props) => {
   const [onboarding, setOnboarding] =
     React.useState<UserOnboardingInterface | null>(null);
 
@@ -51,9 +58,22 @@ const ShowAssignedOnboarding: React.FC<ModalInterface> = (props) => {
 
   const { isLoading, handleIsLoading } = useIsLoading();
 
+  const { activeSelect, toggleSelect } = useSelect();
+
   const { data: session } = useSession({ required: true });
   const user = session?.user;
   const url = process.env.URL;
+
+  const handleOnboardingStatus = (value: string | number, label: string) => {
+    setOnboarding((prev) => {
+      if (prev === null) return prev;
+
+      return {
+        ...prev,
+        status: { value, label },
+      };
+    });
+  };
 
   const getOnboarding = React.useCallback(async () => {
     try {
@@ -400,6 +420,49 @@ const ShowAssignedOnboarding: React.FC<ModalInterface> = (props) => {
     }
   };
 
+  const submitUpdateStatus = async () => {
+    try {
+      const { token } = await getCSRFToken();
+
+      if (token && user?.token) {
+        const status =
+          typeof onboarding?.status === "string"
+            ? onboarding.status
+            : typeof onboarding?.status === "object"
+            ? (onboarding.status.value as string)
+            : "pending";
+
+        const { data: responseData } = await axios.patch(
+          `${url}/onboarding/assigned/${onboarding?.id}`,
+          { status },
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              "X-CSRF-TOKEN": token,
+            },
+            withCredentials: true,
+          }
+        );
+
+        if (responseData.success) {
+          if (props.refetchIndex) {
+            props.refetchIndex();
+          }
+
+          getOnboarding();
+
+          addToast(
+            "Status Update",
+            `Status updated to ${normalizeString(status)} successfully`,
+            "success"
+          );
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const mappedRequiredDocuments = requiredDocuments.map((document, index) => {
     return (
       <div
@@ -410,9 +473,10 @@ const ShowAssignedOnboarding: React.FC<ModalInterface> = (props) => {
         <TextBlock label="Description" value={document.description} />
 
         {/* if there is no user compliance yet/the user compliance document is null/has file input content, show input file field */}
-        {!document.user_compliance ||
-        !document.user_compliance.document ||
-        isRawFileSummary(document.user_compliance.document) ? (
+        {props.viewSource === "assignee" &&
+        (!document.user_compliance ||
+          !document.user_compliance.document ||
+          isRawFileSummary(document.user_compliance.document)) ? (
           <div className="w-full flex flex-col items-center justify-center gap-2">
             <File
               accept="application/pdf"
@@ -447,7 +511,7 @@ const ShowAssignedOnboarding: React.FC<ModalInterface> = (props) => {
               </button>
             ) : null}
           </div>
-        ) : isCloudFileSummary(document.user_compliance.document) ? (
+        ) : isCloudFileSummary(document.user_compliance?.document) ? (
           <div className="w-full p-3 rounded-md border-2 bg-white flex flex-col items-start justify-center relative">
             <Link
               href={document.user_compliance.document?.url}
@@ -484,22 +548,24 @@ const ShowAssignedOnboarding: React.FC<ModalInterface> = (props) => {
           <TextField label="Title" value={policy.title} />
           <TextBlock label="Description" value={policy.description} />
 
-          {!policy.user_acknowledgement ||
-          !policy.user_acknowledgement.acknowledged ? (
+          {props.viewSource === "assignee" &&
+          (!policy.user_acknowledgement ||
+            !policy.user_acknowledgement.acknowledged) ? (
             <button
               className="w-full p-2 rounded-md bg-accent-purple text-neutral-100 font-bold"
               onClick={() => handleAcknowledge(policy.id ?? 0)}
             >
               Acknowledge
             </button>
-          ) : (
+          ) : policy.user_acknowledgement &&
+            policy.user_acknowledgement.acknowledged ? (
             <div
               className="w-full p-2 rounded-md bg-accent-green text-neutral-100 font-bold 
                         text-center flex flex-row items-center justify-center gap-2"
             >
               Policy Acknowledged <IoCheckmark />
             </div>
-          )}
+          ) : null}
         </div>
       );
     }
@@ -545,15 +611,59 @@ const ShowAssignedOnboarding: React.FC<ModalInterface> = (props) => {
                 value={onboarding?.onboarding.title as string}
               />
 
-              <TextField
-                label="Status"
-                value={normalizeString(onboarding?.status ?? "")}
-              />
+              {props.viewSource === "assigner" ? (
+                <div className="w-full relative flex flex-col items-start justify-center">
+                  <Select
+                    onChange={handleOnboardingStatus}
+                    label={true}
+                    placeholder="Status"
+                    id="status"
+                    name="status"
+                    required={true}
+                    value={
+                      typeof onboarding?.status === "string"
+                        ? onboarding.status
+                        : typeof onboarding?.status === "object"
+                        ? onboarding.status.value
+                        : ""
+                    }
+                    activeSelect={activeSelect}
+                    toggleSelect={toggleSelect}
+                    options={[
+                      { label: "Pending", value: "pending" },
+                      { label: "In Progress", value: "in_progress" },
+                      { label: "Done", value: "done" },
+                    ]}
+                  />
+
+                  <IoChevronDown className="absolute right-3 translate-y-3 " />
+                </div>
+              ) : (
+                <TextField
+                  label="Status"
+                  value={normalizeString(
+                    typeof onboarding?.status === "string"
+                      ? onboarding.status
+                      : typeof onboarding?.status === "object"
+                      ? onboarding.status.label
+                      : ""
+                  )}
+                />
+              )}
 
               <TextBlock
                 label="Description"
                 value={onboarding?.onboarding.description as string}
               />
+
+              {props.viewSource === "assignee" ? (
+                <button
+                  onClick={submitUpdateStatus}
+                  className="w-full p-2 rounded-md bg-accent-purple text-neutral-100 mt-4 font-bold"
+                >
+                  Update
+                </button>
+              ) : null}
             </div>
           ) : activeTab === "documents" ? (
             <div className="w-full h-full flex flex-col items-start justify-start gap-4 overflow-y-hidden">

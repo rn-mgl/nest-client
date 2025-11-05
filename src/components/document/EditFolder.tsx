@@ -42,11 +42,11 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
     });
   };
 
-  const handlePaths = (destination: number, label: string) => {
+  const handlePaths = (destination: string | number, label: string) => {
     setFolder((prev) => {
       return {
         ...prev,
-        path: { label, value: destination },
+        path: { label, value: Number(destination) },
       };
     });
   };
@@ -249,11 +249,7 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
             placeholder="Path"
             required={true}
             toggleSelect={toggleSelect}
-            label={
-              folder.path && typeof folder.path === "object"
-                ? folder.path.label
-                : "Home"
-            }
+            label={true}
             value={
               folder.path && typeof folder.path === "object"
                 ? folder.path.value

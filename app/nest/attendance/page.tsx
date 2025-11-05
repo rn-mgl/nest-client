@@ -112,8 +112,8 @@ const Attendance = () => {
     setCanLog((prev) => !prev);
   };
 
-  const handleActiveMonth = (month: number, label: string) => {
-    setActiveMonth({ label: label, value: month });
+  const handleActiveMonth = (month: number | string, label: string) => {
+    setActiveMonth({ label: label, value: Number(month) });
   };
 
   const handleActiveYear = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -274,7 +274,6 @@ const Attendance = () => {
               onChange={handleActiveMonth}
               required={false}
               icon={<IoCalendar />}
-              label={activeMonth.label}
               activeSelect={activeSelect}
               toggleSelect={handleActiveSelect}
             />

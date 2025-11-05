@@ -36,14 +36,14 @@ export interface TextAreaInterface {
 export interface SelectInterface {
   id: string;
   name: string;
-  value: number;
-  options: Array<{ value: number; label: string }>;
+  value: number | string;
+  options: Array<{ value: number | string; label: string }>;
   placeholder: string;
   required: boolean;
   activeSelect: boolean;
-  onChange: (value: number, label: string) => void;
+  onChange: (value: number | string, label: string) => void;
   toggleSelect: () => void;
-  label: string;
+  label?: boolean;
   icon?: React.ReactNode;
 }
 

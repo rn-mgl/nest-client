@@ -19,13 +19,19 @@ const Select: React.FC<SelectInterface> = (props) => {
   });
 
   return (
-    <div className="w-full gap-2 relative ">
+    <div className="w-full gap-2 relative flex flex-col items-start justify-center">
+      {props.label ? (
+        <label htmlFor={props.id} className="text-xs">
+          {props.placeholder}
+        </label>
+      ) : null}
+
       <button
         type="button"
         onClick={props.toggleSelect}
         className="w-full flex flex-col items-start justify-center p-2 rounded-md border-2 relative bg-white"
       >
-        {props.label}
+        {props.options.find((option) => option.value === props.value)?.label}
 
         {props.icon ? (
           <div className="bg-inherit absolute right-1 p-1.5 rounded-md flex flex-col items-center justify-center hover:bg-white">

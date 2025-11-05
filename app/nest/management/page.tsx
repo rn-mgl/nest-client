@@ -55,7 +55,8 @@ import {
 import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
-import { IoCheckmark, IoClose } from "react-icons/io5";
+import { IoCheckmark, IoClose, IoPencil } from "react-icons/io5";
+import ShowAssignedOnboarding from "@/src/components/onboarding/ShowAssignedOnboarding";
 
 const Management = ({
   searchParams,
@@ -79,6 +80,9 @@ const Management = ({
     new Date().toISOString().split("T")[0]
   );
   const [activeTab, setActiveTab] = React.useState("users");
+  const [activeEditOnboarding, setActiveEditOnboarding] = React.useState(0);
+  const [activeEditPerformance, setActiveEditPerformance] = React.useState(0);
+  const [activeEditTraining, setActiveEditTraining] = React.useState(0);
 
   const { isLoading, handleIsLoading } = useIsLoading();
 
@@ -153,6 +157,18 @@ const Management = ({
   const handleDate = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     setDate(value);
+  };
+
+  const handleActiveEditOnboarding = (id: number) => {
+    setActiveEditOnboarding((prev) => (prev === id ? 0 : id));
+  };
+
+  const handleActiveEditPerformance = (id: number) => {
+    setActiveEditPerformance((prev) => (prev === id ? 0 : id));
+  };
+
+  const handleActiveEditTraining = (id: number) => {
+    setActiveEditTraining((prev) => (prev === id ? 0 : id));
   };
 
   const getUserData = React.useCallback(
@@ -349,8 +365,22 @@ const Management = ({
       last_name: assignedTo?.last_name ?? "-",
       email: assignedTo?.email ?? "-",
       title: onboardingDetails?.title ?? "-",
-      status: normalizeString(onboarding.status),
+      status: normalizeString(
+        typeof onboarding.status === "string" ? onboarding.status : ""
+      ),
       assigned_on: assignedOn,
+      action: (
+        <div className="w-full flex flex-col items-start justify-center">
+          <button
+            onClick={() => handleActiveEditOnboarding(onboarding.id ?? 0)}
+            title="Edit"
+            type="button"
+            className="p-2 rounded-md bg-accent-yellow text-accent-blue"
+          >
+            <IoPencil />
+          </button>
+        </div>
+      ),
     };
   });
 
@@ -469,6 +499,18 @@ const Management = ({
       title: performanceReview ? performanceReview.title : "-",
       status: normalizeString(performance.status),
       assigned_on: assignedOn,
+      action: (
+        <div className="w-full flex flex-col items-start justify-center">
+          <button
+            onClick={() => handleActiveEditPerformance(performance.id ?? 0)}
+            title="Edit"
+            type="button"
+            className="p-2 rounded-md bg-accent-yellow text-accent-blue"
+          >
+            <IoPencil />
+          </button>
+        </div>
+      ),
     };
   });
 
@@ -519,6 +561,18 @@ const Management = ({
       status: normalizeString(training.status),
       score: training.score ?? "-",
       assigned_on: assignedOn,
+      action: (
+        <div className="w-full flex flex-col items-start justify-center">
+          <button
+            onClick={() => handleActiveEditTraining(training.id ?? 0)}
+            title="Edit"
+            type="button"
+            className="p-2 rounded-md bg-accent-yellow text-accent-blue"
+          >
+            <IoPencil />
+          </button>
+        </div>
+      ),
     };
   });
 
@@ -549,6 +603,15 @@ const Management = ({
         <ShowUser
           toggleModal={() => handleActiveUserSeeMore(activeUserSeeMore)}
           id={activeUserSeeMore}
+        />
+      ) : null}
+
+      {activeEditOnboarding ? (
+        <ShowAssignedOnboarding
+          toggleModal={() => handleActiveEditOnboarding(activeEditOnboarding)}
+          id={activeEditOnboarding}
+          refetchIndex={() => getUserData(activeTab)}
+          viewSource="assigner"
         />
       ) : null}
 
@@ -646,6 +709,7 @@ const Management = ({
                 "Title",
                 "Status",
                 "Assigned On",
+                "Action",
               ]}
               contents={mappedOnboardings}
               color="blue"
@@ -678,6 +742,7 @@ const Management = ({
                 "Title",
                 "Status",
                 "Assigned On",
+                "Action",
               ]}
               contents={mappedPerformances}
               color="blue"
@@ -694,6 +759,7 @@ const Management = ({
                 "Status",
                 "Score",
                 "Assigned On",
+                "Action",
               ]}
               contents={mappedTrainings}
               color="blue"
