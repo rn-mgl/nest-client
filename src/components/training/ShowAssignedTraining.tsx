@@ -1,12 +1,16 @@
 "use client";
 
-import Radio from "@/src/components/global/form/Radio";
 import TextBlock from "@/global/field/TextBlock";
 import TextField from "@/global/field/TextField";
 import ModalTabs from "@/global/navigation/ModalTabs";
+import Radio from "@/src/components/global/form/Radio";
 import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import useModalTab from "@/src/hooks/useModalTab";
-import { ModalInterface } from "@/src/interface/ModalInterface";
+import {
+  AssignedModalInterface,
+  ModalInterface,
+} from "@/src/interface/ModalInterface";
 import {
   TrainingContentInterface,
   TrainingInterface,
@@ -26,11 +30,18 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
-import { IoCheckmarkCircle, IoClose, IoCloseCircle } from "react-icons/io5";
-import useIsLoading from "@/src/hooks/useIsLoading";
+import {
+  IoCheckmarkCircle,
+  IoChevronDown,
+  IoClose,
+  IoCloseCircle,
+} from "react-icons/io5";
+import Select from "../global/form/Select";
 import LogoLoader from "../global/loader/LogoLoader";
 
-const ShowAssignedTraining: React.FC<ModalInterface> = (props) => {
+const ShowAssignedTraining: React.FC<
+  ModalInterface & AssignedModalInterface
+> = (props) => {
   const [training, setTraining] = React.useState<
     (UserTrainingInterface & { training: TrainingInterface }) | null
   >(null);
@@ -78,6 +89,17 @@ const ShowAssignedTraining: React.FC<ModalInterface> = (props) => {
       };
 
       return reviews;
+    });
+  };
+
+  const handleStatus = (value: string | number, label: string) => {
+    setTraining((prev) => {
+      if (prev === null) return prev;
+
+      return {
+        ...prev,
+        status: { label, value: String(value) },
+      };
     });
   };
 
@@ -217,6 +239,55 @@ const ShowAssignedTraining: React.FC<ModalInterface> = (props) => {
     }
   };
 
+  const submitStatusUpdate = async () => {
+    try {
+      const { token } = await getCSRFToken();
+
+      if (token && user?.token) {
+        const status =
+          typeof training?.status === "string"
+            ? training.status
+            : typeof training?.status === "object"
+            ? training.status.value
+            : "pending";
+
+        const { data: responseData } = await axios.patch(
+          `${url}/training/assigned/${training?.id}`,
+          { status },
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              "X-CSRF-TOKEN": token,
+            },
+            withCredentials: true,
+          }
+        );
+
+        if (responseData.success) {
+          if (props.refetchIndex) {
+            props.refetchIndex();
+          }
+
+          await getTraining();
+
+          addToast(
+            "Status Update",
+            `Status updated to ${normalizeString(status)} successfully.`,
+            "success"
+          );
+        }
+      }
+    } catch (error) {
+      console.log(error);
+
+      if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
+        const message = error.response?.data.message ?? error.message;
+
+        addToast("Update Error", message, "error");
+      }
+    }
+  };
+
   const mappedContents = contents.map((content, index) => {
     const currentContent = isCloudFileSummary(content.content)
       ? content.content.url
@@ -291,16 +362,22 @@ const ShowAssignedTraining: React.FC<ModalInterface> = (props) => {
 
       const isChoiceSelected = review?.user_response?.answer === choice;
 
+      const isCorrectAnswer = review.answer === choice;
+
       return (
         <div
           key={`${currChoice}-${choice}`}
           className="w-full flex flex-row items-center justify-between gap-2 "
         >
-          {alreadyAnswered ? (
+          {alreadyAnswered || props.viewSource === "assigner" ? (
             <div className="p-1 rounded-md bg-white border-2">
               <div
                 className={`p-4 rounded-sm ${
-                  isChoiceSelected ? "bg-accent-purple" : "bg-white"
+                  isChoiceSelected
+                    ? "bg-accent-purple"
+                    : isCorrectAnswer
+                    ? "bg-accent-yellow"
+                    : "bg-white"
                 }`}
               ></div>
             </div>
@@ -375,7 +452,7 @@ const ShowAssignedTraining: React.FC<ModalInterface> = (props) => {
             tabs={["information", "contents", "reviews"]}
           />
           {activeTab === "information" ? (
-            <div className="w-full flex flex-col items-center justify-start gap-4 h-full">
+            <div className="w-full flex flex-col items-center justify-start gap-4 h-full overflow-y-auto">
               <TextField
                 label="Title"
                 value={training?.training?.title ?? ""}
@@ -384,14 +461,54 @@ const ShowAssignedTraining: React.FC<ModalInterface> = (props) => {
                 label="Deadline"
                 value={training?.deadline ?? "No Deadline"}
               />
-              <TextField
-                label="Status"
-                value={normalizeString(training?.status ?? "")}
-              />
+              {props.viewSource === "assigner" ? (
+                <Select
+                  onChange={handleStatus}
+                  value={
+                    typeof training?.status === "string"
+                      ? training.status
+                      : typeof training?.status === "object"
+                      ? training.status.value
+                      : ""
+                  }
+                  id="status"
+                  name="status"
+                  options={[
+                    { label: "Pending", value: "pending" },
+                    { label: "In Progress", value: "in_progress" },
+                    { label: "Done", value: "done" },
+                  ]}
+                  placeholder="Status"
+                  required={true}
+                  label={true}
+                  icon={<IoChevronDown />}
+                />
+              ) : (
+                <TextField
+                  label="Status"
+                  value={normalizeString(
+                    typeof training?.status === "string"
+                      ? training.status
+                      : typeof training?.status === "object"
+                      ? training.status.value
+                      : ""
+                  )}
+                />
+              )}
+
               <TextBlock
                 label="Description"
                 value={training?.training?.description ?? ""}
               />
+
+              {props.viewSource === "assigner" ? (
+                <button
+                  onClick={submitStatusUpdate}
+                  className="w-full p-2 rounded-md bg-accent-purple text-neutral-100 font-bold mt-2"
+                >
+                  Update
+                </button>
+              ) : null}
             </div>
           ) : activeTab === "contents" ? (
             <div className="w-full h-full flex flex-col items-center justify-start gap-4 overflow-y-auto">
@@ -412,7 +529,7 @@ const ShowAssignedTraining: React.FC<ModalInterface> = (props) => {
 
               {mappedReviews}
 
-              {training?.score === null ? (
+              {training?.score === null && props.viewSource === "assignee" ? (
                 <button className="w-full p-2 rounded-md bg-accent-purple text-neutral-100 font-bold mt-4">
                   Submit
                 </button>

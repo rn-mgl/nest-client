@@ -33,7 +33,7 @@ export interface UserPerformanceReviewInterface {
   performance_review: PerformanceReviewInterface;
   assigned_to: number | UserInterface;
   assigned_by: number | UserInterface;
-  status: string;
+  status: { label: string; value: string } | string;
   created_at: string;
   deleted_at: null | string;
 }

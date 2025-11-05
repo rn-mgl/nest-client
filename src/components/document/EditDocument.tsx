@@ -3,18 +3,17 @@ import { ModalInterface } from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios, { isAxiosError } from "axios";
 
+import Input from "@/src/components/global/form/Input";
+import Select from "@/src/components/global/form/Select";
+import TextArea from "@/src/components/global/form/TextArea";
+import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
+import { isCloudFileSummary, isRawFileSummary } from "@/src/utils/utils";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
 import { IoAdd, IoClose, IoText } from "react-icons/io5";
-import Input from "@/src/components/global/form/Input";
-import TextArea from "@/src/components/global/form/TextArea";
-import Link from "next/link";
-import useSelect from "@/src/hooks/useSelect";
-import Select from "@/src/components/global/form/Select";
-import { isCloudFileSummary, isRawFileSummary } from "@/src/utils/utils";
-import { useToasts } from "@/src/context/ToastContext";
-import useIsLoading from "@/src/hooks/useIsLoading";
 import LogoLoader from "../global/loader/LogoLoader";
 
 const EditDocument: React.FC<ModalInterface> = (props) => {
@@ -32,7 +31,6 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
 
   const { addToast } = useToasts();
 
-  const { activeSelect, toggleSelect } = useSelect();
   const documentRef = React.useRef<HTMLInputElement | null>(null);
 
   const { isLoading, handleIsLoading } = useIsLoading();
@@ -217,11 +215,11 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
     }
   };
 
-  const handlePaths = (destination: number, label: string) => {
+  const handlePaths = (destination: number | string, label: string) => {
     setDocument((prev) => {
       return {
         ...prev,
-        path: { label, value: destination },
+        path: { label, value: Number(destination) },
       };
     });
   };
@@ -289,16 +287,10 @@ const EditDocument: React.FC<ModalInterface> = (props) => {
           <Select
             id="path"
             name="path"
-            activeSelect={activeSelect}
-            label={
-              document.path && typeof document.path === "object"
-                ? document.path.label
-                : "Home"
-            }
+            label={true}
             options={paths}
             placeholder="Path"
             required={true}
-            toggleSelect={toggleSelect}
             value={
               document.path && typeof document.path === "object"
                 ? document.path.value

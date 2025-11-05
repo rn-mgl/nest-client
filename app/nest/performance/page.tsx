@@ -216,7 +216,9 @@ const Performance = ({
         key={`assigned-${performance.id}`}
         title={performance.performance_review.title}
         description={performance.performance_review.description}
-        status={normalizeString(performance.status)}
+        status={normalizeString(
+          typeof performance.status === "string" ? performance.status : ""
+        )}
         assignedBy={assignedBy}
       >
         <BaseActions
@@ -304,6 +306,7 @@ const Performance = ({
           <ShowAssignedPerformanceReview
             id={activePerformanceReviewSeeMore}
             toggleModal={() => handleActivePerformanceReviewSeeMore(0)}
+            viewSource="assignee"
           />
         ) : activeTab === "resource" &&
           user?.permissions.includes("read.performance_review_resource") ? (

@@ -21,7 +21,6 @@ const Attendance = () => {
   const [activeYear, setActiveYear] = React.useState<number | string>(
     new Date().getFullYear()
   );
-  const [activeSelect, setActiveSelect] = React.useState(false);
 
   const [attendance, setAttendance] =
     React.useState<AttendanceInterface | null>(null);
@@ -123,10 +122,6 @@ const Attendance = () => {
 
   const handleActiveDate = (date: number) => {
     setActiveDate(date);
-  };
-
-  const handleActiveSelect = () => {
-    setActiveSelect((prev) => !prev);
   };
 
   const calendar = Array(startDay).fill(null);
@@ -274,8 +269,6 @@ const Attendance = () => {
               onChange={handleActiveMonth}
               required={false}
               icon={<IoCalendar />}
-              activeSelect={activeSelect}
-              toggleSelect={handleActiveSelect}
             />
 
             <Input

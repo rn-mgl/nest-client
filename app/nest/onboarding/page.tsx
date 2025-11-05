@@ -234,7 +234,9 @@ const Onboarding = ({
         key={index}
         title={onboarding.onboarding.title}
         description={onboarding.onboarding.description}
-        status={normalizeString(onboarding.status)}
+        status={normalizeString(
+          typeof onboarding.status === "string" ? onboarding.status : ""
+        )}
         assignedBy={assignedBy}
       >
         <BaseActions
@@ -328,6 +330,7 @@ const Onboarding = ({
         activeTab === "assigned" ? (
           <ShowAssignedOnboarding
             id={activeOnboardingSeeMore}
+            viewSource="assignee"
             toggleModal={() =>
               handleActiveOnboardingSeeMore(activeOnboardingSeeMore)
             }

@@ -1,8 +1,9 @@
-import File from "@/src/components/global/form/File";
 import TextBlock from "@/global/field/TextBlock";
 import TextField from "@/global/field/TextField";
 import ModalTabs from "@/global/navigation/ModalTabs";
+import File from "@/src/components/global/form/File";
 import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import useModalTab from "@/src/hooks/useModalTab";
 import {
   AssignedModalInterface,
@@ -27,10 +28,8 @@ import Link from "next/link";
 import React from "react";
 import { AiFillFilePdf } from "react-icons/ai";
 import { IoCheckmark, IoChevronDown, IoClose } from "react-icons/io5";
-import useIsLoading from "@/src/hooks/useIsLoading";
-import LogoLoader from "../global/loader/LogoLoader";
 import Select from "../global/form/Select";
-import useSelect from "@/src/hooks/useSelect";
+import LogoLoader from "../global/loader/LogoLoader";
 
 const ShowAssignedOnboarding: React.FC<
   ModalInterface & AssignedModalInterface
@@ -58,13 +57,11 @@ const ShowAssignedOnboarding: React.FC<
 
   const { isLoading, handleIsLoading } = useIsLoading();
 
-  const { activeSelect, toggleSelect } = useSelect();
-
   const { data: session } = useSession({ required: true });
   const user = session?.user;
   const url = process.env.URL;
 
-  const handleOnboardingStatus = (value: string | number, label: string) => {
+  const handleStatus = (value: string | number, label: string) => {
     setOnboarding((prev) => {
       if (prev === null) return prev;
 
@@ -424,6 +421,8 @@ const ShowAssignedOnboarding: React.FC<
     try {
       const { token } = await getCSRFToken();
 
+      console.log(token);
+
       if (token && user?.token) {
         const status =
           typeof onboarding?.status === "string"
@@ -460,6 +459,12 @@ const ShowAssignedOnboarding: React.FC<
       }
     } catch (error) {
       console.log(error);
+
+      if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
+        const message = error.response?.data.message ?? error.message;
+
+        addToast("Status Error", message, "error");
+      }
     }
   };
 
@@ -612,32 +617,27 @@ const ShowAssignedOnboarding: React.FC<
               />
 
               {props.viewSource === "assigner" ? (
-                <div className="w-full relative flex flex-col items-start justify-center">
-                  <Select
-                    onChange={handleOnboardingStatus}
-                    label={true}
-                    placeholder="Status"
-                    id="status"
-                    name="status"
-                    required={true}
-                    value={
-                      typeof onboarding?.status === "string"
-                        ? onboarding.status
-                        : typeof onboarding?.status === "object"
-                        ? onboarding.status.value
-                        : ""
-                    }
-                    activeSelect={activeSelect}
-                    toggleSelect={toggleSelect}
-                    options={[
-                      { label: "Pending", value: "pending" },
-                      { label: "In Progress", value: "in_progress" },
-                      { label: "Done", value: "done" },
-                    ]}
-                  />
-
-                  <IoChevronDown className="absolute right-3 translate-y-3 " />
-                </div>
+                <Select
+                  onChange={handleStatus}
+                  label={true}
+                  placeholder="Status"
+                  id="status"
+                  name="status"
+                  required={true}
+                  value={
+                    typeof onboarding?.status === "string"
+                      ? onboarding.status
+                      : typeof onboarding?.status === "object"
+                      ? onboarding.status.value
+                      : ""
+                  }
+                  options={[
+                    { label: "Pending", value: "pending" },
+                    { label: "In Progress", value: "in_progress" },
+                    { label: "Done", value: "done" },
+                  ]}
+                  icon={<IoChevronDown />}
+                />
               ) : (
                 <TextField
                   label="Status"
@@ -659,7 +659,7 @@ const ShowAssignedOnboarding: React.FC<
               {props.viewSource === "assignee" ? (
                 <button
                   onClick={submitUpdateStatus}
-                  className="w-full p-2 rounded-md bg-accent-purple text-neutral-100 mt-4 font-bold"
+                  className="w-full p-2 rounded-md bg-accent-purple text-neutral-100 mt-2 font-bold"
                 >
                   Update
                 </button>

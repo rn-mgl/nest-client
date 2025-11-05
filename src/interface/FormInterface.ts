@@ -40,9 +40,7 @@ export interface SelectInterface {
   options: Array<{ value: number | string; label: string }>;
   placeholder: string;
   required: boolean;
-  activeSelect: boolean;
   onChange: (value: number | string, label: string) => void;
-  toggleSelect: () => void;
   label?: boolean;
   icon?: React.ReactNode;
 }

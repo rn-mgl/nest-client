@@ -57,6 +57,8 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import { IoCheckmark, IoClose, IoPencil } from "react-icons/io5";
 import ShowAssignedOnboarding from "@/src/components/onboarding/ShowAssignedOnboarding";
+import ShowAssignedPerformanceReview from "@/src/components/performance/ShowAssignedPerformanceReview";
+import ShowAssignedTraining from "@/src/components/training/ShowAssignedTraining";
 
 const Management = ({
   searchParams,
@@ -497,7 +499,9 @@ const Management = ({
       last_name: assignedTo?.last_name ?? "-",
       email: assignedTo?.email ?? "-",
       title: performanceReview ? performanceReview.title : "-",
-      status: normalizeString(performance.status),
+      status: normalizeString(
+        typeof performance.status === "string" ? performance.status : ""
+      ),
       assigned_on: assignedOn,
       action: (
         <div className="w-full flex flex-col items-start justify-center">
@@ -558,7 +562,9 @@ const Management = ({
       email: assignedTo?.email ?? "-",
       title: trainingDetails?.title ?? "-",
       deadline: deadline,
-      status: normalizeString(training.status),
+      status: normalizeString(
+        typeof training.status === "string" ? training.status : ""
+      ),
       score: training.score ?? "-",
       assigned_on: assignedOn,
       action: (
@@ -610,6 +616,24 @@ const Management = ({
         <ShowAssignedOnboarding
           toggleModal={() => handleActiveEditOnboarding(activeEditOnboarding)}
           id={activeEditOnboarding}
+          refetchIndex={() => getUserData(activeTab)}
+          viewSource="assigner"
+        />
+      ) : null}
+
+      {activeEditPerformance ? (
+        <ShowAssignedPerformanceReview
+          toggleModal={() => handleActiveEditPerformance(activeEditPerformance)}
+          id={activeEditPerformance}
+          refetchIndex={() => getUserData(activeTab)}
+          viewSource="assigner"
+        />
+      ) : null}
+
+      {activeEditTraining ? (
+        <ShowAssignedTraining
+          toggleModal={() => handleActiveEditTraining(activeEditTraining)}
+          id={activeEditTraining}
           refetchIndex={() => getUserData(activeTab)}
           viewSource="assigner"
         />

@@ -224,7 +224,9 @@ const Training = ({
         key={`assigned-${training.id}`}
         title={training.training.title}
         description={training.training.description}
-        status={normalizeString(training.status)}
+        status={normalizeString(
+          typeof training.status === "string" ? training.status : ""
+        )}
         assignedBy={assignedBy}
       >
         <BaseActions
@@ -317,6 +319,7 @@ const Training = ({
           <ShowAssignedTraining
             id={activeTrainingSeeMore}
             toggleModal={() => handleActiveTrainingSeeMore(0)}
+            viewSource="assignee"
           />
         ) : activeTab === "resource" &&
           user?.permissions.includes("read.training_resource") ? (

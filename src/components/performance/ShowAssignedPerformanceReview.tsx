@@ -1,12 +1,16 @@
 "use client";
 
-import TextArea from "@/src/components/global/form/TextArea";
 import TextBlock from "@/global/field/TextBlock";
 import TextField from "@/global/field/TextField";
 import ModalTabs from "@/global/navigation/ModalTabs";
+import TextArea from "@/src/components/global/form/TextArea";
 import { useToasts } from "@/src/context/ToastContext";
+import useIsLoading from "@/src/hooks/useIsLoading";
 import useModalTab from "@/src/hooks/useModalTab";
-import { ModalInterface } from "@/src/interface/ModalInterface";
+import {
+  AssignedModalInterface,
+  ModalInterface,
+} from "@/src/interface/ModalInterface";
 import {
   PerformanceReviewInterface,
   PerformanceReviewSurveyInterface,
@@ -14,18 +18,20 @@ import {
   UserPerformanceReviewSurveyResponseInterface,
 } from "@/src/interface/PerformanceReviewInterface";
 import { getCSRFToken } from "@/src/utils/token";
-import axios from "axios";
-import { useSession } from "next-auth/react";
-import React from "react";
-import { IoCheckmark, IoClose } from "react-icons/io5";
 import {
   isUserPerformanceReviewResponse,
   normalizeString,
 } from "@/src/utils/utils";
-import useIsLoading from "@/src/hooks/useIsLoading";
+import axios from "axios";
+import { useSession } from "next-auth/react";
+import React from "react";
+import { IoCheckmark, IoChevronDown, IoClose } from "react-icons/io5";
+import Select from "../global/form/Select";
 import LogoLoader from "../global/loader/LogoLoader";
 
-const ShowAssignedPerformanceReview: React.FC<ModalInterface> = (props) => {
+const ShowAssignedPerformanceReview: React.FC<
+  ModalInterface & AssignedModalInterface
+> = (props) => {
   const [performanceReview, setPerformanceReview] =
     React.useState<UserPerformanceReviewInterface | null>(null);
 
@@ -70,6 +76,17 @@ const ShowAssignedPerformanceReview: React.FC<ModalInterface> = (props) => {
       };
 
       return surveys;
+    });
+  };
+
+  const handleStatus = (value: string | number, label: string) => {
+    setPerformanceReview((prev) => {
+      if (prev === null) return prev;
+
+      return {
+        ...prev,
+        status: { label, value: String(value) },
+      };
     });
   };
 
@@ -166,6 +183,55 @@ const ShowAssignedPerformanceReview: React.FC<ModalInterface> = (props) => {
     }
   };
 
+  const submitUpdateStatus = async () => {
+    try {
+      const { token } = await getCSRFToken();
+
+      if (token && user?.token) {
+        const status =
+          typeof performanceReview?.status === "string"
+            ? performanceReview.status
+            : typeof performanceReview?.status === "object"
+            ? performanceReview.status.value
+            : "pending";
+
+        const { data: responseData } = await axios.patch(
+          `${url}/performance-review/assigned/${performanceReview?.id}`,
+          { status },
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              "X-CSRF-TOKEN": token,
+            },
+            withCredentials: true,
+          }
+        );
+
+        if (responseData.success) {
+          if (props.refetchIndex) {
+            props.refetchIndex();
+          }
+
+          await getPerformanceReview();
+
+          addToast(
+            "Status Update",
+            `Status updated to ${normalizeString(status)} successfully`,
+            "success"
+          );
+        }
+      }
+    } catch (error) {
+      console.log(error);
+
+      if (axios.isAxiosError(error) && error.code !== "ERR_CANCELED") {
+        const message = error.response?.data.message ?? error.message;
+
+        addToast("Status Error", message, "error");
+      }
+    }
+  };
+
   const mappedSurveys = surveys.map((survey, index) => {
     const hasResponse = isUserPerformanceReviewResponse(survey.user_response);
 
@@ -176,7 +242,7 @@ const ShowAssignedPerformanceReview: React.FC<ModalInterface> = (props) => {
       >
         <TextBlock label={`Survey ${index + 1}`} value={survey.survey} />
 
-        {hasResponse ? (
+        {hasResponse || props.viewSource === "assigner" ? (
           <TextBlock
             label={`Response ${index + 1}`}
             value={survey.user_response?.response ?? ""}
@@ -200,14 +266,14 @@ const ShowAssignedPerformanceReview: React.FC<ModalInterface> = (props) => {
           >
             Responded <IoCheckmark />
           </div>
-        ) : (
+        ) : props.viewSource === "assignee" ? (
           <button
             onClick={() => submitPerformanceReviewResponse(index)}
             className="w-full p-2 rounded-md bg-accent-blue font-bold text-neutral-100"
           >
             Send
           </button>
-        )}
+        ) : null}
       </div>
     );
   });
@@ -245,14 +311,55 @@ const ShowAssignedPerformanceReview: React.FC<ModalInterface> = (props) => {
                 label="Title"
                 value={performanceReview?.performance_review?.title ?? ""}
               />
-              <TextField
-                label="Status"
-                value={normalizeString(performanceReview?.status ?? "")}
-              />
+
+              {props.viewSource === "assigner" ? (
+                <Select
+                  onChange={handleStatus}
+                  id="status"
+                  name="status"
+                  options={[
+                    { label: "Pending", value: "pending" },
+                    { label: "In Progress", value: "in_progress" },
+                    { label: "Done", value: "done" },
+                  ]}
+                  placeholder="Status"
+                  required={true}
+                  value={
+                    typeof performanceReview?.status === "string"
+                      ? performanceReview.status
+                      : typeof performanceReview?.status === "object"
+                      ? performanceReview.status.value
+                      : ""
+                  }
+                  label={true}
+                  icon={<IoChevronDown />}
+                />
+              ) : (
+                <TextField
+                  label="Status"
+                  value={normalizeString(
+                    typeof performanceReview?.status === "string"
+                      ? performanceReview.status
+                      : typeof performanceReview?.status === "object"
+                      ? performanceReview.status.value
+                      : ""
+                  )}
+                />
+              )}
+
               <TextBlock
                 label="Description"
                 value={performanceReview?.performance_review?.description ?? ""}
               />
+
+              {props.viewSource === "assigner" ? (
+                <button
+                  onClick={submitUpdateStatus}
+                  className="w-full p-2 rounded-md bg-accent-purple text-neutral-100 font-bold mt-2"
+                >
+                  Update
+                </button>
+              ) : null}
             </div>
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-start gap-4 overflow-y-auto">
