@@ -35,6 +35,7 @@ import {
   RESOURCE_LEAVE_TYPE_SORT,
 } from "@/src/configs/filters";
 import {
+  isCloudFileSummary,
   isUserSummary,
   normalizeDate,
   normalizeString,
@@ -302,21 +303,35 @@ const Leave = ({
   });
 
   const leaveRequestRows = leaveRequests.map((leave) => {
-    {
-      const requestedAt = normalizeDate(leave.created_at);
+    const actionedBy = isUserSummary(leave.actioned_by) ? (
+      <div
+        style={{
+          backgroundImage: isCloudFileSummary(leave.actioned_by.image)
+            ? `url(${leave.actioned_by.image.url})`
+            : "",
+        }}
+        title={`${leave.actioned_by.first_name} ${leave.actioned_by.last_name}`}
+        className="flex flex-col items-center justify-center rounded-full overflow-clip relative max-w-10 bg-center bg-cover aspect-square bg-accent-green/30"
+      />
+    ) : null;
 
-      const start = normalizeDate(leave.start_date);
+    const requestedAt = normalizeDate(leave.created_at);
 
-      const end = normalizeDate(leave.end_date);
+    const start = normalizeDate(leave.start_date);
 
-      return {
-        type: leave.leave.type,
-        status: normalizeString(leave.status),
-        start_date: start,
-        end_date: end,
-        requested_at: requestedAt,
-        reason: leave.reason,
-        action: (
+    const end = normalizeDate(leave.end_date);
+
+    return {
+      type: leave.leave.type,
+      status: normalizeString(leave.status),
+      start_date: start,
+      end_date: end,
+      requested_at: requestedAt,
+      reason: leave.reason,
+      action:
+        actionedBy && leave.status === "approved" ? (
+          actionedBy
+        ) : (
           <div className="w-full flex flex-row items-center justify-start gap-2 flex-wrap">
             <button
               onClick={() => handleCanEditLeaveRequest(leave.id ?? 0)}
@@ -332,8 +347,7 @@ const Leave = ({
             </button>
           </div>
         ),
-      };
-    }
+    };
   });
 
   const mappedLeaveRequests = useFilterAndSort(

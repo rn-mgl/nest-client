@@ -21,7 +21,6 @@ const Attendance = () => {
   const [activeYear, setActiveYear] = React.useState<number | string>(
     new Date().getFullYear()
   );
-  const [activeSelect, setActiveSelect] = React.useState(false);
 
   const [attendance, setAttendance] =
     React.useState<AttendanceInterface | null>(null);
@@ -112,8 +111,8 @@ const Attendance = () => {
     setCanLog((prev) => !prev);
   };
 
-  const handleActiveMonth = (month: number, label: string) => {
-    setActiveMonth({ label: label, value: month });
+  const handleActiveMonth = (month: number | string, label: string) => {
+    setActiveMonth({ label: label, value: Number(month) });
   };
 
   const handleActiveYear = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -123,10 +122,6 @@ const Attendance = () => {
 
   const handleActiveDate = (date: number) => {
     setActiveDate(date);
-  };
-
-  const handleActiveSelect = () => {
-    setActiveSelect((prev) => !prev);
   };
 
   const calendar = Array(startDay).fill(null);
@@ -274,9 +269,6 @@ const Attendance = () => {
               onChange={handleActiveMonth}
               required={false}
               icon={<IoCalendar />}
-              label={activeMonth.label}
-              activeSelect={activeSelect}
-              toggleSelect={handleActiveSelect}
             />
 
             <Input
@@ -335,7 +327,7 @@ const Attendance = () => {
 
           <div
             className="w-full grid grid-cols-4 items-center justify-center *:flex *:flex-col *:items-center 
-                      *:justify-center bg-white p-2 rounded-b-sm border-[1px] border-t-0 *:text-center t:rounded-b-md t:p-4"
+                      *:justify-center bg-white p-2 rounded-b-sm border border-t-0 *:text-center t:rounded-b-md t:p-4"
           >
             <p>{attendance?.login_time ?? "-"}</p>
             <p>{attendance?.logout_time ?? "-"}</p>

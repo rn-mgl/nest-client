@@ -27,7 +27,7 @@ export interface AssignedOnboarding extends UserInterface {
 export interface UserOnboardingInterface {
   id?: number;
   onboarding_id: number;
-  status: string;
+  status: { label: string; value: string | number } | string;
   created_at: string;
   updated_at: string;
   assigned_to: number | UserInterface;

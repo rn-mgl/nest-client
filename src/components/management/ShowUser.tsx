@@ -101,7 +101,9 @@ const ShowUser: React.FC<ModalInterface> = (props) => {
     return {
       title: onboarding.onboarding.title,
       description: onboarding.onboarding.description,
-      status: normalizeString(onboarding.status),
+      status: normalizeString(
+        typeof onboarding.status === "string" ? onboarding.status : ""
+      ),
       assigned_on: assignedOn,
       assigned_by: `${assignedBy?.first_name} ${assignedBy?.last_name}`,
     };
@@ -146,7 +148,9 @@ const ShowUser: React.FC<ModalInterface> = (props) => {
     return {
       title: performance.performance_review.title,
       description: performance.performance_review.description,
-      status: normalizeString(performance.status),
+      status: normalizeString(
+        typeof performance.status === "string" ? performance.status : ""
+      ),
       assigned_on: assignedOn,
       assigned_by: `${assignedBy?.first_name} ${assignedBy?.last_name}`,
     };
@@ -165,7 +169,9 @@ const ShowUser: React.FC<ModalInterface> = (props) => {
     return {
       title: training.training.title,
       description: training.training.description,
-      status: normalizeString(training.status),
+      status: normalizeString(
+        typeof training.status === "string" ? training.status : ""
+      ),
       deadline: deadlineDate,
       assigned_on: assignedOn,
       assigned_by: `${assignedBy?.first_name} ${assignedBy?.last_name}`,
@@ -196,7 +202,7 @@ const ShowUser: React.FC<ModalInterface> = (props) => {
           {/* employee info */}
           <div className="w-full h-auto flex flex-col items-center justify-start">
             {/* photo and header */}
-            <div className="w-full p-2 rounded-md bg-gradient-to-br from-accent-blue/30 to-accent-purple/30 h-32 t:h-40 relative flex flex-col items-center justify-center">
+            <div className="w-full p-2 rounded-md bg-linear-to-br from-accent-blue/30 to-accent-purple/30 h-32 t:h-40 relative flex flex-col items-center justify-center">
               <div
                 style={{
                   backgroundImage: isCloudFileSummary(employee.image)

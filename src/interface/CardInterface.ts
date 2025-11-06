@@ -6,6 +6,7 @@ export interface BaseCardInterface {
   description?: string;
   createdBy?: string | null;
   assignedBy?: string | null;
+  status?: string;
   children: React.ReactNode;
 }
 

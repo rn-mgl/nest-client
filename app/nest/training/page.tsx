@@ -29,7 +29,7 @@ import {
   UserTrainingInterface,
 } from "@/interface/TrainingInterface";
 import useFilterAndSort from "@/src/hooks/useFilterAndSort";
-import { isUserSummary } from "@/utils/utils";
+import { isUserSummary, normalizeString } from "@/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
@@ -224,6 +224,9 @@ const Training = ({
         key={`assigned-${training.id}`}
         title={training.training.title}
         description={training.training.description}
+        status={normalizeString(
+          typeof training.status === "string" ? training.status : ""
+        )}
         assignedBy={assignedBy}
       >
         <BaseActions
@@ -316,6 +319,7 @@ const Training = ({
           <ShowAssignedTraining
             id={activeTrainingSeeMore}
             toggleModal={() => handleActiveTrainingSeeMore(0)}
+            viewSource="assignee"
           />
         ) : activeTab === "resource" &&
           user?.permissions.includes("read.training_resource") ? (

@@ -55,7 +55,10 @@ import {
 import axios, { isAxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
-import { IoCheckmark, IoClose } from "react-icons/io5";
+import { IoCheckmark, IoClose, IoPencil } from "react-icons/io5";
+import ShowAssignedOnboarding from "@/src/components/onboarding/ShowAssignedOnboarding";
+import ShowAssignedPerformanceReview from "@/src/components/performance/ShowAssignedPerformanceReview";
+import ShowAssignedTraining from "@/src/components/training/ShowAssignedTraining";
 
 const Management = ({
   searchParams,
@@ -79,6 +82,9 @@ const Management = ({
     new Date().toISOString().split("T")[0]
   );
   const [activeTab, setActiveTab] = React.useState("users");
+  const [activeEditOnboarding, setActiveEditOnboarding] = React.useState(0);
+  const [activeEditPerformance, setActiveEditPerformance] = React.useState(0);
+  const [activeEditTraining, setActiveEditTraining] = React.useState(0);
 
   const { isLoading, handleIsLoading } = useIsLoading();
 
@@ -153,6 +159,18 @@ const Management = ({
   const handleDate = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     setDate(value);
+  };
+
+  const handleActiveEditOnboarding = (id: number) => {
+    setActiveEditOnboarding((prev) => (prev === id ? 0 : id));
+  };
+
+  const handleActiveEditPerformance = (id: number) => {
+    setActiveEditPerformance((prev) => (prev === id ? 0 : id));
+  };
+
+  const handleActiveEditTraining = (id: number) => {
+    setActiveEditTraining((prev) => (prev === id ? 0 : id));
   };
 
   const getUserData = React.useCallback(
@@ -349,8 +367,22 @@ const Management = ({
       last_name: assignedTo?.last_name ?? "-",
       email: assignedTo?.email ?? "-",
       title: onboardingDetails?.title ?? "-",
-      status: normalizeString(onboarding.status),
+      status: normalizeString(
+        typeof onboarding.status === "string" ? onboarding.status : ""
+      ),
       assigned_on: assignedOn,
+      action: (
+        <div className="w-full flex flex-col items-start justify-center">
+          <button
+            onClick={() => handleActiveEditOnboarding(onboarding.id ?? 0)}
+            title="Edit"
+            type="button"
+            className="p-2 rounded-md bg-accent-yellow text-accent-blue"
+          >
+            <IoPencil />
+          </button>
+        </div>
+      ),
     };
   });
 
@@ -365,18 +397,6 @@ const Management = ({
     const requestedBy = isUserSummary(leave.requested_by)
       ? leave.requested_by
       : null;
-
-    const actionedBy = isUserSummary(leave.actioned_by) ? (
-      <div
-        style={{
-          backgroundImage: isCloudFileSummary(leave.actioned_by.image)
-            ? `url(${leave.actioned_by.image.url})`
-            : "",
-        }}
-        title={`${leave.actioned_by.first_name} ${leave.actioned_by.last_name}`}
-        className="flex flex-col items-center justify-center rounded-full overflow-clip relative max-w-10 bg-center bg-cover aspect-square bg-accent-green/30"
-      />
-    ) : null;
 
     const leaveType = isLeaveTypeSummary(leave.leave) ? leave.leave : null;
     const leaveBalance = isLeaveBalanceSummary(leave.leave_balance)
@@ -408,9 +428,7 @@ const Management = ({
       status: normalizeString(leave.status),
       reason: leave.reason,
       balance: leaveBalance?.balance ?? 0,
-      action: actionedBy ? (
-        actionedBy
-      ) : user?.permissions.includes("update.leave_request_resource") ? (
+      action: user?.permissions.includes("update.leave_request_resource") ? (
         <div className="w-full flex flex-row flex-wrap items-center justify-start gap-2">
           <button
             onClick={() =>
@@ -481,8 +499,22 @@ const Management = ({
       last_name: assignedTo?.last_name ?? "-",
       email: assignedTo?.email ?? "-",
       title: performanceReview ? performanceReview.title : "-",
-      status: normalizeString(performance.status),
+      status: normalizeString(
+        typeof performance.status === "string" ? performance.status : ""
+      ),
       assigned_on: assignedOn,
+      action: (
+        <div className="w-full flex flex-col items-start justify-center">
+          <button
+            onClick={() => handleActiveEditPerformance(performance.id ?? 0)}
+            title="Edit"
+            type="button"
+            className="p-2 rounded-md bg-accent-yellow text-accent-blue"
+          >
+            <IoPencil />
+          </button>
+        </div>
+      ),
     };
   });
 
@@ -530,9 +562,23 @@ const Management = ({
       email: assignedTo?.email ?? "-",
       title: trainingDetails?.title ?? "-",
       deadline: deadline,
-      status: normalizeString(training.status),
+      status: normalizeString(
+        typeof training.status === "string" ? training.status : ""
+      ),
       score: training.score ?? "-",
       assigned_on: assignedOn,
+      action: (
+        <div className="w-full flex flex-col items-start justify-center">
+          <button
+            onClick={() => handleActiveEditTraining(training.id ?? 0)}
+            title="Edit"
+            type="button"
+            className="p-2 rounded-md bg-accent-yellow text-accent-blue"
+          >
+            <IoPencil />
+          </button>
+        </div>
+      ),
     };
   });
 
@@ -563,6 +609,33 @@ const Management = ({
         <ShowUser
           toggleModal={() => handleActiveUserSeeMore(activeUserSeeMore)}
           id={activeUserSeeMore}
+        />
+      ) : null}
+
+      {activeEditOnboarding ? (
+        <ShowAssignedOnboarding
+          toggleModal={() => handleActiveEditOnboarding(activeEditOnboarding)}
+          id={activeEditOnboarding}
+          refetchIndex={() => getUserData(activeTab)}
+          viewSource="assigner"
+        />
+      ) : null}
+
+      {activeEditPerformance ? (
+        <ShowAssignedPerformanceReview
+          toggleModal={() => handleActiveEditPerformance(activeEditPerformance)}
+          id={activeEditPerformance}
+          refetchIndex={() => getUserData(activeTab)}
+          viewSource="assigner"
+        />
+      ) : null}
+
+      {activeEditTraining ? (
+        <ShowAssignedTraining
+          toggleModal={() => handleActiveEditTraining(activeEditTraining)}
+          id={activeEditTraining}
+          refetchIndex={() => getUserData(activeTab)}
+          viewSource="assigner"
         />
       ) : null}
 
@@ -660,6 +733,7 @@ const Management = ({
                 "Title",
                 "Status",
                 "Assigned On",
+                "Action",
               ]}
               contents={mappedOnboardings}
               color="blue"
@@ -692,6 +766,7 @@ const Management = ({
                 "Title",
                 "Status",
                 "Assigned On",
+                "Action",
               ]}
               contents={mappedPerformances}
               color="blue"
@@ -708,6 +783,7 @@ const Management = ({
                 "Status",
                 "Score",
                 "Assigned On",
+                "Action",
               ]}
               contents={mappedTrainings}
               color="blue"
@@ -718,7 +794,7 @@ const Management = ({
     </div>
   ) : (
     <div
-      className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br 
+      className="w-full h-full flex flex-col items-center justify-center bg-linear-to-br 
                 from-accent-green/50 via-accent-purple/30 to-accent-blue/50"
     >
       <p className="text-xl animate-fade font-bold">You have no access here.</p>

@@ -55,8 +55,8 @@ const EditLeaveRequest: React.FC<ModalInterface> = (props) => {
           }
         );
 
-        if (responseData.request) {
-          setLeaveRequest(responseData.request);
+        if (responseData.leave) {
+          setLeaveRequest(responseData.leave);
         }
       }
     } catch (error) {

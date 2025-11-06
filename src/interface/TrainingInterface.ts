@@ -37,7 +37,7 @@ export interface UserTrainingInterface {
   assigned_to: number | UserInterface;
   assigned_by: number | UserInterface;
   training_id: number;
-  status: string;
+  status: { label: string; value: string } | string;
   score: number | null;
   deadline: string | null;
   created_at: string;

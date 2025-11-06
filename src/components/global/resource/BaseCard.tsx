@@ -16,11 +16,17 @@ const BaseCard: React.FC<BaseCardInterface> = ({ children, ...props }) => {
             <p className="text-xs">assigned by {props.assignedBy}</p>
           ) : null}
         </div>
+
+        {props.status ? (
+          <div className="w-fit py-1 px-2 rounded-l-full rounded-r-full bg-neutral-300 text-xs">
+            {props.status}
+          </div>
+        ) : null}
       </div>
 
       {props.description ? (
         <div className="w-full h-40 max-h-40 min-h-40 flex flex-col items-center justify-start overflow-y-auto bg-neutral-200 p-2 rounded-xs">
-          <p className="text-sm w-full text-wrap break-words">
+          <p className="text-sm w-full text-wrap wrap-break-word">
             {props.description}
           </p>
         </div>

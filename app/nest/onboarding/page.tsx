@@ -29,7 +29,7 @@ import {
   RESOURCE_ONBOARDING_SEARCH,
   RESOURCE_ONBOARDING_SORT,
 } from "@/src/configs/filters";
-import { isUserSummary } from "@/src/utils/utils";
+import { isUserSummary, normalizeString } from "@/src/utils/utils";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
@@ -234,6 +234,9 @@ const Onboarding = ({
         key={index}
         title={onboarding.onboarding.title}
         description={onboarding.onboarding.description}
+        status={normalizeString(
+          typeof onboarding.status === "string" ? onboarding.status : ""
+        )}
         assignedBy={assignedBy}
       >
         <BaseActions
@@ -327,6 +330,7 @@ const Onboarding = ({
         activeTab === "assigned" ? (
           <ShowAssignedOnboarding
             id={activeOnboardingSeeMore}
+            viewSource="assignee"
             toggleModal={() =>
               handleActiveOnboardingSeeMore(activeOnboardingSeeMore)
             }

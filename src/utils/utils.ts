@@ -162,7 +162,7 @@ export const normalizeDate = (date: string, type?: "date" | "time"): string => {
 export const normalizeString = (value: string): string => {
   const normalized = value
     .split("_")
-    .map((s) => `${s[0].toUpperCase()}${s.slice(1, s.length)}`)
+    .map((s) => `${s[0]?.toUpperCase()}${s.slice(1, s.length)}`)
     .join(" ");
 
   return normalized;

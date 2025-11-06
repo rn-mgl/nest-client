@@ -1,16 +1,15 @@
-import useSelect from "@/src/hooks/useSelect";
 import { FolderInterface } from "@/src/interface/DocumentInterface";
 import { ModalInterface } from "@/src/interface/ModalInterface";
 import { getCSRFToken } from "@/src/utils/token";
 import axios, { isAxiosError } from "axios";
 
-import { useSession } from "next-auth/react";
-import React from "react";
-import { IoClose, IoText } from "react-icons/io5";
 import Input from "@/src/components/global/form/Input";
 import Select from "@/src/components/global/form/Select";
 import { useToasts } from "@/src/context/ToastContext";
 import useIsLoading from "@/src/hooks/useIsLoading";
+import { useSession } from "next-auth/react";
+import React from "react";
+import { IoClose, IoText } from "react-icons/io5";
 import LogoLoader from "../global/loader/LogoLoader";
 
 const EditFolder: React.FC<ModalInterface> = (props) => {
@@ -23,7 +22,6 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
     []
   );
   const { addToast } = useToasts();
-  const { activeSelect, toggleSelect } = useSelect();
 
   const { isLoading, handleIsLoading } = useIsLoading();
 
@@ -42,11 +40,11 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
     });
   };
 
-  const handlePaths = (destination: number, label: string) => {
+  const handlePaths = (destination: string | number, label: string) => {
     setFolder((prev) => {
       return {
         ...prev,
-        path: { label, value: destination },
+        path: { label, value: Number(destination) },
       };
     });
   };
@@ -243,17 +241,11 @@ const EditFolder: React.FC<ModalInterface> = (props) => {
           <Select
             id="path"
             name="path"
-            activeSelect={activeSelect}
             onChange={handlePaths}
             options={paths}
             placeholder="Path"
             required={true}
-            toggleSelect={toggleSelect}
-            label={
-              folder.path && typeof folder.path === "object"
-                ? folder.path.label
-                : "Home"
-            }
+            label={true}
             value={
               folder.path && typeof folder.path === "object"
                 ? folder.path.value
