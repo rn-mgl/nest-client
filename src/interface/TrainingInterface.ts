@@ -21,7 +21,7 @@ export interface TrainingContentInterface {
 export interface TrainingReviewInterface {
   id?: number;
   question: string;
-  answer: number;
+  answer?: number;
   choice_1: string;
   choice_2: string;
   choice_3: string;
