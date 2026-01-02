@@ -656,7 +656,7 @@ const ShowAssignedOnboarding: React.FC<
                 value={onboarding?.onboarding.description as string}
               />
 
-              {props.viewSource === "assignee" ? (
+              {props.viewSource === "assigner" ? (
                 <button
                   onClick={submitUpdateStatus}
                   className="w-full p-2 rounded-md bg-accent-purple text-neutral-100 mt-2 font-bold"
