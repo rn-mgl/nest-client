@@ -80,7 +80,7 @@ const ShowResourceOnboarding: React.FC<ModalInterface> = (props) => {
   const mappedRequiredDocuments = requiredDocuments.map((req, index) => {
     return (
       <div
-        key={index}
+        key={req.id}
         className="w-full flex flex-col items-center justify-start rounded-md gap-2"
       >
         <TextField label={`Required Document ${index + 1}`} value={req.title} />
@@ -93,7 +93,7 @@ const ShowResourceOnboarding: React.FC<ModalInterface> = (props) => {
     (ack, index) => {
       return (
         <div
-          key={index}
+          key={ack.id}
           className="w-full flex flex-col items-center justify-start rounded-md gap-2 "
         >
           <TextField

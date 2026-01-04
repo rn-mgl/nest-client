@@ -213,10 +213,7 @@ const AssignLeaveType: React.FC<ModalInterface> = (props) => {
       last_name: user.last_name,
       email: user.email,
       balance: (
-        <div
-          key={`leaveBalance${index}`}
-          className="text-center justify-starts flex flex-row items-center gap-4"
-        >
+        <div className="text-center justify-starts flex flex-row items-center gap-4">
           <button
             type="button"
             onClick={() => handleSubtractLeaveBalance(index)}

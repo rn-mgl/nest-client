@@ -471,7 +471,7 @@ const ShowAssignedOnboarding: React.FC<
   const mappedRequiredDocuments = requiredDocuments.map((document, index) => {
     return (
       <div
-        key={index}
+        key={document.id}
         className="w-full flex flex-col items-center justify-start gap-2"
       >
         <TextField label="Title" value={document.title} />
@@ -543,38 +543,36 @@ const ShowAssignedOnboarding: React.FC<
     );
   });
 
-  const mappedPolicyAcknowledgements = policyAcknowledgements.map(
-    (policy, index) => {
-      return (
-        <div
-          key={index}
-          className="w-full flex flex-col items-center justify-center gap-2 "
-        >
-          <TextField label="Title" value={policy.title} />
-          <TextBlock label="Description" value={policy.description} />
+  const mappedPolicyAcknowledgements = policyAcknowledgements.map((policy) => {
+    return (
+      <div
+        key={policy.id}
+        className="w-full flex flex-col items-center justify-center gap-2 "
+      >
+        <TextField label="Title" value={policy.title} />
+        <TextBlock label="Description" value={policy.description} />
 
-          {props.viewSource === "assignee" &&
-          (!policy.user_acknowledgement ||
-            !policy.user_acknowledgement.acknowledged) ? (
-            <button
-              className="w-full p-2 rounded-md bg-accent-purple text-neutral-100 font-bold"
-              onClick={() => handleAcknowledge(policy.id ?? 0)}
-            >
-              Acknowledge
-            </button>
-          ) : policy.user_acknowledgement &&
-            policy.user_acknowledgement.acknowledged ? (
-            <div
-              className="w-full p-2 rounded-md bg-accent-green text-neutral-100 font-bold 
+        {props.viewSource === "assignee" &&
+        (!policy.user_acknowledgement ||
+          !policy.user_acknowledgement.acknowledged) ? (
+          <button
+            className="w-full p-2 rounded-md bg-accent-purple text-neutral-100 font-bold"
+            onClick={() => handleAcknowledge(policy.id ?? 0)}
+          >
+            Acknowledge
+          </button>
+        ) : policy.user_acknowledgement &&
+          policy.user_acknowledgement.acknowledged ? (
+          <div
+            className="w-full p-2 rounded-md bg-accent-green text-neutral-100 font-bold 
                         text-center flex flex-row items-center justify-center gap-2"
-            >
-              Policy Acknowledged <IoCheckmark />
-            </div>
-          ) : null}
-        </div>
-      );
-    }
-  );
+          >
+            Policy Acknowledged <IoCheckmark />
+          </div>
+        ) : null}
+      </div>
+    );
+  });
 
   React.useEffect(() => {
     getOnboarding();

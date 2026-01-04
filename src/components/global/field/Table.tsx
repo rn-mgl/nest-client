@@ -10,10 +10,10 @@ const Table: React.FC<TableInterface> = (props) => {
     neutral: { background: "#e5e5e5", color: "#171717" },
   };
 
-  const mappedHeaders = props.headers.map((header, index) => {
+  const mappedHeaders = props.headers.map((header) => {
     return (
       <div
-        key={index}
+        key={header}
         className="w-full textne items-center justify-start truncate"
       >
         {header}

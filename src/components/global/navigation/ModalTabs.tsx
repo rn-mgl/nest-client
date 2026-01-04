@@ -2,10 +2,10 @@ import { ModalTabsInterface } from "@/src/interface/NavInterface";
 import React from "react";
 
 const ModalTabs: React.FC<ModalTabsInterface> = (props) => {
-  const mappedTabs = props.tabs.map((page, index) => {
+  const mappedTabs = props.tabs.map((page) => {
     return (
       <button
-        key={index}
+        key={page}
         className={`min-w-full t:w-full t:min-w-fit p-2 t:px-4 text-sm transition-all capitalize ${
           props.activeTab === page
             ? " text-accent-blue font-bold border-b-2 border-accent-blue"

@@ -237,7 +237,7 @@ const ShowAssignedPerformanceReview: React.FC<
 
     return (
       <div
-        key={index}
+        key={survey.id}
         className="w-full flex flex-col items-center justify-center gap-2 "
       >
         <TextBlock label={`Survey ${index + 1}`} value={survey.survey} />

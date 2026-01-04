@@ -231,7 +231,7 @@ const Onboarding = ({
 
     return (
       <BaseCard
-        key={index}
+        key={onboarding.id}
         title={onboarding.onboarding.title}
         description={onboarding.onboarding.description}
         status={normalizeString(
@@ -254,7 +254,7 @@ const Onboarding = ({
     search,
     sort,
     category
-  ).map((onboarding, index) => {
+  ).map((onboarding) => {
     // if the onboarding is an OnboardingInterface, it is from the Resource view
     const createdBy = isUserSummary(onboarding.created_by)
       ? onboarding.created_by.first_name
@@ -262,7 +262,7 @@ const Onboarding = ({
 
     return (
       <BaseCard
-        key={index}
+        key={onboarding.id}
         title={onboarding.title}
         description={onboarding.description}
         assignedBy={createdBy}
