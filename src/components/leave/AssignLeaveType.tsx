@@ -287,7 +287,7 @@ const AssignLeaveType: React.FC<ModalInterface> = (props) => {
           />
 
           <button
-            disabled={true}
+            disabled={isLoading}
             className="w-full p-2 rounded-md bg-accent-green text-neutral-100 mt-2 font-bold"
           >
             Assign
