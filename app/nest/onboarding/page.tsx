@@ -222,7 +222,7 @@ const Onboarding = ({
     search,
     sort,
     category
-  ).map((onboarding, index) => {
+  ).map((onboarding) => {
     // if the onboarding is an OnboardingInterface, it is from the Resource view
 
     const assignedBy = isUserSummary(onboarding.assigned_by)

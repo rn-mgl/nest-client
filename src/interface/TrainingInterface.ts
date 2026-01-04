@@ -12,6 +12,7 @@ export interface TrainingInterface {
 
 export interface TrainingContentInterface {
   id?: number;
+  nanoid?: string;
   title: string;
   description: string;
   content: RawFileInterface | CloudFileInterface | string | null;
@@ -20,6 +21,7 @@ export interface TrainingContentInterface {
 
 export interface TrainingReviewInterface {
   id?: number;
+  nanoid?: string;
   question: string;
   answer?: number;
   choice_1: string;

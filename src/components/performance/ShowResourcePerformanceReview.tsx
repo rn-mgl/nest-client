@@ -70,7 +70,7 @@ const ShowResourcePerformanceReview: React.FC<ModalInterface> = (props) => {
     }
   }, [url, userToken, props.id, addToast]);
 
-  const mappedSurveys = surveys.map((survey, index) => {
+  const mappedSurveys = surveys.map((survey) => {
     return (
       <div key={survey.id} className="w-full">
         <TextBlock label="" value={survey.survey} />

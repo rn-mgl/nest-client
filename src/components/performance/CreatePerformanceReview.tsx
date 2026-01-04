@@ -16,6 +16,7 @@ import React from "react";
 import { IoAdd, IoClose, IoReader, IoText, IoTrash } from "react-icons/io5";
 import useIsLoading from "@/src/hooks/useIsLoading";
 import LogoLoader from "../global/loader/LogoLoader";
+import { nanoid } from "nanoid";
 
 const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
   const [performance, setPerformanceReview] =
@@ -35,7 +36,7 @@ const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
 
   const { addField, fields, handleField, removeField } =
     useDynamicFields<PerformanceReviewSurveyInterface>([
-      { survey: "", created_by: user?.current ?? 0 },
+      { survey: "", created_by: user?.current ?? 0, nanoid: nanoid() },
     ]);
 
   const { activeTab, handleActiveTab } = useModalTab("information");
@@ -107,7 +108,7 @@ const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
   const mappedSurveys = fields.map((survey, index) => {
     return (
       <div
-        key={index}
+        key={survey.nanoid}
         className="w-full flex flex-col gap-2 items-end justify-center"
       >
         <TextArea
@@ -194,7 +195,11 @@ const CreatePerformanceReview: React.FC<ModalInterface> = (props) => {
                     title="Add Survey Field"
                     className="p-2 rounded-md bg-neutral-100"
                     onClick={() =>
-                      addField({ survey: "", created_by: user?.current ?? 0 })
+                      addField({
+                        survey: "",
+                        created_by: user?.current ?? 0,
+                        nanoid: nanoid(),
+                      })
                     }
                   >
                     <IoAdd />

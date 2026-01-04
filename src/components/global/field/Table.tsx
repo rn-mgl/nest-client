@@ -23,9 +23,9 @@ const Table: React.FC<TableInterface> = (props) => {
 
   const mappedRows = props.contents.map((content, index) => {
     const columns = Object.keys(content);
-    const mappedContents = columns.map((key, index) => {
+    const mappedContents = columns.map((key) => {
       return (
-        <div key={index} className="truncate w-full">
+        <div key={key} className="truncate w-full">
           {content[key as keyof object]}
         </div>
       );
