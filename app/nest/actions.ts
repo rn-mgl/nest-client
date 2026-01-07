@@ -30,9 +30,6 @@ export const getDashboard = async (): Promise<APIReturnInterface> => {
   }
 
   try {
-    console.log(cookieStore.toString());
-    console.log(token);
-
     const { data: responseData } = await axios.get<
       | AdminDashboardInterface
       | HRDashboardInterface
