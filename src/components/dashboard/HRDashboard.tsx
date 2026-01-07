@@ -1,5 +1,4 @@
-import { HRDashboardInterface } from "@/src/interface/DashboardInterface";
-import React from "react";
+import { isHrDashboardSummary } from "@/src/utils/utils";
 import {
   IoArrowRedoOutline,
   IoArrowUndoOutline,
@@ -15,9 +14,11 @@ import {
   IoWarningOutline,
 } from "react-icons/io5";
 
-const HRDashboard: React.FC<{ dashboard: HRDashboardInterface | null }> = (
-  props
-) => {
+const HRDashboard: React.FC<{ dashboard: object }> = async ({ dashboard }) => {
+  if (!isHrDashboardSummary(dashboard)) {
+    return;
+  }
+
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
       <div
@@ -34,7 +35,7 @@ const HRDashboard: React.FC<{ dashboard: HRDashboardInterface | null }> = (
             </div>
 
             <div>
-              <p className="text-6xl font-bold">{props.dashboard?.users}</p>
+              <p className="text-6xl font-bold">{dashboard?.users}</p>
               <p className="">Total Users</p>
             </div>
           </div>
@@ -50,7 +51,7 @@ const HRDashboard: React.FC<{ dashboard: HRDashboardInterface | null }> = (
                 <div className="w-full flex flex-row items-center justify-between">
                   <p>Logged In</p>
                   <p className="text-2xl font-bold text-accent-blue">
-                    {props.dashboard?.attendances.in}
+                    {dashboard?.attendances.in}
                   </p>
                 </div>
               </div>
@@ -62,7 +63,7 @@ const HRDashboard: React.FC<{ dashboard: HRDashboardInterface | null }> = (
                 <div className="w-full flex flex-row items-center justify-between">
                   <p>Logged Out</p>
                   <p className="text-2xl font-bold text-accent-green">
-                    {props.dashboard?.attendances.out}
+                    {dashboard?.attendances.out}
                   </p>
                 </div>
               </div>
@@ -74,7 +75,7 @@ const HRDashboard: React.FC<{ dashboard: HRDashboardInterface | null }> = (
                 <div className="w-full flex flex-row items-center justify-between">
                   <p>Late</p>
                   <p className="text-2xl font-bold text-amber-600">
-                    {props.dashboard?.attendances.late}
+                    {dashboard?.attendances.late}
                   </p>
                 </div>
               </div>
@@ -86,7 +87,7 @@ const HRDashboard: React.FC<{ dashboard: HRDashboardInterface | null }> = (
                 <div className="w-full flex flex-row items-center justify-between">
                   <p>Absent</p>
                   <p className="text-2xl font-bold text-red-600">
-                    {props.dashboard?.attendances.absent}
+                    {dashboard?.attendances.absent}
                   </p>
                 </div>
               </div>
@@ -105,7 +106,7 @@ const HRDashboard: React.FC<{ dashboard: HRDashboardInterface | null }> = (
               <div className="w-full flex flex-row items-center justify-between">
                 <p>Pending</p>
                 <p className="font-bold text-accent-purple text-2xl">
-                  {props.dashboard?.leaves.pending ?? 0}
+                  {dashboard?.leaves.pending ?? 0}
                 </p>
               </div>
             </div>
@@ -117,7 +118,7 @@ const HRDashboard: React.FC<{ dashboard: HRDashboardInterface | null }> = (
               <div className="w-full flex flex-row items-center justify-between">
                 <p>In Progress</p>
                 <p className="font-bold text-accent-green text-2xl">
-                  {props.dashboard?.leaves.in_progress ?? 0}
+                  {dashboard?.leaves.in_progress ?? 0}
                 </p>
               </div>
             </div>
@@ -129,7 +130,7 @@ const HRDashboard: React.FC<{ dashboard: HRDashboardInterface | null }> = (
               <div className="w-full flex flex-row items-center justify-between">
                 <p>Done</p>
                 <p className="font-bold text-accent-blue text-2xl">
-                  {props.dashboard?.leaves.done ?? 0}
+                  {dashboard?.leaves.done ?? 0}
                 </p>
               </div>
             </div>
@@ -141,7 +142,7 @@ const HRDashboard: React.FC<{ dashboard: HRDashboardInterface | null }> = (
               <div className="w-full flex flex-row items-center justify-between">
                 <p>Approved</p>
                 <p className="font-bold text-neutral-900 text-2xl">
-                  {props.dashboard?.leaves.approved ?? 0}
+                  {dashboard?.leaves.approved ?? 0}
                 </p>
               </div>
             </div>
@@ -153,7 +154,7 @@ const HRDashboard: React.FC<{ dashboard: HRDashboardInterface | null }> = (
               <div className="w-full flex flex-row items-center justify-between">
                 <p>Rejected</p>
                 <p className="font-bold text-red-600 text-2xl">
-                  {props.dashboard?.leaves.rejected ?? 0}
+                  {dashboard?.leaves.rejected ?? 0}
                 </p>
               </div>
             </div>
@@ -171,7 +172,7 @@ const HRDashboard: React.FC<{ dashboard: HRDashboardInterface | null }> = (
               <div className="w-full flex flex-row items-center justify-between">
                 <p>Pending</p>
                 <p className="font-bold text-accent-purple text-2xl">
-                  {props.dashboard?.onboardings.pending ?? 0}
+                  {dashboard?.onboardings.pending ?? 0}
                 </p>
               </div>
             </div>
@@ -183,7 +184,7 @@ const HRDashboard: React.FC<{ dashboard: HRDashboardInterface | null }> = (
               <div className="w-full flex flex-row items-center justify-between">
                 <p>In Progress</p>
                 <p className="font-bold text-accent-green text-2xl">
-                  {props.dashboard?.onboardings.in_progress ?? 0}
+                  {dashboard?.onboardings.in_progress ?? 0}
                 </p>
               </div>
             </div>
@@ -195,7 +196,7 @@ const HRDashboard: React.FC<{ dashboard: HRDashboardInterface | null }> = (
               <div className="w-full flex flex-row items-center justify-between">
                 <p>Done</p>
                 <p className="font-bold text-accent-blue text-2xl">
-                  {props.dashboard?.onboardings.done ?? 0}
+                  {dashboard?.onboardings.done ?? 0}
                 </p>
               </div>
             </div>
@@ -213,7 +214,7 @@ const HRDashboard: React.FC<{ dashboard: HRDashboardInterface | null }> = (
               <div className="w-full flex flex-row items-center justify-between">
                 <p>Pending</p>
                 <p className="font-bold text-accent-purple text-2xl">
-                  {props.dashboard?.trainings.pending ?? 0}
+                  {dashboard?.trainings.pending ?? 0}
                 </p>
               </div>
             </div>
@@ -225,7 +226,7 @@ const HRDashboard: React.FC<{ dashboard: HRDashboardInterface | null }> = (
               <div className="w-full flex flex-row items-center justify-between">
                 <p>In Progress</p>
                 <p className="font-bold text-accent-green text-2xl">
-                  {props.dashboard?.trainings.in_progress ?? 0}
+                  {dashboard?.trainings.in_progress ?? 0}
                 </p>
               </div>
             </div>
@@ -237,7 +238,7 @@ const HRDashboard: React.FC<{ dashboard: HRDashboardInterface | null }> = (
               <div className="w-full flex flex-row items-center justify-between">
                 <p>Done</p>
                 <p className="font-bold text-accent-blue text-2xl">
-                  {props.dashboard?.trainings.done ?? 0}
+                  {dashboard?.trainings.done ?? 0}
                 </p>
               </div>
             </div>
@@ -255,7 +256,7 @@ const HRDashboard: React.FC<{ dashboard: HRDashboardInterface | null }> = (
               <div className="w-full flex flex-row items-center justify-between">
                 <p>Pending</p>
                 <p className="font-bold text-accent-purple text-2xl">
-                  {props.dashboard?.performances.pending ?? 0}
+                  {dashboard?.performances.pending ?? 0}
                 </p>
               </div>
             </div>
@@ -267,7 +268,7 @@ const HRDashboard: React.FC<{ dashboard: HRDashboardInterface | null }> = (
               <div className="w-full flex flex-row items-center justify-between">
                 <p>In Progress</p>
                 <p className="font-bold text-accent-green text-2xl">
-                  {props.dashboard?.performances.in_progress ?? 0}
+                  {dashboard?.performances.in_progress ?? 0}
                 </p>
               </div>
             </div>
@@ -279,7 +280,7 @@ const HRDashboard: React.FC<{ dashboard: HRDashboardInterface | null }> = (
               <div className="w-full flex flex-row items-center justify-between">
                 <p>Done</p>
                 <p className="font-bold text-accent-blue text-2xl">
-                  {props.dashboard?.performances.done ?? 0}
+                  {dashboard?.performances.done ?? 0}
                 </p>
               </div>
             </div>
@@ -297,7 +298,7 @@ const HRDashboard: React.FC<{ dashboard: HRDashboardInterface | null }> = (
               <div className="w-full flex flex-row items-center justify-between">
                 <p>Files</p>
                 <p className="font-bold text-accent-blue text-2xl">
-                  {props.dashboard?.documents.documents ?? 0}
+                  {dashboard?.documents.documents ?? 0}
                 </p>
               </div>
             </div>
@@ -309,7 +310,7 @@ const HRDashboard: React.FC<{ dashboard: HRDashboardInterface | null }> = (
               <div className="w-full flex flex-row items-center justify-between">
                 <p>Folders</p>
                 <p className="font-bold text-amber-600 text-2xl">
-                  {props.dashboard?.documents.folders ?? 0}
+                  {dashboard?.documents.folders ?? 0}
                 </p>
               </div>
             </div>

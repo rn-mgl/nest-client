@@ -24,6 +24,11 @@ import {
   CloudFileInterface,
   RawFileInterface,
 } from "../interface/FileInterface";
+import {
+  AdminDashboardInterface,
+  EmployeeDashboardInterface,
+  HRDashboardInterface,
+} from "../interface/DashboardInterface";
 
 export const isUserSummary = (value: unknown): value is UserInterface => {
   return typeof value === "object" && value !== null;
@@ -142,6 +147,38 @@ export const isCloudFileSummary = (
     "mime_type" in value &&
     "size" in value &&
     "url" in value
+  );
+};
+
+export const isAdminDashboardSummary = (
+  value: unknown
+): value is AdminDashboardInterface => {
+  return typeof value === "object" && value !== null && "hrs" in value;
+};
+
+export const isHrDashboardSummary = (
+  value: unknown
+): value is HRDashboardInterface => {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "attendances" in value &&
+    typeof value.attendances === "object" &&
+    value.attendances !== null &&
+    "users" in value
+  );
+};
+
+export const isEmployeeDashboardSummary = (
+  value: unknown
+): value is EmployeeDashboardInterface => {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "attendances" in value &&
+    typeof value.attendances === "object" &&
+    value.attendances !== null &&
+    !("users" in value)
   );
 };
 

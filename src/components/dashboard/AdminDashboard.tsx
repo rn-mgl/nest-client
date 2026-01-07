@@ -1,5 +1,9 @@
+"use client";
+
+import { useToasts } from "@/src/context/ToastContext";
+import { APIReturnInterface } from "@/src/interface/APIInterface";
 import { AdminDashboardInterface } from "@/src/interface/DashboardInterface";
-import { isCloudFileSummary } from "@/src/utils/utils";
+import { isAdminDashboardSummary, isCloudFileSummary } from "@/src/utils/utils";
 import React from "react";
 import {
   IoPeopleOutline,
@@ -8,17 +12,25 @@ import {
 } from "react-icons/io5";
 
 const AdminDashboard: React.FC<{
-  dashboard: AdminDashboardInterface | null;
-}> = (props) => {
-  const activatedHRs = React.useMemo(() => {
-    return props.dashboard?.hrs.filter((hr) => hr.email_verified_at !== null);
-  }, [props.dashboard?.hrs]);
+  dashboard: APIReturnInterface;
+}> = ({ dashboard }) => {
+  const { addToast } = useToasts();
 
-  const deactivatedHRs = React.useMemo(() => {
-    return props.dashboard?.hrs.filter((hr) => hr.email_verified_at === null);
-  }, [props.dashboard?.hrs]);
+  const content = React.useMemo(() => {
+    return isAdminDashboardSummary(dashboard.data)
+      ? dashboard.data
+      : { hrs: [] };
+  }, [dashboard.data]);
 
-  const latestHRs = props.dashboard?.hrs
+  const activatedHRs = content.hrs.filter(
+    (hr) => hr.email_verified_at !== null
+  );
+
+  const deactivatedHRs = content.hrs.filter(
+    (hr) => hr.email_verified_at === null
+  );
+
+  const latestHRs = content.hrs
     .filter((hr) => {
       if (!hr.created_at) return false;
 
@@ -67,6 +79,16 @@ const AdminDashboard: React.FC<{
       );
     });
 
+  React.useEffect(() => {
+    if (!dashboard.success) {
+      addToast(
+        "Dashboard Error",
+        dashboard.error ?? "An error occurred",
+        "error"
+      );
+    }
+  }, [dashboard.success, dashboard.error, addToast]);
+
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
       <div
@@ -83,9 +105,7 @@ const AdminDashboard: React.FC<{
               </div>
             </div>
 
-            <div className="text-3xl font-bold">
-              {props.dashboard?.hrs.length}
-            </div>
+            <div className="text-3xl font-bold">{content.hrs.length}</div>
           </div>
 
           <div className="grid w-full grid-cols-2 gap-4">

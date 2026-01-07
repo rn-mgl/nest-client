@@ -1,5 +1,4 @@
-import { EmployeeDashboardInterface } from "@/src/interface/DashboardInterface";
-import React from "react";
+import { isEmployeeDashboardSummary } from "@/src/utils/utils";
 import {
   IoArrowRedoOutline,
   IoArrowUndoOutline,
@@ -16,8 +15,12 @@ import {
 } from "react-icons/io5";
 
 const EmployeeDashboard: React.FC<{
-  dashboard: EmployeeDashboardInterface | null;
-}> = (props) => {
+  dashboard: object;
+}> = async ({ dashboard }) => {
+  if (!isEmployeeDashboardSummary(dashboard)) {
+    return;
+  }
+
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
       <div
@@ -38,12 +41,12 @@ const EmployeeDashboard: React.FC<{
 
                 <div
                   className={`p-2 rounded-md text-neutral-100 w-fit aspect-square ${
-                    props.dashboard?.attendances.in
+                    dashboard?.attendances.in
                       ? "bg-accent-green/50"
                       : "bg-red-600/50"
                   }`}
                 >
-                  {props.dashboard?.attendances.in ? (
+                  {dashboard?.attendances.in ? (
                     <IoCheckmarkCircleOutline className="text-2xl" />
                   ) : (
                     <IoCloseCircleOutline className="text-2xl" />
@@ -62,12 +65,12 @@ const EmployeeDashboard: React.FC<{
 
                 <div
                   className={`p-2 rounded-md text-neutral-100 w-fit aspect-square ${
-                    props.dashboard?.attendances.out
+                    dashboard?.attendances.out
                       ? "bg-accent-green/50"
                       : "bg-red-600/50"
                   }`}
                 >
-                  {props.dashboard?.attendances.out ? (
+                  {dashboard?.attendances.out ? (
                     <IoCheckmarkCircleOutline className="text-2xl" />
                   ) : (
                     <IoCloseCircleOutline className="text-2xl" />
@@ -86,12 +89,12 @@ const EmployeeDashboard: React.FC<{
 
                 <div
                   className={`p-2 rounded-md text-neutral-100 w-fit aspect-square ${
-                    props.dashboard?.attendances.late
+                    dashboard?.attendances.late
                       ? "bg-red-600/50"
                       : "bg-accent-green/50"
                   }`}
                 >
-                  {props.dashboard?.attendances.late ? (
+                  {dashboard?.attendances.late ? (
                     <IoCheckmarkCircleOutline className="text-2xl" />
                   ) : (
                     <IoCloseCircleOutline className="text-2xl" />
@@ -110,12 +113,12 @@ const EmployeeDashboard: React.FC<{
 
                 <div
                   className={`p-2 rounded-md text-neutral-100 w-fit aspect-square ${
-                    props.dashboard?.attendances.absent
+                    dashboard?.attendances.absent
                       ? "bg-red-600/50"
                       : "bg-accent-green/50"
                   }`}
                 >
-                  {props.dashboard?.attendances.absent ? (
+                  {dashboard?.attendances.absent ? (
                     <IoCheckmarkCircleOutline className="text-2xl" />
                   ) : (
                     <IoCloseCircleOutline className="text-2xl" />
@@ -133,14 +136,12 @@ const EmployeeDashboard: React.FC<{
 
                 <div
                   className={`p-2 rounded-md text-neutral-100 w-fit aspect-square ${
-                    props.dashboard?.attendances.in &&
-                    props.dashboard?.attendances.out
+                    dashboard?.attendances.in && dashboard?.attendances.out
                       ? "bg-accent-green/50"
                       : "bg-red-600/50"
                   }`}
                 >
-                  {props.dashboard?.attendances.in &&
-                  props.dashboard?.attendances.out ? (
+                  {dashboard?.attendances.in && dashboard?.attendances.out ? (
                     <IoCheckmarkCircleOutline className="text-2xl" />
                   ) : (
                     <IoCloseCircleOutline className="text-2xl" />
@@ -162,7 +163,7 @@ const EmployeeDashboard: React.FC<{
               <div className="w-full flex flex-row items-center justify-between">
                 <p>Pending</p>
                 <p className="font-bold text-accent-purple text-2xl">
-                  {props.dashboard?.leaves.pending ?? 0}
+                  {dashboard?.leaves.pending ?? 0}
                 </p>
               </div>
             </div>
@@ -174,7 +175,7 @@ const EmployeeDashboard: React.FC<{
               <div className="w-full flex flex-row items-center justify-between">
                 <p>In Progress</p>
                 <p className="font-bold text-accent-green text-2xl">
-                  {props.dashboard?.leaves.in_progress ?? 0}
+                  {dashboard?.leaves.in_progress ?? 0}
                 </p>
               </div>
             </div>
@@ -186,7 +187,7 @@ const EmployeeDashboard: React.FC<{
               <div className="w-full flex flex-row items-center justify-between">
                 <p>Done</p>
                 <p className="font-bold text-accent-blue text-2xl">
-                  {props.dashboard?.leaves.done ?? 0}
+                  {dashboard?.leaves.done ?? 0}
                 </p>
               </div>
             </div>
@@ -198,7 +199,7 @@ const EmployeeDashboard: React.FC<{
               <div className="w-full flex flex-row items-center justify-between">
                 <p>Approved</p>
                 <p className="font-bold text-amber-600 text-2xl">
-                  {props.dashboard?.leaves.approved ?? 0}
+                  {dashboard?.leaves.approved ?? 0}
                 </p>
               </div>
             </div>
@@ -210,7 +211,7 @@ const EmployeeDashboard: React.FC<{
               <div className="w-full flex flex-row items-center justify-between">
                 <p>Rejected</p>
                 <p className="font-bold text-red-600 text-2xl">
-                  {props.dashboard?.leaves.rejected ?? 0}
+                  {dashboard?.leaves.rejected ?? 0}
                 </p>
               </div>
             </div>
@@ -228,7 +229,7 @@ const EmployeeDashboard: React.FC<{
               <div className="w-full flex flex-row items-center justify-between">
                 <p>Pending</p>
                 <p className="font-bold text-accent-purple text-2xl">
-                  {props.dashboard?.onboardings.pending ?? 0}
+                  {dashboard?.onboardings.pending ?? 0}
                 </p>
               </div>
             </div>
@@ -240,7 +241,7 @@ const EmployeeDashboard: React.FC<{
               <div className="w-full flex flex-row items-center justify-between">
                 <p>In Progress</p>
                 <p className="font-bold text-accent-green text-2xl">
-                  {props.dashboard?.onboardings.in_progress ?? 0}
+                  {dashboard?.onboardings.in_progress ?? 0}
                 </p>
               </div>
             </div>
@@ -252,7 +253,7 @@ const EmployeeDashboard: React.FC<{
               <div className="w-full flex flex-row items-center justify-between">
                 <p>Done</p>
                 <p className="font-bold text-accent-blue text-2xl">
-                  {props.dashboard?.onboardings.done ?? 0}
+                  {dashboard?.onboardings.done ?? 0}
                 </p>
               </div>
             </div>
@@ -270,7 +271,7 @@ const EmployeeDashboard: React.FC<{
               <div className="w-full flex flex-row items-center justify-between">
                 <p>Pending</p>
                 <p className="font-bold text-accent-purple text-2xl">
-                  {props.dashboard?.trainings.pending ?? 0}
+                  {dashboard?.trainings.pending ?? 0}
                 </p>
               </div>
             </div>
@@ -282,7 +283,7 @@ const EmployeeDashboard: React.FC<{
               <div className="w-full flex flex-row items-center justify-between">
                 <p>In Progress</p>
                 <p className="font-bold text-accent-green text-2xl">
-                  {props.dashboard?.trainings.in_progress ?? 0}
+                  {dashboard?.trainings.in_progress ?? 0}
                 </p>
               </div>
             </div>
@@ -294,7 +295,7 @@ const EmployeeDashboard: React.FC<{
               <div className="w-full flex flex-row items-center justify-between">
                 <p>Done</p>
                 <p className="font-bold text-accent-blue text-2xl">
-                  {props.dashboard?.trainings.done ?? 0}
+                  {dashboard?.trainings.done ?? 0}
                 </p>
               </div>
             </div>
@@ -312,7 +313,7 @@ const EmployeeDashboard: React.FC<{
               <div className="w-full flex flex-row items-center justify-between">
                 <p>Pending</p>
                 <p className="font-bold text-accent-purple text-2xl">
-                  {props.dashboard?.performances.pending ?? 0}
+                  {dashboard?.performances.pending ?? 0}
                 </p>
               </div>
             </div>
@@ -324,7 +325,7 @@ const EmployeeDashboard: React.FC<{
               <div className="w-full flex flex-row items-center justify-between">
                 <p>In Progress</p>
                 <p className="font-bold text-accent-green text-2xl">
-                  {props.dashboard?.performances.in_progress ?? 0}
+                  {dashboard?.performances.in_progress ?? 0}
                 </p>
               </div>
             </div>
@@ -336,7 +337,7 @@ const EmployeeDashboard: React.FC<{
               <div className="w-full flex flex-row items-center justify-between">
                 <p>Done</p>
                 <p className="font-bold text-accent-blue text-2xl">
-                  {props.dashboard?.performances.done ?? 0}
+                  {dashboard?.performances.done ?? 0}
                 </p>
               </div>
             </div>
@@ -354,7 +355,7 @@ const EmployeeDashboard: React.FC<{
               <div className="w-full flex flex-row items-center justify-between">
                 <p>Files</p>
                 <p className="font-bold text-accent-blue text-2xl">
-                  {props.dashboard?.documents.documents ?? 0}
+                  {dashboard?.documents.documents ?? 0}
                 </p>
               </div>
             </div>
@@ -366,7 +367,7 @@ const EmployeeDashboard: React.FC<{
               <div className="w-full flex flex-row items-center justify-between">
                 <p>Folders</p>
                 <p className="font-bold text-amber-600 text-2xl">
-                  {props.dashboard?.documents.folders ?? 0}
+                  {dashboard?.documents.folders ?? 0}
                 </p>
               </div>
             </div>
