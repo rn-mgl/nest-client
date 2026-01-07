@@ -9,8 +9,6 @@ const Dashboard = async () => {
   const session = await getServerSession(authOptions);
   const user = session?.user;
 
-  console.log(123);
-
   const response = await getDashboard();
 
   if (user?.roles.includes("admin")) {

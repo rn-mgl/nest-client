@@ -2,7 +2,6 @@
 
 import { useToasts } from "@/src/context/ToastContext";
 import { APIReturnInterface } from "@/src/interface/APIInterface";
-import { AdminDashboardInterface } from "@/src/interface/DashboardInterface";
 import { isAdminDashboardSummary, isCloudFileSummary } from "@/src/utils/utils";
 import React from "react";
 import {
