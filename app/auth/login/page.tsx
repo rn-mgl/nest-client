@@ -101,14 +101,19 @@ const Login = () => {
         className="w-full flex flex-col items-start justify-start h-full gap-8 l-s:items-start l-s:flex-row 
             max-w-(--breakpoint-l-l) rounded-lg t:shadow-lg t:p-4 t:bg-neutral-50"
       >
-        <div className="hidden l-s:flex w-full h-full bg-accent-purple rounded-lg flex-col items-start justify-start p-4">
-          <LogoNav url="/" type="dark" />
-        </div>
+        <div
+          style={{
+            backgroundImage: `url(../global/logo.svg)`,
+            backgroundSize: "4rem",
+            backgroundBlendMode: "soft-light",
+          }}
+          className="hidden l-s:flex w-full h-full bg-accent-purple rounded-lg flex-col items-start justify-start p-4"
+        ></div>
         <div
           className="w-full h-full flex flex-col items-start justify-start gap-8 t:mx-auto l-s:max-w-full
-                l-s:justify-start l-s:items-start"
+                l-s:justify-start l-s:items-end"
         >
-          <div className="l-s:hidden">
+          <div>
             <LogoNav url="/" type="dark" />
           </div>
 
