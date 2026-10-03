@@ -38,10 +38,10 @@ const AdminDashboard: React.FC<{
       // Compare the dateToCheck with the calculated week range
       return dateToCheck >= startOfWeek && dateToCheck <= endOfWeek;
     })
-    .map((hr) => {
+    .map((hr, index) => {
       return (
         <div
-          key={hr.id}
+          key={index}
           className="p-2 rounded-md bg-neutral-200 flex flex-row items-center justify-between gap-4 w-full"
         >
           <div

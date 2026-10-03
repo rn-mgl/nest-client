@@ -31,7 +31,6 @@ import { isRawFileSummary } from "@/src/utils/utils";
 import { useToasts } from "@/src/context/ToastContext";
 import useIsLoading from "@/src/hooks/useIsLoading";
 import LogoLoader from "../global/loader/LogoLoader";
-import { nanoid } from "nanoid";
 
 const CreateTraining: React.FC<ModalInterface> = (props) => {
   const [training, setTraining] = React.useState<TrainingInterface>({
@@ -60,7 +59,6 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
       title: "",
       type: "text",
       description: "",
-      nanoid: nanoid(),
     },
   ]);
 
@@ -77,7 +75,6 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
       choice_3: "",
       choice_4: "",
       question: "",
-      nanoid: nanoid(),
     },
   ]);
 
@@ -296,7 +293,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
 
     return (
       <div
-        key={content.nanoid}
+        key={`${content.type}-${index}`}
         className="w-full flex flex-col gap-2 items-end justify-center"
       >
         <div className="w-full flex flex-col gap-2 items-start justify-center">
@@ -346,7 +343,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
 
       return (
         <div
-          key={choice}
+          key={choiceIndex}
           className="w-full flex flex-row items-center justify-between gap-2"
         >
           <Radio
@@ -371,7 +368,7 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
 
     return (
       <div
-        key={review.nanoid}
+        key={reviewIndex}
         className="w-full flex flex-col items-end gap-2 justify-center"
       >
         <div className="w-full flex flex-col items-center justify-center gap-2">
@@ -502,7 +499,6 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
                         description: "",
                         content: "",
                         type: "text",
-                        nanoid: nanoid(),
                       })
                     }
                   >
@@ -519,7 +515,6 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
                         description: "",
                         content: "",
                         type: "image",
-                        nanoid: nanoid(),
                       })
                     }
                   >
@@ -536,7 +531,6 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
                         description: "",
                         content: "",
                         type: "video",
-                        nanoid: nanoid(),
                       })
                     }
                   >
@@ -553,7 +547,6 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
                         description: "",
                         content: "",
                         type: "application",
-                        nanoid: nanoid(),
                       })
                     }
                   >
@@ -577,7 +570,6 @@ const CreateTraining: React.FC<ModalInterface> = (props) => {
                         choice_3: "",
                         choice_4: "",
                         question: "",
-                        nanoid: nanoid(),
                       })
                     }
                     type="button"

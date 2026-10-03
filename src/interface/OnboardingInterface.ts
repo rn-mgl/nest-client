@@ -10,14 +10,12 @@ export interface OnboardingInterface {
 
 export interface OnboardingRequiredDocumentsInterface {
   id?: number;
-  nanoid?: string;
   title: string;
   description: string;
 }
 
 export interface OnboardingPolicyAcknowledgemenInterface {
   id?: number;
-  nanoid?: string;
   title: string;
   description: string;
 }

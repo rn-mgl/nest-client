@@ -151,7 +151,7 @@ const ShowResourceTraining: React.FC<ModalInterface> = (props) => {
 
     return (
       <div
-        key={content.id}
+        key={index}
         className="w-full h-full flex flex-col items-center justify-start gap-4"
       >
         <p className="w-full py-2 border-b-2 border-accent-purple">
@@ -174,7 +174,7 @@ const ShowResourceTraining: React.FC<ModalInterface> = (props) => {
       review[`choice_${review.answer}` as keyof TrainingReviewInterface];
     return (
       <div
-        key={review.id}
+        key={index}
         className="w-full flex flex-col items-center justify-center gap-2"
       >
         <p className="w-full py-2 border-b-2 border-accent-purple">

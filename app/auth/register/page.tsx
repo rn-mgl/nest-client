@@ -174,14 +174,7 @@ const Register = () => {
           </div>
         </div>
 
-        <div
-          style={{
-            backgroundImage: `url(../global/logo-dark.svg)`,
-            backgroundSize: "4rem",
-            backgroundBlendMode: "soft-light",
-          }}
-          className="hidden l-s:flex w-full h-full bg-accent-yellow rounded-lg"
-        ></div>
+        <div className="hidden l-s:flex w-full h-full bg-accent-yellow rounded-lg"></div>
       </div>
     </div>
   );

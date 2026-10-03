@@ -1,6 +1,5 @@
 import React from "react";
 import { ToastInterface } from "@/interface/PopupInterface";
-import { nanoid } from "nanoid";
 
 interface ToastContextData {
   toasts: ToastInterface[];
@@ -34,7 +33,7 @@ const ToastProvider = ({ children }: { children: React.ReactNode }) => {
     ) => {
       const newToast: ToastInterface = {
         duration: duration ?? 5000,
-        id: nanoid(),
+        id: Math.random().toString(36).slice(2),
         message: message,
         subject: subject,
         type: type,
