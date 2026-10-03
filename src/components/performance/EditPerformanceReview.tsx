@@ -18,6 +18,7 @@ import ModalTabs from "@/global/navigation/ModalTabs";
 import { useToasts } from "@/src/context/ToastContext";
 import useIsLoading from "@/src/hooks/useIsLoading";
 import LogoLoader from "../global/loader/LogoLoader";
+import { nanoid } from "nanoid";
 
 const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
   const [performance, setPerformanceReview] =
@@ -34,6 +35,7 @@ const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
       {
         created_by: 0,
         survey: "",
+        nanoid: nanoid(),
       },
     ]);
   const { activeTab, handleActiveTab } = useModalTab("information");
@@ -98,7 +100,7 @@ const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
   const mappedSurveys = fields.map((content, index) => {
     return (
       <div
-        key={index}
+        key={content.id ?? content.nanoid}
         className="w-full flex flex-col gap-2 items-end justify-center"
       >
         <TextArea
@@ -239,7 +241,9 @@ const EditPerformanceReview: React.FC<ModalInterface> = (props) => {
                     type="button"
                     title="Add Survey Field"
                     className="p-2 rounded-md bg-neutral-100"
-                    onClick={() => addField({ survey: "", created_by: 0 })}
+                    onClick={() =>
+                      addField({ survey: "", created_by: 0, nanoid: nanoid() })
+                    }
                   >
                     <IoAdd />
                   </button>

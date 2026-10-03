@@ -3,10 +3,10 @@ import Link from "next/link";
 import React from "react";
 
 const PageTabs: React.FC<PageTabsInterface> = (props) => {
-  const mappedTabs = props.tabs.map((tab, index) => {
+  const mappedTabs = props.tabs.map((tab) => {
     return (
       <Link
-        key={index}
+        key={tab}
         href={`?tab=${tab}`}
         className={`min-w-full t:min-w-fit t:w-full p-2 border-b-2 capitalize text-sm text-center ${
           props.activeTab === tab
