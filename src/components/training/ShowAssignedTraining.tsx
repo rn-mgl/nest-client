@@ -288,7 +288,7 @@ const ShowAssignedTraining: React.FC<
     }
   };
 
-  const mappedContents = contents.map((content) => {
+  const mappedContents = contents.map((content, index) => {
     const currentContent = isCloudFileSummary(content.content)
       ? content.content.url
       : typeof content.content === "string"
@@ -297,7 +297,7 @@ const ShowAssignedTraining: React.FC<
 
     return (
       <div
-        key={content.id}
+        key={index}
         className="w-full flex flex-col items-center justify-center gap-2"
       >
         <TextField label="Title" value={content.title} />

@@ -9,7 +9,6 @@ export interface PerformanceReviewInterface {
 
 export interface PerformanceReviewSurveyInterface {
   id?: number;
-  nanoid?: string;
   created_by: number | UserInterface;
   survey: string;
 }

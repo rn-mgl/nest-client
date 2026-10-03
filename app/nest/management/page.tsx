@@ -272,10 +272,10 @@ const Management = ({
   };
 
   const mappedUsers = useFilterAndSort(users, search, sort, category).map(
-    (user) => {
+    (user, index) => {
       return (
         <UserCard
-          key={user.id}
+          key={index}
           //
           user={{ ...user }}
           sendMail={() => sendMail(user.email)}

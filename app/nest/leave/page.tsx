@@ -241,14 +241,14 @@ const Leave = ({
   );
 
   const mappedLeaves = useFilterAndSort(leaveTypes, search, sort).map(
-    (leave) => {
+    (leave, index) => {
       const leaveId = leave.id ?? 0; // leave ids in this page have leaveids (from db)
       const createdBy = isUserSummary(leave.created_by)
         ? leave.created_by.first_name
         : null;
       return (
         <BaseCard
-          key={leave.id}
+          key={index}
           title={leave.type}
           description={leave.description}
           createdBy={createdBy}
@@ -282,10 +282,10 @@ const Leave = ({
     search,
     sort,
     category
-  ).map((leave) => {
+  ).map((leave, index) => {
     return (
       <LeaveBalanceCard
-        key={leave.id}
+        key={index}
         //
         assigned_to={leave.assigned_to}
         balance={leave.balance}

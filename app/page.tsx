@@ -1,8 +1,5 @@
 import LogoNav from "@/src/components/global/navigation/LogoNav";
-import About from "@/src/components/landing/About";
-import Action from "@/src/components/landing/Action";
 import Hero from "@/src/components/landing/Hero";
-import Offers from "@/src/components/landing/Offers";
 import { Metadata } from "next";
 import Link from "next/link";
 
@@ -27,9 +24,6 @@ export default function Home() {
         </div>
       </div>
       <Hero />
-      <About />
-      <Offers />
-      <Action />
     </div>
   );
 }

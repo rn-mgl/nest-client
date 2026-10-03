@@ -18,7 +18,6 @@ import { IoAdd, IoClose, IoReader, IoText, IoTrash } from "react-icons/io5";
 import ModalTabs from "@/global/navigation/ModalTabs";
 import useIsLoading from "@/src/hooks/useIsLoading";
 import LogoLoader from "../global/loader/LogoLoader";
-import { nanoid } from "nanoid";
 
 const CreateOnboarding: React.FC<ModalInterface> = (props) => {
   const [onboarding, setOnboarding] = React.useState<OnboardingInterface>({
@@ -33,7 +32,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
     handleField: handleDocumentField,
     removeField: removeDocumentField,
   } = useDynamicFields<OnboardingRequiredDocumentsInterface>([
-    { title: "", description: "", nanoid: nanoid() },
+    { title: "", description: "" },
   ]);
 
   const {
@@ -42,7 +41,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
     handleField: handlePolicyField,
     removeField: removePolicyField,
   } = useDynamicFields<OnboardingPolicyAcknowledgemenInterface>([
-    { title: "", description: "", nanoid: nanoid() },
+    { title: "", description: "" },
   ]);
 
   const { isLoading, handleIsLoading } = useIsLoading();
@@ -70,7 +69,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
   const mappedRequiredDocuments = requiredDocuments.map((req, index) => {
     return (
       <div
-        key={req.nanoid}
+        key={index}
         className="w-full flex flex-col gap-2 items-end justify-center"
       >
         <div className="flex flex-col items-center justify-center gap-2 w-full">
@@ -113,7 +112,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
     (ack, index) => {
       return (
         <div
-          key={ack.nanoid}
+          key={index}
           className="w-full flex flex-col gap-2 items-end justify-center"
         >
           <div className="flex flex-col items-center justify-center gap-2 w-full">
@@ -267,11 +266,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
                     title="Add Required Documents Field"
                     className="p-2 rounded-md bg-neutral-100"
                     onClick={() =>
-                      addDocumentField({
-                        title: "",
-                        description: "",
-                        nanoid: nanoid(),
-                      })
+                      addDocumentField({ title: "", description: "" })
                     }
                   >
                     <IoAdd />
@@ -292,11 +287,7 @@ const CreateOnboarding: React.FC<ModalInterface> = (props) => {
                     title="Add Required Documents Field"
                     className="p-2 rounded-md bg-neutral-100"
                     onClick={() =>
-                      addPolicyField({
-                        title: "",
-                        description: "",
-                        nanoid: nanoid(),
-                      })
+                      addPolicyField({ title: "", description: "" })
                     }
                   >
                     <IoAdd />

@@ -8,10 +8,10 @@ const Select: React.FC<SelectInterface> = (props) => {
     setActiveSelect((prev) => !prev);
   };
 
-  const mappedOptions = props.options.map((option) => {
+  const mappedOptions = props.options.map((option, index) => {
     return (
       <button
-        key={option.value}
+        key={index}
         disabled={props.value === option.value}
         onClick={() => {
           props.onChange(option.value, option.label);

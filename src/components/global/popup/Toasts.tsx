@@ -36,10 +36,10 @@ const Toasts = () => {
     },
   };
 
-  const mappedToasts = toasts.map((toast) => {
+  const mappedToasts = toasts.map((toast, index) => {
     return (
       <div
-        key={toast.id}
+        key={index}
         className="w-full p-2 border-2 rounded-sm shadow-md flex flex-row items-start justify-start gap-2 
                   animate-fade relative bg-white overflow-hidden transition-all"
       >
